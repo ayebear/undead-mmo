@@ -15,7 +15,7 @@ class Entity// : public sf::Drawable
     //static CleanList = new //Any entities that die or need to be deleted from entity list are pushed on here.
     public:
         Entity();
-        void SetImage(sf::Image&);
+        void SetTexture(sf::Texture&);
         void SetPos(sf::Vector2f&);
         void SetPos(float, float);
         void UpdateLists();     //Goes through Add list and adds them to the entityList. Goes through clean list and removes them from the entity list.

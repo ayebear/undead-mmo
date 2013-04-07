@@ -6,22 +6,22 @@ Entity::Entity()
     alive = false;
 }
 
-void Entity::SetImage(sf::Image& img)
+void Entity::SetTexture(sf::Texture& texture)
 {
-    sprite.SetImage(img);
+    sprite.setTexture(texture);
 }
 
 void Entity::SetPos(sf::Vector2f& position)
 {
     pos = position;
-    sprite.SetPosition(pos);
+    sprite.setPosition(pos);
 }
 
 void Entity::SetPos(float x, float y)
 {
     pos.x = x;
     pos.y = y;
-    sprite.SetPosition(pos);
+    sprite.setPosition(pos);
 }
 
 int Entity::GetOpenId()

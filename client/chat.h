@@ -12,8 +12,11 @@ class Chat
 {
     public:
         Chat();
-        AddMessage(string);
+        void Show();
+        void Hide();
+        void AddMessage(string);
     private:
+        bool shown;
         deque <string> msgList;
 };
 

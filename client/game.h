@@ -8,7 +8,7 @@
 
 // This class manages the window and input for the game
 
-const std::string version = "Project: Brains v0.0.0.3 Dev";
+const std::string version = "Project: Brains v0.0.0.4 Dev";
 
 class Game
 {
@@ -29,8 +29,8 @@ class Game
         bool playing;
         float elapsedTime;
 
-        Player player; // TODO: use an entity list or something similar
-        sf::Image playerImg; // TODO: make a file loading/resource manager class or something
+        Player player; // TODO: use the entity list
+        sf::Texture playerTex; // TODO: make a file loading/resource manager class or something
 };
 
 #endif // GAME_H

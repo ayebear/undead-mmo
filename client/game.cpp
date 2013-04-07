@@ -3,8 +3,8 @@
 Game::Game()
 {
     // Load files and stuff
-    playerImg.LoadFromFile("data/images/characters/character.png");
-    player.SetImage(playerImg);
+    playerTex.loadFromFile("data/images/characters/character.png");
+    player.SetTexture(playerTex);
 
     // Create the window in fullscreen at max resolution
     //vidMode = sf::VideoMode::GetMode(0);
@@ -12,25 +12,26 @@ Game::Game()
 
     // Create a normal window for now
     vidMode = sf::VideoMode(windowWidth, windowHeight);
-    window.Create(vidMode, version, sf::Style::Close);
+    window.create(vidMode, version, sf::Style::Close);
 
     // Set frame limits and vsync
     //window.SetFramerateLimit(5);
-    window.UseVerticalSync(true);
+    window.setVerticalSyncEnabled(true);
 
     playing = true;
 }
 
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    while (playing && window.IsOpened())
+    sf::Clock clock;
+    while (playing && window.isOpen())
     {
-        // Do we REALLY need a message pump system? These functions will do stuff when user input is detected.
-        // All a message pump will do is delay that, and seems like an unnecessary hoop to jump through.
-        // I think those are only required when dealing with the Windows API, SFML already does that for us. ^^
         GetInput();
         ProcessEvents();
         ProcessInput();
+
+        // Get the time since the last frame, and restart the timer
+        elapsedTime = clock.restart().asSeconds();
 
         // This will update the positions and stuff of all of the sprites and logic
         Update();
@@ -45,27 +46,24 @@ void Game::GetInput()
     // Get the current mouse and keyboard input
     //const sf::Input& input = window.GetInput();
 
-    // Get the elapsed time since last frame
-    elapsedTime = window.GetFrameTime();
-
     // Get mouse coordinates
     //mousePos = window.ConvertCoords(input.GetMouseX(), input.GetMouseY());
 }
 
 void Game::ProcessEvents()
 {
-    sf::Event Event;
-    while (window.GetEvent(Event))
+    sf::Event event;
+    while (window.pollEvent(event))
     {
-        switch (Event.Type)
+        switch (event.type)
         {
             case sf::Event::Closed:
-                window.Close();
+                window.close();
                 break;
             case sf::Event::KeyPressed:
-                switch (Event.Key.Code)
+                switch (event.key.code)
                 {
-                    case sf::Key::Escape:
+                    case sf::Keyboard::Escape:
                         playing = false;
                         break;
                     default:
@@ -79,15 +77,13 @@ void Game::ProcessEvents()
 
 void Game::ProcessInput()
 {
-    const sf::Input& input = window.GetInput();
-
-    if (input.IsKeyDown(sf::Key::W) || input.IsKeyDown(sf::Key::Up))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         player.MoveUp(elapsedTime);
-    if (input.IsKeyDown(sf::Key::S) || input.IsKeyDown(sf::Key::Down))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         player.MoveDown(elapsedTime);
-    if (input.IsKeyDown(sf::Key::A) || input.IsKeyDown(sf::Key::Left))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
         player.MoveLeft(elapsedTime);
-    if (input.IsKeyDown(sf::Key::D) || input.IsKeyDown(sf::Key::Right))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         player.MoveRight(elapsedTime);
 }
 
@@ -98,9 +94,9 @@ void Game::Update()
 
 void Game::Display() // TODO: Use a rendering class instead
 {
-    window.Clear();
+    window.clear();
 
-    window.Draw(player.sprite);
+    window.draw(player.sprite);
 
-    window.Display();
+    window.display();
 }
