@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
-#include "../player.h"
+#include "../shared/player.h"
 
 // This class manages the window and input for the game
 
