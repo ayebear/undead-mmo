@@ -1,8 +1,10 @@
 #include "entity.h"
 
+uint Entity::IDCounter = 0;
+
 Entity::Entity()
 {
-    ID = 0;
+    ID = GetOpenId();
     alive = false;
 }
 
@@ -24,9 +26,10 @@ void Entity::SetPos(float x, float y)
     sprite.setPosition(pos);
 }
 
-int Entity::GetOpenId()
+uint Entity::GetOpenId()
 {
-    return 0;
+    // In the future make sure this won't conflict
+    return IDCounter++;
 }
 
 /*

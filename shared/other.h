@@ -3,6 +3,12 @@
 
 // Miscellaneous functions and classes can go in here
 
+typedef unsigned long ulong;
+typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned char uchar;
+typedef long long llong;
+
 /*struct Position
 {
     float x, y;

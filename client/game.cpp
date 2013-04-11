@@ -3,8 +3,9 @@
 Game::Game()
 {
     // Load files and stuff
-    playerTex.loadFromFile("data/images/characters/character.png");
-    player.SetTexture(playerTex);
+    /*if (!playerTex.loadFromFile("data/images/characters/character.png"))
+        exit(2);
+    player.SetTexture(playerTex);*/
 
     // Create the window in fullscreen at max resolution
     //vidMode = sf::VideoMode::GetMode(0);

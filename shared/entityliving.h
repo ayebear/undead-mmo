@@ -7,8 +7,12 @@ class EntityLiving: public Entity
 {
     public:
         EntityLiving();
+        void Move(float);
     protected:
-        float HP;
+        float angle; // in degrees
+        int currentHealth;
+        int baseHealth; // max health
+        int baseSpeed;
 };
 
 #endif // ENTITYLIVING_H
