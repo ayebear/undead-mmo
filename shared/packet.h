@@ -5,19 +5,32 @@
 // could also do the reverse maybe.
 // this could be used for having different packet "types" that all mean different things, like a character coordinate update, or new zombies or items
 
-enum PacketType
-{
-    ChatMessage = 1,
-    EntityUpdate, // this would be pretty advanced, as not all of the data would need to be sent.
-    // existing values in RAM will be used in place of non-existant data from the packets.
-    // newly spawned entities with new IDs
-
-};
+// we may not need this class depending on how the server will handle packets
+// but we will definitely need the enum
 
 class Packet
 {
     public:
         Packet();
+        enum Type
+        {
+            // Updates (client to server)
+            LogIn = 1,
+            LogOut,
+            ChatMessage,
+            PlayerUpdate, // may need to be more specific with this
+            // Updates (server to client(s))
+            //ChatMessageToClients,
+            NewEntity,
+            EntityUpdate,
+            // Requests (client to server)
+            GetMap,
+            GetEntityList,
+            GetPlayerList,
+            //GetChatHistory,
+            // Requests (server to client)
+            Ping
+        };
     private:
 };
 

@@ -14,7 +14,12 @@ class Entity// : public sf::Drawable
         void SetTexture(sf::Texture&);
         void SetPos(sf::Vector2f&);
         void SetPos(float, float);
+        sf::Vector2f GetPos();
         void UpdateLists(); // Goes through Init list and adds them to the entityList. Goes through clean list and removes them from the entity list.
+
+        static bool InsertEntity(Entity*);
+        static int FindEntity(Entity*);
+        static bool DeleteEntity(Entity*);
 
         //virtual void draw(sf::RenderTarget& target, RenderStates states) const;
 
@@ -23,15 +28,9 @@ class Entity// : public sf::Drawable
         static uint IDCounter;
 
     protected:
-        uint ID; // TODO: make an ID system, and make this get an open ID from it
-        // This ID system MUST save a log of around 100 recently used IDs.
-        // The reason for this is what if a new entity is spawned with the same ID as one that was just killed.
-        // The server doesn't manage what the client knows, it just sends everything that changes to all of the clients.
-        // So, this could cause a conflict, where the client(s) think that entity still exists, and uses those old values.
-        // Now, it would probably update it all correctly, but still, it could cause issues.
-        // We could simply have a deque or linked list with all of the old IDs as part of the ID managment class/function.
+        uint ID; // The entity's ID
 
-        bool alive; //This is set to false until an entity is moved from the addList to the entityList.
+        bool isReady; //This is set to false until an entity is moved from the addList to the entityList.
             //When an entity dies or is set to be deleted. It is set to false again. Basically makes an entity invulnerable
             //for a frame, so that a non-existence error does not occur should it be killed before it makes it onto the entity list.
 

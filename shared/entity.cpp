@@ -5,7 +5,7 @@ uint Entity::IDCounter = 0;
 Entity::Entity()
 {
     ID = GetOpenId();
-    alive = false;
+    isReady = false;
 }
 
 void Entity::SetTexture(sf::Texture& texture)
@@ -24,6 +24,11 @@ void Entity::SetPos(float x, float y)
     pos.x = x;
     pos.y = y;
     sprite.setPosition(pos);
+}
+
+sf::Vector2f Entity::GetPos()
+{
+    return pos;
 }
 
 uint Entity::GetOpenId()
