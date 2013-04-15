@@ -19,6 +19,8 @@ Game::Game()
     //window.SetFramerateLimit(5);
     window.setVerticalSyncEnabled(true);
 
+    chat.SetPosition(64, windowHeight / 2);
+
     playing = true;
 }
 
@@ -65,11 +67,25 @@ void Game::ProcessEvents()
                 switch (event.key.code)
                 {
                     case sf::Keyboard::Escape:
-                        playing = false;
+                        chat.SetInput(false);
+                        break;
+                    case sf::Keyboard::T:
+                        chat.SetInput(true);
+                        break;
+                    case sf::Keyboard::Return:
+                        chat.SendMessage();
+                        break;
+                    case sf::Keyboard::BackSpace:
+                        chat.RemoveChar();
                         break;
                     default:
                         break;
                 }
+                break;
+            case sf::Event::TextEntered:
+                if (chat.GetInput() && event.text.unicode >= 32 && event.text.unicode <= 126)
+                    chat.AddChar(static_cast<char>(event.text.unicode));
+                break;
             default:
                 break;
         }
@@ -97,7 +113,9 @@ void Game::Display() // TODO: Use a rendering class instead
 {
     window.clear();
 
-    window.draw(player.sprite);
+    //window.draw(player.sprite);
+
+    chat.Draw(window);
 
     window.display();
 }

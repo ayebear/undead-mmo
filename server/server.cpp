@@ -73,9 +73,9 @@ void Server::MainLoop()
                     // be notified when he sends something
                     selector.add(*client);
 
-                    cout << "Client connected, here is the current list:\n";
-                    for (auto& client: clients) // loop through the connected clients
-                        cout << client->getRemoteAddress() << endl;
+                    cout << "Client " << client->getRemoteAddress() << " connected, here is the current list:\n";
+                    for (auto& c: clients) // loop through the connected clients
+                        cout << c->getRemoteAddress() << endl;
                 }
             }
             else
@@ -98,6 +98,14 @@ void Server::MainLoop()
                                 case Packet::ChatMessage:{
                                     packet >> msg;
                                     cout << "Message: " << msg << endl;
+                                    SendToClients(packet, i);
+                                    break;}
+                                case Packet::PlayerUpdate:{
+                                    float x, y;
+                                    packet >> x >> y;
+                                    // x and y need to be stored in the player object in the entity list
+                                    // in the future this will be input and time instead of direct coordinates
+                                    // also, when sending the data to the clients, it needs the entity ID with it of course
                                     SendToClients(packet, i);
                                     break;}
                                 default:

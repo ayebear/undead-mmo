@@ -5,10 +5,11 @@
 #include <iostream>
 #include <string>
 #include "../shared/player.h"
+#include "chat.h"
 
 // This class manages the window and input for the game
 
-const std::string version = "Project: Brains v0.0.0.5 Dev";
+const std::string version = "Project: Brains v0.0.0.6 Dev";
 
 class Game
 {
@@ -31,6 +32,8 @@ class Game
 
         Player player; // TODO: use the entity list
         sf::Texture playerTex; // TODO: make a file loading/resource manager class or something
+
+        Chat chat;
 };
 
 #endif // GAME_H
