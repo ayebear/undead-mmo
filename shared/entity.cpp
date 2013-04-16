@@ -35,12 +35,10 @@ uint Entity::GetOpenId()
 {
     // In the future make sure this won't conflict
     return IDCounter++;
+    // Need a way to check if an ID isn't used
 }
 
-/*
-virtual void draw(sf::RenderTarget& target, RenderStates states) const
+void Entity::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
-    //This is required to make the render engine work.
+    window.draw(sprite, states);
 }
-*/
-

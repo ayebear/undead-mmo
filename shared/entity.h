@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Entity// : public sf::Drawable
+class Entity : public sf::Drawable
 {
     public:
         Entity();
@@ -16,26 +16,25 @@ class Entity// : public sf::Drawable
         void SetPos(float, float);
         sf::Vector2f GetPos();
         void UpdateLists(); // Goes through Init list and adds them to the entityList. Goes through clean list and removes them from the entity list.
+        virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
         static bool InsertEntity(Entity*);
         static int FindEntity(Entity*);
         static bool DeleteEntity(Entity*);
 
-        //virtual void draw(sf::RenderTarget& target, RenderStates states) const;
-
-        sf::Sprite sprite;
-
         static uint IDCounter;
 
     protected:
+        static uint GetOpenId();
+
         uint ID; // The entity's ID
 
         bool isReady; //This is set to false until an entity is moved from the addList to the entityList.
             //When an entity dies or is set to be deleted. It is set to false again. Basically makes an entity invulnerable
             //for a frame, so that a non-existence error does not occur should it be killed before it makes it onto the entity list.
 
-        static uint GetOpenId();
         sf::Vector2f pos;
+        sf::Sprite sprite;
 
     private:
         //Init list is the list which entities are for initialized to. This is so that entities created

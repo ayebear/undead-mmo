@@ -8,11 +8,7 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char uchar;
 typedef long long llong;
-
-/*struct Position
-{
-    float x, y;
-};*/
+typedef unsigned long long ullong;
 
 enum class Direction {Up, Down, Left, Right};
 

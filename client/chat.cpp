@@ -1,22 +1,27 @@
 #include "chat.h"
 
-/*
-For the chat input code:
-Have a chat state that can be on/off. This should be turned on after a "T" pressed event is received, and turned off when "Escape" is pressed.
-Use sf::Event::TextEntered to get the text entered, so we don't have to test for a bunch of different types of keys pressed.
-*/
+const ushort Chat::maxMessages = 10;
+const short Chat::textSize = 16;
+const float Chat::cursorBlinkRate = 0.3;
+const float Chat::oldMsgAge = 10;
+const float Chat::maxMsgAge = 20;
 
 Chat::Chat()
 {
-    input = false;
-    textSize = 32;
-    mainPos.x = 50;
-    mainPos.y = 50;
-    if (!font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
+    if (!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
         exit(3);
+
+    input = false;
+    showCursor = true;
+    mainPos.x = 0;
+    mainPos.y = 0;
+
     currentMsg.setFont(font);
     currentMsg.setCharacterSize(textSize);
     currentMsg.setColor(sf::Color::Red);
+
+    cursor.setSize(sf::Vector2f(2, textSize));
+    cursor.setFillColor(sf::Color::Red);
 }
 
 void Chat::SetInput(bool in)
@@ -29,22 +34,36 @@ bool Chat::GetInput()
     return input;
 }
 
+void Chat::ToggleInput()
+{
+    input = !input;
+}
+
 void Chat::SetPosition(float x, float y)
 {
     mainPos.x = x;
     mainPos.y = y;
     FixPositions();
+    FixCursorPosition();
+}
+
+void Chat::FixCursorPosition()
+{
+    auto lastCharPos = currentMsg.findCharacterPos(-1);
+    lastCharPos.x += 1;
+    lastCharPos.y += 2;
+    cursor.setPosition(lastCharPos);
 }
 
 void Chat::FixPositions()
 {
-    float y = mainPos.y;
+    float y = mainPos.y + textSize * (maxMessages - msgList.size());
     for (auto& msg: msgList)
     {
-        msg.setPosition(mainPos.x, y);
+        msg.text.setPosition(mainPos.x + 4, y);
         y += textSize;
     }
-    currentMsg.setPosition(mainPos.x, mainPos.y + maxMessages * textSize);
+    currentMsg.setPosition(mainPos.x + 4, mainPos.y + maxMessages * textSize);
 }
 
 // This is called while the player is typing
@@ -53,6 +72,7 @@ void Chat::AddChar(char c)
     string str = currentMsg.getString();
     str += c;
     currentMsg.setString(str);
+    FixCursorPosition();
 }
 
 // This is called when backspace is pressed
@@ -64,19 +84,16 @@ void Chat::RemoveChar()
         str.pop_back();
         currentMsg.setString(str);
     }
+    FixCursorPosition();
 }
 
 // This is called when a new chat message is received from the server
-// TODO: This will need to re-position the messages too
 void Chat::AddMessage(sf::Text msg)
 {
-    msg.setPosition(mainPos.x, mainPos.y + msgList.size() * textSize);
-    msgList.push_back(msg);
+    msgList.push_back(TimedMsg(msg));
     if (msgList.size() > maxMessages)
-    {
         msgList.pop_front();
-        FixPositions();
-    }
+    FixPositions();
 }
 
 // May need this overload
@@ -92,14 +109,34 @@ void Chat::SendMessage()
     if (currentMsg.getString() != "")
     {
         AddMessage(currentMsg.getString());
-        msgList.back().setColor(sf::Color::Green);
+        msgList.back().text.setColor(sf::Color::Green);
         currentMsg.setString("");
+        FixCursorPosition();
     }
 }
 
-void Chat::Draw(sf::RenderWindow& window)
+void Chat::Update()
 {
     for (auto& msg: msgList)
-        window.draw(msg);
+    {
+        float msgAge = msg.age.getElapsedTime().asSeconds();
+        if (msgAge >= maxMsgAge)
+            msg.text.setColor(sf::Color::Black); // TODO: Actually erase it from the deque
+        else if (msgAge >= oldMsgAge)
+            msg.text.setColor(sf::Color(128, 128, 128));
+    }
+    if (input && cursorTimer.getElapsedTime().asSeconds() >= cursorBlinkRate)
+    {
+        cursorTimer.restart();
+        showCursor = !showCursor;
+    }
+}
+
+void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
+{
+    for (auto& msg: msgList)
+        window.draw(msg.text);
     window.draw(currentMsg);
+    if (input && showCursor)
+        window.draw(cursor);
 }

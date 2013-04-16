@@ -9,7 +9,7 @@
 
 // This class manages the window and input for the game
 
-const std::string version = "Project: Brains v0.0.0.6 Dev";
+const std::string version = "Project: Brains v0.0.0.7 Dev";
 
 class Game
 {

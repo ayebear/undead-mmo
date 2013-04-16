@@ -3,9 +3,9 @@
 Game::Game()
 {
     // Load files and stuff
-    /*if (!playerTex.loadFromFile("data/images/characters/character.png"))
+    if (!playerTex.loadFromFile("data/images/characters/character.png"))
         exit(2);
-    player.SetTexture(playerTex);*/
+    player.SetTexture(playerTex);
 
     // Create the window in fullscreen at max resolution
     //vidMode = sf::VideoMode::GetMode(0);
@@ -19,11 +19,13 @@ Game::Game()
     //window.SetFramerateLimit(5);
     window.setVerticalSyncEnabled(true);
 
-    chat.SetPosition(64, windowHeight / 2);
+    chat.SetPosition(0, windowHeight - 182);
 
     playing = true;
 }
 
+// TODO: Handle networking code! Receiving and sending with both TCP and UDP!
+// Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
     sf::Clock clock;
@@ -69,11 +71,10 @@ void Game::ProcessEvents()
                     case sf::Keyboard::Escape:
                         chat.SetInput(false);
                         break;
-                    case sf::Keyboard::T:
-                        chat.SetInput(true);
-                        break;
                     case sf::Keyboard::Return:
-                        chat.SendMessage();
+                        if (chat.GetInput())
+                            chat.SendMessage();
+                        chat.ToggleInput();
                         break;
                     case sf::Keyboard::BackSpace:
                         chat.RemoveChar();
@@ -92,30 +93,36 @@ void Game::ProcessEvents()
     }
 }
 
+// TODO: Disable most game input when chat is enabled
 void Game::ProcessInput()
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        player.MoveUp(elapsedTime);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        player.MoveDown(elapsedTime);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        player.MoveLeft(elapsedTime);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        player.MoveRight(elapsedTime);
+    if (!chat.GetInput())
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            player.MoveUp(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            player.MoveDown(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            player.MoveLeft(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            player.MoveRight(elapsedTime);
+    }
 }
 
 void Game::Update()
 {
     // All of the processing code will be run from here.
+
+    chat.Update();
 }
 
 void Game::Display() // TODO: Use a rendering class instead
 {
     window.clear();
 
-    //window.draw(player.sprite);
+    window.draw(player);
 
-    chat.Draw(window);
+    window.draw(chat);
 
     window.display();
 }
