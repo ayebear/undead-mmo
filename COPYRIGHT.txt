@@ -1,0 +1,3 @@
+Copyright (C) 2013 Eric Hebert and other contributors.
+
+See the file LICENSE.txt for copying conditions.
