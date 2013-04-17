@@ -1,3 +1,6 @@
-Copyright (C) 2013 Eric Hebert and other contributors.
+Copyright (C) 2013
+Eric Hebert (calcfreak89)
+Miles Combs (undisclosed1)
+Other contributors
 
 See the file LICENSE.txt for copying conditions.
