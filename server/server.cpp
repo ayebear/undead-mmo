@@ -84,7 +84,7 @@ void Server::MainLoop()
             else
             {
                 // The listener socket is not ready, test all other sockets (the clients)
-                for (uint i = 0; i != clients.size(); ++i)
+                for (uint i = 0; i < clients.size(); ++i)
                 {
                     auto& client = *clients[i];
                     if (selector.isReady(client))
@@ -115,6 +115,15 @@ void Server::MainLoop()
                                     cout << "Error: Unrecognized packet type? Type was: " << type << endl;
                                     break;
                             }
+                        }
+                        else // remove the socket
+                        {
+                            cout << "Client " << client.getRemoteAddress() << " disconnected, here is the current list:\n";
+                            selector.remove(client);
+                            delete clients[i];
+                            clients.erase(clients.begin() + i);
+                            for (auto& c: clients) // loop through the connected clients
+                                cout << c->getRemoteAddress() << endl;
                         }
                     }
                 }

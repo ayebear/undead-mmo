@@ -7,6 +7,7 @@
 #include <string>
 #include <deque>
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 
 using namespace std;
 
@@ -33,7 +34,7 @@ class Chat: public sf::Drawable
         void RemoveChar();
         void AddMessage(sf::Text);
         void AddMessage(string);
-        void SendMessage();
+        void SendMessage(sf::TcpSocket&);
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

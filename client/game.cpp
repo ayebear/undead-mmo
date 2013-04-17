@@ -2,6 +2,7 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "game.h"
+#include "../shared/packet.h"
 
 Game::Game()
 {
@@ -31,9 +32,13 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
+    socket.connect("10.0.0.100", 55001);
+    socket.setBlocking(false);
+
     sf::Clock clock;
     while (playing && window.isOpen())
     {
+        ReceiveData();
         GetInput();
         ProcessEvents();
         ProcessInput();
@@ -46,6 +51,22 @@ void Game::Start() // this will need to manage a second thread for the networkin
 
         // This will render everything to the screen
         Display();
+    }
+}
+
+void Game::ReceiveData()
+{
+    sf::Packet packet;
+    if (socket.receive(packet) == sf::Socket::Done)
+    {
+        int type;
+        packet >> type;
+        if (type == Packet::ChatMessage)
+        {
+            string message;
+            packet >> message;
+            chat.AddMessage(message);
+        }
     }
 }
 
@@ -76,7 +97,7 @@ void Game::ProcessEvents()
                         break;
                     case sf::Keyboard::Return:
                         if (chat.GetInput())
-                            chat.SendMessage();
+                            chat.SendMessage(socket);
                         chat.ToggleInput();
                         break;
                     case sf::Keyboard::BackSpace:
@@ -96,7 +117,6 @@ void Game::ProcessEvents()
     }
 }
 
-// TODO: Disable most game input when chat is enabled
 void Game::ProcessInput()
 {
     if (!chat.GetInput())
@@ -119,7 +139,7 @@ void Game::Update()
     chat.Update();
 }
 
-void Game::Display() // TODO: Use a rendering class instead
+void Game::Display()
 {
     window.clear();
 

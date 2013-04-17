@@ -12,7 +12,7 @@
 
 // This class manages the window and input for the game
 
-const std::string version = "Project: Brains v0.0.0.7 Dev";
+const std::string version = "Project: Brains v0.0.0.8 Dev";
 
 class Game
 {
@@ -21,7 +21,7 @@ class Game
         void Start();
     private:
         // Functions
-        void GetInput(), ProcessEvents(), ProcessInput(), Update(), Display();
+        void GetInput(), ReceiveData(), ProcessEvents(), ProcessInput(), Update(), Display();
 
         // Constants
         static const int windowWidth = 1024;
@@ -30,13 +30,13 @@ class Game
         // Variables
         sf::VideoMode vidMode;
         sf::RenderWindow window;
+        sf::TcpSocket socket; // TODO: Maybe make a network management class
+        Chat chat;
         bool playing;
         float elapsedTime;
 
         Player player; // TODO: use the entity list
-        sf::Texture playerTex; // TODO: make a file loading/resource manager class or something
-
-        Chat chat;
+        sf::Texture playerTex; // TODO: Maybe make a file/resource management class
 };
 
 #endif // GAME_H

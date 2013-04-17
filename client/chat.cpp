@@ -2,6 +2,7 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "chat.h"
+#include "../shared/packet.h"
 
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
@@ -21,10 +22,10 @@ Chat::Chat()
 
     currentMsg.setFont(font);
     currentMsg.setCharacterSize(textSize);
-    currentMsg.setColor(sf::Color::Red);
+    currentMsg.setColor(sf::Color::White);
 
     cursor.setSize(sf::Vector2f(2, textSize));
-    cursor.setFillColor(sf::Color::Red);
+    cursor.setFillColor(sf::Color::White);
 }
 
 void Chat::SetInput(bool in)
@@ -107,11 +108,18 @@ void Chat::AddMessage(string msg)
 }
 
 // This is called when enter is pressed
-void Chat::SendMessage()
+void Chat::SendMessage(sf::TcpSocket& socket)
 {
-    if (currentMsg.getString() != "")
+    string str = currentMsg.getString();
+    if (str != "")
     {
-        AddMessage(currentMsg.getString());
+        // Send the actual network packet
+        sf::Packet packet;
+        packet << Packet::ChatMessage << str;
+        socket.send(packet);
+
+        // Update it visually
+        AddMessage(str);
         msgList.back().text.setColor(sf::Color::Green);
         currentMsg.setString("");
         FixCursorPosition();
@@ -124,9 +132,9 @@ void Chat::Update()
     {
         float msgAge = msg.age.getElapsedTime().asSeconds();
         if (msgAge >= maxMsgAge)
-            msg.text.setColor(sf::Color::Black); // TODO: Actually erase it from the deque
+            msg.text.setColor(sf::Color::Transparent); // TODO: Actually erase it from the deque
         else if (msgAge >= oldMsgAge)
-            msg.text.setColor(sf::Color(128, 128, 128));
+            msg.text.setColor(sf::Color(255, 255, 255, 128));
     }
     if (input && cursorTimer.getElapsedTime().asSeconds() >= cursorBlinkRate)
     {
