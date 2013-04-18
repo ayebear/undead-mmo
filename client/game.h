@@ -24,8 +24,8 @@ class Game
         void ReceiveData(), ProcessEvents(), ProcessInput(), Update(), Display();
 
         // Constants
-        static const int windowWidth = 1024;
-        static const int windowHeight = 768;
+        static const int windowWidth = 800;
+        static const int windowHeight = 600;
 
         // Variables
         sf::VideoMode vidMode;
