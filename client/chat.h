@@ -32,13 +32,16 @@ class Chat: public sf::Drawable
         void FixPositions();
         void AddChar(char);
         void RemoveChar();
-        void AddMessage(sf::Text);
+        void ParseMessage(sf::TcpSocket&);
         void AddMessage(string);
-        void SendMessage(sf::TcpSocket&);
+        void ClearMessage();
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
+        void SendMessage(string, sf::TcpSocket&);
+        void ParseCommand(string);
+
         static const ushort maxMessages;
         static const short textSize;
         static const float cursorBlinkRate;

@@ -1,6 +1,7 @@
 Copyright (C) 2013
 Eric Hebert (calcfreak89)
 Miles Combs (undisclosed1)
+Matt Hejl (mhejl12)
 Other contributors
 
 See the file LICENSE.txt for copying conditions.

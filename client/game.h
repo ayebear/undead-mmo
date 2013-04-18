@@ -12,7 +12,7 @@
 
 // This class manages the window and input for the game
 
-const std::string version = "Project: Brains v0.0.0.8 Dev";
+const std::string version = "Project: Brains v0.0.0.9 Dev";
 
 class Game
 {
@@ -21,7 +21,7 @@ class Game
         void Start();
     private:
         // Functions
-        void GetInput(), ReceiveData(), ProcessEvents(), ProcessInput(), Update(), Display();
+        void ReceiveData(), ProcessEvents(), ProcessInput(), Update(), Display();
 
         // Constants
         static const int windowWidth = 1024;
@@ -33,6 +33,7 @@ class Game
         sf::TcpSocket socket; // TODO: Maybe make a network management class
         Chat chat;
         bool playing;
+        bool paused;
         float elapsedTime;
 
         Player player; // TODO: use the entity list

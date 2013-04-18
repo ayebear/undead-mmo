@@ -32,14 +32,13 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    socket.connect("10.0.0.100", 55001);
+    socket.connect("127.0.0.1", 55001);
     socket.setBlocking(false);
 
     sf::Clock clock;
     while (playing && window.isOpen())
     {
         ReceiveData();
-        GetInput();
         ProcessEvents();
         ProcessInput();
 
@@ -70,15 +69,6 @@ void Game::ReceiveData()
     }
 }
 
-void Game::GetInput()
-{
-    // Get the current mouse and keyboard input
-    //const sf::Input& input = window.GetInput();
-
-    // Get mouse coordinates
-    //mousePos = window.ConvertCoords(input.GetMouseX(), input.GetMouseY());
-}
-
 void Game::ProcessEvents()
 {
     sf::Event event;
@@ -97,7 +87,7 @@ void Game::ProcessEvents()
                         break;
                     case sf::Keyboard::Return:
                         if (chat.GetInput())
-                            chat.SendMessage(socket);
+                            chat.ParseMessage(socket);
                         chat.ToggleInput();
                         break;
                     case sf::Keyboard::BackSpace:
@@ -111,6 +101,12 @@ void Game::ProcessEvents()
                 if (chat.GetInput() && event.text.unicode >= 32 && event.text.unicode <= 126)
                     chat.AddChar(static_cast<char>(event.text.unicode));
                 break;
+            case sf::Event::LostFocus:
+                paused = true;
+                break;
+            case sf::Event::GainedFocus:
+                paused = false;
+                break;
             default:
                 break;
         }
@@ -119,7 +115,7 @@ void Game::ProcessEvents()
 
 void Game::ProcessInput()
 {
-    if (!chat.GetInput())
+    if (!paused && !chat.GetInput())
     {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
             player.MoveUp(elapsedTime);
