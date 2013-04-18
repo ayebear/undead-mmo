@@ -94,7 +94,12 @@ void Game::ProcessEvents()
                         chat.RemoveChar();
                         break;
                     case sf::Keyboard::Up:
-                        chat.RelapseMessage();
+                        if (chat.GetInput())
+                            chat.MessageHistoryUp();
+                        break;
+                    case sf::Keyboard::Down:
+                        if (chat.GetInput())
+                            chat.MessageHistoryDown();
                         break;
                     default:
                         break;

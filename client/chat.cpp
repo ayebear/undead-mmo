@@ -23,6 +23,7 @@ Chat::Chat()
     currentMsg.setFont(font);
     currentMsg.setCharacterSize(textSize);
     currentMsg.setColor(sf::Color::White);
+    msgHistoryPos = 0;
 
     cursor.setSize(sf::Vector2f(2, textSize));
     cursor.setFillColor(sf::Color::White);
@@ -98,8 +99,9 @@ void Chat::ParseMessage(sf::TcpSocket& socket)
     if (!msgStr.empty())
     {
         msgHistory.push_back(msgStr);
-        if (msgHistory.size() >= 100)
+        if (msgHistory.size() > 100)
             msgHistory.pop_front();
+        msgHistoryPos = msgHistory.size() - 1;
         AddMessage(msgStr);
         msgList.back().text.setColor(sf::Color::Green);
         if (msgStr.front() == '/')
@@ -142,9 +144,30 @@ void Chat::ClearMessage()
     FixCursorPosition();
 }
 
-void Chat::RelapseMessage()
+void Chat::MessageHistoryUp()
 {
+    SaveCurrentMessage();
+    msgHistoryPos--;
+    if (msgHistoryPos < 0)
+        msgHistoryPos = 0;
+    else
+        currentMsg.setString(msgHistory[msgHistoryPos]);
+}
 
+void Chat::MessageHistoryDown()
+{
+    SaveCurrentMessage();
+    msgHistoryPos++;
+    if (msgHistoryPos >= (int)msgHistory.size())
+        msgHistoryPos = msgHistory.size() - 1;
+    else
+        currentMsg.setString(msgHistory[msgHistoryPos]);
+}
+
+void Chat::SaveCurrentMessage()
+{
+    //msgHistory.push_back(currentMsg.getString());
+    //msgHistory[msgHistoryPos] = currentMsg.getString();
 }
 
 void Chat::Update()

@@ -35,13 +35,15 @@ class Chat: public sf::Drawable
         void ParseMessage(sf::TcpSocket&);
         void AddMessage(string);
         void ClearMessage();
-        void RelapseMessage();
+        void MessageHistoryUp();
+        void MessageHistoryDown();
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
         void SendMessage(string, sf::TcpSocket&);
         void ParseCommand(string);
+        void SaveCurrentMessage();
 
         static const ushort maxMessages;
         static const short textSize;
@@ -54,7 +56,8 @@ class Chat: public sf::Drawable
         sf::Font font;
         deque <TimedMsg> msgList;
         sf::Text currentMsg;
-        deque <string> msgHistory;
+        deque <string> msgHistory; // stores the history of your own messages
+        int msgHistoryPos; // current location in message history deque
         sf::RectangleShape cursor;
         sf::Clock cursorTimer;
 };
