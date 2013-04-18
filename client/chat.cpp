@@ -97,6 +97,9 @@ void Chat::ParseMessage(sf::TcpSocket& socket)
     string msgStr = currentMsg.getString();
     if (!msgStr.empty())
     {
+        msgHistory.push_back(msgStr);
+        if (msgHistory.size() >= 100)
+            msgHistory.pop_front();
         AddMessage(msgStr);
         msgList.back().text.setColor(sf::Color::Green);
         if (msgStr.front() == '/')
@@ -137,6 +140,11 @@ void Chat::ClearMessage()
 {
     currentMsg.setString("");
     FixCursorPosition();
+}
+
+void Chat::RelapseMessage()
+{
+
 }
 
 void Chat::Update()

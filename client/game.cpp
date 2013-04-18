@@ -93,6 +93,9 @@ void Game::ProcessEvents()
                     case sf::Keyboard::BackSpace:
                         chat.RemoveChar();
                         break;
+                    case sf::Keyboard::Up:
+                        chat.RelapseMessage();
+                        break;
                     default:
                         break;
                 }

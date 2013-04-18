@@ -35,6 +35,7 @@ class Chat: public sf::Drawable
         void ParseMessage(sf::TcpSocket&);
         void AddMessage(string);
         void ClearMessage();
+        void RelapseMessage();
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
@@ -53,6 +54,7 @@ class Chat: public sf::Drawable
         sf::Font font;
         deque <TimedMsg> msgList;
         sf::Text currentMsg;
+        deque <string> msgHistory;
         sf::RectangleShape cursor;
         sf::Clock cursorTimer;
 };
