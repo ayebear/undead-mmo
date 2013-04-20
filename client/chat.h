@@ -29,7 +29,10 @@ class Chat: public sf::Drawable
         void ToggleInput();
         void SetPosition(float, float);
         void AddChar(char);
-        void RemoveChar();
+        void Backspace();
+        void Delete();
+        void MoveCursorLeft();
+        void MoveCursorRight();
         void ParseMessage(sf::TcpSocket&);
         void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
         void MessageHistoryUp();
@@ -45,7 +48,7 @@ class Chat: public sf::Drawable
         void FixAllPositions();
         void ClearMessage();
         void SendMessage(const string&, sf::TcpSocket&);
-        void ParseCommand(const string&);
+        void ParseCommand(const string&, sf::TcpSocket&);
         void SaveCurrentMessage();
         void AddToHistory(const string&);
         void ShowHelp(const string&);
@@ -71,6 +74,7 @@ class Chat: public sf::Drawable
         sf::Clock cursorTimer;
         string username;
         sf::Text usernameText;
+        int cursorPos;
 };
 
 #endif // CHAT_H

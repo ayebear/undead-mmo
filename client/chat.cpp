@@ -17,6 +17,13 @@ const map<string,string> Chat::help = {
     {"exit","Exits the game. Usage: /exit"}
 };
 
+void ConnectToServer(string host, sf::TcpSocket& socket)
+{
+    socket.setBlocking(true);
+    socket.connect(host, 55001);
+    socket.setBlocking(false);
+}
+
 Chat::Chat()
 {
     if (!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
@@ -27,6 +34,7 @@ Chat::Chat()
     mainPos.x = 0;
     mainPos.y = 0;
     msgHistoryPos = 0;
+    cursorPos = 0;
 
     usernameText.setFont(font);
     usernameText.setCharacterSize(textSize);
@@ -82,10 +90,10 @@ void Chat::FixInputPositions()
 
 void Chat::FixCursorPosition()
 {
-    auto lastCharPos = currentMsg.findCharacterPos(-1);
-    lastCharPos.x += 1;
-    lastCharPos.y += 2;
-    cursor.setPosition(lastCharPos);
+    auto charPos = currentMsg.findCharacterPos(cursorPos);
+    charPos.x += 1;
+    charPos.y += 2;
+    cursor.setPosition(charPos);
 }
 
 void Chat::FixAllPositions()
@@ -99,21 +107,78 @@ void Chat::FixAllPositions()
 void Chat::AddChar(char c)
 {
     string str = currentMsg.getString();
-    str += c;
+    if (str.empty())
+    {
+	    str += c;
+	    cursorPos = -1;
+	}
+	else if (cursorPos == -1)
+	{
+		str += c;
+	}
+	else
+	{
+		str.insert(str.begin() + cursorPos, c);
+		cursorPos++;
+	}
     currentMsg.setString(str);
     FixCursorPosition();
 }
 
 // This is called when backspace is pressed
-void Chat::RemoveChar()
+void Chat::Backspace()
+{
+    string str = currentMsg.getString();
+    if (!str.empty() && cursorPos != 0)
+    {
+    	if (cursorPos == -1)
+    		str.pop_back();
+    	else
+    	{
+    		cursorPos--;
+	    	str.erase(str.begin() + cursorPos);
+	    }
+        currentMsg.setString(str);
+        FixCursorPosition();
+    }
+}
+
+void Chat::Delete()
 {
     string str = currentMsg.getString();
     if (!str.empty())
     {
-        str.pop_back();
+    	if (cursorPos < (int)str.size())
+	    	str.erase(str.begin() + cursorPos);
         currentMsg.setString(str);
     }
-    FixCursorPosition();
+}
+
+void Chat::MoveCursorLeft()
+{
+	cursorTimer.restart();
+	showCursor = true;
+	if (cursorPos == -1)
+		cursorPos = currentMsg.getString().getSize() - 1;
+	else if (cursorPos != 0)
+	{
+		cursorPos--;
+		FixCursorPosition();
+	}
+}
+
+void Chat::MoveCursorRight()
+{
+	cursorTimer.restart();
+	showCursor = true;
+	if (cursorPos != -1)
+	{
+		cursorPos++;
+		string str = currentMsg.getString();
+		if (cursorPos >= (int)str.size())
+			cursorPos = -1;
+		FixCursorPosition();
+	}
 }
 
 // This is called when enter is pressed
@@ -126,7 +191,7 @@ void Chat::ParseMessage(sf::TcpSocket& socket)
         if (msgStr.front() == '/')
         {
             PrintMessage(msgStr, sf::Color::Red);
-            ParseCommand(msgStr);
+            ParseCommand(msgStr, socket);
         }
         else
         {
@@ -146,7 +211,7 @@ void Chat::SendMessage(const string& msg, sf::TcpSocket& socket)
     socket.send(packet);
 }
 
-void Chat::ParseCommand(const string& msgStr)
+void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
 {
     uint spacePos = msgStr.find(" ");
     string cmdStr = msgStr.substr(1, spacePos - 1);
@@ -156,6 +221,11 @@ void Chat::ParseCommand(const string& msgStr)
     // There are a few alternative commands, we could decide on which to use later, or just keep them all
     if (cmdStr == "test")
         PrintMessage("Command parser seems to be working!", cmdOutColor);
+    else if (cmdStr == "connect")
+    {
+        PrintMessage("Attempting a connection to " + content + "...", cmdOutColor);
+        ConnectToServer(content, socket);
+    }
     else if (cmdStr == "echo" || cmdStr == "print")
         PrintMessage(content, cmdOutColor);
     else if (cmdStr == "username" || cmdStr == "set_username")
@@ -210,6 +280,7 @@ void Chat::MessageHistoryUp()
     else
     {
         currentMsg.setString(msgHistory[msgHistoryPos]);
+        cursorPos = -1;
         FixCursorPosition();
     }
 }
@@ -223,6 +294,7 @@ void Chat::MessageHistoryDown()
     else
     {
         currentMsg.setString(msgHistory[msgHistoryPos]);
+        cursorPos = -1;
         FixCursorPosition();
     }
 }
@@ -290,3 +362,5 @@ void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
     if (input && showCursor)
         window.draw(cursor);
 }
+
+

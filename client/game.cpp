@@ -4,7 +4,7 @@
 #include "game.h"
 #include "../shared/packet.h"
 
-const std::string version = "Project: Brains v0.0.0.12 Dev";
+const std::string version = "Project: Brains v0.0.0.13 Dev";
 
 Game::Game()
 {
@@ -34,7 +34,7 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    socket.connect("127.0.0.1", 55001);
+    //socket.connect("ayebear.com", 55001);
     socket.setBlocking(false);
 
     sf::Clock clock;
@@ -92,19 +92,34 @@ void Game::ProcessEvents()
                             chat.ParseMessage(socket);
                         chat.ToggleInput();
                         break;
-                    case sf::Keyboard::BackSpace:
-                        chat.RemoveChar();
-                        break;
-                    case sf::Keyboard::Up:
-                        if (chat.GetInput())
-                            chat.MessageHistoryUp();
-                        break;
-                    case sf::Keyboard::Down:
-                        if (chat.GetInput())
-                            chat.MessageHistoryDown();
-                        break;
                     default:
                         break;
+                }
+                if (chat.GetInput())
+                {
+					switch (event.key.code)
+		            {
+		                case sf::Keyboard::BackSpace:
+		                    chat.Backspace();
+		                    break;
+		                case sf::Keyboard::Delete:
+		                	chat.Delete();
+		                	break;
+		                case sf::Keyboard::Up:
+		                    chat.MessageHistoryUp();
+		                    break;
+		                case sf::Keyboard::Down:
+		                    chat.MessageHistoryDown();
+		                    break;
+		                case sf::Keyboard::Left:
+		                	chat.MoveCursorLeft();
+		                	break;
+		                case sf::Keyboard::Right:
+		                	chat.MoveCursorRight();
+		                	break;
+		                default:
+		                    break;
+		            }
                 }
                 break;
             case sf::Event::TextEntered:
