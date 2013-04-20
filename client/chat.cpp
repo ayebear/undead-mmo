@@ -14,15 +14,9 @@ const sf::Color Chat::cmdOutColor = sf::Color::Cyan;
 const map<string,string> Chat::help = {
     {"echo","Prints out the text after the command. Usage: /echo text goes here"},
     {"username","Sets your current username. Usage: /username YourUsername"},
-    {"exit","Exits the game. Usage: /exit"}
+    {"exit","Exits the game. Usage: /exit"},
+    {"connect","Connects to a server. Usage: /connect hostname"}
 };
-
-void ConnectToServer(string host, sf::TcpSocket& socket)
-{
-    socket.setBlocking(true);
-    socket.connect(host, 55001);
-    socket.setBlocking(false);
-}
 
 Chat::Chat()
 {
@@ -106,15 +100,12 @@ void Chat::FixAllPositions()
 // This is called while the player is typing
 void Chat::AddChar(char c)
 {
+    RestartCursorTimer();
     string str = currentMsg.getString();
-    if (str.empty())
+    if (str.empty() || cursorPos == -1)
     {
 	    str += c;
 	    cursorPos = -1;
-	}
-	else if (cursorPos == -1)
-	{
-		str += c;
 	}
 	else
 	{
@@ -128,6 +119,7 @@ void Chat::AddChar(char c)
 // This is called when backspace is pressed
 void Chat::Backspace()
 {
+    RestartCursorTimer();
     string str = currentMsg.getString();
     if (!str.empty() && cursorPos != 0)
     {
@@ -145,21 +137,24 @@ void Chat::Backspace()
 
 void Chat::Delete()
 {
+    RestartCursorTimer();
     string str = currentMsg.getString();
-    if (!str.empty())
+    if (!str.empty() && cursorPos != -1 && cursorPos < (int)str.size())
     {
-    	if (cursorPos < (int)str.size())
-	    	str.erase(str.begin() + cursorPos);
+	    str.erase(str.begin() + cursorPos);
         currentMsg.setString(str);
+        FixCursorPosition();
     }
 }
 
 void Chat::MoveCursorLeft()
 {
-	cursorTimer.restart();
-	showCursor = true;
+	RestartCursorTimer();
 	if (cursorPos == -1)
+	{
 		cursorPos = currentMsg.getString().getSize() - 1;
+		FixCursorPosition();
+    }
 	else if (cursorPos != 0)
 	{
 		cursorPos--;
@@ -169,8 +164,7 @@ void Chat::MoveCursorLeft()
 
 void Chat::MoveCursorRight()
 {
-	cursorTimer.restart();
-	showCursor = true;
+	RestartCursorTimer();
 	if (cursorPos != -1)
 	{
 		cursorPos++;
@@ -179,6 +173,12 @@ void Chat::MoveCursorRight()
 			cursorPos = -1;
 		FixCursorPosition();
 	}
+}
+
+void Chat::RestartCursorTimer()
+{
+    cursorTimer.restart();
+	showCursor = true;
 }
 
 // This is called when enter is pressed
@@ -222,10 +222,7 @@ void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
     if (cmdStr == "test")
         PrintMessage("Command parser seems to be working!", cmdOutColor);
     else if (cmdStr == "connect")
-    {
-        PrintMessage("Attempting a connection to " + content + "...", cmdOutColor);
         ConnectToServer(content, socket);
-    }
     else if (cmdStr == "echo" || cmdStr == "print")
         PrintMessage(content, cmdOutColor);
     else if (cmdStr == "username" || cmdStr == "set_username")
@@ -238,10 +235,27 @@ void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
         PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
 }
 
+void Chat::ConnectToServer(const string& host, sf::TcpSocket& socket)
+{
+    PrintMessage("Attempting a connection to '" + host + "'...", cmdOutColor);
+
+    // In the future this will use the network class instead
+    socket.setBlocking(true);
+    socket.connect(host, 55001);
+    socket.setBlocking(false);
+
+    PrintMessage("Successfully connected to '" + host + "'.", cmdOutColor);
+}
+
 void Chat::ShowHelp(const string& content)
 {
     if (content.empty() || content == "help")
-        PrintMessage("Shows how to use commands. Commands: echo, username, help, exit. Usage: /help command", cmdOutColor);
+    {
+        string commands;
+        for (auto& cmd: help)
+            commands += cmd.first + ", ";
+        PrintMessage("Shows how to use commands. Commands: " + commands + "help. Usage: /help command", cmdOutColor);
+    }
     else
     {
         auto i = help.find(content);

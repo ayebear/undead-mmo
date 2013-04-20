@@ -33,11 +33,13 @@ class Chat: public sf::Drawable
         void Delete();
         void MoveCursorLeft();
         void MoveCursorRight();
+        void RestartCursorTimer();
         void ParseMessage(sf::TcpSocket&);
         void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
         void MessageHistoryUp();
         void MessageHistoryDown();
         void SetUsername(const string&);
+        void ConnectToServer(const string&, sf::TcpSocket&);
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

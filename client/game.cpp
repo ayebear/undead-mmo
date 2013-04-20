@@ -36,6 +36,7 @@ void Game::Start() // this will need to manage a second thread for the networkin
 {
     //socket.connect("ayebear.com", 55001);
     socket.setBlocking(false);
+    chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
 
     sf::Clock clock;
     while (playing && window.isOpen())
