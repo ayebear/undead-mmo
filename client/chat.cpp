@@ -7,9 +7,15 @@
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
 const float Chat::cursorBlinkRate = 0.3;
-const float Chat::oldMsgAge = 20;
-const float Chat::maxMsgAge = 30;
+const float Chat::oldMsgAge = 50;
+const float Chat::maxMsgAge = 60;
 const ushort Chat::maxMsgHistory = 100;
+const sf::Color Chat::cmdOutColor = sf::Color::Cyan;
+const map<string,string> Chat::help = {
+    {"echo","Prints out the text after the command. Usage: /echo text goes here"},
+    {"username","Sets your current username. Usage: /username YourUsername"},
+    {"exit","Exits the game. Usage: /exit"}
+};
 
 Chat::Chat()
 {
@@ -17,17 +23,23 @@ Chat::Chat()
         exit(3);
 
     input = false;
-    showCursor = true;
+    showCursor = false;
     mainPos.x = 0;
     mainPos.y = 0;
+    msgHistoryPos = 0;
+
+    usernameText.setFont(font);
+    usernameText.setCharacterSize(textSize);
+    usernameText.setColor(sf::Color::White);
 
     currentMsg.setFont(font);
     currentMsg.setCharacterSize(textSize);
     currentMsg.setColor(sf::Color::White);
-    msgHistoryPos = 0;
 
     cursor.setSize(sf::Vector2f(2, textSize));
     cursor.setFillColor(sf::Color::White);
+
+    SetUsername("Anonymous");
 }
 
 void Chat::SetInput(bool in)
@@ -49,8 +61,23 @@ void Chat::SetPosition(float x, float y)
 {
     mainPos.x = x;
     mainPos.y = y;
-    FixPositions();
-    FixCursorPosition();
+    FixAllPositions();
+}
+
+void Chat::FixMessagePositions()
+{
+    float y = mainPos.y + textSize * (maxMessages - msgList.size());
+    for (auto& msg: msgList)
+    {
+        msg.text.setPosition(mainPos.x + 4, y);
+        y += textSize;
+    }
+}
+
+void Chat::FixInputPositions()
+{
+    usernameText.setPosition(mainPos.x + 4, mainPos.y + maxMessages * textSize);
+    currentMsg.setPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, mainPos.y + maxMessages * textSize);
 }
 
 void Chat::FixCursorPosition()
@@ -61,15 +88,11 @@ void Chat::FixCursorPosition()
     cursor.setPosition(lastCharPos);
 }
 
-void Chat::FixPositions()
+void Chat::FixAllPositions()
 {
-    float y = mainPos.y + textSize * (maxMessages - msgList.size());
-    for (auto& msg: msgList)
-    {
-        msg.text.setPosition(mainPos.x + 4, y);
-        y += textSize;
-    }
-    currentMsg.setPosition(mainPos.x + 4, mainPos.y + maxMessages * textSize);
+    FixMessagePositions();
+    FixInputPositions();
+    FixCursorPosition();
 }
 
 // This is called while the player is typing
@@ -100,12 +123,17 @@ void Chat::ParseMessage(sf::TcpSocket& socket)
     if (!msgStr.empty())
     {
         AddToHistory(msgStr);
-        AddMessage(msgStr);
-        msgList.back().text.setColor(sf::Color::Green);
         if (msgStr.front() == '/')
+        {
+            PrintMessage(msgStr, sf::Color::Red);
             ParseCommand(msgStr);
+        }
         else
-            SendMessage(msgStr, socket);
+        {
+            string fullStr = username + ": " + msgStr;
+            SendMessage(fullStr, socket);
+            PrintMessage(fullStr, sf::Color::Green);
+        }
         ClearMessage();
     }
 }
@@ -122,26 +150,49 @@ void Chat::ParseCommand(const string& msgStr)
 {
     uint spacePos = msgStr.find(" ");
     string cmdStr = msgStr.substr(1, spacePos - 1);
+    string content;
+    if (spacePos != string::npos && spacePos < msgStr.size())
+        content = msgStr.substr(spacePos + 1);
+    // There are a few alternative commands, we could decide on which to use later, or just keep them all
     if (cmdStr == "test")
-        AddMessage("Command parser seems to be working!");
+        PrintMessage("Command parser seems to be working!", cmdOutColor);
     else if (cmdStr == "echo" || cmdStr == "print")
-    {
-        if (spacePos != string::npos && spacePos < msgStr.size())
-            AddMessage(msgStr.substr(spacePos + 1));
-    }
+        PrintMessage(content, cmdOutColor);
+    else if (cmdStr == "username" || cmdStr == "set_username")
+        SetUsername(content);
+    else if (cmdStr == "help" || cmdStr == "?")
+        ShowHelp(content);
     else if (cmdStr == "exit" || cmdStr == "quit")
         exit(0);
     else
-        AddMessage("Error: '" + cmdStr + "' is not a recognized command!");
+        PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
 }
 
-void Chat::AddMessage(const string& msgStr)
+void Chat::ShowHelp(const string& content)
 {
-    sf::Text msgText(msgStr, font, textSize);
-    msgList.push_back(TimedMsg(msgText));
-    if (msgList.size() > maxMessages)
-        msgList.pop_front();
-    FixPositions();
+    if (content.empty() || content == "help")
+        PrintMessage("Shows how to use commands. Commands: echo, username, help, exit. Usage: /help command", cmdOutColor);
+    else
+    {
+        auto i = help.find(content);
+        if (i != help.end())
+            PrintMessage(i->second, cmdOutColor);
+        else
+            PrintMessage("Hmm, not quite sure how to help you with that!", cmdOutColor);
+    }
+}
+
+void Chat::PrintMessage(const string& msgStr, const sf::Color& color)
+{
+    if (!msgStr.empty())
+    {
+        sf::Text msgText(msgStr, font, textSize);
+        msgText.setColor(color);
+        msgList.push_back(TimedMsg(msgText));
+        if (msgList.size() > maxMessages)
+            msgList.pop_front();
+        FixMessagePositions();
+    }
 }
 
 void Chat::ClearMessage()
@@ -202,6 +253,17 @@ void Chat::SaveCurrentMessage()
         msgHistory[msgHistoryPos] = msgStr; // Overwrite the message instead of appending a new one
 }
 
+void Chat::SetUsername(const string& str)
+{
+    if (!str.empty())
+    {
+        username = str;
+        usernameText.setString(username + ":");
+        FixInputPositions();
+        PrintMessage("Username successfully set to '" + username + "'.", cmdOutColor);
+    }
+}
+
 void Chat::Update()
 {
     for (auto& msg: msgList)
@@ -223,6 +285,7 @@ void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     for (auto& msg: msgList)
         window.draw(msg.text);
+    window.draw(usernameText);
     window.draw(currentMsg);
     if (input && showCursor)
         window.draw(cursor);

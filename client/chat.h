@@ -13,7 +13,7 @@ using namespace std;
 
 struct TimedMsg
 {
-    TimedMsg(sf::Text& t): text(t) {}
+    TimedMsg(const sf::Text& t): text(t) {}
     sf::Text text;
     sf::Clock age;
 };
@@ -31,20 +31,24 @@ class Chat: public sf::Drawable
         void AddChar(char);
         void RemoveChar();
         void ParseMessage(sf::TcpSocket&);
-        void AddMessage(const string&);
+        void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
         void MessageHistoryUp();
         void MessageHistoryDown();
+        void SetUsername(const string&);
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
+        void FixMessagePositions();
+        void FixInputPositions();
         void FixCursorPosition();
-        void FixPositions();
+        void FixAllPositions();
         void ClearMessage();
         void SendMessage(const string&, sf::TcpSocket&);
         void ParseCommand(const string&);
         void SaveCurrentMessage();
         void AddToHistory(const string&);
+        void ShowHelp(const string&);
 
         static const ushort maxMessages;
         static const short textSize;
@@ -52,6 +56,8 @@ class Chat: public sf::Drawable
         static const float oldMsgAge;
         static const float maxMsgAge;
         static const ushort maxMsgHistory;
+        static const sf::Color cmdOutColor;
+        static const map<string,string> help;
 
         bool input;
         bool showCursor;
@@ -63,6 +69,8 @@ class Chat: public sf::Drawable
         int msgHistoryPos; // current location in message history deque
         sf::RectangleShape cursor;
         sf::Clock cursorTimer;
+        string username;
+        sf::Text usernameText;
 };
 
 #endif // CHAT_H

@@ -4,7 +4,7 @@
 #include "game.h"
 #include "../shared/packet.h"
 
-const std::string version = "Project: Brains v0.0.0.10 Dev";
+const std::string version = "Project: Brains v0.0.0.12 Dev";
 
 Game::Game()
 {
@@ -66,7 +66,7 @@ void Game::ReceiveData()
         {
             string message;
             packet >> message;
-            chat.AddMessage(message);
+            chat.PrintMessage(message);
         }
     }
 }
