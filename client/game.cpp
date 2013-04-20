@@ -141,6 +141,11 @@ void Game::ProcessInput()
 void Game::Update()
 {
     // All of the processing code will be run from here.
+    if (zombieCount < 200)
+        {
+            Entity * aZombie = new Zombie;
+            zombieCount++;
+        }
 
     chat.Update();
 }

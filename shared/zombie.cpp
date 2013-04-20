@@ -5,5 +5,19 @@
 
 Zombie::Zombie()
 {
+    //Zombie Constructor
+
+}
+
+void Zombie::freeRoam(float time) {
+   float amount = time * speed;
+   //random number generator for directions
+   //while (pos is valid)
+   //{
+   pos = sprite.getPosition();
+   sprite.move(0, -amount);
+   pos = sprite.getPosition();
+   //}
+
 
 }

@@ -36,6 +36,7 @@ class Game
 
         Player player; // TODO: use the entity list
         sf::Texture playerTex; // TODO: Maybe make a file/resource management class
+
 };
 
 #endif // GAME_H

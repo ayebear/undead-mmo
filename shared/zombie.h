@@ -10,7 +10,13 @@ class Zombie: public EntityLiving
 {
     public:
         Zombie();
+        void freeRoam (float);
     private:
+        static const int defaultSpeed = 300;
+        float speed;
+        sf::Texture = zombieTex;
+        int zombieCount = 0;
+
 };
 
 #endif // ZOMBIE_H
