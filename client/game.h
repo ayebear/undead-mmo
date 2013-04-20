@@ -12,8 +12,6 @@
 
 // This class manages the window and input for the game
 
-const std::string version = "Project: Brains v0.0.0.9 Dev";
-
 class Game
 {
     public:

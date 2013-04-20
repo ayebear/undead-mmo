@@ -4,6 +4,8 @@
 #include "game.h"
 #include "../shared/packet.h"
 
+const std::string version = "Project: Brains v0.0.0.10 Dev";
+
 Game::Game()
 {
     // Load files and stuff

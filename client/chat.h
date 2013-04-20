@@ -28,28 +28,31 @@ class Chat: public sf::Drawable
         bool GetInput();
         void ToggleInput();
         void SetPosition(float, float);
-        void FixCursorPosition();
-        void FixPositions();
         void AddChar(char);
         void RemoveChar();
         void ParseMessage(sf::TcpSocket&);
-        void AddMessage(string);
-        void ClearMessage();
+        void AddMessage(const string&);
         void MessageHistoryUp();
         void MessageHistoryDown();
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
-        void SendMessage(string, sf::TcpSocket&);
-        void ParseCommand(string);
+        void FixCursorPosition();
+        void FixPositions();
+        void ClearMessage();
+        void SendMessage(const string&, sf::TcpSocket&);
+        void ParseCommand(const string&);
         void SaveCurrentMessage();
+        void AddToHistory(const string&);
 
         static const ushort maxMessages;
         static const short textSize;
         static const float cursorBlinkRate;
         static const float oldMsgAge;
         static const float maxMsgAge;
+        static const ushort maxMsgHistory;
+
         bool input;
         bool showCursor;
         sf::Vector2f mainPos;
