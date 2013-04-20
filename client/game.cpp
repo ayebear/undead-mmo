@@ -4,7 +4,7 @@
 #include "game.h"
 #include "../shared/packet.h"
 
-const std::string version = "Project: Brains v0.0.0.13 Dev";
+const std::string version = "Project: Brains v0.0.0.14 Dev";
 
 Game::Game()
 {
@@ -118,6 +118,12 @@ void Game::ProcessEvents()
 		                case sf::Keyboard::Right:
 		                	chat.MoveCursorRight();
 		                	break;
+                        case sf::Keyboard::Home:
+                            chat.Home();
+                            break;
+                        case sf::Keyboard::End:
+                            chat.End();
+                            break;
 		                default:
 		                    break;
 		            }

@@ -175,6 +175,20 @@ void Chat::MoveCursorRight()
 	}
 }
 
+void Chat::Home()
+{
+    RestartCursorTimer();
+    cursorPos = 0;
+    FixCursorPosition();
+}
+
+void Chat::End()
+{
+    RestartCursorTimer();
+    cursorPos = -1;
+    FixCursorPosition();
+}
+
 void Chat::RestartCursorTimer()
 {
     cursorTimer.restart();
