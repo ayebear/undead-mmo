@@ -11,26 +11,30 @@
 #include <SFML/Network.hpp>
 #include "../shared/packet.h"
 
-const int serverPort = 55001;
-
 class Server
 {
     public:
         Server();
         void Start();
     private:
+        void GetIPs();
         void PrintWelcomeMsg();
         void MainLoop();
         void SendToClients(sf::Packet& packet, int exclude = -1);
+        void PrintClients();
+        void AddClient();
+        void RemoveClient(sf::TcpSocket&, uint);
+        void TestSockets();
+        void ProcessPacket(sf::Packet&, uint);
 
-        // Stores the clients
-        std::deque<sf::TcpSocket*> clients;
+        static const ushort port;
 
-        // Create a socket to listen to new connections
+        std::deque<sf::TcpSocket*> clients; // Stores the clients
         sf::TcpListener listener;
-
-        // Create a selector
         sf::SocketSelector selector;
+        sf::IpAddress severAddressLAN;
+        sf::IpAddress serverAddressWAN;
+        bool running;
 };
 
 #endif // SERVER_H
