@@ -7,6 +7,7 @@ Implement threading
 Also handle UDP packets
 Send a message to all connected clients when a player connects or disconnects
 Handle client timeouts and improper disconnects
+Program entity networking
 Make a "protocol version" or something
 Create a login system
 Create a persistent account system
