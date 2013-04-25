@@ -19,7 +19,11 @@ class Game
         void Start();
     private:
         // Functions
-        void ReceiveData(), ProcessEvents(), ProcessInput(), Update(), Display();
+        void ReceiveData();
+        void ProcessEvents();
+        void ProcessInput();
+        void Update();
+        void Display();
 
         // Constants
         static const int windowWidth = 800;

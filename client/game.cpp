@@ -4,7 +4,7 @@
 #include "game.h"
 #include "../shared/packet.h"
 
-const std::string version = "Project: Brains v0.0.0.14 Dev";
+const std::string version = "Project: Brains v0.0.0.15 Dev";
 
 Game::Game()
 {
@@ -34,7 +34,6 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    //socket.connect("ayebear.com", 55001);
     socket.setBlocking(false);
     chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
 
@@ -149,14 +148,25 @@ void Game::ProcessInput()
 {
     if (!paused && !chat.GetInput())
     {
+        int x = 0;
+        int y = 0;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            player.MoveUp(elapsedTime);
+            y--; // 90
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            player.MoveDown(elapsedTime);
+            y++; // 270 (or -90)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            player.MoveLeft(elapsedTime);
+            x--; // 180
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            player.MoveRight(elapsedTime);
+            x++; // 0 (or 360)
+        float degrees = y * 90;
+        if (degrees != 0)
+            degrees += -y * x * 45;
+        else
+            degrees = 90 - (90 * x);
+        if (x != 0 || y != 0)
+            player.Move(elapsedTime, degrees);
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+            player.Move(elapsedTime);
     }
 }
 

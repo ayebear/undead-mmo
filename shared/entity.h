@@ -4,6 +4,69 @@
 #ifndef ENTITY_H
 #define ENTITY_H
 
+#include <SFML/Graphics.hpp>
+#include "other.h"
+
+class Entity : public sf::Drawable
+{
+    public:
+        Entity();
+        virtual ~Entity();
+        void SetTexture(sf::Texture&);
+        void SetPos(sf::Vector2f&);
+        sf::Vector2f GetPos();
+        virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+        static EntityId IDCounter;
+
+    protected:
+        static EntityId GetOpenId();
+        EntityId ID;
+        bool isReady;
+        sf::Vector2f pos;
+        sf::Sprite sprite;
+};
+
+/*
+#include <array>
+#include "entitylist.h"
+
+class EntityList; //This one is fine, but it annoys me that it won't work without it ...
+
+class Entity
+{
+public:
+    const int* _ID;
+
+    static EntityList* ents;
+
+    Entity();
+    virtual ~Entity();
+
+    bool setPosition(std::array<int,2>);//,Map);
+    std::array<int,2> getPosition() const;
+    void update();
+    void setReady(bool);
+    bool getReady() const;
+    //virtual bool draw();
+
+    bool operator==(const Entity &other) const;
+    bool operator<=(const Entity &other) const;
+    bool operator>=(const Entity &other) const;
+    bool operator!=(const Entity &other) const;
+    bool operator<(const Entity &other) const;
+    bool operator>(const Entity &other) const;
+private:
+    bool isReady;
+    std::array<int,2> position;
+};
+*/
+#endif
+
+
+/* OLD
+#ifndef ENTITY_H
+#define ENTITY_H
+
 #include <deque>
 #include <SFML/Graphics.hpp>
 #include "other.h"
@@ -51,3 +114,4 @@ class Entity : public sf::Drawable
 };
 
 #endif // ENTITY_H
+*/

@@ -1,6 +1,14 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+/*
+TODO:
+    Change the transparency of the chat input and username text when focus is lost
+    Program mouse controls for the chat
+    Make some other subclasses like for the inputbox and/or cursor
+    Maybe animate the PrintMessage command - would need to update the animation in Update()
+*/
+
 #include "chat.h"
 #include "../shared/packet.h"
 
@@ -225,6 +233,8 @@ void Chat::SendMessage(const string& msg, sf::TcpSocket& socket)
     socket.send(packet);
 }
 
+// We could also have server-side commands!
+// These will need to be executed using a different character or a special command in here...
 void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
 {
     uint spacePos = msgStr.find(" ");
