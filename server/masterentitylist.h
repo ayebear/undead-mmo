@@ -23,6 +23,7 @@ This would be a lot more thread safe than using another container, as memory isn
 #ifndef MASTERENTITYLIST_H
 #define MASTERENTITYLIST_H
 
+#include "../shared/entity.h"
 #include <vector>
 #include <list>
 
