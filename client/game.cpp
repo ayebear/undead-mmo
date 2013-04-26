@@ -22,7 +22,7 @@ Game::Game()
     window.create(vidMode, version, sf::Style::Close);
 
     // Set frame limits and vsync
-    //window.SetFramerateLimit(5);
+    //window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
 
     chat.SetPosition(0, windowHeight - 182);

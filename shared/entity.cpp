@@ -3,11 +3,11 @@
 
 #include "entity.h"
 
-uint Entity::IDCounter = 0;
+EID Entity::IDCounter = 0;
 
 Entity::Entity()
 {
-    ID = GetOpenId();
+    ID = GetOpenID();
     isReady = false;
 }
 
@@ -31,7 +31,12 @@ sf::Vector2f Entity::GetPos()
     return pos;
 }
 
-uint Entity::GetOpenId()
+const EID Entity::GetID()
+{
+    return ID;
+}
+
+EID Entity::GetOpenID()
 {
     // In the future make sure this won't conflict
     return IDCounter++;

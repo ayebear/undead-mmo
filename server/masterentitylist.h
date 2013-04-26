@@ -32,11 +32,11 @@ class MasterEntityList
     public:
         MasterEntityList();
         void Insert(Entity*);
-        Entity* Find (EntityId);
-        void Delete(EntityId);
+        Entity* Find(EID);
+        void Delete(EID);
     private:
         std::vector <Entity*> ents; // all of the entity pointers are stored here, and accessed by ID directly
-        std::list <EntityId> freeList; // unused IDs go here
+        std::list <EID> freeList; // unused IDs go here
 };
 
 #endif // MASTERENTITYLIST_H

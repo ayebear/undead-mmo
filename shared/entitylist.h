@@ -1,7 +1,7 @@
 /*
 MINI ENTITY LISTS (both client and server)
 EntityList class:
-    Use an std::map<EntityId,Entity*> for partial entity lists (on client/in grid on server).
+    Use an std::map<EID,Entity*> for partial entity lists (on client/in grid on server).
 Purpose:
     Client: Main entity list
     Server: Used for each cell in the grid
@@ -18,20 +18,18 @@ The client will only need to instantiate 1 EntityList object, which can hold eve
 #ifndef ENTITYLIST_H
 #define ENTITYLIST_H
 
-// Will need some of these
-#include <vector>
-#include <deque>
 #include <map>
-#include <list>
 #include "entity.h"
 
 class EntityList
 {
     public:
-
-        static std::map<EntityId,Entity*> ents; // move this to private
+        EntityList();
+        void Insert(Entity*);
+        Entity* Find(EID);
+        void Delete(EID);
     private:
-
+        std::map<EID,Entity*> ents; // stores entity pointers, accessed by searching for ID
 };
 
 #endif
