@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 /*
 MASTER ENTITY LIST (server only)
 MasterEntityList class:
@@ -34,7 +37,10 @@ class MasterEntityList
         void Insert(Entity*);
         Entity* Find(EID);
         void Delete(EID);
+        bool CleanUp();
     private:
+        static uint entCount;
+        static const int cleanUpRatio;
         std::vector <Entity*> ents; // all of the entity pointers are stored here, and accessed by ID directly
         std::list <EID> freeList; // unused IDs go here
 };

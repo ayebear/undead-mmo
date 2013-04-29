@@ -6,16 +6,15 @@
 
 #include "entityliving.h"
 
+/*
+Zombies will need a "state" so we know what they are supposed to be doing.
+*/
 class Zombie: public EntityLiving
 {
     public:
         Zombie();
-        void freeRoam (float);
-        int zombieCount = 0;
+        void Update(float);
     private:
-        static const int defaultSpeed = 300;
-        float speed;
-        //sf::Texture = zombieTex;
 };
 
-#endif // ZOMBIE_H
+#endif
