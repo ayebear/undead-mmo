@@ -6,7 +6,7 @@
 Entity::Entity()
 {
     ID = 0;
-    isReady = false;
+    ready = false;
 }
 
 Entity::~Entity()
@@ -23,9 +23,29 @@ void Entity::SetID(EID newID)
     ID = newID;
 }
 
+bool Entity::Collides(Entity*)
+{
+    return false;
+}
+
 void Entity::SetTexture(const sf::Texture& texture)
 {
     sprite.setTexture(texture);
+}
+
+bool Entity::IsMoving()
+{
+    return false;
+}
+
+void Entity::SetReady(bool state)
+{
+    ready = state;
+}
+
+const bool Entity::GetReady() const
+{
+    return ready;
 }
 
 void Entity::SetPos(const sf::Vector2f& position)
@@ -34,7 +54,7 @@ void Entity::SetPos(const sf::Vector2f& position)
     sprite.setPosition(pos);
 }
 
-sf::Vector2f Entity::GetPos()
+const sf::Vector2f Entity::GetPos() const
 {
     return pos;
 }
