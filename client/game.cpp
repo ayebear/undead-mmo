@@ -8,24 +8,27 @@ const std::string version = "Project: Brains v0.0.0.15 Dev";
 
 Game::Game()
 {
+
     // Load files and stuff
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
         exit(2);
     player.SetTexture(playerTex);
 
     // Create the window in fullscreen at max resolution
-    //vidMode = sf::VideoMode::GetMode(0);
-    //window.Create(vidMode, version, sf::Style::Fullscreen);
+    //vidMode = sf::VideoMode::getDesktopMode();
+    //window.create(vidMode, version, sf::Style::Fullscreen);
 
     // Create a normal window for now
     vidMode = sf::VideoMode(windowWidth, windowHeight);
-    window.create(vidMode, version, sf::Style::Close);
+    window.create(vidMode, version);
+
 
     // Set frame limits and vsync
     //window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
 
-    chat.SetPosition(0, windowHeight - 182);
+    chat.SetPosition(0, windowHeight - 182); //   Windowed Mode
+    //chat.SetPosition(0, vidMode.height - 182);  // Full- screen
 
     playing = true;
 }
@@ -34,24 +37,37 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    socket.setBlocking(false);
-    chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
+    Menu menu(window, vidMode);
+    int choice = menu.processChoice(window);
 
-    sf::Clock clock;
-    while (playing && window.isOpen())
+    if(choice == 1)
     {
-        ReceiveData();
-        ProcessEvents();
-        ProcessInput();
 
-        // Get the time since the last frame, and restart the timer
-        elapsedTime = clock.restart().asSeconds();
+        socket.setBlocking(false);
+        chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
 
-        // This will update the positions and stuff of all of the sprites and logic
-        Update();
+        sf::Clock clock;
+        while (playing && window.isOpen())
+        {
+            ReceiveData();
+            ProcessEvents();
+            ProcessInput();
 
-        // This will render everything to the screen
-        Display();
+            // Get the time since the last frame, and restart the timer
+            elapsedTime = clock.restart().asSeconds();
+
+            // This will update the positions and stuff of all of the sprites and logic
+            Update();
+
+            // This will render everything to the screen
+            Display();
+        }
+
+    }
+    //Change to whatever option quit is after we add more menu choices
+    else if(choice == 2 || choice == 3)
+    {
+        return;
     }
 }
 

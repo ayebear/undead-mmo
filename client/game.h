@@ -9,6 +9,7 @@
 #include <string>
 #include "../shared/player.h"
 #include "chat.h"
+#include "menu.h"
 
 // This class manages the window and input for the game
 
@@ -37,6 +38,7 @@ class Game
         bool playing;
         bool paused;
         float elapsedTime;
+
 
         Player player; // TODO: use the entity list
         sf::Texture playerTex; // TODO: Maybe make a file/resource management class

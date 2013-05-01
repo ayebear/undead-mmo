@@ -4,6 +4,9 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <SFML/Graphics.hpp>
+#include "game.h"
+#include <iostream>
 // This class creates a menu and processes user input
 // Based on that input, different game states are run
 
@@ -11,12 +14,50 @@
 
 // Maybe we should make this accept function pointers somehow? So it dereferences them and calls them depending on the menu choice?
 
+struct MenuChoice
+{
+    sf::Text option;
+    sf::Rect<int> rect;
+    short fontSize;
+    sf::Font font;
+    sf::Color unselectedColor;
+    sf::Color selectedColor;
+
+};
 class Menu
 {
     public:
-        Menu();
-        void Show();
+
+        //Game class will call the menu and pass the same screen.
+        Menu(sf::RenderWindow&, sf::VideoMode);
+        void Show(sf::RenderWindow&);
+
+        int processChoice(sf::RenderWindow& screen);
+
+        void fixRectangles(float width, float height);
     private:
+
+
+        sf::Vector2f topOptionPos;
+
+        MenuChoice play;
+        MenuChoice options;
+        MenuChoice quit;
+        string tmpText;
+
+        short fontSize;
+        sf::Font font;
+        sf::Color unselectedColor;
+        sf::Color selectedColor;
+
+        sf::RenderWindow window;
+        sf::VideoMode vidMode;
+        sf::View view;
+
+        sf::Texture background;
+        sf::Sprite backgroundImage;
+
+        int selection;
 };
 
 #endif // MENU_H
