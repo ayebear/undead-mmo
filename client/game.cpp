@@ -24,7 +24,7 @@ Game::Game()
 
 
     // Set frame limits and vsync
-    //window.SetFramerateLimit(5);
+    //window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
 
     chat.SetPosition(0, windowHeight - 182); //   Windowed Mode

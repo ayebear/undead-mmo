@@ -5,19 +5,15 @@
 
 Zombie::Zombie()
 {
-    //Zombie Constructor
-
 }
 
-void Zombie::freeRoam(float time) {
-   float amount = time * speed;
-   //random number generator for directions
-   //while (pos is valid)
-   //{
-   pos = sprite.getPosition();
-   sprite.move(0, -amount);
-   pos = sprite.getPosition();
-   //}
-
-
+/*
+We will need to use a pathfinding algorithm like A* to find a random path for the zombie to go.
+The zombie will roam that path over time. It will have to calculate new paths depending on state changes.
+The tile maps and collision detection will need to be programmed first before this can be started.
+*/
+void Zombie::Update(float time)
+{
+    sprite.move(time * speed, 0);
+    pos = sprite.getPosition();
 }

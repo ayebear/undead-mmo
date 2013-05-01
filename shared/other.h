@@ -12,7 +12,7 @@ typedef unsigned short ushort;
 typedef unsigned char uchar;
 typedef long long llong;
 typedef unsigned long long ullong;
-typedef unsigned int EntityId;
+typedef unsigned int EID;
 
 enum class Direction {Up, Down, Left, Right};
 
