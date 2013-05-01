@@ -5,5 +5,18 @@
 
 Player::Player()
 {
+}
 
+void Player::Update(float time)
+{
+}
+
+bool Player::Collides(Entity* ent)
+{
+    return false;
+}
+
+void Player::draw(sf::RenderTarget& window, sf::RenderStates states) const
+{
+    window.draw(sprite);
 }

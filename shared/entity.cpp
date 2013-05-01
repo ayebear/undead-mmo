@@ -13,7 +13,7 @@ Entity::~Entity()
 {
 }
 
-const EID Entity::GetID()
+const EID Entity::GetID() const
 {
     return ID;
 }
@@ -22,14 +22,6 @@ void Entity::SetID(EID newID)
 {
     ID = newID;
 }
-
-void Entity::draw(sf::RenderTarget& window, sf::RenderStates states) const
-{
-    window.draw(sprite, states);
-}
-
-
-
 
 void Entity::SetTexture(const sf::Texture& texture)
 {

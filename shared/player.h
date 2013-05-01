@@ -10,8 +10,11 @@ class Player: public EntityLiving
 {
     public:
         Player();
+        void Update(float);
+        bool Collides(Entity*);
+        void draw(sf::RenderTarget&, sf::RenderStates) const;
     private:
 
 };
 
-#endif // PLAYER_H
+#endif

@@ -68,6 +68,12 @@ void Game::ReceiveData()
             packet >> message;
             chat.PrintMessage(message);
         }
+        /*
+        This will simply pass the type received into the entity list object which will choose the proper class
+            to use to allocate a new object.
+
+        We can then stream in the rest of the packet data into the newly created entity object.
+        */
     }
 }
 
