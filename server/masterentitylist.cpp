@@ -42,8 +42,9 @@ void MasterEntityList::Delete(EID id)
 {
     entCount--;
     // TODO: May need to check if within bounds!
-    ents[id] = nullptr;
-    freeList.push_back(id);
+    delete ents[id]; // Deallocate
+    ents[id] = nullptr; // Set pointer to null
+    freeList.push_back(id); // Add the ID to the free list
 }
 
 /*
@@ -69,8 +70,11 @@ bool MasterEntityList::CleanUp()
         vector <Entity*> entsTmp;
         for (EID id = 0; id < ents.size(); id++)
         {
-            ents[id]->SetID(id);
-            entsTmp.push_back(ents[id]);
+            if (ents[id] != nullptr)
+            {
+                ents[id]->SetID(entsTmp.size());
+                entsTmp.push_back(ents[id]);
+            }
         }
         // Clear the old vector
         ents.clear();

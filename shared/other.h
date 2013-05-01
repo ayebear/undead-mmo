@@ -14,6 +14,18 @@ typedef long long llong;
 typedef unsigned long long ullong;
 typedef unsigned int EID;
 
-enum class Direction {Up, Down, Left, Right};
+//enum class Direction {Up, Down, Left, Right};
+
+namespace Errors
+{
+    enum ErrorCode
+    {
+        Unknown = -1,
+        Ok,
+        Graphics,
+        Audio,
+        Font
+    };
+}
 
 #endif // OTHER_H

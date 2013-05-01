@@ -7,11 +7,11 @@ Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 {
 
 
-    if(!background.loadFromFile("data/images/MenuBackground.png"))
-        exit(3);
+    if(!background.loadFromFile("data/images/ui/MenuBackground.png"))
+        exit(Errors::Graphics);
 
     if(!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(3);
+        exit(Errors::Font);
 
     background.setSmooth(true);
     backgroundImage.setTexture(background);
@@ -154,7 +154,7 @@ int Menu::processChoice(sf::RenderWindow& window)
                 break;
 
             case sf::Event::Resized:
-
+            {
                 //Minimum window size
                 sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
                 // Minimum size
@@ -175,9 +175,13 @@ int Menu::processChoice(sf::RenderWindow& window)
                 fixRectangles(float(event.size.width), event.size.height);
                 break;
             }
+            default:
+                break;
+            }
         }
         Show(window);
     }//end while
+    return 3;
 }
 
 void Menu::fixRectangles(float width, float height)

@@ -11,6 +11,7 @@ TODO:
 
 #include "chat.h"
 #include "../shared/packet.h"
+#include "../shared/other.h"
 
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
@@ -29,7 +30,7 @@ const map<string,string> Chat::help = {
 Chat::Chat()
 {
     if (!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(3);
+        exit(Errors::Font);
 
     input = false;
     showCursor = false;
@@ -254,7 +255,7 @@ void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
     else if (cmdStr == "help" || cmdStr == "?")
         ShowHelp(content);
     else if (cmdStr == "exit" || cmdStr == "quit")
-        exit(0);
+        exit(Errors::Ok);
     else
         PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
 }

@@ -7,7 +7,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
-#include "../shared/player.h"
+#include "../shared/entity.h"
+#include "entitylist.h"
 #include "chat.h"
 #include "menu.h"
 
@@ -39,10 +40,10 @@ class Game
         bool paused;
         float elapsedTime;
 
-
-        Player player; // TODO: use the entity list
-        sf::Texture playerTex; // TODO: Maybe make a file/resource management class
+        EntityList entList;
+        Entity* myPlayer;
+        sf::Texture playerTex, zombieTex; // TODO: Make a file/resource management class
 
 };
 
-#endif // GAME_H
+#endif

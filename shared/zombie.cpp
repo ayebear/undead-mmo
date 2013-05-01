@@ -5,6 +5,8 @@
 
 Zombie::Zombie()
 {
+    type = Entity::Zombie;
+    speed = 50;
 }
 
 /*
@@ -14,6 +16,15 @@ The tile maps and collision detection will need to be programmed first before th
 */
 void Zombie::Update(float time)
 {
-    sprite.move(time * speed, 0);
-    pos = sprite.getPosition();
+    Move(time);
+}
+
+bool Zombie::Collides(Entity* ent)
+{
+    return false;
+}
+
+void Zombie::draw(sf::RenderTarget& window, sf::RenderStates states) const
+{
+    window.draw(sprite);
 }

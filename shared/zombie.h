@@ -8,12 +8,16 @@
 
 /*
 Zombies will need a "state" so we know what they are supposed to be doing.
+    This could be represented with an enum.
+    Within the update function, it will do different things depending on its state and stuff.
 */
 class Zombie: public EntityLiving
 {
     public:
         Zombie();
         void Update(float);
+        bool Collides(Entity*);
+        void draw(sf::RenderTarget&, sf::RenderStates) const;
     private:
 };
 

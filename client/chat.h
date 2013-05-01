@@ -81,4 +81,4 @@ class Chat: public sf::Drawable
         int cursorPos;
 };
 
-#endif // CHAT_H
+#endif

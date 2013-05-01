@@ -40,6 +40,11 @@ class Menu
 
         sf::Vector2f topOptionPos;
 
+        // TODO: Use a vector or some container of MenuChoice objects instead.
+        // Could be done like this: "vector<MenuChoice> options;"
+        // Then all of the code could just loop through that and use math to position it.
+        // And we could more easily add new menu options, and maybe even allow adding stuff from outside the class,
+        // so that it is more generic.
         MenuChoice play;
         MenuChoice options;
         MenuChoice quit;

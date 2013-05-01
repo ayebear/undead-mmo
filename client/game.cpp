@@ -4,15 +4,39 @@
 #include "game.h"
 #include "../shared/packet.h"
 
-const std::string version = "Project: Brains v0.0.0.15 Dev";
+const std::string version = "Project: Brains v0.0.0.16 Dev";
 
 Game::Game()
 {
 
     // Load files and stuff
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
-        exit(2);
-    player.SetTexture(playerTex);
+        exit(Errors::Graphics);
+    if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
+        exit(Errors::Graphics);
+    // TODO: Will need to send a request to the server (during or after the log-in process)
+    // which will create a new entity on the server first, which gets a unique global ID,
+    // and then that gets sent right back to the player who just logged in, and then
+    // is allocated on the client.
+    // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
+    entList.Add(Entity::Player, 5);
+
+    // Add a few local test zombies for now
+    entList.Add(Entity::Zombie, 10);
+    entList.Add(Entity::Zombie, 11);
+    //entList.Add(Entity::Zombie, 12);
+    auto* zombie = entList.Find(10);
+    zombie->SetTexture(zombieTex);
+    zombie->SetPos(sf::Vector2f(50, 50));
+    zombie->SetAngle(45);
+
+    zombie = entList.Find(11);
+    zombie->SetTexture(zombieTex);
+    zombie->SetPos(sf::Vector2f(700, 500));
+    zombie->SetAngle(210);
+
+    myPlayer = entList.Find(5);
+    myPlayer->SetTexture(playerTex);
 
     // Create the window in fullscreen at max resolution
     //vidMode = sf::VideoMode::getDesktopMode();
@@ -31,6 +55,7 @@ Game::Game()
     //chat.SetPosition(0, vidMode.height - 182);  // Full- screen
 
     playing = true;
+    paused = false;
 }
 
 // TODO: Handle networking code! Receiving and sending with both TCP and UDP!
@@ -170,6 +195,7 @@ void Game::ProcessInput()
 {
     if (!paused && !chat.GetInput())
     {
+        // This is horrible code I wrote, we should make it better
         int x = 0;
         int y = 0;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -186,20 +212,15 @@ void Game::ProcessInput()
         else
             degrees = 90 - (90 * x);
         if (x != 0 || y != 0)
-            player.Move(elapsedTime, degrees);
-        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-            player.Move(elapsedTime);
+            myPlayer->SetAngle(degrees);
     }
 }
 
 void Game::Update()
 {
     // All of the processing code will be run from here.
-    //if (zombieCount < 200)
-    //    {
-    //        Entity * aZombie = new Zombie;
-    //        zombieCount++;
-    //    }
+
+    entList.Update(elapsedTime);
 
     chat.Update();
 }
@@ -208,8 +229,10 @@ void Game::Display()
 {
     window.clear();
 
-    window.draw(player);
+    // Draws all of the entities
+    window.draw(entList);
 
+    // Draws the chat
     window.draw(chat);
 
     window.display();

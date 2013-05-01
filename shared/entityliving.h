@@ -13,7 +13,7 @@ class EntityLiving: public Entity
     public:
         EntityLiving();
         void Move(float);
-        void Move(float, float);
+        void SetAngle(float);
     protected:
         float angle; // in degrees
         int currentHealth;
@@ -21,6 +21,7 @@ class EntityLiving: public Entity
         int baseSpeed;
         static const int defaultSpeed = 200;
         float speed;
+        bool moving;
 };
 
 #endif // ENTITYLIVING_H
