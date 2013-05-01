@@ -22,9 +22,9 @@ class EntityList: public sf::Drawable
 {
     public:
         EntityList();
-        void Add(int, EID);
-        void Insert(Entity*);
-        void Insert(Entity*, EID);
+        Entity* Add(int, EID);
+        //void Insert(Entity*);
+        Entity* Insert(Entity*, EID);
         Entity* Find(EID);
         void Delete(EID);
         void Update(float);

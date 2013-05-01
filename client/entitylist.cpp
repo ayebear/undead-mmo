@@ -10,20 +10,22 @@ EntityList::EntityList()
 {
 }
 
-void EntityList::Add(int type, EID id)
+// This function allocates a new entity based on type AND inserts it into the entity list
+Entity* EntityList::Add(int type, EID id)
 {
-    Insert(AllocateEntity(type), id);
+    return Insert(AllocateEntity(type), id);
 }
 
 // Probably won't need this overload
-void EntityList::Insert(Entity* newEnt)
+/*void EntityList::Insert(Entity* newEnt)
 {
     ents[newEnt->GetID()] = newEnt;
-}
+}*/
 
-void EntityList::Insert(Entity* newEnt, EID id)
+Entity* EntityList::Insert(Entity* newEnt, EID id)
 {
     ents[id] = newEnt;
+    return newEnt;
 }
 
 Entity* EntityList::Find(EID id)

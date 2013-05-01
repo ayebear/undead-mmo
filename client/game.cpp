@@ -19,23 +19,18 @@ Game::Game()
     // and then that gets sent right back to the player who just logged in, and then
     // is allocated on the client.
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
-    entList.Add(Entity::Player, 5);
+    entList.Add(Entity::Player, 1);
 
-    // Add a few local test zombies for now
-    entList.Add(Entity::Zombie, 10);
-    entList.Add(Entity::Zombie, 11);
-    //entList.Add(Entity::Zombie, 12);
-    auto* zombie = entList.Find(10);
-    zombie->SetTexture(zombieTex);
-    zombie->SetPos(sf::Vector2f(50, 50));
-    zombie->SetAngle(45);
+    // Add quite a few local test zombies for now
+    for (int x = 2; x < 1000; x++)
+    {
+        auto* zombie = entList.Add(Entity::Zombie, x);
+        zombie->SetTexture(zombieTex);
+        zombie->SetPos(sf::Vector2f(rand() % windowWidth, rand() % windowHeight));
+        zombie->SetAngle(rand() % 360);
+    }
 
-    zombie = entList.Find(11);
-    zombie->SetTexture(zombieTex);
-    zombie->SetPos(sf::Vector2f(700, 500));
-    zombie->SetAngle(210);
-
-    myPlayer = entList.Find(5);
+    myPlayer = entList.Find(1);
     myPlayer->SetTexture(playerTex);
 
     // Create the window in fullscreen at max resolution
