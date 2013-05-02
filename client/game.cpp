@@ -4,7 +4,7 @@
 #include "game.h"
 #include "../shared/packet.h"
 
-const std::string version = "Project: Brains v0.0.0.16 Dev";
+const std::string version = "Project: Brains v0.0.1.0 Dev";
 
 Game::Game()
 {

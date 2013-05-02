@@ -5,6 +5,7 @@
 #define ENTITY_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include "other.h"
 
 /*
@@ -40,8 +41,8 @@ class Entity: public sf::Drawable
         void SetReady(bool);
         const bool GetReady() const;
 
-        virtual sf::Packet GetPacket();
-        virtual void SetPacket(const sf::Packet&);
+        virtual sf::Packet GetPacket() = 0;
+        virtual sf::Packet& SetData(sf::Packet&) = 0;
 
         // TODO: Instead of SetAngle, it needs to set both an angle and a speed. This could be encapsulated in a class/struct.
         virtual void SetAngle(float deg) {}
@@ -67,5 +68,9 @@ class Entity: public sf::Drawable
         sf::Vector2f pos;
         sf::Sprite sprite;
 };
+
+sf::Packet& operator<<(sf::Packet&, const Entity&);
+
+sf::Packet& operator>>(sf::Packet&, Entity&);
 
 #endif

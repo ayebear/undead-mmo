@@ -13,6 +13,8 @@ class Player: public EntityLiving
         void Update(float);
         bool Collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
+        sf::Packet GetPacket();
+        sf::Packet& SetData(sf::Packet&);
     private:
 
 };

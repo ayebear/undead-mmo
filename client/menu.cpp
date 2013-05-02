@@ -6,7 +6,7 @@
 Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 {
 
-    if(!background.loadFromFile("data/images/MenuBackground.png"))
+    if(!background.loadFromFile("data/images/ui/MenuBackground.png"))
         exit(Errors::Graphics);
 
     if(!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
@@ -41,9 +41,9 @@ Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 Menu::~Menu()
 {
 
-    for(int i = 0; i < menuOptions.size(); i++)
+    for(auto& menuItem: menuOptions)
     {
-        delete menuOptions[i];
+        delete menuItem;
     }
 }
 int Menu::processChoice(sf::RenderWindow& window)
@@ -66,7 +66,7 @@ int Menu::processChoice(sf::RenderWindow& window)
 
             case sf::Event::MouseMoved:
             {
-                int i = 0;
+                uint i = 0;
                 while(menuOptions.size() > i)
                 {
                     //First Menu Choice
@@ -87,7 +87,7 @@ int Menu::processChoice(sf::RenderWindow& window)
             case sf::Event::MouseButtonReleased:
             {
 
-                int i = 0;
+                uint i = 0;
                 while(menuOptions.size() > i)
                 {
                     if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(window)) && event.mouseButton.button == sf::Mouse::Left)
@@ -122,10 +122,13 @@ int Menu::processChoice(sf::RenderWindow& window)
                 fixRectangles(float(event.size.width), event.size.height);
                 break;
             }
+            default:
+                break;
             }
         }
         Show(window);
     }//end while
+    return 3;
 }
 
 void Menu::fixRectangles(float width, float height)
@@ -134,7 +137,7 @@ void Menu::fixRectangles(float width, float height)
     topOptionPos.x = width / 1.5;                     //Smaller numbers puts text further the the right. Larger goes left.
     topOptionPos.y = height / 2;
 
-    for(int i = 0; i < menuOptions.size(); i++)
+    for(uint i = 0; i < menuOptions.size(); i++)
     {
         menuOptions[i]->option.setOrigin(0,0);
         menuOptions[i]->option.setPosition(topOptionPos.x, topOptionPos.y + (i * (fontSize + 75)));
@@ -173,9 +176,9 @@ void Menu::Show(sf::RenderWindow& window)
     window.draw(backgroundImage);
 
     //Menu Choices
-    for(int i = 0; i < menuOptions.size(); i++)
+    for(auto& i: menuOptions)
     {
-        window.draw(menuOptions[i]->option);
+        window.draw(i->option);
     }
  /*   window.draw(play.option);
     window.draw(options.option);

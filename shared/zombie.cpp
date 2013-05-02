@@ -28,3 +28,16 @@ void Zombie::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.draw(sprite);
 }
+
+sf::Packet Zombie::GetPacket()
+{
+    sf::Packet packet;
+    packet << ID << type << pos.x << pos.y;
+    return packet;
+}
+
+sf::Packet& Zombie::SetData(sf::Packet& packet)
+{
+    return packet >> ID >> type >> pos.x >> pos.y;
+}
+
