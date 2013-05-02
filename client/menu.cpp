@@ -7,10 +7,10 @@ Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 {
 
     if(!background.loadFromFile("data/images/MenuBackground.png"))
-        exit(3);
+        exit(Errors::Graphics);
 
     if(!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(3);
+        exit(Errors::Font);
 
     background.setSmooth(true);
     backgroundImage.setTexture(background);

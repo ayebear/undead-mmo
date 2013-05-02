@@ -12,8 +12,10 @@ Game::Game()
     // Load files and stuff
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
         exit(Errors::Graphics);
+    playerTex.setSmooth(true);
     if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
         exit(Errors::Graphics);
+    zombieTex.setSmooth(true);
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
     // and then that gets sent right back to the player who just logged in, and then
