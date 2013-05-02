@@ -48,6 +48,18 @@ const bool Entity::GetReady() const
     return ready;
 }
 
+virtual sf::Packet Entity::GetPacket()
+{
+    sf::Packet packet;
+    packet << ID << type << pos;
+    return packet;
+}
+
+virtual void Entity::SetData(const sf::Packet& packet)
+{
+    packet >> ID >> type >> pos;
+}
+
 void Entity::SetPos(const sf::Vector2f& position)
 {
     pos = position;

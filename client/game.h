@@ -39,6 +39,7 @@ class Game
         bool playing;
         bool paused;
         float elapsedTime;
+        sf::Clock FPSTimer;
 
         EntityList entList;
         Entity* myPlayer;
