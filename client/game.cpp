@@ -180,6 +180,21 @@ void Game::ProcessEvents()
             case sf::Event::GainedFocus:
                 paused = false;
                 break;
+            case sf::Event::Resized:
+            {
+                //Minimum window size
+                sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
+                // Minimum size
+                if(size.x < 800)
+                    size.x = 800;
+                if(size.y < 600)
+                    size.y = 600;
+                window.setSize(static_cast<sf::Vector2u>(size));
+                //Reset the view of the window
+                window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                chat.SetPosition(0, event.size.height - 182);
+                break;
+            }
             default:
                 break;
         }
