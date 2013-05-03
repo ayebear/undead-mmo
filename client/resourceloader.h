@@ -14,7 +14,7 @@ class ResourceLoader
         void LoadTiles();
         sf::Font defaultFontMono;
         sf::Font defaultFontBold;
-        static vector<sf::Texture> textures;
+       //static vector<sf::Texture> Textures;
 
 };
 

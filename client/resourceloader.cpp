@@ -1,3 +1,5 @@
+#include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "resourceloader.h"
 
 ResourceLoader::ResourceLoader()
@@ -7,11 +9,8 @@ ResourceLoader::ResourceLoader()
 
 void LoadTiles()
 {
-    for ()
-    {
 
-    }
-    if (!texture.loadFromFile("data/images/tiles/tiles.png"))
-        exit(Errors::graphics)
-     texturestexture setSmooth(true);
+//    if (!texture.loadFromFile("data/images/tiles/tiles.png"))
+//       exit(Errors::graphics)
+
 }
