@@ -12,6 +12,7 @@ TODO:
 #include "chat.h"
 #include "../shared/packet.h"
 #include "../shared/other.h"
+#include "resources.h"
 
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
@@ -29,8 +30,7 @@ const map<string,string> Chat::help = {
 
 Chat::Chat()
 {
-    if (!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(Errors::Font);
+    Resources::LoadFiles();
 
     input = false;
     showCursor = false;
@@ -39,11 +39,11 @@ Chat::Chat()
     msgHistoryPos = 0;
     cursorPos = 0;
 
-    usernameText.setFont(font);
+    usernameText.setFont(Resources::fontBold);
     usernameText.setCharacterSize(textSize);
     usernameText.setColor(sf::Color::White);
 
-    currentMsg.setFont(font);
+    currentMsg.setFont(Resources::fontBold);
     currentMsg.setCharacterSize(textSize);
     currentMsg.setColor(sf::Color::White);
 
@@ -295,7 +295,7 @@ void Chat::PrintMessage(const string& msgStr, const sf::Color& color)
 {
     if (!msgStr.empty())
     {
-        sf::Text msgText(msgStr, font, textSize);
+        sf::Text msgText(msgStr, Resources::fontBold, textSize);
         msgText.setColor(color);
         msgList.push_back(TimedMsg(msgText));
         if (msgList.size() > maxMessages)

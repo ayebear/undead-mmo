@@ -1,19 +1,13 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "menu.h"
 #include <iostream>
+#include "menu.h"
+#include "resources.h"
+
 Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 {
-
-    if(!background.loadFromFile("data/images/ui/MenuBackground.png"))
-        exit(Errors::Graphics);
-
-    if(!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(Errors::Font);
-
-    background.setSmooth(true);
-    backgroundImage.setTexture(background);
+    backgroundImage.setTexture(Resources::menuBgTex);
 
 //scale take a factor amount so  newSize/oldSize.
 //The background image I made is 1920 x 1080, so resize it for windowed users.  Move the origin because scaling the image moves it.

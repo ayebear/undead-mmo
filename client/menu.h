@@ -20,7 +20,6 @@ struct MenuChoice
     sf::Text option;
     sf::Rect<int> rect;
     short fontSize;
-    sf::Font font;
     sf::Color unselectedColor;
     sf::Color selectedColor;
 

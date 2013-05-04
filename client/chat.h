@@ -69,7 +69,6 @@ class Chat: public sf::Drawable
         bool input;
         bool showCursor;
         sf::Vector2f mainPos;
-        sf::Font font;
         deque <TimedMsg> msgList;
         sf::Text currentMsg;
         deque <string> msgHistory; // stores the history of your own messages
