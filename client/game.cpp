@@ -5,7 +5,7 @@
 #include "../shared/packet.h"
 #include "../shared/tile.h"
 
-const std::string version = "Project: Brains v0.0.1.3 Dev";
+const std::string version = "Project: Brains v0.0.1.4 Dev";
 
 Game::Game()
 {
@@ -46,6 +46,8 @@ Game::Game()
     myPlayer = entList.Find(1);
     myPlayer->SetTexture(playerTex);
 
+    myPlayer->SetPos(sf::Vector2f(300, 400));
+
     // Create the window in fullscreen at max resolution
     //vidMode = sf::VideoMode::getDesktopMode();
     //window.create(vidMode, version, sf::Style::Fullscreen);
@@ -54,6 +56,8 @@ Game::Game()
     vidMode = sf::VideoMode(windowWidth, windowHeight);
     window.create(vidMode, version);
 
+    gameView.setSize(vidMode.width, vidMode.height);
+    gameView.setCenter(myPlayer->GetPos());
 
     // Set frame limits and vsync
     //window.setFramerateLimit(10);
@@ -76,6 +80,8 @@ void Game::Start() // this will need to manage a second thread for the networkin
 
     if(choice == 1)
     {
+        gameView.setCenter(myPlayer->GetPos());
+        window.setView(gameView);
 
         socket.setBlocking(false);
         chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
@@ -205,7 +211,8 @@ void Game::ProcessEvents()
                     size.y = 600;
                 window.setSize(static_cast<sf::Vector2u>(size));
                 //Reset the view of the window
-                window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+                gameView.setSize(event.size.width, event.size.height);
+                window.setView(gameView);
                 chat.SetPosition(0, event.size.height - 182);
                 break;
             }
@@ -237,6 +244,10 @@ void Game::ProcessInput()
             degrees = 90 - (90 * x);
         if (x != 0 || y != 0)
             myPlayer->SetAngle(degrees);
+
+       //     gameView.setSize(vidMode.width, vidMode.height);
+        gameView.setCenter(myPlayer->GetPos());
+        window.setView(gameView);
     }
 }
 
