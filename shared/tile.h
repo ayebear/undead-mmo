@@ -4,13 +4,24 @@
 #ifndef TILE_H
 #define TILE_H
 
-// this could just be a struct if there is no point in making anything private
+#include <SFML/Graphics.hpp>
 
-class Tile
+typedef sf::Uint16 TileID;
+
+class Tile: public sf::Drawable
 {
     public:
         Tile();
+        Tile(TileID, int, int);
+        void SetID(TileID);
+        void SetPos(int, int);
+        bool IsWalkable();
+        void draw(sf::RenderTarget&, sf::RenderStates) const;
+
     private:
+        TileID ID;
+        bool walkable;
+        sf::Sprite sprite;
 };
 
-#endif // TILE_H
+#endif

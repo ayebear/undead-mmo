@@ -1,113 +1,94 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "map.h"
-#include "../client/resources.h"
 #include <fstream>
+#include "map.h"
 
-Tile::Tile(sf::UINT16 tileID, float x, float y)
+using namespace std;
+
+Map::Map()
 {
-    id = TileID;
-    if(tileID < 128)
-    {
-        walkable = true;
-    }
-    else
-    {
-        walkable = false;
-    }
-
-    updateImage(tileID);
+    ready = false;
 }
 
-Tile::updateImage(sf::UINT16 tileID)
+Map::Map(vector<vector<TileID> > & mapData)
 {
-    tileImage.setTexture(Resources::textures[tileID]);
-    tileImage.setPosition(x, y);
+    LoadMapFromMemory(mapData);
 }
 
-
-Map::drawMap(sf::RenderWindow& window, sf::Rect viewWindow)
+Map::Map(const string& filename)
 {
+    LoadMapFromFile(filename);
+}
 
-    //Convert coordinates for view.
-    int startX = viewWindow.left / tileWidth;
-    int startY = viewWindow.top / tileHeight;
-
-    int endX = (viewWindow.left + viewWindow.width) / tileWidth + 1;
-    int endY = (viewWindow.top + viewWindow.height) / tileHeight + 1;
-
-    if(endX > tiles[startX].size() && endY >)
-        for(int y = startY; x < endY; x++)
+void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
+{
+    tiles.resize(mapData.size());
+    for (uint i = 0; i < mapData.size(); i++)
+    {
+        for (uint j = 0; j < mapData[i].size(); j++)
         {
-            for(int x = startX; X < endX; y++)
-            {
-                window.draw(tiles[y][x]);
-            }
+            tiles[i].push_back(Tile(mapData[i][j], i * tileWidth, j * tileHeight));
         }
+    }
+
+    ready = true;
 }
 
-void Map::loadMapFromFile(char*)
+void Map::LoadMapFromFile(const string& filename)
 {
-    istream in;
+    ifstream in(filename);
     string temp;
     int tmpID = 0;
-    int width;
-    int hieght;
+    int width, height;
     in >> width >> height;
-    std::vector<std::vector<short>> ids;
 
-    for(int i = 0; i < height; i++)
+    tiles.resize(height);
+    for (int i = 0; i < height; i++)
     {
-        for(int j = 0; j < width; j++)
+        for (int j = 0; j < width; j++)
         {
             in >> tmpID;
-            ids.push_back(tmpID);
-            tiles.push_back(Tile(ids[i][j], i * tileWidth, j * tileHeight));
+            tiles[i].push_back(Tile(tmpID, i * tileWidth, j * tileHeight));
         }
     }
 
-}
-void Map::loadMapFromMemory(std::vector<std::vector<sf::UINT16 id>>& mapData)
-{
-    for(int i = 0; i < mapData.size(); i++)
-    {
-        for(int j = 0; j < mapData[i].size(); j++)
-        {
-            tiles.push_back(Tile(mapData[i][j], i * tileWidth, j * tileHeight));
-        }
-    }
+    ready = true;
 }
 
-Map::Map(char* mapFile)
+void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
-    istream in;
-    string temp;
-    int tmpID = 0;
-    int width;
-    int hieght;
-    in >> width >> height;
-    std::vector<std::vector<short>> ids;
+    if (!ready)
+        return;
 
-    for(int i = 0; i < height; i++)
+    // No need to pass the view in separately, it is already stored inside the window
+    sf::View viewWindow = window.getView();
+    // TODO: Actually calculate the rectangle from the sf::View of the window
+    sf::FloatRect viewRect(0, 0, 800, 600);
+
+    // Convert coordinates of view to logical tile coordinates
+    int startX = viewRect.left / tileWidth;
+    int startY = viewRect.top / tileHeight;
+
+    int endX = (viewRect.left + viewRect.width) / tileWidth + 1;
+    int endY = (viewRect.top + viewRect.height) / tileHeight + 1;
+
+    // Check if these values are within bounds of the array
+    if (startX < 0)
+        startX = 0;
+    if (startY < 0)
+        startY = 0;
+    if (endX >= (int)tiles[startX].size())
+        endX = tiles[startX].size() - 1;
+    if (endY >= (int)tiles.size())
+        endY = tiles.size() - 1;
+
+    // Draw all of the tiles within view
+    for (int y = startY; y < endY; y++)
     {
-        for(int j = 0; j < width; j++)
+        for (int x = startX; x < endX; x++)
         {
-            in >> tmpID;
-            ids.push_back(tmpID);
-            tiles.push_back(Tile(ids[i][j], i * tileWidth, j * tileHeight));
+            window.draw(tiles[y][x]);
         }
     }
-
-}
-Map::Map(std::vector<std::vector<sf::UINT16 id>>& mapData)
-{
-    for(int i = 0; i < mapData.size(); i++)
-    {
-        for(int j = 0; j < mapData[i].size(); j++)
-        {
-            tiles.push_back(Tile(mapData[i][j], i * tileWidth, j * tileHeight));
-        }
-    }
-
 }

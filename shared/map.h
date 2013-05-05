@@ -5,37 +5,28 @@
 #define MAP_H
 
 #include <vector>
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics.hpp>
+#include "tile.h"
 
-struct Tile: public sf::Drawable{
-
-    sf::UINT16 id;
-    bool walkable;
-    void updateImage();
-
-    Tile(sf::Uint16);
-
-    sf::Sprite tileImage;
-
-};
-
-class Map
+class Map: public sf::Drawable
 {
     public:
+        Map();
+        Map(std::vector< std::vector<TileID> > & mapData);
+        Map(const std::string&);
 
-        static const tileWidth = 128;
-        static const tileHeight = 128;
-        Map(std::vector<std::vector<sf::UINT16 id>>& mapData);
-        Map(char*);
+        // This should be bool in case it failed, or somehow have a good way of handling it
+        void LoadMapFromFile(const std::string&);
+        void LoadMapFromMemory(std::vector< std::vector<TileID> > & mapData);
 
-        void loadMapFromFile(char*);
-        void loadMapFromMemory(std::vector<std::vector<sf::UINT16 id>>& mapData);
+        void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-        //uint16 is a tile ID
-        void drawMap(sf::RenderWindow& window, sf::Rect viewWindow);
+        static const int tileWidth = 128;
+        static const int tileHeight = 128;
 
     private:
-        std::vector<std::vector<Tile*>> tiles;
+        std::vector<std::vector<Tile>> tiles;
+        bool ready;
 };
 
-#endif // MAP_H
+#endif

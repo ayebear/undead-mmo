@@ -47,15 +47,15 @@ void Resources::LoadImages()
 void Resources::LoadTiles()
 {
     // 16 = 1024 / 128
-    int tileCount = tilesImageSize / Map::tileSize;
+    int tileCount = tilesImageSize / Map::tileWidth;
     textures.resize(tileCount * tileCount);
     for (int y = 0; y < tileCount; y++)
     {
         for (int x = 0; x < tileCount; x++)
         {
             if (textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
-                sf::IntRect(x * Map::tileSize, y * Map::tileSize,
-                (x + 1) * Map::tileSize, (y + 1) * Map::tileSize)))
+                sf::IntRect(x * Map::tileWidth, y * Map::tileWidth,
+                (x + 1) * Map::tileWidth, (y + 1) * Map::tileWidth)))
                     exit(Errors::Graphics);
             textures[y * tileCount + x].setSmooth(true);
         }
