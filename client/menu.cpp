@@ -3,16 +3,20 @@
 
 #include <iostream>
 #include "menu.h"
-#include "resources.h"
 
-Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
+Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode, sf::Font* theFont)
 {
-    backgroundImage.setTexture(Resources::menuBgTex);
+    font = theFont;
+
+    if (!bgTexture.loadFromFile("data/images/ui/MenuBackground.png"))
+        exit(Errors::Graphics);
+    bgTexture.setSmooth(true);
+    bgSprite.setTexture(bgTexture);
 
 //scale take a factor amount so  newSize/oldSize.
 //The background image I made is 1920 x 1080, so resize it for windowed users.  Move the origin because scaling the image moves it.
-    backgroundImage.setScale(static_cast<float>(videoMode.width) / 1920, static_cast<float>(videoMode.height) / 1080);
-    backgroundImage.setOrigin(0, 0);
+    bgSprite.setScale(static_cast<float>(videoMode.width) / 1920, static_cast<float>(videoMode.height) / 1080);
+    bgSprite.setOrigin(0, 0);
 
     view.reset(sf::FloatRect(0, 0, videoMode.width, videoMode.height));
 
@@ -34,12 +38,10 @@ Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 
 Menu::~Menu()
 {
-
     for(auto& menuItem: menuOptions)
-    {
         delete menuItem;
-    }
 }
+
 int Menu::processChoice(sf::RenderWindow& window)
 {
 
@@ -109,8 +111,8 @@ int Menu::processChoice(sf::RenderWindow& window)
                 window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
 
                 //Resize the background image
-                backgroundImage.setScale(static_cast<float>(event.size.width) / 1920, static_cast<float>(event.size.height) / 1080);
-                backgroundImage.setOrigin(0, 0);
+                bgSprite.setScale(static_cast<float>(event.size.width) / 1920, static_cast<float>(event.size.height) / 1080);
+                bgSprite.setOrigin(0, 0);
 
                 //Adjust selection rectangles
                 fixRectangles(float(event.size.width), event.size.height);
@@ -150,7 +152,7 @@ void Menu::addMenuItem(string itemName)
     menuItem->option.setString(itemName);
     menuItem->option.setCharacterSize(fontSize);
     menuItem->option.setColor(unselectedColor);
-    menuItem->option.setFont(font);
+    menuItem->option.setFont(*font);
     menuItem->option.setPosition(topOptionPos.x, topOptionPos.y + i * (fontSize + 75));   //Extra 75 pixels of space
 
     tmpText = menuItem->option.getString();
@@ -167,16 +169,12 @@ void Menu::Show(sf::RenderWindow& window)
 {
     window.clear();
 
-    window.draw(backgroundImage);
+    // Draw the background
+    window.draw(bgSprite);
 
-    //Menu Choices
+    // Draw menu choices
     for(auto& i: menuOptions)
-    {
         window.draw(i->option);
-    }
- /*   window.draw(play.option);
-    window.draw(options.option);
-    window.draw(quit.option);*/
 
     window.display();
 }

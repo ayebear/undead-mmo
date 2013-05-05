@@ -12,7 +12,6 @@ TODO:
 #include "chat.h"
 #include "../shared/packet.h"
 #include "../shared/other.h"
-#include "resources.h"
 
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
@@ -30,8 +29,7 @@ const map<string,string> Chat::help = {
 
 Chat::Chat()
 {
-    Resources::LoadFiles();
-
+    font = nullptr;
     input = false;
     showCursor = false;
     mainPos.x = 0;
@@ -39,11 +37,9 @@ Chat::Chat()
     msgHistoryPos = 0;
     cursorPos = 0;
 
-    usernameText.setFont(Resources::fontBold);
     usernameText.setCharacterSize(textSize);
     usernameText.setColor(sf::Color::White);
 
-    currentMsg.setFont(Resources::fontBold);
     currentMsg.setCharacterSize(textSize);
     currentMsg.setColor(sf::Color::White);
 
@@ -51,6 +47,13 @@ Chat::Chat()
     cursor.setFillColor(sf::Color::White);
 
     SetUsername("Anonymous");
+}
+
+void Chat::SetFont(sf::Font* theFont)
+{
+    font = theFont;
+    usernameText.setFont(*font);
+    currentMsg.setFont(*font);
 }
 
 void Chat::SetInput(bool in)
@@ -293,9 +296,9 @@ void Chat::ShowHelp(const string& content)
 
 void Chat::PrintMessage(const string& msgStr, const sf::Color& color)
 {
-    if (!msgStr.empty())
+    if (!msgStr.empty() && font != nullptr)
     {
-        sf::Text msgText(msgStr, Resources::fontBold, textSize);
+        sf::Text msgText(msgStr, *font, textSize);
         msgText.setColor(color);
         msgList.push_back(TimedMsg(msgText));
         if (msgList.size() > maxMessages)

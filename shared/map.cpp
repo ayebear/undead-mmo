@@ -9,16 +9,37 @@ using namespace std;
 Map::Map()
 {
     ready = false;
+    LoadTileTextures();
 }
 
 Map::Map(vector<vector<TileID> > & mapData)
 {
+    LoadTileTextures();
     LoadMapFromMemory(mapData);
 }
 
 Map::Map(const string& filename)
 {
+    LoadTileTextures();
     LoadMapFromFile(filename);
+}
+
+void Map::LoadTileTextures()
+{
+    // 16 = 1024 / 128
+    int tileCount = 1024 / tileWidth;
+    textures.resize(tileCount * tileCount);
+    for (int y = 0; y < tileCount; y++)
+    {
+        for (int x = 0; x < tileCount; x++)
+        {
+            if (textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
+                sf::IntRect(x * tileWidth, y * tileWidth,
+                (x + 1) * tileWidth, (y + 1) * tileWidth)))
+                    exit(3);
+            textures[y * tileCount + x].setSmooth(true);
+        }
+    }
 }
 
 void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
@@ -35,9 +56,12 @@ void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
     ready = true;
 }
 
-void Map::LoadMapFromFile(const string& filename)
+bool Map::LoadMapFromFile(const string& filename)
 {
     ifstream in(filename);
+    if (!in.is_open())
+        return false;
+
     string temp;
     int tmpID = 0;
     int width, height;
@@ -52,8 +76,11 @@ void Map::LoadMapFromFile(const string& filename)
             tiles[i].push_back(Tile(tmpID, i * tileWidth, j * tileHeight));
         }
     }
+    in.close();
 
     ready = true;
+
+    return true;
 }
 
 void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const

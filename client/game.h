@@ -34,17 +34,17 @@ class Game
         // Variables
         sf::VideoMode vidMode;
         sf::RenderWindow window;
-        sf::TcpSocket socket; // TODO: Maybe make a network management class
+        sf::TcpSocket socket; // TODO: Make a network management class
         Chat chat;
         bool playing;
         bool paused;
         float elapsedTime;
         sf::Clock FPSTimer;
+        sf::Font font, fontBold, fontMono, fontMonoBold;
+        sf::Texture playerTex, zombieTex;
 
         EntityList entList;
         Entity* myPlayer;
-        sf::Texture playerTex, zombieTex; // TODO: Make a file/resource management class
-
 };
 
 #endif

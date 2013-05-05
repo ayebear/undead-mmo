@@ -24,6 +24,7 @@ class Chat: public sf::Drawable
 {
     public:
         Chat();
+        void SetFont(sf::Font*);
         void SetInput(bool);
         bool GetInput();
         void ToggleInput();
@@ -66,6 +67,7 @@ class Chat: public sf::Drawable
         static const sf::Color cmdOutColor;
         static const map<string,string> help;
 
+        sf::Font* font;
         bool input;
         bool showCursor;
         sf::Vector2f mainPos;

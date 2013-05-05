@@ -3,12 +3,30 @@
 
 #include "game.h"
 #include "../shared/packet.h"
-#include "resources.h"
+#include "../shared/tile.h"
 
-const std::string version = "Project: Brains v0.0.1.2 Dev";
+const std::string version = "Project: Brains v0.0.1.3 Dev";
 
 Game::Game()
 {
+    // Load font files
+    if (!font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
+        exit(Errors::Font);
+    if (!fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
+        exit(Errors::Font);
+    if (!fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
+        exit(Errors::Font);
+    if (!fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
+        exit(Errors::Font);
+
+    // Load character sprites
+    if (!playerTex.loadFromFile("data/images/characters/character.png"))
+        exit(Errors::Graphics);
+    playerTex.setSmooth(true);
+    if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
+        exit(Errors::Graphics);
+    zombieTex.setSmooth(true);
+
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
     // and then that gets sent right back to the player who just logged in, and then
@@ -41,6 +59,7 @@ Game::Game()
     //window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
 
+    chat.SetFont(&fontBold);
     chat.SetPosition(0, windowHeight - 182); //   Windowed Mode
     //chat.SetPosition(0, vidMode.height - 182);  // Full- screen
 
@@ -52,7 +71,7 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    Menu menu(window, vidMode);
+    Menu menu(window, vidMode, &fontBold);
     int choice = menu.processChoice(window);
 
     if(choice == 1)

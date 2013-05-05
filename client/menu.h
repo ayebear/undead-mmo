@@ -8,28 +8,27 @@
 #include "game.h"
 #include <iostream>
 #include <vector>
+
 // This class creates a menu and processes user input
 // Based on that input, different game states are run
 
 // I will refactor my aMAZEd code for the menu, by making it completely generic, and eventually put it in here
-
-// Maybe we should make this accept function pointers somehow? So it dereferences them and calls them depending on the menu choice?
+// Nevermind, this menu is fine.
 
 struct MenuChoice
 {
     sf::Text option;
     sf::Rect<int> rect;
-    short fontSize;
     sf::Color unselectedColor;
     sf::Color selectedColor;
-
 };
+
 class Menu
 {
     public:
 
         //Game class will call the menu and pass the same screen.
-        Menu(sf::RenderWindow&, sf::VideoMode);
+        Menu(sf::RenderWindow&, sf::VideoMode, sf::Font*);
         ~Menu();
 
         void Show(sf::RenderWindow&);
@@ -47,7 +46,7 @@ class Menu
         string tmpText;
 
         short fontSize;
-        sf::Font font;
+        sf::Font* font;
         sf::Color unselectedColor;
         sf::Color selectedColor;
 
@@ -55,8 +54,8 @@ class Menu
         sf::VideoMode vidMode;
         sf::View view;
 
-        sf::Texture background;
-        sf::Sprite backgroundImage;
+        sf::Texture bgTexture;
+        sf::Sprite bgSprite;
 
         int selection;
 };

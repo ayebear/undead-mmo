@@ -15,18 +15,19 @@ class Map: public sf::Drawable
         Map(std::vector< std::vector<TileID> > & mapData);
         Map(const std::string&);
 
-        // This should be bool in case it failed, or somehow have a good way of handling it
-        void LoadMapFromFile(const std::string&);
+        bool LoadMapFromFile(const std::string&);
         void LoadMapFromMemory(std::vector< std::vector<TileID> > & mapData);
 
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-        static const int tileWidth = 128;
-        static const int tileHeight = 128;
-
     private:
+        void LoadTileTextures();
+
         std::vector<std::vector<Tile>> tiles;
         bool ready;
+        static const int tileWidth = 128;
+        static const int tileHeight = 128;
+        std::vector<sf::Texture> textures;
 };
 
 #endif

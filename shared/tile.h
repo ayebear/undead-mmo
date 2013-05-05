@@ -4,6 +4,7 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <vector>
 #include <SFML/Graphics.hpp>
 
 typedef sf::Uint16 TileID;
@@ -18,10 +19,14 @@ class Tile: public sf::Drawable
         bool IsWalkable();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
+        static void SetTexturesPtr(std::vector<sf::Texture>*);
+
     private:
         TileID ID;
         bool walkable;
         sf::Sprite sprite;
+
+        static std::vector<sf::Texture>* textures;
 };
 
 #endif

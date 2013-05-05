@@ -3,6 +3,8 @@
 
 #include "tile.h"
 
+std::vector<sf::Texture>* Tile::textures = nullptr;
+
 Tile::Tile()
 {
     SetID(0);
@@ -15,6 +17,11 @@ Tile::Tile(TileID tileID, int x, int y)
     SetPos(x, y);
 }
 
+void Tile::SetTexturesPtr(std::vector<sf::Texture>* texturesPtr)
+{
+    textures = texturesPtr;
+}
+
 void Tile::SetID(TileID tileID)
 {
     ID = tileID;
@@ -24,7 +31,10 @@ void Tile::SetID(TileID tileID)
     else
         walkable = false;
 
-    sprite.setTexture(Resources::textures[id]);
+    if (textures == nullptr)
+        exit(555);
+
+    sprite.setTexture((*textures)[ID]);
 }
 
 void Tile::SetPos(int x, int y)
