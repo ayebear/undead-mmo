@@ -1,5 +1,5 @@
 #include "hud.h"
-
+#include "../shared/other.h"
 
 void Hud::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {

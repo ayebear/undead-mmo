@@ -24,7 +24,7 @@ namespace Errors
         Ok,
         Graphics,
         Audio,
-        Font
+        Font = 10
     };
 }
 

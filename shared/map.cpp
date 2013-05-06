@@ -33,10 +33,10 @@ void Map::LoadTileTextures()
     {
         for (int x = 0; x < tileCount; x++)
         {
-            if (textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
+            if (!textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
                 sf::IntRect(x * tileWidth, y * tileWidth,
                 (x + 1) * tileWidth, (y + 1) * tileWidth)))
-                    exit(3);
+                    exit(20);
             textures[y * tileCount + x].setSmooth(true);
         }
     }
