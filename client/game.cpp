@@ -64,8 +64,8 @@ Game::Game()
     window.setVerticalSyncEnabled(true);
 
     chat.SetFont(&fontBold);
-    chat.SetPosition(0, windowHeight - 182); //   Windowed Mode
-    //chat.SetPosition(0, vidMode.height - 182);  // Full- screen
+    //chat.SetPosition(0, windowHeight - 182); //   Windowed Mode
+    chat.SetPosition(0, vidMode.height - 182);  // Full- screen
 
     playing = true;
     paused = false;
@@ -245,7 +245,6 @@ void Game::ProcessInput()
         if (x != 0 || y != 0)
             myPlayer->SetAngle(degrees);
 
-       //     gameView.setSize(vidMode.width, vidMode.height);
         gameView.setCenter(myPlayer->GetPos());
         window.setView(gameView);
     }
@@ -267,8 +266,17 @@ void Game::Display()
     // Draws all of the entities
     window.draw(entList);
 
+
+    //To do: Eventually move this to the HUD class
+    //Draw the chat in its own view
+    sf::Vector2u chatViewPos(gameView.getSize());
+    chatView.reset(sf::Rect<float>(0, 0, chatViewPos.x, chatViewPos.y));
+    window.setView(chatView);
+
     // Draws the chat
     window.draw(chat);
+
+    window.setView(gameView);
 
     window.display();
 }

@@ -11,6 +11,7 @@
 #include "entitylist.h"
 #include "chat.h"
 #include "menu.h"
+#include "../shared/map.h"
 
 // This class manages the window and input for the game
 
@@ -34,6 +35,14 @@ class Game
         // Variables
         sf::VideoMode vidMode;
         sf::RenderWindow window;
+
+        sf::View gameView;
+
+        sf::View chatView;
+
+
+        Map tileMap;
+
         sf::TcpSocket socket; // TODO: Make a network management class
         Chat chat;
         bool playing;
