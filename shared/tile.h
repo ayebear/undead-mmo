@@ -19,14 +19,15 @@ class Tile: public sf::Drawable
         bool IsWalkable();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-        static void SetTexturesPtr(std::vector<sf::Texture>*);
+        static const int tileWidth = 128;
+        static const int tileHeight = 128;
+        static void LoadTileTextures();
 
     private:
         TileID ID;
         bool walkable;
         sf::Sprite sprite;
-
-        static std::vector<sf::Texture>* textures;
+        static std::vector<sf::Texture> textures;
 };
 
 #endif

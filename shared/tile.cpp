@@ -2,8 +2,9 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "tile.h"
+#include "other.h"
 
-std::vector<sf::Texture>* Tile::textures = nullptr;
+std::vector<sf::Texture> Tile::textures;
 
 Tile::Tile()
 {
@@ -17,9 +18,22 @@ Tile::Tile(TileID tileID, int x, int y)
     SetPos(x, y);
 }
 
-void Tile::SetTexturesPtr(std::vector<sf::Texture>* texturesPtr)
+void Tile::LoadTileTextures()
 {
-    textures = texturesPtr;
+    // 16 = 1024 / 128
+    int tileCount = 1024 / tileWidth;
+    textures.resize(tileCount * tileCount);
+    for (int y = 0; y < tileCount; y++)
+    {
+        for (int x = 0; x < tileCount; x++)
+        {
+            if (!textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
+                sf::IntRect(x * tileWidth, y * tileWidth,
+                (x + 1) * tileWidth, (y + 1) * tileWidth)))
+                    exit(Errors::Graphics);
+            textures[y * tileCount + x].setSmooth(false);
+        }
+    }
 }
 
 void Tile::SetID(TileID tileID)
@@ -31,10 +45,8 @@ void Tile::SetID(TileID tileID)
     else
         walkable = false;
 
-    if (textures == nullptr)
-        exit(555);
-
-    sprite.setTexture((*textures)[ID]);
+    if (ID < textures.size())
+        sprite.setTexture(textures[ID]);
 }
 
 void Tile::SetPos(int x, int y)

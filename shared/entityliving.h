@@ -19,7 +19,7 @@ class EntityLiving: public Entity
         int currentHealth;
         int baseHealth; // max health
         int baseSpeed;
-        static const int defaultSpeed = 200;
+        static const int defaultSpeed = 400;
         float speed;
         bool moving;
 };

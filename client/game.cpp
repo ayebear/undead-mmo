@@ -199,6 +199,17 @@ void Game::Update()
     // Update the game view center position with the player's current position
     gameView.setCenter(myPlayer->GetPos());
 
+    sf::Vector2f viewSize(gameView.getSize());
+    sf::Vector2f viewCenter(gameView.getCenter());
+    if (viewCenter.x - (viewSize.x / 2) < 0)
+    {
+        gameView.setCenter(viewSize.x / 2, viewCenter.y);
+        viewSize = gameView.getSize();
+        viewCenter = gameView.getCenter();
+    }
+    if (viewCenter.y - (viewSize.y / 2) < 0)
+        gameView.setCenter(viewCenter.x, viewSize.y / 2);
+
     theHud.Update();
 }
 

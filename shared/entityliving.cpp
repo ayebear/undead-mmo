@@ -22,6 +22,12 @@ void EntityLiving::Move(float deltaTime)
     sprite.move(amount);
     sprite.setRotation(angle + 90);
     pos = sprite.getPosition();
+    // TODO: Improve this later
+    if (pos.x < 0)
+    {
+        pos.x = 0;
+        Move(-deltaTime);
+    }
 }
 
 void EntityLiving::SetAngle(float deg)
