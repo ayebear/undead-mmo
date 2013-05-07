@@ -5,7 +5,7 @@
 #include "../shared/packet.h"
 #include "../shared/tile.h"
 
-const std::string version = "Project: Brains v0.0.1.5 Dev";
+const std::string version = "Project: Brains v0.0.1.6 Dev";
 
 Game::Game()
 {
@@ -17,12 +17,14 @@ Game::Game()
         exit(Errors::Graphics);
     zombieTex.setSmooth(true);
 
+    tileMap.LoadMapFromFile("data/maps/2.map");
+
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
     // and then that gets sent right back to the player who just logged in, and then
     // is allocated on the client.
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
-    entList.Add(Entity::Player, 1);
+    entList.Add(Entity::Player, 1001);
 
     // Add quite a few local test zombies for now
     for (int x = 2; x < 500; x++)
@@ -33,7 +35,7 @@ Game::Game()
         zombie->SetAngle(rand() % 360);
     }
 
-    myPlayer = entList.Find(1);
+    myPlayer = entList.Find(1001);
     myPlayer->SetTexture(playerTex);
 
     myPlayer->SetPos(sf::Vector2f(300, 400));
@@ -224,13 +226,16 @@ void Game::Display()
 {
     window.clear();
 
-    // Set the window to use the game view
+    // Use the game view to draw this stuff
     window.setView(gameView);
+
+	// Draw the tile map
+    window.draw(tileMap);
 
     // Draws all of the entities
     window.draw(entList);
 
-    // Draw the HUD
+    // Draw the HUD (changes the window's view)
     window.draw(theHud);
 
     window.display();
