@@ -59,6 +59,8 @@ Game::Game()
 
     playing = true;
     paused = false;
+
+    netManager.LaunchThreads();
 }
 
 // TODO: Handle networking code! Receiving and sending with both TCP and UDP!
@@ -73,13 +75,12 @@ void Game::Start() // this will need to manage a second thread for the networkin
         gameView.setCenter(myPlayer->GetPos());
         window.setView(gameView);
 
-        socket.setBlocking(false);
         theHud.chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
 
         sf::Clock clock;
         while (playing && window.isOpen())
         {
-            ReceiveData();
+            //ReceiveData();
             ProcessEvents();
             ProcessInput();
 
@@ -98,29 +99,6 @@ void Game::Start() // this will need to manage a second thread for the networkin
     else if(choice == 2 || choice == 3)
     {
         return;
-    }
-}
-
-// TODO: Move to network class
-void Game::ReceiveData()
-{
-    sf::Packet packet;
-    if (socket.receive(packet) == sf::Socket::Done)
-    {
-        int type;
-        packet >> type;
-        if (type == Packet::ChatMessage)
-        {
-            string message;
-            packet >> message;
-            theHud.chat.PrintMessage(message);
-        }
-        /*
-        This will simply pass the type received into the entity list object which will choose the proper class
-            to use to allocate a new object.
-
-        We can then stream in the rest of the packet data into the newly created entity object.
-        */
     }
 }
 
@@ -145,7 +123,7 @@ void Game::ProcessEvents()
                         break;
                     case sf::Keyboard::Return:
                         if (theHud.chat.GetInput())
-                            theHud.chat.ParseMessage(socket);
+                            netManager.SendChatMessage(theHud.chat.ParseMessage());
                         theHud.chat.ToggleInput();
                         break;
                     default:
@@ -154,6 +132,7 @@ void Game::ProcessEvents()
                 theHud.chat.ProcessInput(event.key.code);
                 break;
             case sf::Event::TextEntered:
+                // TODO: Make a function in the chat class that takes the event.text.unicode
                 if (theHud.chat.GetInput() && event.text.unicode >= 32 && event.text.unicode <= 126)
                     theHud.chat.AddChar(static_cast<char>(event.text.unicode));
                 break;
@@ -165,15 +144,16 @@ void Game::ProcessEvents()
                 break;
             case sf::Event::Resized:
             {
-                //Minimum window size
+                // Minimum window size
                 sf::Vector2f size = static_cast<sf::Vector2f>(window.getSize());
                 // Minimum size
                 if(size.x < 800)
                     size.x = 800;
                 if(size.y < 600)
                     size.y = 600;
-                window.setSize(static_cast<sf::Vector2u>(size));
-                //Reset the view of the window
+                // This causes some issues to occur?
+                //window.setSize(static_cast<sf::Vector2u>(size));
+                // Reset the view of the window
                 gameView.setSize(event.size.width, event.size.height);
                 window.setView(gameView);
                 theHud.chat.SetPosition(0, event.size.height - 182);

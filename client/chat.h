@@ -7,7 +7,6 @@
 #include <string>
 #include <deque>
 #include <SFML/Graphics.hpp>
-#include <SFML/Network.hpp>
 
 using namespace std;
 
@@ -38,12 +37,12 @@ class Chat: public sf::Drawable
         void Home();
         void End();
         void RestartCursorTimer();
-        void ParseMessage(sf::TcpSocket&);
+        const string ParseMessage();
         void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
         void MessageHistoryUp();
         void MessageHistoryDown();
         void SetUsername(const string&);
-        void ConnectToServer(const string&, sf::TcpSocket&);
+        void ConnectToServer(const string&);
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
@@ -53,8 +52,8 @@ class Chat: public sf::Drawable
         void FixCursorPosition();
         void FixAllPositions();
         void ClearMessage();
-        void SendMessage(const string&, sf::TcpSocket&);
-        void ParseCommand(const string&, sf::TcpSocket&);
+        //void SendMessage(const string&);
+        void ParseCommand(const string&);
         void SaveCurrentMessage();
         void AddToHistory(const string&);
         void ShowHelp(const string&);

@@ -9,6 +9,7 @@
 #include <string>
 #include "../shared/entity.h"
 #include "entitylist.h"
+#include "network.h"
 #include "hud.h"
 #include "menu.h"
 #include "../shared/map.h"
@@ -22,7 +23,7 @@ class Game
         void Start();
     private:
         // Functions
-        void ReceiveData();
+        //void ReceiveData();
         void ProcessEvents();
         void ProcessInput();
         void Update();
@@ -33,6 +34,7 @@ class Game
         static const int windowHeight = 600;
 
         // Important objects
+        Network netManager;
         Map tileMap;
         EntityList entList;
         Entity* myPlayer;
@@ -47,8 +49,6 @@ class Game
         float elapsedTime;
         sf::Clock FPSTimer;
         sf::Texture playerTex, zombieTex;
-
-        sf::TcpSocket socket; // TODO: Make a network management class
 };
 
 #endif

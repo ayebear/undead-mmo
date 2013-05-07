@@ -10,6 +10,20 @@ EntityList::EntityList()
 {
 }
 
+// TODO: We must find a way to destroy entities on the client...
+// It would be best if each client could keep track of it to lessen the load on the server.
+void EntityList::UpdateEntity(EID id, sf::Packet& packet)
+{
+    Entity* ent = Find(id);
+    int type;
+    packet >> type;
+    if (ent == nullptr) // If the entity does not exist already
+        ent = Add(type, id); // Add a new default entity of that type to the list with that ID
+    packet >> *ent; // Update the entity with the packet data
+    // TODO: Maybe it would be better to just call one of the entity functions and pass in an
+    // entire reference to the packet...
+}
+
 // This function allocates a new entity based on type AND inserts it into the entity list
 Entity* EntityList::Add(int type, EID id)
 {

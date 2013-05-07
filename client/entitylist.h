@@ -22,6 +22,7 @@ class EntityList: public sf::Drawable
 {
     public:
         EntityList();
+        void UpdateEntity(EID, sf::Packet&);
         Entity* Add(int, EID);
         //void Insert(Entity*);
         Entity* Insert(Entity*, EID);

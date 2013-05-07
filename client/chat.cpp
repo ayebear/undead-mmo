@@ -244,7 +244,7 @@ void Chat::RestartCursorTimer()
 }
 
 // This is called when enter is pressed
-void Chat::ParseMessage(sf::TcpSocket& socket)
+const string Chat::ParseMessage()
 {
     string msgStr = currentMsg.getString();
     if (!msgStr.empty())
@@ -253,18 +253,22 @@ void Chat::ParseMessage(sf::TcpSocket& socket)
         if (msgStr.front() == '/')
         {
             PrintMessage(msgStr, sf::Color::Red);
-            ParseCommand(msgStr, socket);
+            ParseCommand(msgStr);
         }
         else
         {
             string fullStr = username + ": " + msgStr;
-            SendMessage(fullStr, socket);
+            // TODO: Either have the chat class build a packet which Game passes to the Network class
+            // or, pass a reference from Game to Chat of the Network class
+            //SendMessage(fullStr);
             PrintMessage(fullStr, sf::Color::Green);
         }
         ClearMessage();
     }
+    return msgStr;
 }
 
+/*
 void Chat::SendMessage(const string& msg, sf::TcpSocket& socket)
 {
     // Send the actual network packet
@@ -272,10 +276,11 @@ void Chat::SendMessage(const string& msg, sf::TcpSocket& socket)
     packet << Packet::ChatMessage << msg;
     socket.send(packet);
 }
+*/
 
 // We could also have server-side commands!
 // These will need to be executed using a different character or a special command in here...
-void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
+void Chat::ParseCommand(const string& msgStr)
 {
     uint spacePos = msgStr.find(" ");
     string cmdStr = msgStr.substr(1, spacePos - 1);
@@ -286,7 +291,7 @@ void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
     if (cmdStr == "test")
         PrintMessage("Command parser seems to be working!", cmdOutColor);
     else if (cmdStr == "connect")
-        ConnectToServer(content, socket);
+        ConnectToServer(content);
     else if (cmdStr == "echo" || cmdStr == "print")
         PrintMessage(content, cmdOutColor);
     else if (cmdStr == "username" || cmdStr == "set_username")
@@ -299,14 +304,9 @@ void Chat::ParseCommand(const string& msgStr, sf::TcpSocket& socket)
         PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
 }
 
-void Chat::ConnectToServer(const string& host, sf::TcpSocket& socket)
+void Chat::ConnectToServer(const string& host)
 {
     PrintMessage("Attempting a connection to '" + host + "'...", cmdOutColor);
-
-    // In the future this will use the network class instead
-    socket.setBlocking(true);
-    socket.connect(host, 55001);
-    socket.setBlocking(false);
 
     PrintMessage("Successfully connected to '" + host + "'.", cmdOutColor);
 }
