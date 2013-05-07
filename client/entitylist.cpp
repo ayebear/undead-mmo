@@ -21,7 +21,8 @@ void EntityList::UpdateEntity(EID id, sf::Packet& packet)
         ent = Add(type, id); // Add a new default entity of that type to the list with that ID
     packet >> *ent; // Update the entity with the packet data
     // TODO: Maybe it would be better to just call one of the entity functions and pass in an
-    // entire reference to the packet...
+    // entire reference to the packet... Like this:
+    //ent->SetData(packet);
 }
 
 // This function allocates a new entity based on type AND inserts it into the entity list

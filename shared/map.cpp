@@ -53,7 +53,7 @@ void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
     {
         for (uint x = 0; x < mapData[y].size(); x++)
         {
-            tiles[y].push_back(Tile(mapData[y][x], y * tileWidth, x * tileHeight));
+            tiles[y].push_back(Tile(mapData[y][x], x * tileWidth, y * tileHeight));
         }
     }
 
@@ -77,7 +77,7 @@ bool Map::LoadMapFromFile(const string& filename)
         for (int x = 0; x < width; x++)
         {
             in >> tmpID;
-            tiles[y].push_back(Tile(tmpID, y * tileWidth, x * tileHeight));
+            tiles[y].push_back(Tile(tmpID, x * tileWidth, y * tileHeight));
         }
     }
     in.close();
@@ -102,15 +102,15 @@ void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
     sf::FloatRect viewRect(viewCenter.x - viewSize.x / 2, viewCenter.y - viewSize.y / 2, viewSize.x, viewSize.y);
 
     // Convert coordinates of view to logical tile coordinates
-    //int startX = viewRect.left / tileWidth;
-    //int startY = viewRect.top / tileHeight;
-    int startX =  (viewRect.top - ((int)viewRect.top % (int)tileHeight)) / tileHeight;//viewRect.left / tileWidth;
-    int startY =  (viewRect.left - ((int)viewRect.left % (int)tileWidth)) / tileWidth;
+    int startX = viewRect.left / tileWidth;
+    int startY = viewRect.top / tileHeight;
+    //int startX =  (viewRect.top - ((int)viewRect.top % (int)tileHeight)) / tileHeight;//viewRect.left / tileWidth;
+    //int startY =  (viewRect.left - ((int)viewRect.left % (int)tileWidth)) / tileWidth;
 
-    //int endX = (viewRect.left + viewRect.width) / tileWidth + 1;
-    //int endY = (viewRect.top + viewRect.height) / tileHeight + 1;
-    int endX =  (viewRect.top + viewRect.height + (tileHeight - (int)(viewRect.top + viewRect.height) % tileHeight)) / tileHeight;// (viewRect.left + viewRect.width) / tileWidth + 1;
-    int endY =  (viewRect.left + viewRect.width + (tileWidth - (int)(viewRect.left + viewRect.width) % tileWidth)) / tileWidth;//(viewRect.top + viewRect.height) / tileHeight + 1;
+    int endX = (viewRect.left + viewRect.width) / tileWidth + 1;
+    int endY = (viewRect.top + viewRect.height) / tileHeight + 1;
+    //int endX =  (viewRect.top + viewRect.height + (tileHeight - (int)(viewRect.top + viewRect.height) % tileHeight)) / tileHeight;// (viewRect.left + viewRect.width) / tileWidth + 1;
+    //int endY =  (viewRect.left + viewRect.width + (tileWidth - (int)(viewRect.left + viewRect.width) % tileWidth)) / tileWidth;//(viewRect.top + viewRect.height) / tileHeight + 1;
 
     // Check if these values are within bounds of the array
     if (startX < 0)
