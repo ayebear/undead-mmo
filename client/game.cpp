@@ -5,20 +5,10 @@
 #include "../shared/packet.h"
 #include "../shared/tile.h"
 
-const std::string version = "Project: Brains v0.0.1.4 Dev";
+const std::string version = "Project: Brains v0.0.1.5 Dev";
 
 Game::Game()
 {
-    // Load font files
-    if (!font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
-        exit(Errors::Font);
-    if (!fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(Errors::Font);
-    if (!fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
-        exit(Errors::Font);
-    if (!fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
-        exit(Errors::Font);
-
     // Load character sprites
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
         exit(Errors::Graphics);
@@ -35,7 +25,7 @@ Game::Game()
     entList.Add(Entity::Player, 1);
 
     // Add quite a few local test zombies for now
-    for (int x = 2; x < 1000; x++)
+    for (int x = 2; x < 500; x++)
     {
         auto* zombie = entList.Add(Entity::Zombie, x);
         zombie->SetTexture(zombieTex);
@@ -49,23 +39,21 @@ Game::Game()
     myPlayer->SetPos(sf::Vector2f(300, 400));
 
     // Create the window in fullscreen at max resolution
-    //vidMode = sf::VideoMode::getDesktopMode();
-    //window.create(vidMode, version, sf::Style::Fullscreen);
+    vidMode = sf::VideoMode::getDesktopMode();
+    window.create(vidMode, version, sf::Style::Fullscreen);
 
     // Create a normal window for now
-    vidMode = sf::VideoMode(windowWidth, windowHeight);
-    window.create(vidMode, version);
+    //vidMode = sf::VideoMode(windowWidth, windowHeight);
+    //window.create(vidMode, version);
 
     gameView.setSize(vidMode.width, vidMode.height);
     gameView.setCenter(myPlayer->GetPos());
 
+    theHud.UpdateView(gameView);
+
     // Set frame limits and vsync
     //window.setFramerateLimit(10);
     window.setVerticalSyncEnabled(true);
-
-    chat.SetFont(&fontBold);
-    //chat.SetPosition(0, windowHeight - 182); //   Windowed Mode
-    chat.SetPosition(0, vidMode.height - 182);  // Full- screen
 
     playing = true;
     paused = false;
@@ -75,7 +63,7 @@ Game::Game()
 // Also integrate that with the chat class.
 void Game::Start() // this will need to manage a second thread for the networking code
 {
-    Menu menu(window, vidMode, &fontBold);
+    Menu menu(window, vidMode);
     int choice = menu.processChoice(window);
 
     if(choice == 1)
@@ -84,7 +72,7 @@ void Game::Start() // this will need to manage a second thread for the networkin
         window.setView(gameView);
 
         socket.setBlocking(false);
-        chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
+        theHud.chat.PrintMessage("Warning: Currently not connected to a server! Please type '/help connect' for more info.", sf::Color::Yellow);
 
         sf::Clock clock;
         while (playing && window.isOpen())
@@ -111,6 +99,7 @@ void Game::Start() // this will need to manage a second thread for the networkin
     }
 }
 
+// TODO: Move to network class
 void Game::ReceiveData()
 {
     sf::Packet packet;
@@ -122,7 +111,7 @@ void Game::ReceiveData()
         {
             string message;
             packet >> message;
-            chat.PrintMessage(message);
+            theHud.chat.PrintMessage(message);
         }
         /*
         This will simply pass the type received into the entity list object which will choose the proper class
@@ -147,52 +136,24 @@ void Game::ProcessEvents()
                 switch (event.key.code)
                 {
                     case sf::Keyboard::Escape:
-                        chat.SetInput(false);
+                        if (theHud.chat.GetInput())
+                            theHud.chat.SetInput(false);
+                        else
+                            window.close();
                         break;
                     case sf::Keyboard::Return:
-                        if (chat.GetInput())
-                            chat.ParseMessage(socket);
-                        chat.ToggleInput();
+                        if (theHud.chat.GetInput())
+                            theHud.chat.ParseMessage(socket);
+                        theHud.chat.ToggleInput();
                         break;
                     default:
                         break;
                 }
-                if (chat.GetInput())
-                {
-					switch (event.key.code)
-		            {
-		                case sf::Keyboard::BackSpace:
-		                    chat.Backspace();
-		                    break;
-		                case sf::Keyboard::Delete:
-		                	chat.Delete();
-		                	break;
-		                case sf::Keyboard::Up:
-		                    chat.MessageHistoryUp();
-		                    break;
-		                case sf::Keyboard::Down:
-		                    chat.MessageHistoryDown();
-		                    break;
-		                case sf::Keyboard::Left:
-		                	chat.MoveCursorLeft();
-		                	break;
-		                case sf::Keyboard::Right:
-		                	chat.MoveCursorRight();
-		                	break;
-                        case sf::Keyboard::Home:
-                            chat.Home();
-                            break;
-                        case sf::Keyboard::End:
-                            chat.End();
-                            break;
-		                default:
-		                    break;
-		            }
-                }
+                theHud.chat.ProcessInput(event.key.code);
                 break;
             case sf::Event::TextEntered:
-                if (chat.GetInput() && event.text.unicode >= 32 && event.text.unicode <= 126)
-                    chat.AddChar(static_cast<char>(event.text.unicode));
+                if (theHud.chat.GetInput() && event.text.unicode >= 32 && event.text.unicode <= 126)
+                    theHud.chat.AddChar(static_cast<char>(event.text.unicode));
                 break;
             case sf::Event::LostFocus:
                 paused = true;
@@ -213,7 +174,7 @@ void Game::ProcessEvents()
                 //Reset the view of the window
                 gameView.setSize(event.size.width, event.size.height);
                 window.setView(gameView);
-                chat.SetPosition(0, event.size.height - 182);
+                theHud.chat.SetPosition(0, event.size.height - 182);
                 break;
             }
             default:
@@ -224,7 +185,7 @@ void Game::ProcessEvents()
 
 void Game::ProcessInput()
 {
-    if (!paused && !chat.GetInput())
+    if (!paused && !theHud.chat.GetInput())
     {
         // This is horrible code I wrote, we should make it better
         int x = 0;
@@ -244,9 +205,6 @@ void Game::ProcessInput()
             degrees = 90 - (90 * x);
         if (x != 0 || y != 0)
             myPlayer->SetAngle(degrees);
-
-        gameView.setCenter(myPlayer->GetPos());
-        window.setView(gameView);
     }
 }
 
@@ -256,27 +214,24 @@ void Game::Update()
 
     entList.Update(elapsedTime);
 
-    chat.Update();
+    // Update the game view center position with the player's current position
+    gameView.setCenter(myPlayer->GetPos());
+
+    theHud.Update();
 }
 
 void Game::Display()
 {
     window.clear();
 
+    // Set the window to use the game view
+    window.setView(gameView);
+
     // Draws all of the entities
     window.draw(entList);
 
-
-    //To do: Eventually move this to the HUD class
-    //Draw the chat in its own view
-    sf::Vector2u chatViewPos(gameView.getSize());
-    chatView.reset(sf::Rect<float>(0, 0, chatViewPos.x, chatViewPos.y));
-    window.setView(chatView);
-
-    // Draws the chat
-    window.draw(chat);
-
-    window.setView(gameView);
+    // Draw the HUD
+    window.draw(theHud);
 
     window.display();
 }

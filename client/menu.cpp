@@ -4,9 +4,11 @@
 #include <iostream>
 #include "menu.h"
 
-Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode, sf::Font* theFont)
+Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 {
-    font = theFont;
+    // TODO: Make a font class which loads all of the fonts, and pass a reference around to it
+    if (!font.loadFromFile("data/fonts/Ubuntu-B.ttf"))
+        exit(Errors::Font);
 
     if (!bgTexture.loadFromFile("data/images/ui/MenuBackground.png"))
         exit(Errors::Graphics);
@@ -152,7 +154,7 @@ void Menu::addMenuItem(string itemName)
     menuItem->option.setString(itemName);
     menuItem->option.setCharacterSize(fontSize);
     menuItem->option.setColor(unselectedColor);
-    menuItem->option.setFont(*font);
+    menuItem->option.setFont(font);
     menuItem->option.setPosition(topOptionPos.x, topOptionPos.y + i * (fontSize + 75));   //Extra 75 pixels of space
 
     tmpText = menuItem->option.getString();

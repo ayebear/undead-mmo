@@ -71,6 +71,42 @@ void Chat::ToggleInput()
     input = !input;
 }
 
+void Chat::ProcessInput(sf::Keyboard::Key keyCode)
+{
+    if (input)
+    {
+        switch (keyCode)
+        {
+            case sf::Keyboard::BackSpace:
+                Backspace();
+                break;
+            case sf::Keyboard::Delete:
+                Delete();
+                break;
+            case sf::Keyboard::Up:
+                MessageHistoryUp();
+                break;
+            case sf::Keyboard::Down:
+                MessageHistoryDown();
+                break;
+            case sf::Keyboard::Left:
+                MoveCursorLeft();
+                break;
+            case sf::Keyboard::Right:
+                MoveCursorRight();
+                break;
+            case sf::Keyboard::Home:
+                Home();
+                break;
+            case sf::Keyboard::End:
+                End();
+                break;
+            default:
+                break;
+        }
+    }
+}
+
 void Chat::SetPosition(float x, float y)
 {
     mainPos.x = x;

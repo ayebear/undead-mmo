@@ -28,6 +28,7 @@ class Chat: public sf::Drawable
         void SetInput(bool);
         bool GetInput();
         void ToggleInput();
+        void ProcessInput(sf::Keyboard::Key);
         void SetPosition(float, float);
         void AddChar(char);
         void Backspace();

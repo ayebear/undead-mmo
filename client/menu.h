@@ -28,7 +28,7 @@ class Menu
     public:
 
         //Game class will call the menu and pass the same screen.
-        Menu(sf::RenderWindow&, sf::VideoMode, sf::Font*);
+        Menu(sf::RenderWindow&, sf::VideoMode);
         ~Menu();
 
         void Show(sf::RenderWindow&);
@@ -46,7 +46,7 @@ class Menu
         string tmpText;
 
         short fontSize;
-        sf::Font* font;
+        sf::Font font;
         sf::Color unselectedColor;
         sf::Color selectedColor;
 

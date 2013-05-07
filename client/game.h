@@ -9,7 +9,7 @@
 #include <string>
 #include "../shared/entity.h"
 #include "entitylist.h"
-#include "chat.h"
+#include "hud.h"
 #include "menu.h"
 #include "../shared/map.h"
 
@@ -32,28 +32,23 @@ class Game
         static const int windowWidth = 800;
         static const int windowHeight = 600;
 
+        // Important objects
+        Map tileMap;
+        EntityList entList;
+        Entity* myPlayer;
+        Hud theHud; // TODO: Choose a better name?
+
         // Variables
         sf::VideoMode vidMode;
         sf::RenderWindow window;
-
         sf::View gameView;
-
-        sf::View chatView;
-
-
-        Map tileMap;
-
-        sf::TcpSocket socket; // TODO: Make a network management class
-        Chat chat;
         bool playing;
         bool paused;
         float elapsedTime;
         sf::Clock FPSTimer;
-        sf::Font font, fontBold, fontMono, fontMonoBold;
         sf::Texture playerTex, zombieTex;
 
-        EntityList entList;
-        Entity* myPlayer;
+        sf::TcpSocket socket; // TODO: Make a network management class
 };
 
 #endif

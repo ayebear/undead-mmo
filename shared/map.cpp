@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include "map.h"
+#include "other.h"
 
 using namespace std;
 
@@ -36,7 +37,7 @@ void Map::LoadTileTextures()
             if (!textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
                 sf::IntRect(x * tileWidth, y * tileWidth,
                 (x + 1) * tileWidth, (y + 1) * tileWidth)))
-                    exit(20);
+                    exit(Errors::Graphics);
             textures[y * tileCount + x].setSmooth(true);
         }
     }
@@ -45,11 +46,11 @@ void Map::LoadTileTextures()
 void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
 {
     tiles.resize(mapData.size());
-    for (uint i = 0; i < mapData.size(); i++)
+    for (uint y = 0; y < mapData.size(); y++)
     {
-        for (uint j = 0; j < mapData[i].size(); j++)
+        for (uint x = 0; x < mapData[y].size(); x++)
         {
-            tiles[i].push_back(Tile(mapData[i][j], i * tileWidth, j * tileHeight));
+            tiles[y].push_back(Tile(mapData[y][x], y * tileWidth, x * tileHeight));
         }
     }
 
@@ -68,12 +69,12 @@ bool Map::LoadMapFromFile(const string& filename)
     in >> width >> height;
 
     tiles.resize(height);
-    for (int i = 0; i < height; i++)
+    for (int y = 0; y < height; y++)
     {
-        for (int j = 0; j < width; j++)
+        for (int x = 0; x < width; x++)
         {
             in >> tmpID;
-            tiles[i].push_back(Tile(tmpID, i * tileWidth, j * tileHeight));
+            tiles[y].push_back(Tile(tmpID, y * tileWidth, x * tileHeight));
         }
     }
     in.close();

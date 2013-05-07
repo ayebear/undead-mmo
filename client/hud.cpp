@@ -1,30 +1,6 @@
 #include "hud.h"
 #include "../shared/other.h"
 
-void Hud::draw(sf::RenderTarget& window, sf::RenderStates states) const
-{
-     //Draw the chat in its own view
-    window.setView(chatView);
-
-    // Draws the chat
-    window.draw(chat);
-
-    window.setView(gameView);
-}
-
-Chat Hud::getChat()
-{
-    return chat;
-}
-void Hud::fixViews(sf::View mainGameView)
-{
-    gameView.setSize(mainGameView.getSize());
-    gameView.setCenter(mainGameView.getCenter());
-
-    sf::Vector2u chatViewPos(gameView.getSize());
-    chatView.reset(sf::Rect<float>(0, 0, chatViewPos.x, chatViewPos.y));
-}
-
 Hud::Hud()
 {
     // Load font files
@@ -38,4 +14,33 @@ Hud::Hud()
         exit(Errors::Font);
 
     chat.SetFont(&fontBold);
+}
+
+void Hud::UpdateView(sf::View& mainGameView)
+{
+    sf::Vector2u hudViewPos(mainGameView.getSize());
+    hudView.reset(sf::Rect<float>(0, 0, hudViewPos.x, hudViewPos.y));
+
+    chat.SetPosition(0, hudViewPos.y - 182);
+}
+
+Chat& Hud::GetChat()
+{
+    return chat;
+}
+
+void Hud::Update()
+{
+    chat.Update();
+}
+
+void Hud::draw(sf::RenderTarget& window, sf::RenderStates states) const
+{
+    // Draw everything using the HUD view
+    window.setView(hudView);
+
+    // Draw the chat
+    window.draw(chat);
+
+    // Other HUD elements will simply be drawn here
 }
