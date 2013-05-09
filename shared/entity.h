@@ -7,7 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include "other.h"
-#include "Map.h"
+#include "map.h"
 
 /*
 TODO:
