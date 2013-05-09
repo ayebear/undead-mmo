@@ -99,7 +99,7 @@ int Menu::processChoice(sf::RenderWindow& window)
                     break;
 
                 case sf::Keyboard::Down:
-                    if(selection < menuOptions.size())
+                    if(selection < (int)menuOptions.size())
                         selection++;
                     else
                         selection = 1;
@@ -110,7 +110,9 @@ int Menu::processChoice(sf::RenderWindow& window)
                         selection--;
                     else
                         selection = menuOptions.size();
-                        break;
+                    break;
+                default:
+                    break;
                 }
                 break;
             case sf::Event::Resized:
@@ -139,7 +141,7 @@ int Menu::processChoice(sf::RenderWindow& window)
                 break;
             }
 
-            for(int i = 0; i < menuOptions.size(); i++)
+            for(int i = 0; i < (int)menuOptions.size(); i++)
             {
                 if(selection == i + 1)
                     menuOptions[i]->option.setColor(selectedColor);
