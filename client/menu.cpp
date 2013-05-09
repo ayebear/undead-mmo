@@ -29,11 +29,11 @@ Menu::Menu(sf::RenderWindow& screen, sf::VideoMode videoMode)
 
     unselectedColor = sf::Color::White;
     selectedColor = sf::Color::Yellow;
-    selection = 0;
+    selection = 1;
+    selectionMade = false;
 
     //Set up menuOption structs
     addMenuItem("Play");
-    addMenuItem("Options");
     addMenuItem("Quit");
 
 }
@@ -48,7 +48,7 @@ int Menu::processChoice(sf::RenderWindow& window)
 {
 
     sf::Event event;
-    while(selection == 0)
+    while(!selectionMade)
     {
 
         while(window.pollEvent(event))
@@ -69,14 +69,7 @@ int Menu::processChoice(sf::RenderWindow& window)
                 {
                     //First Menu Choice
                     if(menuOptions[i]->rect.contains(event.mouseMove.x, event.mouseMove.y))
-                    {
-                        menuOptions[i]->option.setColor(selectedColor);
-
-                    }
-                    else
-                    {
-                        menuOptions[i]->option.setColor(unselectedColor);
-                    }
+                        selection = i + 1;
                     i++;
                 }
 
@@ -98,6 +91,28 @@ int Menu::processChoice(sf::RenderWindow& window)
 
                 break;
             }
+            case sf::Event::KeyPressed:
+                switch (event.key.code)
+                {
+                case sf::Keyboard::Return:
+                    return selection;
+                    break;
+
+                case sf::Keyboard::Down:
+                    if(selection < menuOptions.size())
+                        selection++;
+                    else
+                        selection = 1;
+                    break;
+
+                case sf::Keyboard::Up:
+                    if(selection > 1)
+                        selection--;
+                    else
+                        selection = menuOptions.size();
+                        break;
+                }
+                break;
             case sf::Event::Resized:
             {
                 //Minimum window size
@@ -122,6 +137,14 @@ int Menu::processChoice(sf::RenderWindow& window)
             }
             default:
                 break;
+            }
+
+            for(int i = 0; i < menuOptions.size(); i++)
+            {
+                if(selection == i + 1)
+                    menuOptions[i]->option.setColor(selectedColor);
+                else
+                    menuOptions[i]->option.setColor(unselectedColor);
             }
         }
         Show(window);

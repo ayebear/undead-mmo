@@ -58,6 +58,7 @@ class Menu
         sf::Sprite bgSprite;
 
         int selection;
+        bool selectionMade;
 };
 
 #endif // MENU_H

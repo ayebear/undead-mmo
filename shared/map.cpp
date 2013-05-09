@@ -25,6 +25,16 @@ Map::Map(const string& filename)
     LoadMapFromFile(filename);
 }
 
+int Map::getMapHeight()
+{
+    return tiles.size() * Tile::tileHeight - Tile::tileHeight;
+}
+
+int Map::getMapWidth()
+{
+    return tiles.front().size() * Tile::tileWidth - Tile::tileWidth;
+}
+
 void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
 {
     tiles.resize(mapData.size());

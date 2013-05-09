@@ -7,6 +7,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
 #include "other.h"
+#include "Map.h"
 
 /*
 TODO:
@@ -49,6 +50,9 @@ class Entity: public sf::Drawable
         void SetPos(const sf::Vector2f&);
         const sf::Vector2f GetPos() const;
 
+        static void setMapPtr(Map&);
+
+
         // All of the different entity types
         enum Type
         {
@@ -67,6 +71,10 @@ class Entity: public sf::Drawable
         int type;
         sf::Vector2f pos;
         sf::Sprite sprite;
+
+
+        static Map* mapPtr;
+
 };
 
 sf::Packet& operator<<(sf::Packet&, const Entity&);

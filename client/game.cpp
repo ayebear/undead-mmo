@@ -4,6 +4,9 @@
 #include "game.h"
 #include "../shared/packet.h"
 #include "../shared/tile.h"
+#include <ctime>
+#include <string>
+#include <sstream>
 
 const std::string version = "Project: Brains v0.0.1.6 Dev";
 
@@ -18,6 +21,7 @@ Game::Game()
     zombieTex.setSmooth(true);
 
     tileMap.LoadMapFromFile("data/maps/2.map");
+    Entity::setMapPtr(tileMap);
 
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
@@ -126,6 +130,20 @@ void Game::ProcessEvents()
                             netManager.SendChatMessage(theHud.chat.ParseMessage());
                         theHud.chat.ToggleInput();
                         break;
+
+                    case sf::Keyboard::Key::P:
+                        {
+                            //Get the current system time.
+                            time_t currTime = time(0);
+                            string fileName = "screenshots/";
+                            stringstream ss;
+                            ss << currTime;
+
+                            //Add the time.png to the end of the file name and save it.
+                            fileName += ss.str() + ".png";
+                            sf::Image scrShot = window.capture();
+                            scrShot.saveToFile(fileName);
+                        }
                     default:
                         break;
                 }
@@ -208,7 +226,25 @@ void Game::Update()
         viewCenter = gameView.getCenter();
     }
     if (viewCenter.y - (viewSize.y / 2) < 0)
+    {
         gameView.setCenter(viewCenter.x, viewSize.y / 2);
+        viewSize = gameView.getSize();
+        viewCenter = gameView.getCenter();
+    }
+
+    if(viewCenter.x + (viewSize.x /2) >= tileMap.getMapWidth())
+    {
+        gameView.setCenter(tileMap.getMapWidth() - viewSize.x / 2, viewCenter.y);
+        viewSize = gameView.getSize();
+        viewCenter = gameView.getCenter();
+
+    }
+    if(viewCenter.y + (viewSize.y / 2) >= tileMap.getMapHeight())
+    {
+        gameView.setCenter(viewCenter.x, tileMap.getMapHeight() - viewSize.y  / 2);
+        viewSize = gameView.getSize();
+        viewCenter = gameView.getCenter();
+    }
 
     theHud.Update();
 }

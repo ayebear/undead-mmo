@@ -3,6 +3,9 @@
 
 #include "entity.h"
 
+
+Map* Entity::mapPtr;
+
 Entity::Entity()
 {
     ID = 0;
@@ -13,6 +16,10 @@ Entity::~Entity()
 {
 }
 
+void Entity::setMapPtr(Map& tileMap)
+{
+    mapPtr = &tileMap;
+}
 const EID Entity::GetID() const
 {
     return ID;
