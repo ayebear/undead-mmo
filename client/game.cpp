@@ -135,7 +135,7 @@ void Game::ProcessEvents()
                         {
                             //Get the current system time.
                             time_t currTime = time(0);
-                            string fileName = "screenshots/";
+                            string fileName = "data/screenshots/";
                             stringstream ss;
                             ss << currTime;
 

@@ -1,16 +1,20 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include <thread>
 #include <SFML/Network.hpp>
+//#include <SFML/System.hpp>
 #include "network.h"
 #include "../shared/packet.h"
 #include "../shared/other.h"
 
 using namespace std;
 
+const unsigned short Network::defaultPort = 55001;
+
 Network::Network()
 {
+    connected = false;
+
     serverAddress = "ayebear.com";
 
     // The sockets should be blocking so they are dealt with as soon as data is received
@@ -24,7 +28,7 @@ bool Network::ConnectToServer(const sf::IpAddress& address)
     serverAddress = address;
     sf::Socket::Status status;
     tcpSock.setBlocking(true);
-    status = tcpSock.connect(serverAddress, 55001);
+    status = tcpSock.connect(serverAddress, defaultPort);
     tcpSock.setBlocking(false);
     return (status == sf::Socket::Done);
 }
@@ -43,59 +47,55 @@ bool Network::Login(const string& username, const string& password)
 
 void Network::LaunchThreads()
 {
-    thread udpThread(&Network::ReceiveUdp, this);
-    udpThread.detach();
-    thread tcpThread(&Network::ReceiveTcp, this);
-    tcpThread.detach();
+    sf::Thread udpThread(&Network::ReceiveUdp, this);
+    udpThread.launch();
+    sf::Thread tcpThread(&Network::ReceiveTcp, this);
+    tcpThread.launch();
 }
 
 void Network::ReceiveUdp()
 {
-    while (true)
+    while (udpSock.getLocalPort())
     {
         sf::Packet packet;
         sf::IpAddress address;
         unsigned short port;
         // Will block on this line until a packet is received...
         if (udpSock.receive(packet, address, port) == sf::Socket::Done)
-            ProcessPacket(packet);
+            StorePacket(packet);
     }
 }
 
 void Network::ReceiveTcp()
 {
     // TODO: When the connection terminates, terminate the loop and disconnect
-    while (true)
+    while (tcpSock.getLocalPort())
     {
         sf::Packet packet;
         // Will block on this line until a packet is received...
         if (tcpSock.receive(packet) == sf::Socket::Done)
-            ProcessPacket(packet);
+            StorePacket(packet);
     }
 }
 
-// This works with both TCP or UDP, so we can change protocols for better robustness/performance
-// This will need access to a lot of the stuff in the Game class...
-// Currently needs access to: Chat, EntityList
-void Network::ProcessPacket(sf::Packet& packet)
+sf::Packet& Network::GetPacket(int type)
 {
-    int type;
-    packet >> type;
-    switch (type)
-    {
-        case Packet::ChatMessage:{
-            string message;
-            packet >> message;
-            //theHud.chat.PrintMessage(message);
-            break;}
-        case Packet::EntityUpdate:{
-            EID entID;
-            packet >> entID;
-            //entList.UpdateEntity(entID, packet)
-            break;}
-        default:
-            break;
-    }
+	sf::Lock lock(packetMutex);
+	return packets[type].front();
+}
+
+void Network::PopPacket(int type)
+{
+	sf::Lock lock(packetMutex);
+	packets[type].pop_front();
+}
+
+void Network::StorePacket(sf::Packet& packet)
+{
+	int type;
+	packet >> type;
+	sf::Lock lock(packetMutex);
+	packets[type].push_back(packet);
 }
 
 void Network::SendChatMessage(const string& msg)

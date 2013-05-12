@@ -9,7 +9,7 @@
 #include <string>
 #include "../shared/entity.h"
 #include "entitylist.h"
-#include "network.h"
+#include "../shared/network.h"
 #include "hud.h"
 #include "menu.h"
 #include "../shared/map.h"

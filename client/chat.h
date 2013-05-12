@@ -7,6 +7,7 @@
 #include <string>
 #include <deque>
 #include <SFML/Graphics.hpp>
+#include "../shared/other.h"
 
 using namespace std;
 

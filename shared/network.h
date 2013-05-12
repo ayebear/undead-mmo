@@ -5,6 +5,9 @@
 #define NETWORK_H
 
 #include <string>
+#include <vector>
+#include <list>
+#include "../shared/packet.h"
 
 // This class manages the sending and receiving of packets over the network for the client.
 /*
@@ -27,17 +30,23 @@ class Network
         bool ConnectToServer(const sf::IpAddress&);
         bool Login(const std::string&, const std::string&);
         void LaunchThreads();
+        sf::Packet& GetPacket(int);
+        void PopPacket(int);
+        void StorePacket(sf::Packet&);
         void ReceiveUdp();
         void ReceiveTcp();
-        void ProcessPacket(sf::Packet&);
         void SendChatMessage(const std::string&);
 
     private:
+        static const unsigned short defaultPort;
         sf::TcpSocket tcpSock;
         sf::UdpSocket udpSock;
 
         // Must be stored so that the UDP socket knows where to send packets to!
         sf::IpAddress serverAddress;
+
+        std::list<sf::Packet> packets[Packet::PacketTypes];
+        sf::Mutex packetMutex;
 
         bool connected;
 };
