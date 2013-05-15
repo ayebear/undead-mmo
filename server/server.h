@@ -10,6 +10,7 @@
 #include <deque>
 #include <SFML/Network.hpp>
 #include "../shared/packet.h"
+#include "servernetwork.h"
 
 class Server
 {
@@ -17,24 +18,14 @@ class Server
         Server();
         void Start();
     private:
-        void GetIPs();
         void PrintWelcomeMsg();
         void MainLoop();
-        void SendToClients(sf::Packet& packet, int exclude = -1);
-        void PrintClients();
-        void AddClient();
-        void RemoveClient(sf::TcpSocket&, uint);
-        void TestSockets();
-        void ProcessPacket(sf::Packet&, uint);
 
-        static const ushort port;
+        static const float desiredFrameTime;
 
-        std::deque<sf::TcpSocket*> clients; // Stores the clients
-        sf::TcpListener listener;
-        sf::SocketSelector selector;
-        sf::IpAddress severAddressLAN;
-        sf::IpAddress serverAddressWAN;
         bool running;
+        float elapsedTime;
+        ServerNetwork netManager;
 };
 
 #endif // SERVER_H

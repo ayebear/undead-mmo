@@ -30,6 +30,7 @@ This would be a lot more thread safe than using another container, as memory isn
 #include <vector>
 #include <list>
 
+// TODO: Add a few extra functions like what was added to the client's entity list
 class MasterEntityList
 {
     public:
@@ -45,4 +46,4 @@ class MasterEntityList
         std::list <EID> freeList; // unused IDs go here
 };
 
-#endif // MASTERENTITYLIST_H
+#endif

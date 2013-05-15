@@ -20,20 +20,25 @@ Tile::Tile(TileID tileID, int x, int y)
 
 void Tile::LoadTileTextures()
 {
-    // 16 = 1024 / 128
-    int tileCount = 1024 / tileWidth;
+    // Load the entire image into memory
+    sf::Image* tilesImage = new sf::Image;
+    tilesImage->loadFromFile("data/images/tiles/tiles.png");
+    // Split up the image into separate textures on your GPU
+    int tileCount = 1024 / tileWidth; // 16 = 1024 / 128
     textures.resize(tileCount * tileCount);
     for (int y = 0; y < tileCount; y++)
     {
         for (int x = 0; x < tileCount; x++)
         {
-            if (!textures[y * tileCount + x].loadFromFile("data/images/tiles/tiles.png",
+            if (!textures[y * tileCount + x].loadFromImage(*tilesImage,
                 sf::IntRect(x * tileWidth, y * tileWidth,
                 (x + 1) * tileWidth, (y + 1) * tileWidth)))
                     exit(Errors::Graphics);
             textures[y * tileCount + x].setSmooth(false);
         }
     }
+    // Delete the image from memory
+    delete tilesImage;
 }
 
 void Tile::SetID(TileID tileID)

@@ -8,6 +8,7 @@
 #include <deque>
 #include <SFML/Graphics.hpp>
 #include "../shared/other.h"
+#include "clientnetwork.h"
 
 using namespace std;
 
@@ -19,31 +20,38 @@ struct TimedMsg
 };
 
 // This class handles the client-side stuff for the chat like graphics and input
-
 class Chat: public sf::Drawable
 {
     public:
         Chat();
+
+        void SetNetManager(ClientNetwork*);
         void SetFont(sf::Font*);
+        void SetPosition(float, float);
+
         void SetInput(bool);
         bool GetInput();
         void ToggleInput();
         void ProcessInput(sf::Keyboard::Key);
-        void SetPosition(float, float);
+
         void AddChar(char);
         void Backspace();
         void Delete();
+        void MessageHistoryUp();
+        void MessageHistoryDown();
         void MoveCursorLeft();
         void MoveCursorRight();
         void Home();
         void End();
         void RestartCursorTimer();
+
         const string ParseMessage();
         void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
-        void MessageHistoryUp();
-        void MessageHistoryDown();
+
         void SetUsername(const string&);
         void ConnectToServer(const string&);
+        void LoginToServer(const string&);
+
         void Update();
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
@@ -68,11 +76,12 @@ class Chat: public sf::Drawable
         static const sf::Color cmdOutColor;
         static const map<string,string> help;
 
+        ClientNetwork* netManager;
         sf::Font* font;
         bool input;
         bool showCursor;
         sf::Vector2f mainPos;
-        deque <TimedMsg> msgList;
+        deque <TimedMsg> msgList; // stores the current messages on the screen
         sf::Text currentMsg;
         deque <string> msgHistory; // stores the history of your own messages
         int msgHistoryPos; // current location in message history deque

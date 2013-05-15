@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 
-const std::string version = "Project: Brains v0.0.1.6 Dev";
+const std::string version = "Project: Brains v0.0.2.0 Dev";
 
 Game::Game()
 {
@@ -23,26 +23,25 @@ Game::Game()
     tileMap.LoadMapFromFile("data/maps/2.map");
     Entity::setMapPtr(tileMap);
 
+    theHud.chat.SetNetManager(&netManager);
+
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
     // and then that gets sent right back to the player who just logged in, and then
     // is allocated on the client.
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
-    entList.Add(Entity::Player, 1001);
+    myPlayer = entList.Add(Entity::Player, 1001);
+    myPlayer->SetTexture(playerTex);
+    myPlayer->SetPos(sf::Vector2f(300, 400));
 
     // Add quite a few local test zombies for now
-    for (int x = 2; x < 500; x++)
+    for (int x = 2; x < 50; x++)
     {
         auto* zombie = entList.Add(Entity::Zombie, x);
         zombie->SetTexture(zombieTex);
         zombie->SetPos(sf::Vector2f(rand() % windowWidth, rand() % windowHeight));
         zombie->SetAngle(rand() % 360);
     }
-
-    myPlayer = entList.Find(1001);
-    myPlayer->SetTexture(playerTex);
-
-    myPlayer->SetPos(sf::Vector2f(300, 400));
 
     // Create the window in fullscreen at max resolution
     vidMode = sf::VideoMode::getDesktopMode();
@@ -67,9 +66,8 @@ Game::Game()
     netManager.LaunchThreads();
 }
 
-// TODO: Handle networking code! Receiving and sending with both TCP and UDP!
-// Also integrate that with the chat class.
-void Game::Start() // this will need to manage a second thread for the networking code
+// TODO: Make a game state manager with different game states
+void Game::Start()
 {
     Menu menu(window, vidMode);
     int choice = menu.processChoice(window);

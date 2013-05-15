@@ -9,7 +9,7 @@
 #include <string>
 #include "../shared/entity.h"
 #include "entitylist.h"
-#include "../shared/network.h"
+#include "clientnetwork.h"
 #include "hud.h"
 #include "menu.h"
 #include "../shared/map.h"
@@ -34,7 +34,7 @@ class Game
         static const int windowHeight = 600;
 
         // Important objects
-        Network netManager;
+        ClientNetwork netManager;
         Map tileMap;
         EntityList entList;
         Entity* myPlayer;

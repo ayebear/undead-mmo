@@ -9,6 +9,7 @@ TODO:
     Maybe animate the PrintMessage command - would need to update the animation in Update()
 */
 
+#include <sstream>
 #include "chat.h"
 #include "../shared/packet.h"
 #include "../shared/other.h"
@@ -21,14 +22,16 @@ const float Chat::maxMsgAge = 60;
 const ushort Chat::maxMsgHistory = 100;
 const sf::Color Chat::cmdOutColor = sf::Color::Cyan;
 const map<string,string> Chat::help = {
-    {"echo","Prints out the text after the command. Usage: /echo text goes here"},
-    {"username","Sets your current username. Usage: /username YourUsername"},
-    {"exit","Exits the game. Usage: /exit"},
-    {"connect","Connects to a server. Usage: /connect hostname"}
+    {"echo", "Prints out the text after the command. Usage: /echo text goes here"},
+    {"username", "Sets your current username. Usage: /username YourUsername"},
+    {"exit", "Exits the game. Usage: /exit"},
+    {"connect", "Connects to a server. Usage: /connect hostname"},
+    {"login", "Connects and logs into a server. Usage: /login hostname username password"}
 };
 
 Chat::Chat()
 {
+    netManager = nullptr;
     font = nullptr;
     input = false;
     showCursor = false;
@@ -47,6 +50,11 @@ Chat::Chat()
     cursor.setFillColor(sf::Color::White);
 
     SetUsername("Anonymous");
+}
+
+void Chat::SetNetManager(ClientNetwork* theNetMan)
+{
+    netManager = theNetMan;
 }
 
 void Chat::SetFont(sf::Font* theFont)
@@ -260,23 +268,15 @@ const string Chat::ParseMessage()
             string fullStr = username + ": " + msgStr;
             // TODO: Either have the chat class build a packet which Game passes to the Network class
             // or, pass a reference from Game to Chat of the Network class
-            //SendMessage(fullStr);
+            if (netManager == nullptr)
+                exit(99);
+            netManager->SendChatMessage(fullStr);
             PrintMessage(fullStr, sf::Color::Green);
         }
         ClearMessage();
     }
     return msgStr;
 }
-
-/*
-void Chat::SendMessage(const string& msg, sf::TcpSocket& socket)
-{
-    // Send the actual network packet
-    sf::Packet packet;
-    packet << Packet::ChatMessage << msg;
-    socket.send(packet);
-}
-*/
 
 // We could also have server-side commands!
 // These will need to be executed using a different character or a special command in here...
@@ -292,9 +292,11 @@ void Chat::ParseCommand(const string& msgStr)
         PrintMessage("Command parser seems to be working!", cmdOutColor);
     else if (cmdStr == "connect")
         ConnectToServer(content);
+    else if (cmdStr == "login")
+        LoginToServer(content);
     else if (cmdStr == "echo" || cmdStr == "print")
         PrintMessage(content, cmdOutColor);
-    else if (cmdStr == "username" || cmdStr == "set_username")
+    else if (cmdStr == "username")
         SetUsername(content);
     else if (cmdStr == "help" || cmdStr == "?")
         ShowHelp(content);
@@ -306,9 +308,50 @@ void Chat::ParseCommand(const string& msgStr)
 
 void Chat::ConnectToServer(const string& host)
 {
-    PrintMessage("Attempting a connection to '" + host + "'...", cmdOutColor);
+    if (host.empty() || host == "status")
+        PrintMessage(netManager->GetStatusString());
+    else
+    {
+        PrintMessage("Attempting a connection to '" + host + "'...", cmdOutColor);
+        if (netManager->ConnectToServer(host))
+            PrintMessage("Successfully connected to '" + host + "'.", cmdOutColor);
+        else
+            PrintMessage("Error: Could not connect to '" + host + "'.", cmdOutColor);
+    }
+}
 
-    PrintMessage("Successfully connected to '" + host + "'.", cmdOutColor);
+void Chat::LoginToServer(const string& paramStr)
+{
+    if (!paramStr.empty())
+    {
+        istringstream params(paramStr);
+        string host, username, password;
+        params >> host >> username >> password;
+        if (!host.empty() && !username.empty())
+        {
+            ConnectToServer(host);
+            PrintMessage("Logging in...");
+            int authStatus = netManager->Login(username, password);
+            switch (authStatus)
+            {
+                case Packet::Auth::Successful:
+                    PrintMessage("Logged in successfully!");
+                    break;
+                case Packet::Auth::InvalidUsername:
+                    PrintMessage("Error: Invalid username.");
+                    break;
+                case Packet::Auth::InvalidPassword:
+                    PrintMessage("Error: Invalid password.");
+                    break;
+                case Packet::Auth::AccountBanned:
+                    PrintMessage("Error: Your account has been banned.");
+                    break;
+                default:
+                    PrintMessage("Error: Unknown login failure.");
+                    break;
+            }
+        }
+    }
 }
 
 void Chat::ShowHelp(const string& content)
