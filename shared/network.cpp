@@ -10,7 +10,9 @@ using namespace std;
 
 const unsigned short Network::defaultPort = 55001;
 
-Network::Network()
+Network::Network() : udpThread(&Network::ReceiveUdp, this),
+                     tcpThread(&Network::ReceiveTcp, this)
+
 {
     udpSock.setBlocking(true);
     udpSock.bind(defaultPort);
@@ -19,9 +21,7 @@ Network::Network()
 // This is flawed logic - the thread objects are destroyed after this function finishes. So fix this by creating the thread objects outside of the class...
 void Network::LaunchThreads()
 {
-    sf::Thread udpThread(&Network::ReceiveUdp, this);
     udpThread.launch();
-    sf::Thread tcpThread(&Network::ReceiveTcp, this);
     tcpThread.launch();
 }
 

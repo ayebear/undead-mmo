@@ -58,6 +58,9 @@ class Network
         static const unsigned short defaultPort;
         sf::UdpSocket udpSock;
 
+        sf::Thread udpThread;
+        sf::Thread tcpThread;
+
         // All received packets will be stored in here. Only valid packets sent from authorized senders will be stored.
         std::list<sf::Packet> packets[Packet::PacketTypes];
         sf::Mutex packetMutexes[Packet::PacketTypes];
