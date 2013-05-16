@@ -1,6 +1,7 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include <iostream>
 #include "tile.h"
 #include "other.h"
 
@@ -20,6 +21,7 @@ Tile::Tile(TileID tileID, int x, int y)
 
 void Tile::LoadTileTextures()
 {
+    std::cout << "Loading tile textures...\n";
     // Load the entire image into memory
     sf::Image* tilesImage = new sf::Image;
     tilesImage->loadFromFile("data/images/tiles/tiles.png");
@@ -39,6 +41,7 @@ void Tile::LoadTileTextures()
     }
     // Delete the image from memory
     delete tilesImage;
+    std::cout << "Done loading tile textures!\n";
 }
 
 void Tile::SetID(TileID tileID)

@@ -306,18 +306,21 @@ void Chat::ParseCommand(const string& msgStr)
         PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
 }
 
-void Chat::ConnectToServer(const string& host)
+bool Chat::ConnectToServer(const string& host)
 {
+    bool connected = false;
     if (host.empty() || host == "status")
         PrintMessage(netManager->GetStatusString());
     else
     {
         PrintMessage("Attempting a connection to '" + host + "'...", cmdOutColor);
-        if (netManager->ConnectToServer(host))
+        connected = netManager->ConnectToServer(host);
+        if (connected)
             PrintMessage("Successfully connected to '" + host + "'.", cmdOutColor);
         else
             PrintMessage("Error: Could not connect to '" + host + "'.", cmdOutColor);
     }
+    return connected;
 }
 
 void Chat::LoginToServer(const string& paramStr)
@@ -329,26 +332,28 @@ void Chat::LoginToServer(const string& paramStr)
         params >> host >> username >> password;
         if (!host.empty() && !username.empty())
         {
-            ConnectToServer(host);
-            PrintMessage("Logging in...");
-            int authStatus = netManager->Login(username, password);
-            switch (authStatus)
+            if (ConnectToServer(host))
             {
-                case Packet::Auth::Successful:
-                    PrintMessage("Logged in successfully!");
-                    break;
-                case Packet::Auth::InvalidUsername:
-                    PrintMessage("Error: Invalid username.");
-                    break;
-                case Packet::Auth::InvalidPassword:
-                    PrintMessage("Error: Invalid password.");
-                    break;
-                case Packet::Auth::AccountBanned:
-                    PrintMessage("Error: Your account has been banned.");
-                    break;
-                default:
-                    PrintMessage("Error: Unknown login failure.");
-                    break;
+                PrintMessage("Logging in...");
+                int authStatus = netManager->Login(username, password);
+                switch (authStatus)
+                {
+                    case Packet::Auth::Successful:
+                        PrintMessage("Logged in successfully!");
+                        break;
+                    case Packet::Auth::InvalidUsername:
+                        PrintMessage("Error: Invalid username.");
+                        break;
+                    case Packet::Auth::InvalidPassword:
+                        PrintMessage("Error: Invalid password.");
+                        break;
+                    case Packet::Auth::AccountBanned:
+                        PrintMessage("Error: Your account has been banned.");
+                        break;
+                    default:
+                        PrintMessage("Error: Unknown login failure.");
+                        break;
+                }
             }
         }
     }

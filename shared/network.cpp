@@ -1,6 +1,7 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include <iostream>
 #include <SFML/Network.hpp>
 #include "network.h"
 #include "../shared/packet.h"
@@ -12,23 +13,50 @@ const unsigned short Network::defaultPort = 55001;
 
 Network::Network() : udpThread(&Network::ReceiveUdp, this),
                      tcpThread(&Network::ReceiveTcp, this)
-
 {
     udpSock.setBlocking(true);
     udpSock.bind(defaultPort);
+    threadsRunning = false;
 }
 
-// This is flawed logic - the thread objects are destroyed after this function finishes. So fix this by creating the thread objects outside of the class...
+Network::~Network()
+{
+    cout << "Network class destructor called.\n";
+    udpSock.setBlocking(false);
+    udpSock.unbind();
+    cout << "UDP Socket was unbound.\n";
+    StopThreads();
+}
+
 void Network::LaunchThreads()
 {
-    udpThread.launch();
-    tcpThread.launch();
+    if (!threadsRunning)
+    {
+        udpThread.launch();
+        tcpThread.launch();
+        threadsRunning = true;
+    }
+}
+
+void Network::StopThreads()
+{
+    if (threadsRunning)
+    {
+        cout << "StopThreads(): Terminating threads now...\n";
+        udpThread.terminate();
+        tcpThread.terminate();
+        threadsRunning = false;
+    }
+    else
+        cout << "StopThreads(): No threads are running.\n";
 }
 
 void Network::ReceiveUdp()
 {
-    while (udpSock.getLocalPort())
+    cout << "ReceiveUdp started.\n";
+    while (threadsRunning && udpSock.getLocalPort())
     {
+        cout << "ReceiveUdp looping...\n";
         sf::Packet packet;
         sf::IpAddress address;
         unsigned short port;
@@ -36,6 +64,7 @@ void Network::ReceiveUdp()
         if (udpSock.receive(packet, address, port) == sf::Socket::Done)
             StorePacket(packet);
     }
+    cout << "ReceiveUdp finished.\n";
 }
 
 bool Network::ArePackets(int type)

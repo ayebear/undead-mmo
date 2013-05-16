@@ -8,7 +8,7 @@
 #include <string>
 #include <sstream>
 
-const std::string version = "Project: Brains v0.0.2.0 Dev";
+const std::string version = "Project: Brains v0.0.2.2 Dev";
 
 Game::Game()
 {
@@ -63,7 +63,7 @@ Game::Game()
     playing = true;
     paused = false;
 
-    netManager.LaunchThreads();
+    //netManager.LaunchThreads();
 }
 
 // TODO: Make a game state manager with different game states

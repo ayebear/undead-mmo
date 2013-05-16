@@ -1,3 +1,4 @@
+#include <iostream>
 #include "clientnetwork.h"
 
 using namespace std;
@@ -9,16 +10,25 @@ ClientNetwork::ClientNetwork()
     tcpSock.setBlocking(true);
 }
 
+ClientNetwork::~ClientNetwork()
+{
+    cout << "ClientNetwork class destructor called.\n";
+    tcpSock.disconnect();
+    cout << "TCP Socket was disconnected.\n";
+}
+
 void ClientNetwork::ReceiveTcp()
 {
-    // TODO: When the connection terminates, terminate the loop and disconnect
-    while (tcpSock.getLocalPort())
+    cout << "ReceiveTcp started.\n";
+    while (threadsRunning && tcpSock.getLocalPort())
     {
+        cout << "ReceiveTcp looping...\n";
         sf::Packet packet;
         // Will block on this line until a packet is received...
         if (tcpSock.receive(packet) == sf::Socket::Done)
             StorePacket(packet);
     }
+    cout << "ReceiveTcp finished.\n";
 }
 
 // This initiates a TCP socket connection to a server
@@ -34,6 +44,8 @@ bool ClientNetwork::ConnectToServer(const sf::IpAddress& address)
     sf::Socket::Status status = tcpSock.connect(serverAddress, defaultPort);
     tcpSock.setBlocking(false);
     connected = (status == sf::Socket::Done);
+    if (connected)
+        LaunchThreads();
     return connected;
 }
 

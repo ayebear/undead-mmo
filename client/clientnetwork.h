@@ -8,6 +8,7 @@ class ClientNetwork: public Network
 {
     public:
         ClientNetwork();
+        ~ClientNetwork();
         void ReceiveTcp();
         bool ConnectToServer(const sf::IpAddress&);
         int Login(const std::string&, const std::string&);

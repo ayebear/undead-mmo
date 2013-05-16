@@ -44,7 +44,9 @@ class Network
 {
     public:
         Network();
+        virtual ~Network();
         void LaunchThreads();
+        void StopThreads();
         bool ArePackets(int); // determines if there are any packets in the lists
         sf::Packet& GetPacket(int);
         void PopPacket(int);
@@ -60,6 +62,7 @@ class Network
 
         sf::Thread udpThread;
         sf::Thread tcpThread;
+        bool threadsRunning;
 
         // All received packets will be stored in here. Only valid packets sent from authorized senders will be stored.
         std::list<sf::Packet> packets[Packet::PacketTypes];

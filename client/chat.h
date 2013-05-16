@@ -49,7 +49,7 @@ class Chat: public sf::Drawable
         void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
 
         void SetUsername(const string&);
-        void ConnectToServer(const string&);
+        bool ConnectToServer(const string&);
         void LoginToServer(const string&);
 
         void Update();
