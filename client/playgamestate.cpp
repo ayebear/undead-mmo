@@ -79,7 +79,7 @@ void PlayGameState::resume()
 
 void PlayGameState::handleEvents(GameEngine* game)
 {
-    cout << "Game State" << endl;
+    //cout << "Game State" << endl;
      sf::Event event;
     if (game->window.pollEvent(event))
     {

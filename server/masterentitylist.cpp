@@ -1,6 +1,7 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include "../shared/entityalloc.h"
 #include "masterentitylist.h"
 
 using namespace std;
@@ -12,7 +13,12 @@ MasterEntityList::MasterEntityList()
 {
 }
 
-void MasterEntityList::Insert(Entity* newEnt)
+Entity* MasterEntityList::Add(int type)
+{
+    return Insert(AllocateEntity(type));
+}
+
+Entity* MasterEntityList::Insert(Entity* newEnt)
 {
     entCount++;
     EID id = 0;
@@ -30,6 +36,7 @@ void MasterEntityList::Insert(Entity* newEnt)
         ents[id] = newEnt;
     }
     newEnt->SetID(id);
+    return newEnt;
 }
 
 Entity* MasterEntityList::Find(EID id)
@@ -86,4 +93,13 @@ bool MasterEntityList::CleanUp()
     }
     else
         return false;
+}
+
+void MasterEntityList::Update(float time)
+{
+    for (auto& ent: ents)
+    {
+        if (ent != nullptr)
+            ent->Update(time);
+    }
 }

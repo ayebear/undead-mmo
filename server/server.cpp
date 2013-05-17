@@ -24,9 +24,9 @@ void Server::Start()
     MainLoop();
 }
 
-void ServerNetwork::PrintWelcomeMsg()
+void Server::PrintWelcomeMsg()
 {
-    cout << "ZombieSurvivalGame Server v0.2.0.0 Dev\n\n";
+    cout << "ZombieSurvivalGame Server v0.2.0.2 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -52,6 +52,43 @@ void Server::MainLoop()
     }
 }
 
+void Server::ProcessPackets()
+{
+    /*
+    // Could do something like this, but then process packet would need to do a switch for each packet
+    for (int type = 0; type < Packet::PacketTypes; types++)
+    {
+        while (netManager.ArePackets(type))
+            ProcessPacket(netManager.GetPacket(type));
+    }
+    */
+    while (netManager.ArePackets(Packet::ChatMessage))
+            ProcessChatMessage(netManager.GetPacket(Packet::ChatMessage));
+
+    while (netManager.ArePackets(Packet::LogIn))
+            ProcessLogIn(netManager.GetPacket(Packet::LogIn));
+}
+
+void Server::Update()
+{
+    // TODO: Iterate through the entity grid instead
+    entList.Update(elapsedTime);
+}
+
+void Server::ProcessChatMessage(sf::Packet& packet)
+{
+    string msg;
+    packet >> msg;
+    cout << "Message: " << msg << endl;
+    netManager.SendToClients(packet); // TODO: Don't send back to the original sender
+}
+
+void Server::ProcessLogIn(sf::Packet& packet)
+{
+    string username, password;
+}
+
+/*
 void Server::ProcessPacket(sf::Packet& packet, uint exclude)
 {
     int type = 1;
@@ -59,10 +96,7 @@ void Server::ProcessPacket(sf::Packet& packet, uint exclude)
     switch (type)
     {
         case Packet::ChatMessage:{
-            string msg;
-            packet >> msg;
-            cout << "Message: " << msg << endl;
-            SendToClients(packet, exclude);
+
             break;}
         case Packet::EntityUpdate:{
             float x, y;
@@ -77,3 +111,4 @@ void Server::ProcessPacket(sf::Packet& packet, uint exclude)
             break;
     }
 }
+*/

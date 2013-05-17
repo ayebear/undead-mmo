@@ -20,6 +20,7 @@ namespace Packet
         // Server specific packets that the client won't need to store
         LogIn,
         LogOut,
+        CreateAccount,
 
         //TotalPacketTypes // For the server - see below
         PacketTypes, // This saves us a lot of issues, and is not a big deal if we store a few empty linked lists...

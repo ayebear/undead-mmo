@@ -5,12 +5,10 @@
 #define SERVER_H
 
 #include <iostream>
-#include <thread>
-#include <vector>
-#include <deque>
 #include <SFML/Network.hpp>
 #include "../shared/packet.h"
 #include "servernetwork.h"
+#include "masterentitylist.h"
 
 class Server
 {
@@ -20,12 +18,18 @@ class Server
     private:
         void PrintWelcomeMsg();
         void MainLoop();
+        void ProcessPackets();
+        void Update();
+
+        void ProcessChatMessage(sf::Packet&);
+        void ProcessLogIn(sf::Packet&);
 
         static const float desiredFrameTime;
 
         bool running;
         float elapsedTime;
         ServerNetwork netManager;
+        MasterEntityList entList;
 };
 
 #endif // SERVER_H

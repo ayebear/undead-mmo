@@ -165,7 +165,7 @@ void MainMenuState::handleEvents(GameEngine* game)
 }
 void MainMenuState::update(GameEngine* game)
 {
-    cout << "Menu State" << endl;
+    //cout << "Menu State" << endl;
     for(int i = 0; i < (int)menuOptions.size(); i++)
     {
         if(selection == i + 1)

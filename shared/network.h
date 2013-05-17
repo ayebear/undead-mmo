@@ -40,6 +40,7 @@ Would need a way to handle different senders for both TCP and UDP
         that the server sent the packet instead of another client.
     This would work with TCP as long as we did getRemoteAddress or whatever.
 */
+
 class Network
 {
     public:

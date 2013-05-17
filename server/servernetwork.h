@@ -1,9 +1,14 @@
 #ifndef SERVERNETWORK_H
 #define SERVERNETWORK_H
 
+#include <deque>
 #include "../shared/network.h"
 
-// TODO: Move most of the server code into here, the code that manages sockets and stuff
+struct PacketExtra
+{
+    sf::Packet packet;
+    int sender;
+};
 
 class ServerNetwork: public Network
 {
@@ -13,7 +18,8 @@ class ServerNetwork: public Network
         const std::string GetStatusString();
         bool ValidAddress(sf::IpAddress);
 
-        void SendToClients(sf::Packet& packet, int exclude = -1);
+        void SendToAll(sf::Packet&, int exclude = -1);
+        void SendToClient(sf::Packet&, int);
         void PrintClients();
         void AddClient();
         void RemoveClient(sf::TcpSocket&, uint);

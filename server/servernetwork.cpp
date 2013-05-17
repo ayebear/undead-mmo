@@ -1,4 +1,7 @@
+#include <iostream>
 #include "servernetwork.h"
+
+using namespace std;
 
 ServerNetwork::ServerNetwork()
 {
@@ -25,7 +28,26 @@ void ServerNetwork::ReceiveTcp()
     }
 }
 
-void ServerNetwork::SendToClients(sf::Packet& packet, int exclude)
+const string ServerNetwork::GetStatusString()
+{
+    string status;
+    for (auto& c: clients)
+        status += c->getRemoteAddress().toString() + '\n';
+    return status;
+}
+
+void ServerNetwork::PrintClients()
+{
+    cout << GetStatusString();
+}
+
+bool ServerNetwork::ValidAddress(sf::IpAddress address)
+{
+    string clientsStr = GetStatusString();
+    return (clientsStr.find(address.toString()) != string::npos);
+}
+
+void ServerNetwork::SendToAll(sf::Packet& packet, int exclude)
 {
     for (int i = 0; i != (int)clients.size(); ++i) // loop through the connected clients
     {
@@ -34,10 +56,9 @@ void ServerNetwork::SendToClients(sf::Packet& packet, int exclude)
     }
 }
 
-void ServerNetwork::PrintClients()
+void ServerNetwork::SendToClient(sf::Packet& packet, int clientID)
 {
-    for (auto& c: clients)
-        cout << c->getRemoteAddress() << endl;
+    clients[clientID]->send(packet);
 }
 
 void ServerNetwork::AddClient()
@@ -75,7 +96,7 @@ void ServerNetwork::TestSockets()
             // The client has sent some data, we can receive it
             sf::Packet packet;
             if (client.receive(packet) == sf::Socket::Done)
-                ProcessPacket(packet, i);
+                StorePacket(packet); // TODO: Store sender also
             else // the client has disconnected, so remove it
             {
                 cout << "Client " << client.getRemoteAddress() << " disconnected, here is the current list:\n";
