@@ -82,7 +82,7 @@ void ClientNetwork::SendChatMessage(const string& msg)
 const string ClientNetwork::GetStatusString()
 {
     string status;
-    if (serverAddress == sf::IpAddress::None)
+    if (!connected)
         status = "Currently not connected to any server.";
     else
     {
