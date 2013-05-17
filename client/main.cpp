@@ -1,13 +1,31 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "game.h"
+#include "gameengine.h"
+#include "mainmenustate.h"
 
 int main()
 {
     // For now lets just go straight to the game
-    Game zombieGame;
-    zombieGame.Start();
-    // In the future we will instead run the menu, which in turn will start the game
-    return 0;
+  GameEngine game;
+
+  // initialize the engine
+
+    game.init(0, 0, true, "Project: Brains v0.0.2.2 Dev");
+
+  // load the intro
+  game.changeState( MainMenuState::instance() );
+
+  // main loop
+  while ( game.running() )
+  {
+    game.handleEvents();
+    game.update();
+    game.draw();
+  }
+
+  // cleanup the engine
+  game.cleanup();
+  return 0;
+
 }
