@@ -15,7 +15,10 @@ MainMenuState::MainMenuState()
 void MainMenuState::init(GameEngine* game)
 {
 
-    sf::Vector2f windowSize = static_cast<sf::Vector2f>(game->window.getSize());
+    sf::Vector2f windowSize;
+    windowSize.x = game->window.getSize().x;
+    windowSize.y = game->window.getSize().y;
+
     std::string bgFile("data/images/ui/MenuBackground.png");
     std::string fontFile("data/fonts/Ubuntu-B.ttf");
     mainMenu.setUpMenu(bgFile,                             //Background file
@@ -49,15 +52,13 @@ void MainMenuState::resume()
 void MainMenuState::handleEvents(GameEngine* game)
 {
      int choice = 0;
-     sf::Event event;
 
     choice = mainMenu.handleEvents(game->window);
 
      if(choice == 1)
         game->changeState(PlayGameState::instance());
-     else if(choice == 2 || choice == -1)
+     else if (choice == 2 || choice == -1)
         game->quit();
-
 
 
 }

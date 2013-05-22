@@ -3,7 +3,7 @@
 
 #include "gameengine.h"
 #include "mainmenustate.h"
-
+#include <iostream>
 int main()
 {
     // For now lets just go straight to the game
@@ -11,10 +11,11 @@ int main()
 
   // initialize the engine
 
-    game.init(0, 0, true, "Project: Brains v0.0.2.2 Dev");
+    game.init(1366, 768, false, "Project: Brains v0.0.2.2 Dev");
+
 
   // load the intro
-  game.changeState( MainMenuState::instance() );
+  game.changeState( MainMenuState::instance());
 
   // main loop
   while ( game.running() )

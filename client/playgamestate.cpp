@@ -50,7 +50,7 @@ void PlayGameState::init(GameEngine* game)
     }
 
 
-    gameView.setSize(static_cast<sf::Vector2f>(game->window.getSize()));
+    gameView.setSize(game->window.getSize().x, game->window.getSize().y);
     gameView.setCenter(myPlayer->GetPos());
 
     theHud.UpdateView(gameView);
@@ -77,7 +77,7 @@ void PlayGameState::resume()
 void PlayGameState::handleEvents(GameEngine* game)
 {
      sf::Event event;
-    if (game->window.pollEvent(event))
+    while (game->window.pollEvent(event))
     {
         switch (event.type)
         {
@@ -130,13 +130,15 @@ void PlayGameState::handleEvents(GameEngine* game)
                 break;
             case sf::Event::Resized:
             {
-                sf::Vector2f windowSize = static_cast<sf::Vector2f>(game->window.getSize());
+                sf::Vector2f windowSize;
+                windowSize.x = game->window.getSize().x;
+                windowSize.y = game->window.getSize().y;
                 // Reset the view of the window
                 gameView.setSize(windowSize);
               //  game->window.setView(gameView);
                 viewDimensions = game->window.getView().getSize();
 
-                theHud.chat.SetPosition(0, viewDimensions.y - 182);
+                theHud.UpdateView(gameView);
                 break;
             }
             default:

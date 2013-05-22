@@ -87,7 +87,7 @@ void Menu::setButtonColors(sf::Color unselectedColor, sf::Color selectedColor)
 int Menu::handleEvents(sf::RenderWindow& window)
 {
         sf::Event event;
-        if(window.pollEvent(event))
+        while(window.pollEvent(event))
         {
             switch(event.type)
             {
@@ -156,7 +156,6 @@ int Menu::handleEvents(sf::RenderWindow& window)
                 break;
             case sf::Event::Resized:
             {
-
                 //Resize the background image
                 bgSprite.setScale(static_cast<float>(event.size.width) / bgImageSize.x, static_cast<float>(event.size.height) / bgImageSize.y);
                 bgSprite.setOrigin(0, 0);
@@ -164,13 +163,13 @@ int Menu::handleEvents(sf::RenderWindow& window)
                 window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
                 //Adjust selection rectangles
                 fixRectangles(float(event.size.width), event.size.height);
-                windowSize = static_cast<sf::Vector2f>(window.getSize());
                 break;
             }
             default:
                 break;
             }
         }
+        return 0;
 }
 
 void Menu::updateMenu()

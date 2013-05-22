@@ -34,9 +34,9 @@ class PlayGameState: public GameState
         {
             return &playState;
         }
-
-    protected:
         PlayGameState();
+
+
     private:
 
         static PlayGameState playState;
