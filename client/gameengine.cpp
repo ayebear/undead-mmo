@@ -26,6 +26,10 @@ void GameEngine::init(int windowWidth, int windowHeight, bool fullscreen, std::s
         window.create(vidMode, title);
     }
 
+    // Set frame limits and vsync
+    //window.setFramerateLimit(10);
+    window.setVerticalSyncEnabled(true);
+
 }
 void GameEngine::cleanup()
 {

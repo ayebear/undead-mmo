@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include "clientnetwork.h"
 
 /*
 *   GameEngine class manages every gamestate. The gamestates themselves decide when to change to
@@ -16,34 +17,37 @@ class GameState;
 class GameEngine
 {
     public:
-      GameEngine();
-      ~GameEngine();
+        GameEngine();
+        ~GameEngine();
+        //Window width, height, fullscreen, and window title
+        void init(int windowWidth = 800, int windowHeight = 600, bool fullscreen = false, std::string title = "Zombie Game");
+        void cleanup();
+        void changeState(GameState*);
+        void pushState(GameState*);
+        void popState();
 
-      //Window width, height, fullscreen, and window title
-      void init(int windowWidth = 800, int windowHeight = 600, bool fullscreen = false, std::string title = "Zombie Game");
-      void cleanup();
+        void handleEvents();
+        void update();
+        void draw();
 
-      void changeState(GameState*);
-      void pushState(GameState*);
-      void popState();
+        bool running();
+        void quit();
 
-      void handleEvents();
-      void update();
-      void draw();
+        sf::VideoMode vidMode;
+        sf::RenderWindow window;
 
-      bool running();
-      void quit();
+        //Client's network manager
+        ClientNetwork netManager;
 
+    protected:
 
-      sf::VideoMode vidMode;
-      sf::RenderWindow window;
 
     private:
-      // the stack of states
-      std::vector<GameState*> states;
+        // the stack of states
+        std::vector<GameState*> states;
 
 
-      bool isRunning;
+        bool isRunning;
 };
 
 #endif // GAMEENGINE_H
