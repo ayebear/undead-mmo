@@ -8,7 +8,6 @@
 #include <string>
 #include "../shared/entity.h"
 #include "entitylist.h"
-#include "clientnetwork.h"
 #include "hud.h"
 #include "mainmenustate.h"
 #include "../shared/map.h"
@@ -48,7 +47,6 @@ class PlayGameState: public GameState
         void ProcessInput();
 
         // Important objects
-        ClientNetwork netManager;
         Map tileMap;
         EntityList entList;
         Entity* myPlayer;
@@ -57,6 +55,7 @@ class PlayGameState: public GameState
         // Variables
         sf::Clock clock;
         sf::View gameView;
+        sf::Vector2f viewDimensions;
         bool playing;
         bool paused;
         float elapsedTime;

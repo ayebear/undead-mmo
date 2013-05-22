@@ -1,27 +1,13 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#ifndef MENU_H
-#define MENU_H
-
-#include <SFML/Graphics.hpp>
 #include "gamestate.h"
-#include <iostream>
-#include <vector>
-using namespace std;
-
+#include "menu.h"
+#ifndef MAINMENUSTATE_H
+#define MAINMENUSTATE_H
 
 // This class creates a menu and processes user input
 // Based on that input, different game states are run
-
-
-struct MenuChoice
-{
-    sf::Text option;
-    sf::Rect<int> rect;
-    sf::Color unselectedColor;
-    sf::Color selectedColor;
-};
 
 class MainMenuState: public GameState
 {
@@ -46,36 +32,16 @@ class MainMenuState: public GameState
         }
 
 
-        void fixRectangles(float width, float height);
-
     protected:
         MainMenuState();
         ~MainMenuState();
+
     private:
 
         static MainMenuState menuState;
 
-        void addMenuItem(string itemName);
+        Menu mainMenu;
 
-        sf::Vector2f topOptionPos;
-
-        vector<MenuChoice*> menuOptions;
-        string tmpText;
-
-        short fontSize;
-        sf::Font font;
-        sf::Color unselectedColor;
-        sf::Color selectedColor;
-
-        sf::RenderWindow window;
-        sf::VideoMode vidMode;
-        sf::View view;
-
-        sf::Texture bgTexture;
-        sf::Sprite bgSprite;
-
-        int selection;
-        bool selectionMade;
 };
 
 #endif // MENU_H

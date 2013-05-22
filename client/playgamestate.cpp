@@ -29,7 +29,7 @@ void PlayGameState::init(GameEngine* game)
     tileMap.LoadMapFromFile("data/maps/2.map");
     Entity::setMapPtr(tileMap);
 
-    theHud.chat.SetNetManager(&netManager);
+    theHud.chat.SetNetManager(&game->netManager);
 
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
@@ -49,14 +49,11 @@ void PlayGameState::init(GameEngine* game)
         zombie->SetAngle(rand() % 360);
     }
 
-    gameView.setSize(game->vidMode.width, game->vidMode.height);
+
+    gameView.setSize(static_cast<sf::Vector2f>(game->window.getSize()));
     gameView.setCenter(myPlayer->GetPos());
 
     theHud.UpdateView(gameView);
-
-    // Set frame limits and vsync
-    //window.setFramerateLimit(10);
-    game->window.setVerticalSyncEnabled(true);
 
     playing = true;
     paused = false;
@@ -79,7 +76,6 @@ void PlayGameState::resume()
 
 void PlayGameState::handleEvents(GameEngine* game)
 {
-    //cout << "Game State" << endl;
      sf::Event event;
     if (game->window.pollEvent(event))
     {
@@ -99,7 +95,7 @@ void PlayGameState::handleEvents(GameEngine* game)
                         break;
                     case sf::Keyboard::Return:
                         if (theHud.chat.GetInput())
-                            netManager.SendChatMessage(theHud.chat.ParseMessage());
+                            game->netManager.SendChatMessage(theHud.chat.ParseMessage());
                         theHud.chat.ToggleInput();
                         break;
 
@@ -134,19 +130,13 @@ void PlayGameState::handleEvents(GameEngine* game)
                 break;
             case sf::Event::Resized:
             {
-                // Minimum window size
-                sf::Vector2f size = static_cast<sf::Vector2f>(game->window.getSize());
-                // Minimum size
-                if(size.x < 800)
-                    size.x = 800;
-                if(size.y < 600)
-                    size.y = 600;
-                // This causes some issues to occur?
-                //window.setSize(static_cast<sf::Vector2u>(size));
+                sf::Vector2f windowSize = static_cast<sf::Vector2f>(game->window.getSize());
                 // Reset the view of the window
-                gameView.setSize(event.size.width, event.size.height);
-                game->window.setView(gameView);
-                theHud.chat.SetPosition(0, event.size.height - 182);
+                gameView.setSize(windowSize);
+              //  game->window.setView(gameView);
+                viewDimensions = game->window.getView().getSize();
+
+                theHud.chat.SetPosition(0, viewDimensions.y - 182);
                 break;
             }
             default:
