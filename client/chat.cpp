@@ -16,7 +16,6 @@ TODO:
 
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
-const float Chat::cursorBlinkRate = 0.3;
 const float Chat::oldMsgAge = 50;
 const float Chat::maxMsgAge = 60;
 const ushort Chat::maxMsgHistory = 100;
@@ -33,21 +32,14 @@ Chat::Chat()
 {
     netManager = nullptr;
     font = nullptr;
+
     input = false;
-    showCursor = false;
     mainPos.x = 0;
     mainPos.y = 0;
     msgHistoryPos = 0;
-    cursorPos = 0;
 
     usernameText.setCharacterSize(textSize);
     usernameText.setColor(sf::Color::White);
-
-    currentMsg.setCharacterSize(textSize);
-    currentMsg.setColor(sf::Color::White);
-
-    cursor.setSize(sf::Vector2f(2, textSize));
-    cursor.setFillColor(sf::Color::White);
 
     SetUsername("Anonymous");
 }
@@ -61,12 +53,13 @@ void Chat::SetFont(sf::Font* theFont)
 {
     font = theFont;
     usernameText.setFont(*font);
-    currentMsg.setFont(*font);
+    currentMsg.SetFont(font);
 }
 
 void Chat::SetInput(bool in)
 {
     input = in;
+    currentMsg.SetInput(input);
 }
 
 bool Chat::GetInput()
@@ -76,7 +69,7 @@ bool Chat::GetInput()
 
 void Chat::ToggleInput()
 {
-    input = !input;
+    SetInput(!input);
 }
 
 void Chat::ProcessInput(sf::Keyboard::Key keyCode)
@@ -85,34 +78,23 @@ void Chat::ProcessInput(sf::Keyboard::Key keyCode)
     {
         switch (keyCode)
         {
-            case sf::Keyboard::BackSpace:
-                Backspace();
-                break;
-            case sf::Keyboard::Delete:
-                Delete();
-                break;
             case sf::Keyboard::Up:
                 MessageHistoryUp();
                 break;
             case sf::Keyboard::Down:
                 MessageHistoryDown();
                 break;
-            case sf::Keyboard::Left:
-                MoveCursorLeft();
-                break;
-            case sf::Keyboard::Right:
-                MoveCursorRight();
-                break;
-            case sf::Keyboard::Home:
-                Home();
-                break;
-            case sf::Keyboard::End:
-                End();
-                break;
             default:
+                currentMsg.ProcessInput(keyCode);
                 break;
         }
     }
+}
+
+void Chat::ProcessTextEntered(sf::Uint32 text)
+{
+    if (input && text >= 32 && text <= 126)
+        currentMsg.AddChar(static_cast<char>(text));
 }
 
 void Chat::SetPosition(float x, float y)
@@ -135,126 +117,19 @@ void Chat::FixMessagePositions()
 void Chat::FixInputPositions()
 {
     usernameText.setPosition(mainPos.x + 4, mainPos.y + maxMessages * textSize);
-    currentMsg.setPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, mainPos.y + maxMessages * textSize);
-}
-
-void Chat::FixCursorPosition()
-{
-    auto charPos = currentMsg.findCharacterPos(cursorPos);
-    charPos.x += 1;
-    charPos.y += 2;
-    cursor.setPosition(charPos);
+    currentMsg.SetPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, mainPos.y + maxMessages * textSize);
 }
 
 void Chat::FixAllPositions()
 {
     FixMessagePositions();
     FixInputPositions();
-    FixCursorPosition();
-}
-
-// This is called while the player is typing
-void Chat::AddChar(char c)
-{
-    RestartCursorTimer();
-    string str = currentMsg.getString();
-    if (str.empty() || cursorPos == -1)
-    {
-	    str += c;
-	    cursorPos = -1;
-	}
-	else
-	{
-		str.insert(str.begin() + cursorPos, c);
-		cursorPos++;
-	}
-    currentMsg.setString(str);
-    FixCursorPosition();
-}
-
-// This is called when backspace is pressed
-void Chat::Backspace()
-{
-    RestartCursorTimer();
-    string str = currentMsg.getString();
-    if (!str.empty() && cursorPos != 0)
-    {
-    	if (cursorPos == -1)
-    		str.pop_back();
-    	else
-    	{
-    		cursorPos--;
-	    	str.erase(str.begin() + cursorPos);
-	    }
-        currentMsg.setString(str);
-        FixCursorPosition();
-    }
-}
-
-void Chat::Delete()
-{
-    RestartCursorTimer();
-    string str = currentMsg.getString();
-    if (!str.empty() && cursorPos != -1 && cursorPos < (int)str.size())
-    {
-	    str.erase(str.begin() + cursorPos);
-        currentMsg.setString(str);
-        FixCursorPosition();
-    }
-}
-
-void Chat::MoveCursorLeft()
-{
-	RestartCursorTimer();
-	if (cursorPos == -1)
-	{
-		cursorPos = currentMsg.getString().getSize() - 1;
-		FixCursorPosition();
-    }
-	else if (cursorPos != 0)
-	{
-		cursorPos--;
-		FixCursorPosition();
-	}
-}
-
-void Chat::MoveCursorRight()
-{
-	RestartCursorTimer();
-	if (cursorPos != -1)
-	{
-		cursorPos++;
-		string str = currentMsg.getString();
-		if (cursorPos >= (int)str.size())
-			cursorPos = -1;
-		FixCursorPosition();
-	}
-}
-
-void Chat::Home()
-{
-    RestartCursorTimer();
-    cursorPos = 0;
-    FixCursorPosition();
-}
-
-void Chat::End()
-{
-    RestartCursorTimer();
-    cursorPos = -1;
-    FixCursorPosition();
-}
-
-void Chat::RestartCursorTimer()
-{
-    cursorTimer.restart();
-	showCursor = true;
 }
 
 // This is called when enter is pressed
 const string Chat::ParseMessage()
 {
-    string msgStr = currentMsg.getString();
+    string msgStr = currentMsg.GetString();
     if (!msgStr.empty())
     {
         AddToHistory(msgStr);
@@ -384,7 +259,7 @@ void Chat::PrintMessage(const string& msgStr, const sf::Color& color)
     {
         sf::Text msgText(msgStr, *font, textSize);
         msgText.setColor(color);
-        msgList.push_back(TimedMsg(msgText));
+        msgList.emplace_back(msgText);
         if (msgList.size() > maxMessages)
             msgList.pop_front();
         FixMessagePositions();
@@ -393,8 +268,7 @@ void Chat::PrintMessage(const string& msgStr, const sf::Color& color)
 
 void Chat::ClearMessage()
 {
-    currentMsg.setString("");
-    FixCursorPosition();
+    currentMsg.Clear();
 }
 
 void Chat::MessageHistoryUp()
@@ -405,9 +279,8 @@ void Chat::MessageHistoryUp()
         msgHistoryPos = 0;
     else
     {
-        currentMsg.setString(msgHistory[msgHistoryPos]);
-        cursorPos = -1;
-        FixCursorPosition();
+        currentMsg.SetString(msgHistory[msgHistoryPos]);
+        currentMsg.ResetCursor();
     }
 }
 
@@ -419,9 +292,8 @@ void Chat::MessageHistoryDown()
         msgHistoryPos = msgHistory.size() - 1;
     else
     {
-        currentMsg.setString(msgHistory[msgHistoryPos]);
-        cursorPos = -1;
-        FixCursorPosition();
+        currentMsg.SetString(msgHistory[msgHistoryPos]);
+        currentMsg.ResetCursor();
     }
 }
 
@@ -444,7 +316,7 @@ void Chat::AddToHistory(const string& msgStr)
 
 void Chat::SaveCurrentMessage()
 {
-    string msgStr = currentMsg.getString();
+    string msgStr = currentMsg.GetString();
     if (msgHistoryPos >= (int)msgHistory.size()) // Check if you are typing a new message which is not saved yet
         msgHistory.push_back(msgStr); // Append it to the list
     else // You are editing an already added message
@@ -472,11 +344,7 @@ void Chat::Update()
         else if (msgAge >= oldMsgAge)
             msg.text.setColor(sf::Color(255, 255, 255, 128));
     }
-    if (input && cursorTimer.getElapsedTime().asSeconds() >= cursorBlinkRate)
-    {
-        cursorTimer.restart();
-        showCursor = !showCursor;
-    }
+    currentMsg.UpdateCursor();
 }
 
 void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
@@ -485,8 +353,6 @@ void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
         window.draw(msg.text);
     window.draw(usernameText);
     window.draw(currentMsg);
-    if (input && showCursor)
-        window.draw(cursor);
 }
 
 

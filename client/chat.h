@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include "../shared/other.h"
 #include "clientnetwork.h"
+#include "inputbox.h"
 
 using namespace std;
 
@@ -33,17 +34,10 @@ class Chat: public sf::Drawable
         bool GetInput();
         void ToggleInput();
         void ProcessInput(sf::Keyboard::Key);
+        void ProcessTextEntered(sf::Uint32);
 
-        void AddChar(char);
-        void Backspace();
-        void Delete();
         void MessageHistoryUp();
         void MessageHistoryDown();
-        void MoveCursorLeft();
-        void MoveCursorRight();
-        void Home();
-        void End();
-        void RestartCursorTimer();
 
         const string ParseMessage();
         void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
@@ -53,12 +47,11 @@ class Chat: public sf::Drawable
         void LoginToServer(const string&);
 
         void Update();
-        virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
+        void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
         void FixMessagePositions();
         void FixInputPositions();
-        void FixCursorPosition();
         void FixAllPositions();
         void ClearMessage();
         //void SendMessage(const string&);
@@ -67,29 +60,32 @@ class Chat: public sf::Drawable
         void AddToHistory(const string&);
         void ShowHelp(const string&);
 
+        // Constants
         static const ushort maxMessages;
         static const short textSize;
-        static const float cursorBlinkRate;
         static const float oldMsgAge;
         static const float maxMsgAge;
         static const ushort maxMsgHistory;
         static const sf::Color cmdOutColor;
         static const map<string,string> help;
 
+        // Dependencies
         ClientNetwork* netManager;
         sf::Font* font;
-        bool input;
-        bool showCursor;
-        sf::Vector2f mainPos;
+
+        // Visible objects
         deque <TimedMsg> msgList; // stores the current messages on the screen
-        sf::Text currentMsg;
+        InputBox currentMsg;
+
+        // Message history
         deque <string> msgHistory; // stores the history of your own messages
         int msgHistoryPos; // current location in message history deque
-        sf::RectangleShape cursor;
-        sf::Clock cursorTimer;
+
+        // Other variables
+        bool input;
+        sf::Vector2f mainPos;
         string username;
         sf::Text usernameText;
-        int cursorPos;
 };
 
 #endif

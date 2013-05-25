@@ -122,9 +122,7 @@ void PlayGameState::handleEvents(GameEngine* game)
                 theHud.chat.ProcessInput(event.key.code);
                 break;
             case sf::Event::TextEntered:
-                // TODO: Make a function in the chat class that takes the event.text.unicode
-                if (theHud.chat.GetInput() && event.text.unicode >= 32 && event.text.unicode <= 126)
-                    theHud.chat.AddChar(static_cast<char>(event.text.unicode));
+                theHud.chat.ProcessTextEntered(event.text.unicode);
                 break;
             case sf::Event::LostFocus:
                 paused = true;
