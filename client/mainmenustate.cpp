@@ -53,12 +53,51 @@ void MainMenuState::handleEvents(GameEngine* game)
 {
      int choice = 0;
 
-    choice = mainMenu.handleEvents(game->window);
+        sf::Event event;
+        while(game->window.pollEvent(event))
+        {
+            switch(event.type)
+            {
+            case sf::Event::Closed:
+                game->quit();
+                break;
 
-     if(choice == 1)
-        game->changeState(PlayGameState::instance());
-     else if (choice == 2 || choice == -1)
-        game->quit();
+            case sf::Event::MouseMoved:
+            {
+                mainMenu.handleMouseMovement(event);
+                break;
+            }
+
+            case sf::Event::MouseButtonReleased:
+            {
+                choice = mainMenu.handleMouseReleased(event, game->window);
+                if(choice == 1)
+                    game->changeState(PlayGameState::instance());
+                else if(choice == 2)
+                    game->quit();
+                break;
+            }
+
+            //Allow user to make selections with the keyboard. Enter makes a selection
+            case sf::Event::KeyPressed:
+            {
+                choice = mainMenu.handleKeyPressed(event, game->window);
+                if(choice == 1)
+                    game->changeState(PlayGameState::instance());
+                else if(choice == 2)
+                    game->quit();
+                break;
+            }
+
+            case sf::Event::Resized:
+            {
+                mainMenu.handleResize(event, game->window);
+                break;
+            }
+            default:
+                break;
+            }
+        }
 
 
 }

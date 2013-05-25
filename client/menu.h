@@ -34,9 +34,6 @@ class Menu: public sf::Drawable
         //Background file, font file, font size, topButtonPos, the window, and the desired view
         void setUpMenu(std::string&, std::string&, short, sf::Vector2f, sf::RenderWindow*);
 
-        //Returns 1 if first button is pressed, 2 if second button is pressed, etc.
-        //Returns -1 if window is closed.
-        int handleEvents(sf::RenderWindow&);
         void updateMenu();
         void clearButtons();
 
@@ -48,6 +45,18 @@ class Menu: public sf::Drawable
         void setButtonColors(sf::Color, sf::Color);
 
         void addMenuButton(std::string);
+
+        //Returns 1 if first button is pressed, 2 if second button is pressed, etc.
+        //Returns -1 if window is closed.
+        int handleEvents(sf::RenderWindow&);
+
+        void handleMouseMovement(sf::Event&);
+        int handleMouseReleased(sf::Event&, sf::RenderWindow&);
+        int handleKeyPressed(sf::Event&, sf::RenderWindow&);
+        void handleResize(sf::Event&, sf::RenderWindow&);
+
+
+        sf::Font getFont();
 
     private:
 
@@ -69,6 +78,7 @@ class Menu: public sf::Drawable
 
         //Used to keep track of the size of the window before resizing
         sf::Vector2f windowSize;
+        sf::View menuView;
 
         //Used to reorientate the buttons on resize
         float buttonWidthFactor;

@@ -101,16 +101,20 @@ void PlayGameState::handleEvents(GameEngine* game)
 
                     case sf::Keyboard::Key::P:
                         {
-                            //Get the current system time.
-                            time_t currTime = time(0);
-                            string fileName = "data/screenshots/";
-                            stringstream ss;
-                            ss << currTime;
+                            //If player is not typing
+                            if(!theHud.chat.GetInput())
+                            {
+                                //Get the current system time.
+                                time_t currTime = time(0);
+                                string fileName = "data/screenshots/";
+                                stringstream ss;
+                                ss << currTime;
 
-                            //Add the time.png to the end of the file name and save it.
-                            fileName += ss.str() + ".png";
-                            sf::Image scrShot = game->window.capture();
-                            scrShot.saveToFile(fileName);
+                                //Add the time.png to the end of the file name and save it.
+                                fileName += ss.str() + ".png";
+                                sf::Image scrShot = game->window.capture();
+                                scrShot.saveToFile(fileName);
+                            }
                         }
                     default:
                         break;

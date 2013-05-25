@@ -1,11 +1,12 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "gamestate.h"
-#include "menu.h"
+
 #ifndef MAINMENUSTATE_H
 #define MAINMENUSTATE_H
 
+#include "gamestate.h"
+#include "menu.h"
 // This class creates a menu and processes user input
 // Based on that input, different game states are run
 

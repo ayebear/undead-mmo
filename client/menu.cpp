@@ -1,5 +1,6 @@
 #include "menu.h"
 #include "../shared/other.h"
+#include <sstream>
 
 Menu::Menu()
 {
@@ -15,8 +16,9 @@ Menu::~Menu()
 void Menu::setUpMenu(std::string& backgroundFile, std::string& fontFile, short fontSize, sf::Vector2f topButtonPosition, sf::RenderWindow* renderingWindow)
 {
 
-    windowSize = static_cast<sf::Vector2f>(renderingWindow->getSize());
-    renderingWindow->setView(sf::View(sf::FloatRect(0, 0, windowSize.x, windowSize.y)));
+    windowSize.x = renderingWindow->getSize().x;
+    windowSize.y = renderingWindow->getSize().y;
+    menuView.reset(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 
     buttonWidthFactor = windowSize.x / topButtonPosition.x;
     buttonHeightFactor = windowSize.y / topButtonPosition.y;
@@ -86,92 +88,90 @@ void Menu::setButtonColors(sf::Color unselectedColor, sf::Color selectedColor)
 
 int Menu::handleEvents(sf::RenderWindow& window)
 {
-        sf::Event event;
-        while(window.pollEvent(event))
-        {
-            switch(event.type)
-            {
-                //Not working for some reason
-            case sf::Event::Closed:
-               // window.Close();
-                return -1;
-                break;
 
-            case sf::Event::MouseMoved:
-            {
-                uint i = 0;
-                while(menuOptions.size() > i)
-                {
-                    //First Menu Choice
-                    if(menuOptions[i]->rect.contains(event.mouseMove.x, event.mouseMove.y))
-                        selection = i + 1;
-                    i++;
-                }
-
-                break;
-            }
-
-            // If left mouse button is clicked and released. Determine if it was clicked while
-            // the mouse was hovering over a button.
-            case sf::Event::MouseButtonReleased:
-            {
-                uint i = 0;
-                while(i < menuOptions.size())
-                {
-                    if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(window)) && event.mouseButton.button == sf::Mouse::Left)
-                    {
-                        selection = i + 1;
-                        return selection;
-                    }
-                    i++;
-                }
-
-                break;
-            }
-
-            //Allow user to make selections with the keyboard. Enter makes a selection
-            case sf::Event::KeyPressed:
-                switch (event.key.code)
-                {
-                case sf::Keyboard::Return:
-                        return selection;
-                    break;
-
-                case sf::Keyboard::Down:
-                    if(selection < (int)menuOptions.size())
-                        selection++;
-                    else
-                        selection = 1;
-                    break;
-
-                case sf::Keyboard::Up:
-                    if(selection > 1)
-                        selection--;
-                    else
-                        selection = menuOptions.size();
-                    break;
-                default:
-                    break;
-                }
-                break;
-            case sf::Event::Resized:
-            {
-                //Resize the background image
-                bgSprite.setScale(static_cast<float>(event.size.width) / bgImageSize.x, static_cast<float>(event.size.height) / bgImageSize.y);
-                bgSprite.setOrigin(0, 0);
-
-                window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
-                //Adjust selection rectangles
-                fixRectangles(float(event.size.width), event.size.height);
-                break;
-            }
-            default:
-                break;
-            }
-        }
         return 0;
 }
+void Menu::handleMouseMovement(sf::Event& event)
+{
+    uint i = 0;
+    while(menuOptions.size() > i)
+    {
+        //First Menu Choice
+        if(menuOptions[i]->rect.contains(event.mouseMove.x, event.mouseMove.y))
+            selection = i + 1;
+        i++;
+    }
+}
+int Menu::handleMouseReleased(sf::Event& event, sf::RenderWindow& window)
+{
+    uint i = 0;
+    while(i < menuOptions.size())
+    {
+        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(window)) && event.mouseButton.button == sf::Mouse::Left)
+        {
+            selection = i + 1;
+            return selection;
+        }
+        i++;
+    }
+    return 0;
 
+}
+int Menu::handleKeyPressed(sf::Event& event, sf::RenderWindow& window)
+{
+    switch (event.key.code)
+    {
+    case sf::Keyboard::Return:
+            return selection;
+        break;
+
+    case sf::Keyboard::Down:
+        if(selection < (int)menuOptions.size())
+            selection++;
+        else
+            selection = 1;
+        break;
+
+    case sf::Keyboard::Up:
+        if(selection > 1)
+            selection--;
+        else
+            selection = menuOptions.size();
+        break;
+
+    case sf::Keyboard::Key::P:
+    {
+        //Get the current system time.
+        time_t currTime = time(0);
+        std::string fileName = "data/screenshots/";
+        std::stringstream ss;
+        ss << currTime;
+
+        //Add the time.png to the end of the file name and save it.
+        fileName += ss.str() + ".png";
+        sf::Image scrShot = window.capture();
+        scrShot.saveToFile(fileName);
+        break;
+    }
+    }
+    return 0;
+}
+void Menu::handleResize(sf::Event& event, sf::RenderWindow& window)
+{
+    sf::Vector2f windowSize;
+    windowSize.x = window.getSize().x;
+    windowSize.y = window.getSize().y;
+    menuView.setSize(windowSize);
+    //Resize the background image
+    bgSprite.setScale(windowSize.x / bgImageSize.x, windowSize.y / bgImageSize.y);
+    bgSprite.setOrigin(0, 0);
+
+
+    //Adjust selection rectangles
+    fixRectangles(float(event.size.width), event.size.height);
+
+
+}
 void Menu::updateMenu()
 {
     for(int i = 0; i < (int)menuOptions.size(); i++)
@@ -238,8 +238,13 @@ void Menu::addMenuButton(std::string itemName)
     menuOptions.push_back(menuItem);
 }
 
+sf::Font Menu::getFont()
+{
+    return buttonFont;
+}
 void Menu::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
+    window.setView(menuView);
     // Draw the background
     window.draw(bgSprite);
 
