@@ -53,7 +53,7 @@ void ScrollBar::scrollUp(sf::View& destRect, sf::Vector2f topPos, unsigned int d
     //Only scroll up if the slider is not at the top of the scroll bar
     if(destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
     {
-        int loops = 0;
+        unsigned int loops = 0;
         while(loops < distance && destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
         {
             loops++;
@@ -68,7 +68,7 @@ void ScrollBar::scrollDown(sf::View& destRect, sf::Vector2f bottomPos, unsigned 
     //Only scroll down if the bottom of the slider is not at the bottom of the scroll bar
     if(destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y + 3)
     {
-       int loops = 0;
+       unsigned int loops = 0;
        while(loops <= distance && destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y + 3)
        {
            loops++;

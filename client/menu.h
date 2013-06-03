@@ -1,9 +1,12 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #ifndef MENU_H
 #define MENU_H
 
-#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <SFML/Graphics.hpp>
 
 /*
     Menu class that can be used as a component for any type of menu screen.

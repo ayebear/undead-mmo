@@ -1,38 +1,34 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #ifndef LOGINSTATE_H
 #define LOGINSTATE_H
 
-#include "gamestate.h"
 #include "menu.h"
 #include "textitemlist.h"
+#include "state.h"
 
-
-class LoginState : public GameState
+/*
+This is for the login screen, which shows a list of servers that you can pick from.
+After logging into a server, this will push a PlayGameState.
+*/
+class LoginState: public State
 {
     public:
-        LoginState();
+        LoginState(GameObjects& gameObjects);
         ~LoginState();
 
-        void init(GameEngine*);
-        void cleanup();
+        const StateAction& start(const StateArgs&);
 
-        void pause();
-        void resume();
-
-        void handleEvents(GameEngine*);
-        void update(GameEngine*);
-        void draw(GameEngine*);
-
-        //Return an instance of this state
-        static LoginState* instance()
-        {
-            return &loginState;
-        }
+        void handleEvents();
+        void update();
+        void draw();
 
     private:
-        static LoginState loginState;
+        void processChoice(int);
 
         Menu loginMenu;
         TextItemList textItemList;
 };
 
-#endif // LOGINSTATE_H
+#endif

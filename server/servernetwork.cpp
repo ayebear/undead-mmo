@@ -3,6 +3,14 @@
 
 using namespace std;
 
+Client::Client(sf::TcpSocket* tcpSockPtr)
+{
+    loggedIn = false;
+    tcpSock = tcpSockPtr;
+    ip = tcpSock->getRemoteAddress();
+    port = tcpSock->getRemotePort();
+}
+
 ServerNetwork::ServerNetwork()
 {
     // Have the listener listen on the port

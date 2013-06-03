@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include <iostream>
 #include "clientnetwork.h"
 
@@ -29,6 +32,33 @@ void ClientNetwork::ReceiveTcp()
             StorePacket(packet);
     }
     cout << "ReceiveTcp finished.\n";
+}
+
+bool ClientNetwork::ArePackets(int type)
+{
+    return !packets[type].empty();
+}
+
+sf::Packet& ClientNetwork::GetPacket(int type)
+{
+	sf::Lock lock(packetMutexes[type]);
+	return packets[type].front();
+}
+
+void ClientNetwork::PopPacket(int type)
+{
+	sf::Lock lock(packetMutexes[type]);
+	packets[type].pop_front();
+}
+
+void ClientNetwork::StorePacket(sf::Packet& packet)
+{
+	int type = -1;
+	if (packet >> type && IsValidType(type))
+	{
+        sf::Lock lock(packetMutexes[type]);
+        packets[type].push_back(packet);
+    }
 }
 
 // This initiates a TCP socket connection to a server
@@ -100,4 +130,9 @@ bool ClientNetwork::ValidAddress(sf::IpAddress address)
 bool ClientNetwork::IsConnected()
 {
     return connected;
+}
+
+bool ClientNetwork::IsValidType(int type)
+{
+    return (type >= 0 && type < Packet::PacketTypes);
 }

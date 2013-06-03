@@ -4,47 +4,35 @@
 #ifndef GAME_H
 #define GAME_H
 
-#include "gamestate.h"
 #include <string>
+#include "state.h"
 #include "../shared/entity.h"
 #include "entitylist.h"
 #include "hud.h"
 #include "mainmenustate.h"
 #include "../shared/map.h"
 
-// This class manages the window and input for the game
-
-class PlayGameState: public GameState
+/*
+This class manages the window and input for the game
+*/
+class PlayGameState: public State
 {
     public:
+        PlayGameState(GameObjects& gameObjects);
+        ~PlayGameState();
 
+        const StateAction& start(const StateArgs&);
 
-        void init(GameEngine*);
-        void cleanup();
-
-        void pause();
-        void resume();
-
-        void handleEvents(GameEngine*);
-        void update(GameEngine*);
-        void draw(GameEngine*);
-
-        //Return an instance of this state
-        static PlayGameState* instance()
-        {
-            return &playState;
-        }
-        PlayGameState();
-
+        void handleEvents();
+        void update();
+        void draw();
 
     private:
-
-        static PlayGameState playState;
-
-
         // Functions
         //void ReceiveData();
-        void ProcessInput();
+        void handleInput();
+        void takeScreenshot();
+        void handleWindowResized();
 
         // Important objects
         Map tileMap;

@@ -15,6 +15,7 @@ class Tile: public sf::Drawable
         Tile();
         Tile(TileID, int, int);
         void SetID(TileID);
+        const TileID GetID() const;
         void SetPos(int, int);
         bool IsWalkable();
         void draw(sf::RenderTarget&, sf::RenderStates) const;

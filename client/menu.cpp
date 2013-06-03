@@ -153,6 +153,9 @@ int Menu::handleKeyPressed(sf::Event& event, sf::RenderWindow& window)
         scrShot.saveToFile(fileName);
         break;
     }
+
+    default:
+        break;
     }
     return 0;
 }

@@ -21,6 +21,12 @@ Tile::Tile(TileID tileID, int x, int y)
 
 void Tile::LoadTileTextures()
 {
+    if (!textures.empty())
+    {
+        std::cout << "Tile textures already loaded.\n";
+        return;
+    }
+
     std::cout << "Loading tile textures...\n";
     // Load the entire image into memory
     sf::Image* tilesImage = new sf::Image;
@@ -55,6 +61,13 @@ void Tile::SetID(TileID tileID)
 
     if (ID < textures.size())
         sprite.setTexture(textures[ID]);
+    //else
+        //std::cout << "Fatal Error: Failed to set texture. textures.size() = " << textures.size() << "\n";
+}
+
+const TileID Tile::GetID() const
+{
+    return ID;
 }
 
 void Tile::SetPos(int x, int y)

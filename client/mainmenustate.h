@@ -1,48 +1,32 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-
 #ifndef MAINMENUSTATE_H
 #define MAINMENUSTATE_H
 
-#include "gamestate.h"
+#include "state.h"
 #include "menu.h"
-// This class creates a menu and processes user input
-// Based on that input, different game states are run
 
-class MainMenuState: public GameState
+/*
+This class creates a menu and processes user input
+Based on that input, a different action is returned from this state to the state manager
+*/
+class MainMenuState: public State
 {
     public:
-
-        //Game class will call the menu and pass the same screen.
-
-        void init(GameEngine*);
-        void cleanup();
-
-        void pause();
-        void resume();
-
-        void handleEvents(GameEngine*);
-        void update(GameEngine*);
-        void draw(GameEngine*);
-
-        //Return an instance of this state
-        static MainMenuState* instance()
-        {
-            return &menuState;
-        }
-
-
-    protected:
-        MainMenuState();
+        MainMenuState(GameObjects& gameObjects);
         ~MainMenuState();
 
-    private:
+        const StateAction& start(const StateArgs&);
 
-        static MainMenuState menuState;
+        void handleEvents();
+        void update();
+        void draw();
+
+    private:
+        void processChoice(int);
 
         Menu mainMenu;
-
 };
 
-#endif // MENU_H
+#endif

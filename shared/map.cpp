@@ -1,6 +1,7 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include <iostream>
 #include <fstream>
 #include "map.h"
 #include "other.h"
@@ -42,7 +43,7 @@ void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
     {
         for (uint x = 0; x < mapData[y].size(); x++)
         {
-            tiles[y].push_back(Tile(mapData[y][x], x * Tile::tileWidth, y * Tile::tileHeight));
+            tiles[y].emplace_back(mapData[y][x], x * Tile::tileWidth, y * Tile::tileHeight);
         }
     }
 
@@ -66,7 +67,7 @@ bool Map::LoadMapFromFile(const string& filename)
         for (int x = 0; x < width; x++)
         {
             in >> tmpID;
-            tiles[y].push_back(Tile(tmpID, x * Tile::tileWidth, y * Tile::tileHeight));
+            tiles[y].emplace_back(tmpID, x * Tile::tileWidth, y * Tile::tileHeight);
         }
     }
     in.close();

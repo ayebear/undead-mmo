@@ -1,296 +1,112 @@
-#include "loginstate.h"
-#include "mainmenustate.h"
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include <iostream>
-LoginState LoginState::loginState;
+#include <sstream>
+#include "loginstate.h"
 
-LoginState::LoginState()
-{
-    //ctor
-}
-
-LoginState::~LoginState()
-{
-    //dtor
-}
-
-void LoginState::init(GameEngine* game)
+LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 {
     sf::Vector2f windowSize;
-    windowSize.x = game->window.getSize().x;
-    windowSize.y = game->window.getSize().y;
+    windowSize.x = objects.window.getSize().x;
+    windowSize.y = objects.window.getSize().y;
 
     std::string bgFile("data/images/ui/MenuBackground.png");
     std::string fontFile("data/fonts/Ubuntu-B.ttf");
     loginMenu.setUpMenu(bgFile,                                             //Background file
                        fontFile,                                            //Font file
                        32,                                                  //Font size
-                       sf::Vector2f(windowSize.x / 5, windowSize.y / 2),  //Button position
-                       &game->window                                        //Rendering window
+                       sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
+                       &objects.window                                      //Rendering window
                        );
 
 
-    textItemList.setupList(game->window, sf::FloatRect(windowSize.x / 1.5, windowSize.y / 6, windowSize.x / 3, windowSize.y / 1.5), fontFile, 16);
+    textItemList.setupList(objects.window, sf::FloatRect(windowSize.x / 1.5, windowSize.y / 6, windowSize.x / 3, windowSize.y / 1.5), fontFile, 16);
 
     std::string test("Kevin Millerajksdjkansjkdnkjanskdjnajksdjknasjkdnjkaasdsdasdngfhjklnakjsndjkasnjkasdj knjaksddddddddddddndjkasnjkasdjkn jaksddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddndjka snjkasdjknjaksdddddddddddddddddddddddddddddddddddd ddddddddddddddddddddddddddddddddddddddddddddddddddddddndjkasnjkandjkasnjkasdjknjaksddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdjknjaksddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddkasndkjanskjdnauiwndyuabsuyfbasdfhyujbasdhjfbhjuasdfk");
     textItemList.addTextItem(test);
 
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-/*
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);
-
-    test = "Kevin Miller";
-    textItemList.addTextItem(test);*/
-
+    textItemList.addTextItem("This is a test...");
+
+    for (int x = 1; x <= 100; x++)
+    {
+        std::stringstream tmp;
+        tmp << "Test server " << x;
+        textItemList.addTextItem(tmp.str());
+    }
+
+    textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");
 
   //  textItemList.addTextItem(test2);
     //Set up menuOption structs
     loginMenu.addMenuButton("Login");
     loginMenu.addMenuButton("Return to Main Menu");
-
 }
-void LoginState::cleanup()
+
+LoginState::~LoginState()
 {
     loginMenu.clearButtons();
 }
-void LoginState::pause()
-{
 
-}
-void LoginState::resume()
+void LoginState::handleEvents()
 {
-
-}
-void LoginState::handleEvents(GameEngine* game)
-{
-     int choice = 0;
-
-        sf::Event event;
-        while(game->window.pollEvent(event))
+    sf::Event event;
+    while(objects.window.pollEvent(event))
+    {
+        switch(event.type)
         {
-            switch(event.type)
-            {
             case sf::Event::Closed:
-                game->quit();
+                action.exitGame();
                 break;
 
             case sf::Event::MouseMoved:
-            {
                 loginMenu.handleMouseMovement(event);
                 break;
-            }
+
             case sf::Event::MouseWheelMoved:
-                textItemList.handleScrolling(event, game->window);
+                textItemList.handleScrolling(event, objects.window);
+
             case sf::Event::MouseButtonPressed:
-                textItemList.handleMouseClicked(event, game->window);
+                textItemList.handleMouseClicked(event, objects.window);
+
             case sf::Event::MouseButtonReleased:
-            {
-                choice = loginMenu.handleMouseReleased(event, game->window);
-                if(choice == 1)
-                    std::cout << "Logging in...\n";
-                else if(choice == 2)
-                    game->changeState(MainMenuState::instance());
+                processChoice(loginMenu.handleMouseReleased(event, objects.window));
                 break;
-            }
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-            {
-                choice = loginMenu.handleKeyPressed(event, game->window);
-                if(choice == 1)
-                    std::cout << "Logging in...\n";
-                else if(choice == 2)
-                    game->changeState(MainMenuState::instance());
+                processChoice(loginMenu.handleKeyPressed(event, objects.window));
                 break;
-            }
 
             case sf::Event::Resized:
-            {
-                loginMenu.handleResize(event, game->window);
+                loginMenu.handleResize(event, objects.window);
                 break;
-            }
+
             default:
                 break;
-            }
         }
+    }
 }
-void LoginState::update(GameEngine* game)
+
+void LoginState::processChoice(int choice)
+{
+    if (choice == 1)
+        action.pushState(StateType::Game);
+    else if (choice == 2)
+        action.popState();
+}
+
+void LoginState::update()
 {
     loginMenu.updateMenu();
 }
-void LoginState::draw(GameEngine* game)
+
+void LoginState::draw()
 {
-    game->window.clear();
+    objects.window.clear();
 
-    game->window.draw(loginMenu);
-    game->window.draw(textItemList);
+    objects.window.draw(loginMenu);
+    objects.window.draw(textItemList);
 
-    game->window.display();
+    objects.window.display();
 }

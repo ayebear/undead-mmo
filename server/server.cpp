@@ -26,7 +26,7 @@ void Server::Start()
 
 void Server::PrintWelcomeMsg()
 {
-    cout << "ZombieSurvivalGame Server v0.2.0.2 Dev\n\n";
+    cout << "ZombieSurvivalGame Server v0.2.1.0 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -39,7 +39,7 @@ void Server::MainLoop()
     while (running)
     {
         // Do stuff with all of the received packets
-        ProcessPackets();
+        ProcessAllPackets();
 
         // Update the current game state, also send some of this info to the clients
         Update();
@@ -52,21 +52,10 @@ void Server::MainLoop()
     }
 }
 
-void Server::ProcessPackets()
+void Server::ProcessAllPackets()
 {
-    /*
-    // Could do something like this, but then process packet would need to do a switch for each packet
-    for (int type = 0; type < Packet::PacketTypes; types++)
-    {
-        while (netManager.ArePackets(type))
-            ProcessPacket(netManager.GetPacket(type));
-    }
-    */
-    while (netManager.ArePackets(Packet::ChatMessage))
-            ProcessChatMessage(netManager.GetPacket(Packet::ChatMessage));
-
-    while (netManager.ArePackets(Packet::LogIn))
-            ProcessLogIn(netManager.GetPacket(Packet::LogIn));
+    while (netManager.ArePackets())
+            ProcessPacket(netManager.GetPacket());
 }
 
 void Server::Update()
@@ -75,15 +64,33 @@ void Server::Update()
     entList.Update(elapsedTime);
 }
 
-void Server::ProcessChatMessage(sf::Packet& packet)
+void Server::ProcessPacket(ExtraPacket& packet)
+{
+    int type = 1;
+    packet.data >> type;
+    switch (type)
+    {
+        case Packet::ChatMessage:
+            ProcessChatMessage(packet);
+            break;
+        case Packet::LogIn:
+            ProcessLogIn(packet);
+            break;
+        default:
+            cout << "Error: Unknown received packet type.\n";
+            break;
+    }
+}
+
+void Server::ProcessChatMessage(ExtraPacket& packet)
 {
     string msg;
     packet >> msg;
-    cout << "Message: " << msg << endl;
-    netManager.SendToClients(packet); // TODO: Don't send back to the original sender
+    cout << "Message from " << packet.sender << ": " << msg << endl;
+    netManager.SendToAll(packet.data, packet.sender);
 }
 
-void Server::ProcessLogIn(sf::Packet& packet)
+void Server::ProcessLogIn(ExtraPacket& packet)
 {
     string username, password;
 }

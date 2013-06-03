@@ -1,24 +1,16 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "playgamestate.h"
-#include "../shared/packet.h"
-#include "../shared/tile.h"
 #include <ctime>
 #include <string>
 #include <sstream>
+#include "playgamestate.h"
+#include "../shared/packet.h"
+#include "../shared/tile.h"
 
-PlayGameState PlayGameState::playState;
-
-PlayGameState::PlayGameState()
+PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
-}
-
-void PlayGameState::init(GameEngine* game)
-{
-
-
-     // Load character sprites
+    // Load character textures
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
         exit(Errors::Graphics);
     playerTex.setSmooth(true);
@@ -26,10 +18,11 @@ void PlayGameState::init(GameEngine* game)
         exit(Errors::Graphics);
     zombieTex.setSmooth(true);
 
+    // TODO: Have it download the map from the server instead
     tileMap.LoadMapFromFile("data/maps/2.map");
     Entity::setMapPtr(tileMap);
 
-    theHud.chat.SetNetManager(&game->netManager);
+    theHud.chat.SetNetManager(&objects.netManager);
 
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
@@ -49,41 +42,30 @@ void PlayGameState::init(GameEngine* game)
         zombie->SetAngle(rand() % 360);
     }
 
-
-    gameView.setSize(game->window.getSize().x, game->window.getSize().y);
+    gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
     gameView.setCenter(myPlayer->GetPos());
 
     theHud.UpdateView(gameView);
 
     playing = true;
     paused = false;
-
-    //netManager.LaunchThreads();
-}
-void PlayGameState::cleanup()
-{
-
 }
 
-void PlayGameState::pause()
+PlayGameState::~PlayGameState()
 {
-
-}
-void PlayGameState::resume()
-{
-
 }
 
-void PlayGameState::handleEvents(GameEngine* game)
+void PlayGameState::handleEvents()
 {
-     sf::Event event;
-    while (game->window.pollEvent(event))
+    sf::Event event;
+    while (objects.window.pollEvent(event))
     {
         switch (event.type)
         {
             case sf::Event::Closed:
-                game->quit();
+                action.exitGame();
                 break;
+
             case sf::Event::KeyPressed:
                 switch (event.key.code)
                 {
@@ -91,66 +73,50 @@ void PlayGameState::handleEvents(GameEngine* game)
                         if (theHud.chat.GetInput())
                             theHud.chat.SetInput(false);
                         else
-                            game->changeState(MainMenuState::instance());
+                            action.popState();
                         break;
+
                     case sf::Keyboard::Return:
                         if (theHud.chat.GetInput())
-                            game->netManager.SendChatMessage(theHud.chat.ParseMessage());
+                            objects.netManager.SendChatMessage(theHud.chat.ParseMessage());
                         theHud.chat.ToggleInput();
                         break;
 
                     case sf::Keyboard::Key::P:
-                        {
-                            //If player is not typing
-                            if(!theHud.chat.GetInput())
-                            {
-                                //Get the current system time.
-                                time_t currTime = time(0);
-                                string fileName = "data/screenshots/";
-                                stringstream ss;
-                                ss << currTime;
+                        takeScreenshot();
+                        break;
 
-                                //Add the time.png to the end of the file name and save it.
-                                fileName += ss.str() + ".png";
-                                sf::Image scrShot = game->window.capture();
-                                scrShot.saveToFile(fileName);
-                            }
-                        }
                     default:
                         break;
                 }
                 theHud.chat.ProcessInput(event.key.code);
                 break;
+
             case sf::Event::TextEntered:
                 theHud.chat.ProcessTextEntered(event.text.unicode);
                 break;
+
             case sf::Event::LostFocus:
                 paused = true;
                 break;
+
             case sf::Event::GainedFocus:
                 paused = false;
                 break;
-            case sf::Event::Resized:
-            {
-                sf::Vector2f windowSize;
-                windowSize.x = game->window.getSize().x;
-                windowSize.y = game->window.getSize().y;
-                // Reset the view of the window
-                gameView.setSize(windowSize);
-              //  game->window.setView(gameView);
-                viewDimensions = game->window.getView().getSize();
 
-                theHud.UpdateView(gameView);
+            case sf::Event::Resized:
+                handleWindowResized();
                 break;
-            }
+
             default:
                 break;
         }
     }
-    ProcessInput();
+    handleInput();
 
 }
-void PlayGameState::update(GameEngine* game)
+
+void PlayGameState::update()
 {
      // All of the processing code will be run from here.
    // cout << elapsedTime << endl;
@@ -174,14 +140,14 @@ void PlayGameState::update(GameEngine* game)
         viewCenter = gameView.getCenter();
     }
 
-    if(viewCenter.x + (viewSize.x /2) >= tileMap.getMapWidth())
+    if (viewCenter.x + (viewSize.x /2) >= tileMap.getMapWidth())
     {
         gameView.setCenter(tileMap.getMapWidth() - viewSize.x / 2, viewCenter.y);
         viewSize = gameView.getSize();
         viewCenter = gameView.getCenter();
 
     }
-    if(viewCenter.y + (viewSize.y / 2) >= tileMap.getMapHeight())
+    if (viewCenter.y + (viewSize.y / 2) >= tileMap.getMapHeight())
     {
         gameView.setCenter(viewCenter.x, tileMap.getMapHeight() - viewSize.y  / 2);
         viewSize = gameView.getSize();
@@ -190,26 +156,27 @@ void PlayGameState::update(GameEngine* game)
 
     theHud.Update();
 }
-void PlayGameState::draw(GameEngine* game)
+
+void PlayGameState::draw()
 {
-    game->window.clear();
+    objects.window.clear();
 
     // Use the game view to draw this stuff
-    game->window.setView(gameView);
+    objects.window.setView(gameView);
 
 	// Draw the tile map
-    game->window.draw(tileMap);
+    objects.window.draw(tileMap);
 
     // Draws all of the entities
-    game->window.draw(entList);
+    objects.window.draw(entList);
 
     // Draw the HUD (changes the window's view)
-    game->window.draw(theHud);
+    objects.window.draw(theHud);
 
-    game->window.display();
+    objects.window.display();
 }
 
-void PlayGameState::ProcessInput()
+void PlayGameState::handleInput()
 {
     if (!paused && !theHud.chat.GetInput())
     {
@@ -234,6 +201,34 @@ void PlayGameState::ProcessInput()
     }
     elapsedTime = clock.restart().asSeconds();
 }
-// TODO: Make a game state manager with different game states
 
+void PlayGameState::takeScreenshot()
+{
+    // If player is not typing in the chat
+    if (!theHud.chat.GetInput())
+    {
+        //Get the current system time.
+        time_t currTime = time(0);
+        string fileName = "data/screenshots/";
+        stringstream ss;
+        ss << currTime;
 
+        //Add the time.png to the end of the file name and save it.
+        fileName += ss.str() + ".png";
+        sf::Image scrShot = objects.window.capture();
+        scrShot.saveToFile(fileName);
+    }
+}
+
+void PlayGameState::handleWindowResized()
+{
+    sf::Vector2f windowSize;
+    windowSize.x = objects.window.getSize().x;
+    windowSize.y = objects.window.getSize().y;
+    // Reset the view of the window
+    gameView.setSize(windowSize);
+    // objects.window.setView(gameView);
+    viewDimensions = objects.window.getView().getSize();
+
+    theHud.UpdateView(gameView);
+}

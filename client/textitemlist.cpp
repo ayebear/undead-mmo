@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include "textitemlist.h"
 #include "../shared/other.h"
 #include <iostream>
@@ -59,7 +62,7 @@ bool TextItemList::getClickable()
     return isClickable;
 }
 
-void TextItemList::addTextItem(std::string& newText)
+void TextItemList::addTextItem(const std::string& newText)
 {
     if(isReady)
     {

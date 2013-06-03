@@ -18,11 +18,12 @@ class Server
     private:
         void PrintWelcomeMsg();
         void MainLoop();
-        void ProcessPackets();
+        void ProcessAllPackets();
         void Update();
 
-        void ProcessChatMessage(sf::Packet&);
-        void ProcessLogIn(sf::Packet&);
+        void ProcessPacket(ExtraPacket&);
+        void ProcessChatMessage(ExtraPacket&);
+        void ProcessLogIn(ExtraPacket&);
 
         static const float desiredFrameTime;
 

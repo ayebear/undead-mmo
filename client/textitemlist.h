@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #ifndef TEXTITEMLIST_H
 #define TEXTITEMLIST_H
 
@@ -25,7 +28,7 @@ class TextItemList: public sf::Drawable
         void setClickable(bool);
         bool getClickable();
 
-        void addTextItem(std::string&);
+        void addTextItem(const std::string&);
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #ifndef TEXTITEM_H
 #define TEXTITEM_H
 
@@ -8,12 +11,12 @@ class TextItem: public sf::Drawable
 {
     public:
 
-        TextItem(std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
+        TextItem(const std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
 
         ~TextItem();
 
-        void setTextItem(std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
-        void setTextItem(std::string&);
+        void setTextItem(const std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
+        void setTextItem(const std::string&);
         sf::Text getText();
 
         void setTextColor(sf::Color);

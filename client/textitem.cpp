@@ -1,7 +1,10 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include "textitem.h"
 #include <iostream>
 
-TextItem::TextItem(std::string& text, sf::Font& font, unsigned int fontSize, sf::Color color, sf::Vector2f pos)
+TextItem::TextItem(const std::string& text, sf::Font& font, unsigned int fontSize, sf::Color color, sf::Vector2f pos)
 {
     textItemBox.setFillColor(sf::Color::Transparent);
 
@@ -20,7 +23,7 @@ TextItem::~TextItem()
     //dtor
 }
 
-void TextItem::setTextItem(std::string& text, sf::Font& font, unsigned int fontSize, sf::Color color, sf::Vector2f pos)
+void TextItem::setTextItem(const std::string& text, sf::Font& font, unsigned int fontSize, sf::Color color, sf::Vector2f pos)
 {
     textItemBox.setFillColor(sf::Color::Transparent);
 
@@ -33,7 +36,7 @@ void TextItem::setTextItem(std::string& text, sf::Font& font, unsigned int fontS
     textItems.back().setColor(color);
 }
 
-void TextItem::setTextItem(std::string& text)
+void TextItem::setTextItem(const std::string& text)
 {
     textItems.emplace_back(text,textFont, textFontSize);
 }
@@ -63,8 +66,8 @@ void TextItem::wrapText(sf::FloatRect destBox)
     while(textItems.back().getGlobalBounds().left + textItems.back().getGlobalBounds().width > destBox.left + destBox.width)
     {
 
-        std::cout << textItems.back().getGlobalBounds().width << std::endl;
-        std::cout << destBox.left + destBox.width << std::endl;
+        //std::cout << textItems.back().getGlobalBounds().width << std::endl;
+        //std::cout << destBox.left + destBox.width << std::endl;
         unsigned int i = 0;
         int endChar = 0;
 
@@ -75,7 +78,7 @@ void TextItem::wrapText(sf::FloatRect destBox)
         {
             i++;
             endChar = i;
-            std::cout << textItems.back().findCharacterPos(i).x << std::endl;
+            //std::cout << textItems.back().findCharacterPos(i).x << std::endl;
         }
 
         //Decrement index until a space is found.(Don't truncate a word)
@@ -91,8 +94,8 @@ void TextItem::wrapText(sf::FloatRect destBox)
         tempText2 = tempText.substr(0, i);
         tempText = tempText.substr(i);
 
-        std::cout << tempText2 << ".\n";
-        std::cout << tempText << ".\n";
+        //std::cout << tempText2 << ".\n";
+        //std::cout << tempText << ".\n";
         textItems.emplace_back(tempText, textFont, textFontSize);
         textItems[textItems.size() - 2].setString(tempText2);
 
@@ -113,7 +116,7 @@ void TextItem::toggleHighlight()
     {
         isHighlighted = true;
         textItemBox.setFillColor(sf::Color(200, 220, 200, 75));
-        std::cout << "Highlighting text\n";
+        //std::cout << "Highlighting text\n";
     }
 
     //If text is already highlights
@@ -121,7 +124,7 @@ void TextItem::toggleHighlight()
     {
         isHighlighted = false;
         textItemBox.setFillColor(sf::Color::Transparent);
-        std::cout << "Unhighlighting text\n";
+        //std::cout << "Unhighlighting text\n";
     }
 }
 

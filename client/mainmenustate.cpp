@@ -3,21 +3,12 @@
 
 #include <iostream>
 #include "mainmenustate.h"
-#include "playgamestate.h"
 
-MainMenuState MainMenuState::menuState;
-
-MainMenuState::MainMenuState()
+MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
 {
-
-
-}
-void MainMenuState::init(GameEngine* game)
-{
-
     sf::Vector2f windowSize;
-    windowSize.x = game->window.getSize().x;
-    windowSize.y = game->window.getSize().y;
+    windowSize.x = objects.window.getSize().x;
+    windowSize.y = objects.window.getSize().y;
 
     std::string bgFile("data/images/ui/MenuBackground.png");
     std::string fontFile("data/fonts/Ubuntu-B.ttf");
@@ -25,7 +16,7 @@ void MainMenuState::init(GameEngine* game)
                        fontFile,                           //Font file
                        32,                                 //Font size
                        sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),                 //Rendering window
-                       &game->window
+                       &objects.window
                        );
 
 
@@ -33,93 +24,68 @@ void MainMenuState::init(GameEngine* game)
     //Set up menuOption structs
     mainMenu.addMenuButton("Play");
     mainMenu.addMenuButton("Quit");
-
 }
-void MainMenuState::cleanup()
+
+MainMenuState::~MainMenuState()
 {
     mainMenu.clearButtons();
 }
 
-void MainMenuState::pause()
+void MainMenuState::handleEvents()
 {
-
-}
-void MainMenuState::resume()
-{
-
-}
-
-void MainMenuState::handleEvents(GameEngine* game)
-{
-     int choice = 0;
-
-        sf::Event event;
-        while(game->window.pollEvent(event))
+    sf::Event event;
+    while (objects.window.pollEvent(event))
+    {
+        switch (event.type)
         {
-            switch(event.type)
-            {
             case sf::Event::Closed:
-                game->quit();
+                action.exitGame();
                 break;
 
             case sf::Event::MouseMoved:
-            {
                 mainMenu.handleMouseMovement(event);
                 break;
-            }
 
             case sf::Event::MouseButtonReleased:
-            {
-                choice = mainMenu.handleMouseReleased(event, game->window);
-                if(choice == 1)
-                    game->changeState(PlayGameState::instance());
-                else if(choice == 2)
-                    game->quit();
+                processChoice(mainMenu.handleMouseReleased(event, objects.window));
                 break;
-            }
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-            {
-                choice = mainMenu.handleKeyPressed(event, game->window);
-                if(choice == 1)
-                    game->changeState(PlayGameState::instance());
-                else if(choice == 2)
-                    game->quit();
+                processChoice(mainMenu.handleKeyPressed(event, objects.window));
                 break;
-            }
 
             case sf::Event::Resized:
-            {
-                mainMenu.handleResize(event, game->window);
+                mainMenu.handleResize(event, objects.window);
                 break;
-            }
+
             default:
                 break;
-            }
         }
-
-
+    }
 }
-void MainMenuState::update(GameEngine* game)
+
+void MainMenuState::processChoice(int choice)
+{
+    if (choice == 1)
+    {
+        std::cout << "MainMenuState created a push action to LoginState.\n";
+        action.pushState(StateType::Login);
+    }
+    else if (choice == 2)
+        action.exitGame();
+}
+
+void MainMenuState::update()
 {
     mainMenu.updateMenu();
 }
-void MainMenuState::draw(GameEngine* game)
+
+void MainMenuState::draw()
 {
-    game->window.clear();
+    objects.window.clear();
 
-    game->window.draw(mainMenu);
+    objects.window.draw(mainMenu);
 
-    game->window.display();
+    objects.window.display();
 }
-
-
-MainMenuState::~MainMenuState()
-{
-}
-
-
-
-
-

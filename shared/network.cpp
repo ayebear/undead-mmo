@@ -56,7 +56,6 @@ void Network::ReceiveUdp()
     cout << "ReceiveUdp started.\n";
     while (threadsRunning && udpSock.getLocalPort())
     {
-        cout << "ReceiveUdp looping...\n";
         sf::Packet packet;
         sf::IpAddress address;
         unsigned short port;
@@ -65,32 +64,4 @@ void Network::ReceiveUdp()
             StorePacket(packet);
     }
     cout << "ReceiveUdp finished.\n";
-}
-
-bool Network::ArePackets(int type)
-{
-    return !packets[type].empty();
-}
-
-sf::Packet& Network::GetPacket(int type)
-{
-	sf::Lock lock(packetMutexes[type]);
-	return packets[type].front();
-}
-
-void Network::PopPacket(int type)
-{
-	sf::Lock lock(packetMutexes[type]);
-	packets[type].pop_front();
-}
-
-void Network::StorePacket(sf::Packet& packet)
-{
-	int type;
-	packet >> type;
-	if (type >= 0 && type < Packet::PacketTypes)
-	{
-        sf::Lock lock(packetMutexes[type]);
-        packets[type].push_back(packet);
-    }
 }
