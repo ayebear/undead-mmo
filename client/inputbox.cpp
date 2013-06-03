@@ -5,6 +5,7 @@ const char InputBox::pwdChar = '*';
 InputBox::InputBox()
 {
     input = false;
+    pwdMode = false;
     SetTextSize(16);
     SetColor(sf::Color::White);
 }

@@ -31,10 +31,10 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
     myPlayer = entList.Add(Entity::Player, 1001);
     myPlayer->SetTexture(playerTex);
-    myPlayer->SetPos(sf::Vector2f(300, 400));
+    myPlayer->SetPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
 
     // Add quite a few local test zombies for now
-    for (int x = 2; x < 50; x++)
+    for (int x = 2; x < 999; x++)
     {
         auto* zombie = entList.Add(Entity::Zombie, x);
         zombie->SetTexture(zombieTex);
@@ -86,6 +86,14 @@ void PlayGameState::handleEvents()
                         takeScreenshot();
                         break;
 
+                    case sf::Keyboard::Key::Y:
+                    {
+                        StateArgs someArgs;
+                        someArgs.push_back("This is just a test error...");
+                        action.pushState(StateType::Error, someArgs);
+                        break;
+                    }
+
                     default:
                         break;
                 }
@@ -118,8 +126,6 @@ void PlayGameState::handleEvents()
 
 void PlayGameState::update()
 {
-     // All of the processing code will be run from here.
-   // cout << elapsedTime << endl;
     entList.Update(elapsedTime);
 
     // Update the game view center position with the player's current position

@@ -4,8 +4,6 @@
 /*
 TODO:
     Change the transparency of the chat input and username text when focus is lost
-    Program mouse controls for the chat
-    Make some other subclasses like for the inputbox and/or cursor
     Maybe animate the PrintMessage command - would need to update the animation in Update()
 */
 
@@ -141,8 +139,6 @@ const string Chat::ParseMessage()
         else
         {
             string fullStr = username + ": " + msgStr;
-            // TODO: Either have the chat class build a packet which Game passes to the Network class
-            // or, pass a reference from Game to Chat of the Network class
             if (netManager == nullptr)
                 exit(99);
             netManager->SendChatMessage(fullStr);
@@ -162,20 +158,20 @@ void Chat::ParseCommand(const string& msgStr)
     string content;
     if (spacePos != string::npos && spacePos < msgStr.size())
         content = msgStr.substr(spacePos + 1);
-    // There are a few alternative commands, we could decide on which to use later, or just keep them all
+    // TODO: Make a map of pointers to these functions
     if (cmdStr == "test")
         PrintMessage("Command parser seems to be working!", cmdOutColor);
     else if (cmdStr == "connect")
         ConnectToServer(content);
     else if (cmdStr == "login")
         LoginToServer(content);
-    else if (cmdStr == "echo" || cmdStr == "print")
+    else if (cmdStr == "echo")
         PrintMessage(content, cmdOutColor);
     else if (cmdStr == "username")
         SetUsername(content);
-    else if (cmdStr == "help" || cmdStr == "?")
+    else if (cmdStr == "help")
         ShowHelp(content);
-    else if (cmdStr == "exit" || cmdStr == "quit")
+    else if (cmdStr == "exit")
         exit(Errors::Ok);
     else
         PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);

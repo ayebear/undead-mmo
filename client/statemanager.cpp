@@ -5,6 +5,7 @@
 #include "mainmenustate.h"
 #include "loginstate.h"
 #include "playgamestate.h"
+#include "errorstate.h"
 
 StateManager::StateManager(std::string windowTitle, int windowWidth, int windowHeight)
 {
@@ -34,6 +35,8 @@ StateManager::~StateManager()
         delete states.back();
         states.pop_back();
     }
+
+    cout << "Successfully deallocated all states.\n";
 
     // Close the window
     objects.window.close();
@@ -88,6 +91,9 @@ void StateManager::push(int type)
             break;
         case StateType::Game:
             statePtr = new PlayGameState(objects);
+            break;
+        case StateType::Error:
+            statePtr = new ErrorState(objects);
             break;
         default:
             break;

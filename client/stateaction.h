@@ -31,6 +31,7 @@ namespace StateType
         Menu = 0,
         Login,
         Game,
+        Error,
         TotalTypes
     };
 }
@@ -49,6 +50,7 @@ class StateAction
         bool shouldContinue();
         bool isNotExit();
         void pushState(int);
+        void pushState(int, const StateArgs&);
         void popState();
         void exitGame();
         void reset();

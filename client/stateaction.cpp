@@ -19,6 +19,13 @@ void StateAction::pushState(int stateType)
     type = stateType;
 }
 
+void StateAction::pushState(int stateType, const StateArgs& theArgs)
+{
+    command = StateCommand::Push;
+    type = stateType;
+    args = theArgs;
+}
+
 void StateAction::popState()
 {
     command = StateCommand::Pop;
