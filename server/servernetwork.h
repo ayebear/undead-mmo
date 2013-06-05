@@ -2,6 +2,7 @@
 #define SERVERNETWORK_H
 
 #include <deque>
+#include <string>
 #include "../shared/network.h"
 #include "../shared/linkedqueue.h"
 
@@ -19,7 +20,7 @@ struct Client
     // These are required for UDP
     sf::IpAddress ip;
     unsigned short port;
-    string username;
+    std::string username;
     bool loggedIn; // They can be connected but not logged in
     // ID will already be known by position in deque
     // This seems to change so we cannot rely on this for the long term,
@@ -36,9 +37,9 @@ class ServerNetwork: public Network
 
         // Packet functions
         bool ArePackets();
-        sf::Packet& GetPacket();
+        PacketExtra& GetPacket();
         void PopPacket();
-        void StorePacket(sf::Packet&);
+        void StorePacket(PacketExtra&);
 
         void SendToAll(sf::Packet&, int exclude = -1);
         void SendToClient(sf::Packet&, int);

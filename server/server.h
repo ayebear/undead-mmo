@@ -21,16 +21,17 @@ class Server
         void ProcessAllPackets();
         void Update();
 
-        void ProcessPacket(ExtraPacket&);
-        void ProcessChatMessage(ExtraPacket&);
-        void ProcessLogIn(ExtraPacket&);
+        void ProcessPacket(PacketExtra&);
+        void ProcessChatMessage(PacketExtra&);
+        void ProcessLogIn(PacketExtra&);
 
         static const float desiredFrameTime;
 
         bool running;
         float elapsedTime;
+        sf::Clock clock;
         ServerNetwork netManager;
         MasterEntityList entList;
 };
 
-#endif // SERVER_H
+#endif

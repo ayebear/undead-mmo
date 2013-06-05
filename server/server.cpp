@@ -26,7 +26,7 @@ void Server::Start()
 
 void Server::PrintWelcomeMsg()
 {
-    cout << "ZombieSurvivalGame Server v0.2.1.0 Dev\n\n";
+    cout << "ZombieSurvivalGame Server v0.2.1.1 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -35,9 +35,14 @@ void Server::MainLoop()
 {
     netManager.LaunchThreads();
     running = true;
-    sf::Clock clock;
     while (running)
     {
+        // TODO: Put these in separate threads, so that all packets can be processed right away,
+        // and updates happen at the desired frame rate.
+
+        // Thread for ProcessAllPackets();
+        // Thread for Update();
+
         // Do stuff with all of the received packets
         ProcessAllPackets();
 
@@ -47,15 +52,18 @@ void Server::MainLoop()
         // Calculate elapsed time
         elapsedTime = clock.restart().asSeconds();
 
-        // Sleep some if everything is caught up
-        sf::sleep(sf::milliseconds(desiredFrameTime - elapsedTime));
+        // Sleep some if everything is caught up (we will only want to do this with the update thread)
+        //sf::sleep(sf::milliseconds(desiredFrameTime - elapsedTime));
     }
 }
 
 void Server::ProcessAllPackets()
 {
-    while (netManager.ArePackets())
+    while (clock.getElapsedTime() < desiredFrameTime)
+    {
+        while (netManager.ArePackets())
             ProcessPacket(netManager.GetPacket());
+    }
 }
 
 void Server::Update()
@@ -64,7 +72,7 @@ void Server::Update()
     entList.Update(elapsedTime);
 }
 
-void Server::ProcessPacket(ExtraPacket& packet)
+void Server::ProcessPacket(PacketExtra& packet)
 {
     int type = 1;
     packet.data >> type;
@@ -82,7 +90,7 @@ void Server::ProcessPacket(ExtraPacket& packet)
     }
 }
 
-void Server::ProcessChatMessage(ExtraPacket& packet)
+void Server::ProcessChatMessage(PacketExtra& packet)
 {
     string msg;
     packet >> msg;
@@ -90,7 +98,7 @@ void Server::ProcessChatMessage(ExtraPacket& packet)
     netManager.SendToAll(packet.data, packet.sender);
 }
 
-void Server::ProcessLogIn(ExtraPacket& packet)
+void Server::ProcessLogIn(PacketExtra& packet)
 {
     string username, password;
 }
