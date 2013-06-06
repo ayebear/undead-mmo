@@ -135,7 +135,9 @@ sf::FloatRect TextItem::getTextBounds()
 }
 float TextItem::getTextItemHeight()
 {
-    return textItems[0].getCharacterSize() * textItems.size();
+
+    return textItems.back().getPosition().y + textItems.back().getCharacterSize() - textItems[0].getPosition().y + 5;
+
 }
 
 sf::Vector2f TextItem::getTopPosition() const

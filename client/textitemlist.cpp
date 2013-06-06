@@ -42,7 +42,7 @@ void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect dimensions,
     //Box that the user can see
     viewableAreaBox.setPosition(dimensions.left, dimensions.top);
     viewableAreaBox.setSize(sf::Vector2f(dimensions.width, dimensions.height));
-    viewableAreaBox.setFillColor(sf::Color(102, 102, 255, 75));
+    viewableAreaBox.setFillColor(sf::Color(0, 0, 0, 75));
 
     scrollBar.attachScrollBar(dimensions);
 
@@ -62,22 +62,24 @@ bool TextItemList::getClickable()
     return isClickable;
 }
 
-void TextItemList::addTextItem(const std::string& newText)
+void TextItemList::addTextItem(const std::string& newText, const sf::Color& color)
 {
     if(isReady)
     {
         sf::Text text(newText, textItemFont, textFontSize);
         sf::Vector2f newPos = getNewItemPos();
 
-        TextItem newItem(newText, textItemFont,textFontSize, sf::Color::White, newPos);
+        TextItem newItem(newText, textItemFont,textFontSize, color, newPos);
         textItemList.push_back(newItem);
 
         //Wrap the text as needed
         textItemList.back().wrapText(viewableArea);
 
+        scrollDown(textItemList.back().getTextItemHeight());
+
         scrollBar.adjustScrollerHeight(viewableArea.height, textItemList.back().getBottomPosition().y + (textItemList.back().getBottomPosition().y - textItemList.front().getBottomPosition().y));
 
-        scrollDown(textFontSize);
+
     }
 
 }
@@ -176,7 +178,7 @@ void TextItemList::draw(sf::RenderTarget& window, sf::RenderStates states) const
     for (auto& textItem: textItemList)
     {
         //If the bottom of the view is greater than or equal to the bottom of the text item
-        if(itemListView.getCenter().y + itemListView.getSize().y / 2 >= textItem.getBottomPosition().y)
+        if(itemListView.getCenter().y + itemListView.getSize().y / 2 >= textItem.getTopPosition().y)
             window.draw(textItem);
     }
 }

@@ -28,7 +28,7 @@ class TextItemList: public sf::Drawable
         void setClickable(bool);
         bool getClickable();
 
-        void addTextItem(const std::string&);
+        void addTextItem(const std::string&, const sf::Color& = sf::Color(sf::Color::White));
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

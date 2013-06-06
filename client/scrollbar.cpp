@@ -3,10 +3,10 @@
 ScrollBar::ScrollBar()
 {
     //Almost white. More opaque
-    slider.setFillColor(sf::Color(0, 0, 0, 150));
+    slider.setFillColor(sf::Color(255, 255, 255, 100));
 
     //Greyish color. semi-transparent
-    scrollBar.setFillColor(sf::Color(200, 200, 200, 50));
+    scrollBar.setFillColor(sf::Color(10, 10, 10, 75));
 
     isVisible = true;
 }
@@ -66,10 +66,10 @@ void ScrollBar::scrollUp(sf::View& destRect, sf::Vector2f topPos, unsigned int d
 void ScrollBar::scrollDown(sf::View& destRect, sf::Vector2f bottomPos, unsigned int distance)
 {
     //Only scroll down if the bottom of the slider is not at the bottom of the scroll bar
-    if(destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y + 3)
+    if(destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y)
     {
        unsigned int loops = 0;
-       while(loops <= distance && destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y + 3)
+       while(loops <= distance && destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y)
        {
            loops++;
            destRect.move(0, 1);
