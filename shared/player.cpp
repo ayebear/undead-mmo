@@ -11,9 +11,7 @@ Player::Player()
 
 void Player::Update(float time)
 {
-    if (moving)
-        Move(time);
-    moving = false; // Quick hack until we have a physics vector thing
+    Move(time);
 }
 
 bool Player::Collides(Entity* ent)

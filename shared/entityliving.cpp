@@ -15,41 +15,43 @@ EntityLiving::EntityLiving()
 
 void EntityLiving::Move(float deltaTime)
 {
-    float rad = (angle * PI) / 180.0;
-    sf::Vector2f amount;
-    amount.x = deltaTime * speed * cos(rad);
-    amount.y = deltaTime * speed * sin(rad);
-    sprite.move(amount);
-    sprite.setRotation(angle + 90);
-    pos = sprite.getPosition();
-    // TODO: Improve this later
-    if (pos.x < 0)
+    if (moving)
     {
-        pos.x = 0;
-        Move(-deltaTime);
-    }
-    if (pos.y < 0)
-    {
-        pos.y = 0;
-        Move(-deltaTime);
-    }
+        float rad = (angle * PI) / 180.0;
+        sf::Vector2f amount;
+        amount.x = deltaTime * speed * cos(rad);
+        amount.y = deltaTime * speed * sin(rad);
+        sprite.move(amount);
+        sprite.setRotation(angle + 90);
+        pos = sprite.getPosition();
+        // TODO: Improve this later
+        if (pos.x < 0)
+        {
+            pos.x = 0;
+            Move(-deltaTime);
+        }
+        if (pos.y < 0)
+        {
+            pos.y = 0;
+            Move(-deltaTime);
+        }
 
-    if (pos.x >= mapPtr->getMapWidth())
-    {
-        pos.x = mapPtr->getMapWidth();
-        Move(-deltaTime);
-    }
-    if (pos.y >= mapPtr->getMapHeight())
-    {
-        pos.y = mapPtr->getMapHeight();
-        Move(-deltaTime);
+        if (pos.x >= mapPtr->getMapWidth())
+        {
+            pos.x = mapPtr->getMapWidth();
+            Move(-deltaTime);
+        }
+        if (pos.y >= mapPtr->getMapHeight())
+        {
+            pos.y = mapPtr->getMapHeight();
+            Move(-deltaTime);
+        }
     }
 }
 
 void EntityLiving::SetAngle(float deg)
 {
     angle = deg;
-    moving = true;
 }
 
 void EntityLiving::SetSpeed(float theSpeed)

@@ -13,7 +13,7 @@ StateManager::StateManager(std::string windowTitle, int windowWidth, int windowH
 
     // Create a normal window
     objects.vidMode = sf::VideoMode(windowWidth, windowHeight);
-    objects.window.create(objects.vidMode, windowTitle);
+    objects.window.create(objects.vidMode, windowTitle, sf::Style::Close);
 
     // TODO: Have an option for this
     objects.window.setVerticalSyncEnabled(true);

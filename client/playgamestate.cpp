@@ -40,6 +40,8 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
         zombie->SetTexture(zombieTex);
         zombie->SetPos(sf::Vector2f(rand() % tileMap.getMapWidth(), rand() % tileMap.getMapHeight()));
         zombie->SetAngle(rand() % 360);
+        zombie->SetMoving(true);
+        zombie->SetSpeed(rand() % 50 + 25);
     }
 
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
@@ -209,6 +211,10 @@ void PlayGameState::handleInput()
         {
             myPlayer->SetAngle(degrees);
             myPlayer->SetMoving(true);
+        }
+        else
+        {
+            myPlayer->SetMoving(false);
         }
     }
     elapsedTime = clock.restart().asSeconds();
