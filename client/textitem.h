@@ -11,6 +11,7 @@ class TextItem: public sf::Drawable
 {
     public:
 
+        TextItem();
         TextItem(const std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
 
         ~TextItem();
@@ -18,6 +19,9 @@ class TextItem: public sf::Drawable
         void setTextItem(const std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
         void setTextItem(const std::string&);
         sf::Text getText();
+
+        void setHiddenText(std::string&);
+        std::string& getHiddenText();
 
         void setTextColor(sf::Color);
         void setFontSize(unsigned int);
@@ -32,9 +36,11 @@ class TextItem: public sf::Drawable
 
         //Toggle
         void toggleHighlight();
+        bool getHighlighted();
 
         //Returns height of the text. Takes wrapping into account.
         float getTextItemHeight();
+
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
@@ -48,7 +54,14 @@ class TextItem: public sf::Drawable
 
         bool isHighlighted;
 
+        //Is used to hold the text that is displayed
+        //Can hold the server name and description
         std::vector<sf::Text> textItems;
+
+        //Is used to hold the text that is returned when a text item is selected.
+        //Can hold a server ip address
+        std::string hiddenText;
+
         sf::RectangleShape textItemBox;
 
 

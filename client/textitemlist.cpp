@@ -4,6 +4,7 @@
 #include "textitemlist.h"
 #include "../shared/other.h"
 #include <iostream>
+
 TextItemList::TextItemList()
 {
     isReady = false;
@@ -15,11 +16,11 @@ TextItemList::~TextItemList()
 }
 
 
-void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect dimensions, std::string& fontFile, unsigned int fontSize)
+void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect dimensions, sf::Font& font, unsigned int fontSize, bool clickable)
 {
 
-    if (!textItemFont.loadFromFile(fontFile))
-        exit(Errors::Font);
+    textItemFont = &font;
+
     textFontSize = fontSize;
 
     sf::Vector2f windowSize;
@@ -46,8 +47,18 @@ void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect dimensions,
 
     scrollBar.attachScrollBar(dimensions);
 
+    isClickable = clickable;
+    currentSelection = 0;
     isReady = true;
 }
+
+
+
+void resizeBox(sf::RenderWindow& window, sf::FloatRect dimensions)
+{
+
+}
+
 sf::FloatRect TextItemList::getListDimensions()
 {
     return viewableArea;
@@ -66,18 +77,33 @@ void TextItemList::addTextItem(const std::string& newText, const sf::Color& colo
 {
     if(isReady)
     {
-        sf::Text text(newText, textItemFont, textFontSize);
+        sf::Text text(newText, *textItemFont, textFontSize);
         sf::Vector2f newPos = getNewItemPos();
 
-        TextItem newItem(newText, textItemFont,textFontSize, color, newPos);
+
+        TextItem newItem(newText, *textItemFont,textFontSize, color, newPos);
         textItemList.push_back(newItem);
 
         //Wrap the text as needed
         textItemList.back().wrapText(viewableArea);
 
+        //If there are selections. Default to the most recent item
+        if(isClickable)
+        {
+            //Unhighlight the last item if it was already highlighted
+            if(textItemList[currentSelection].getHighlighted())
+                textItemList[currentSelection].toggleHighlight();
+\
+            currentSelection = textItemList.size() - 1;
+
+            //Highlight the new item
+            textItemList[currentSelection].toggleHighlight();
+        }
+
+
         scrollDown(textItemList.back().getTextItemHeight());
 
-        scrollBar.adjustScrollerHeight(viewableArea.height, textItemList.back().getBottomPosition().y + (textItemList.back().getBottomPosition().y - textItemList.front().getBottomPosition().y));
+        scrollBar.adjustScrollerHeight(viewableArea.height, textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y);
 
 
     }
@@ -106,18 +132,28 @@ sf::Vector2f TextItemList::getNewItemPos()
 
 void TextItemList::scrollDown(unsigned int distance)
 {
-    scrollBar.scrollDown(itemListView, textItemList.back().getBottomPosition(), distance);
+    if(!textItemList.empty())
+    {
+        float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
+        scrollBar.scrollDown(itemListView, actualHeight, textItemList.back().getBottomPosition(), distance);
+    }
+
+
   //  itemListView.reset(viewableArea);
 }
 void TextItemList::scrollUp(unsigned int distance)
 {
-    scrollBar.scrollUp(itemListView, textItemList.front().getTopPosition(), distance);
+    if(!textItemList.empty())
+    {
+        float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
+        scrollBar.scrollUp(itemListView, actualHeight,  textItemList.front().getTopPosition(), distance);
+    }
    // itemListView.reset(viewableArea);
 }
 
 void TextItemList::setTextFont(std::string& fontFile)
 {
-    if (!textItemFont.loadFromFile(fontFile))
+    if (!textItemFont->loadFromFile(fontFile))
         exit(Errors::Font);
 }
 
@@ -145,18 +181,31 @@ void TextItemList::handleScrolling(sf::Event& event, sf::RenderWindow& window)
 }
 void TextItemList::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
 {
-    if(isClickable)
+    //Get the mouse coordinates relative to the window to determine if it's inside of the item list
+    sf::Vector2f mousePos;
+    mousePos.x = sf::Mouse::getPosition(window).x;
+    mousePos.y = sf::Mouse::getPosition(window).y;
+
+    if(isClickable && viewableArea.contains(mousePos))
     {
-        sf::Vector2f mousePos;
-        mousePos.x = sf::Mouse::getPosition(window).x;
-        mousePos.y = sf::Mouse::getPosition(window).y;
+        //Get the mouse coordinates relative to the message box view to determine which item is selected
+        mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window),itemListView);
+
         uint i = 0;
         while(i < textItemList.size())
         {
+
             if(textItemList[i].getTextBounds().contains(mousePos) && event.mouseButton.button == sf::Mouse::Left)
             {
-                textItemList[i].toggleHighlight();
-                selection = i;
+           //     std::cout << "Mouse x: " << mousePos.x << std::endl;
+            //    std::cout << "Mouse y: " << mousePos.y << std::endl;
+
+                //Unhighlight the last selection
+                textItemList[currentSelection].toggleHighlight();
+
+                //Highlight the new selection
+                currentSelection = i;
+                textItemList[currentSelection].toggleHighlight();
             }
             i++;
         }

@@ -32,7 +32,7 @@ class PlayGameState: public State
         //void ReceiveData();
         void handleInput();
         void takeScreenshot();
-        void handleWindowResized();
+        void handleWindowResized(GameObjects&);
 
         // Important objects
         Map tileMap;

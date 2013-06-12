@@ -22,7 +22,7 @@ class TextItemList: public sf::Drawable
         //Used when the itemList needs to be interacted with
         std::string handleEvents(sf::RenderWindow& window);
 
-        void setupList(sf::RenderWindow&, sf::FloatRect, std::string&, unsigned int);
+        void setupList(sf::RenderWindow&, sf::FloatRect, sf::Font&, unsigned int, bool);
         sf::FloatRect getListDimensions();
 
         void setClickable(bool);
@@ -36,6 +36,9 @@ class TextItemList: public sf::Drawable
         void scrollUp(unsigned int);
 
         void setTextFont(std::string&);
+
+        void reposition(float, float);
+        void resizeBox(sf::RenderWindow&, sf::FloatRect);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
         void handleMouseClicked(sf::Event&, sf::RenderWindow&);
@@ -56,9 +59,9 @@ class TextItemList: public sf::Drawable
 
         bool isClickable;
         bool isReady;
-        int selection;
+        int currentSelection;
 
-        sf::Font textItemFont;
+        sf::Font* textItemFont;
         unsigned int textFontSize;
 
 };

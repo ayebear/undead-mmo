@@ -12,27 +12,26 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     windowSize.y = objects.window.getSize().y;
 
     std::string bgFile("data/images/ui/MenuBackground.png");
-    std::string fontFile("data/fonts/Ubuntu-B.ttf");
+
     loginMenu.setUpMenu(bgFile,                                             //Background file
-                       fontFile,                                            //Font file
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
-                       &objects.window                                      //Rendering window
+                       objects                                     //Rendering window
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(windowSize.x / 1.5, windowSize.y / 6, windowSize.x / 3, windowSize.y / 1.5), fontFile, 16);
+    textItemList.setupList(objects.window, sf::FloatRect(windowSize.x / 1.5, windowSize.y / 6, windowSize.x / 3, windowSize.y / 1.5), gameObjects.fontBold, 16, true);
 
-    std::string test("Kevin Millerajksdjkansjkdnkjanskdjnajksdjknasjkdnjkaasdsdasdngfhjklnakjsndjkasnjkasdj knjaksddddddddddddndjkasnjkasdjkn jaksddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddndjka snjkasdjknjaksdddddddddddddddddddddddddddddddddddd ddddddddddddddddddddddddddddddddddddddddddddddddddddddndjkasnjkandjkasnjkasdjknjaksddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddsdjknjaksddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddkasndkjanskjdnauiwndyuabsuyfbasdfhyujbasdhjfbhjuasdfk");
+    std::string test("Kevin Millerajk");
     textItemList.addTextItem(test);
-
+\
     textItemList.addTextItem("This is a test...");
 
     for (int x = 1; x <= 100; x++)
     {
         std::stringstream tmp;
         tmp << "Test server " << x;
-        textItemList.addTextItem(tmp.str());
+        textItemList.addTextItem(tmp.str(), sf::Color::Red);
     }
 
     textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");

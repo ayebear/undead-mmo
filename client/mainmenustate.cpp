@@ -13,10 +13,9 @@ MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
     std::string bgFile("data/images/ui/MenuBackground.png");
     std::string fontFile("data/fonts/Ubuntu-B.ttf");
     mainMenu.setUpMenu(bgFile,                             //Background file
-                       fontFile,                           //Font file
                        32,                                 //Font size
                        sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),                 //Rendering window
-                       &objects.window
+                       objects
                        );
 
 

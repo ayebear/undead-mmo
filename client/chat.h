@@ -10,15 +10,11 @@
 #include "../shared/other.h"
 #include "clientnetwork.h"
 #include "inputbox.h"
+#include "textitemlist.h"
+#include "gameobjects.h"
 
 using namespace std;
 
-struct TimedMsg
-{
-    TimedMsg(const sf::Text& t): text(t) {}
-    sf::Text text;
-    sf::Clock age;
-};
 
 // This class handles the client-side stuff for the chat like graphics and input
 class Chat: public sf::Drawable
@@ -28,7 +24,7 @@ class Chat: public sf::Drawable
 
         void SetNetManager(ClientNetwork*);
         void SetFont(sf::Font*);
-        void SetPosition(float, float);
+        void setUp(float, float, float, float, GameObjects&);
 
         void SetInput(bool);
         bool GetInput();
@@ -45,6 +41,8 @@ class Chat: public sf::Drawable
         void SetUsername(const string&);
         bool ConnectToServer(const string&);
         void LoginToServer(const string&);
+
+        void handleScrolling(sf::Event&, sf::RenderWindow&);
 
         void Update();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -74,7 +72,7 @@ class Chat: public sf::Drawable
         sf::Font* font;
 
         // Visible objects
-        deque <TimedMsg> msgList; // stores the current messages on the screen
+        TextItemList messageBox; // stores the current messages on the screen
         InputBox currentMsg;
 
         // Message history

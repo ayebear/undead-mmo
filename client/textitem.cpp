@@ -4,6 +4,11 @@
 #include "textitem.h"
 #include <iostream>
 
+
+TextItem::TextItem()
+{
+    hiddenText = "";
+}
 TextItem::TextItem(const std::string& text, sf::Font& font, unsigned int fontSize, sf::Color color, sf::Vector2f pos)
 {
     textItemBox.setFillColor(sf::Color::Transparent);
@@ -55,6 +60,15 @@ sf::Text TextItem::getText()
     return fullText;
 }
 
+void TextItem::setHiddenText(std::string& text)
+{
+    hiddenText = text;
+}
+
+std::string& TextItem::getHiddenText()
+{
+    return hiddenText;
+}
 
 //Take the width of the destination box
 void TextItem::wrapText(sf::FloatRect destBox)
@@ -102,11 +116,12 @@ void TextItem::wrapText(sf::FloatRect destBox)
         //Move the next text line down
         lastLinePos.y += textFontSize + 5;
         textItems.back().setPosition(lastLinePos);
+        textItems.back().setColor(textColor);
 
         tempText = textItems.back().getString();
 
-        fixTextItemBox(destBox);
     }
+    fixTextItemBox(destBox);
 }
 
 void TextItem::toggleHighlight()
@@ -128,6 +143,10 @@ void TextItem::toggleHighlight()
     }
 }
 
+bool TextItem::getHighlighted()
+{
+    return isHighlighted;
+}
 sf::FloatRect TextItem::getTextBounds()
 {
     sf::FloatRect textBounds(textItemBox.getPosition(), textItemBox.getSize());
@@ -161,12 +180,14 @@ void TextItem::fixTextItemBox(sf::FloatRect destBox)
         //Make the bounding box the width of the entire string
         boxSize.x = destBox.width ;
         //Make the bounding box height large enough to fit all lines of text
-        boxSize.y = textFontSize * textItems.size();
+        boxSize.y = getTextItemHeight();
 
         textItemBox.setPosition(textItems[0].getPosition());
         textItemBox.setSize(boxSize);
     }
 }
+
+
 void TextItem::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.draw(textItemBox);

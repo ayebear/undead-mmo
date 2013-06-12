@@ -3,25 +3,15 @@
 
 Hud::Hud()
 {
-    // Load font files
-    if (!font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
-        exit(Errors::Font);
-    if (!fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(Errors::Font);
-    if (!fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
-        exit(Errors::Font);
-    if (!fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
-        exit(Errors::Font);
-
-    chat.SetFont(&fontBold);
 }
 
-void Hud::UpdateView(sf::View& mainGameView)
+void Hud::UpdateView(sf::View& mainGameView, GameObjects& objects)
 {
     sf::Vector2u hudViewPos(mainGameView.getSize());
     hudView.reset(sf::Rect<float>(0, 0, hudViewPos.x, hudViewPos.y));
 
-    chat.SetPosition(0, hudViewPos.y - 182);
+    //MessageBox is 512.
+    chat.setUp(0, hudViewPos.y / 1.75, mainGameView.getSize().x / 3, mainGameView.getSize().y / 3, objects);
 }
 
 Chat& Hud::GetChat()
@@ -33,6 +23,7 @@ void Hud::Update()
 {
     chat.Update();
 }
+
 
 void Hud::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {

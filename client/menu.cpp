@@ -13,11 +13,11 @@ Menu::~Menu()
     clearButtons();
 }
 
-void Menu::setUpMenu(std::string& backgroundFile, std::string& fontFile, short fontSize, sf::Vector2f topButtonPosition, sf::RenderWindow* renderingWindow)
+void Menu::setUpMenu(std::string& backgroundFile, short fontSize, sf::Vector2f topButtonPosition, GameObjects& objects)
 {
 
-    windowSize.x = renderingWindow->getSize().x;
-    windowSize.y = renderingWindow->getSize().y;
+    windowSize.x = objects.window.getSize().x;
+    windowSize.y = objects.window.getSize().y;
     menuView.reset(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 
     buttonWidthFactor = windowSize.x / topButtonPosition.x;
@@ -27,8 +27,7 @@ void Menu::setUpMenu(std::string& backgroundFile, std::string& fontFile, short f
     if (!bgTexture.loadFromFile(backgroundFile))
         exit(Errors::Graphics);
 
-    if (!buttonFont.loadFromFile(fontFile))
-        exit(Errors::Font);
+    buttonFont = &objects.font;
 
     bgImageSize = bgTexture.getSize();
 
@@ -65,7 +64,7 @@ void Menu::setBackground(std::string& backgroundFile)
 
 void Menu::setFont(std::string& fontFile)
 {
-     if (!buttonFont.loadFromFile(fontFile))
+     if (!buttonFont->loadFromFile(fontFile))
         exit(Errors::Font);
 }
 
@@ -228,7 +227,7 @@ void Menu::addMenuButton(std::string itemName)
     menuItem->buttonName.setString(itemName);
     menuItem->buttonName.setCharacterSize(buttonFontSize);
     menuItem->buttonName.setColor(buttonUnselectedColor);
-    menuItem->buttonName.setFont(buttonFont);
+    menuItem->buttonName.setFont(*buttonFont);
     menuItem->buttonName.setPosition(topButtonPos.x, topButtonPos.y + i * (buttonFontSize + 75));   //Extra 75 pixels of space
 
     tmpText = menuItem->buttonName.getString();
@@ -241,10 +240,6 @@ void Menu::addMenuButton(std::string itemName)
     menuOptions.push_back(menuItem);
 }
 
-sf::Font Menu::getFont()
-{
-    return buttonFont;
-}
 void Menu::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.setView(menuView);

@@ -38,7 +38,7 @@ void ScrollBar::adjustScrollerHeight(float viewHeight, float actualHeight)
     if(actualHeight > 0)
     {
         //Slider should be same ratio to the scrolbar as the viewHeight is to the actual height
-        float sliderHeight = scrollBar.getSize().y * (viewHeight/actualHeight);
+        float sliderHeight = viewHeight * (viewHeight/actualHeight);
 
         slider.setSize(sf::Vector2f(scrollBarWidth, sliderHeight));
     }
@@ -47,35 +47,39 @@ void ScrollBar::adjustScrollerHeight(float viewHeight, float actualHeight)
         slider.setSize(sf::Vector2f(scrollBarWidth, 0));
 }
 
-void ScrollBar::scrollUp(sf::View& destRect, sf::Vector2f topPos, unsigned int distance)
+void ScrollBar::scrollUp(sf::View& destRect, float actualHeight,  sf::Vector2f topPos, unsigned int distance)
 {
 
     //Only scroll up if the slider is not at the top of the scroll bar
-    if(destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
+    if(actualHeight > 0 && distance > 0 && destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
     {
         unsigned int loops = 0;
-        while(loops < distance && destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
+        while(loops <= distance && destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
         {
             loops++;
             destRect.move(0, -1);
-            slider.setPosition(slider.getPosition().x, slider.getPosition().y - 1);
+            slider.setPosition(slider.getPosition().x, slider.getPosition().y -  slider.getSize().y * (distance / actualHeight) / distance);
         }
+
+
     }
 
+
 }
-void ScrollBar::scrollDown(sf::View& destRect, sf::Vector2f bottomPos, unsigned int distance)
+void ScrollBar::scrollDown(sf::View& destRect, float actualHeight, sf::Vector2f bottomPos, unsigned int distance)
 {
     //Only scroll down if the bottom of the slider is not at the bottom of the scroll bar
-    if(destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y)
+    if(actualHeight > 0 && distance > 0 && destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y)
     {
        unsigned int loops = 0;
        while(loops <= distance && destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y)
        {
            loops++;
            destRect.move(0, 1);
-           slider.setPosition(slider.getPosition().x, slider.getPosition().y + 1);
-
+           slider.setPosition(slider.getPosition().x, slider.getPosition().y +  slider.getSize().y * (distance / actualHeight) / distance);
        }
+
+
     }
 }
 

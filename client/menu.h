@@ -4,9 +4,10 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-#include <SFML/Graphics.hpp>
+#include "gameobjects.h"
 
 /*
     Menu class that can be used as a component for any type of menu screen.
@@ -35,7 +36,7 @@ class Menu: public sf::Drawable
         ~Menu();
 
         //Background file, font file, font size, topButtonPos, the window, and the desired view
-        void setUpMenu(std::string&, std::string&, short, sf::Vector2f, sf::RenderWindow*);
+        void setUpMenu(std::string&, short, sf::Vector2f, GameObjects&);
 
         void updateMenu();
         void clearButtons();
@@ -59,8 +60,6 @@ class Menu: public sf::Drawable
         void handleResize(sf::Event&, sf::RenderWindow&);
 
 
-        sf::Font getFont();
-
     private:
 
         //Utility Functions
@@ -70,7 +69,7 @@ class Menu: public sf::Drawable
         //Formatting variables
         sf::Color buttonUnselectedColor;
         sf::Color buttonSelectedColor;
-        sf::Font buttonFont;
+        sf::Font* buttonFont;
         short buttonFontSize;
         sf::Vector2f topButtonPos;
 

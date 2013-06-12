@@ -95,27 +95,31 @@ void Chat::ProcessTextEntered(sf::Uint32 text)
         currentMsg.AddChar(static_cast<char>(text));
 }
 
-void Chat::SetPosition(float x, float y)
+void Chat::setUp(float x, float y, float width, float height, GameObjects& objects)
 {
     mainPos.x = x;
     mainPos.y = y;
+
+    SetNetManager(&objects.netManager);
+    messageBox.setupList(objects.window, sf::FloatRect(x, y, width, height), objects.fontBold, 16, false);
+
+    currentMsg.SetPosition(x, y + height);
+    currentMsg.SetFont(&objects.fontBold);
+
+    usernameText.setPosition(mainPos.x + 4, y + height - 182);
+    currentMsg.SetPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, y + height - 182);
     FixAllPositions();
 }
 
 void Chat::FixMessagePositions()
 {
-    float y = mainPos.y + textSize * (maxMessages - msgList.size());
-    for (auto& msg: msgList)
-    {
-        msg.text.setPosition(mainPos.x + 4, y);
-        y += textSize;
-    }
+   // messageBox.reposition(mainPos.x, mainPos.y);
 }
 
 void Chat::FixInputPositions()
 {
-    usernameText.setPosition(mainPos.x + 4, mainPos.y + maxMessages * textSize);
-    currentMsg.SetPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, mainPos.y + maxMessages * textSize);
+    usernameText.setPosition(mainPos.x + 4, messageBox.getListDimensions().top + messageBox.getListDimensions().height);
+   // currentMsg.SetPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, messageBox.);
 }
 
 void Chat::FixAllPositions()
@@ -251,15 +255,7 @@ void Chat::ShowHelp(const string& content)
 
 void Chat::PrintMessage(const string& msgStr, const sf::Color& color)
 {
-    if (!msgStr.empty() && font != nullptr)
-    {
-        sf::Text msgText(msgStr, *font, textSize);
-        msgText.setColor(color);
-        msgList.emplace_back(msgText);
-        if (msgList.size() > maxMessages)
-            msgList.pop_front();
-        FixMessagePositions();
-    }
+    messageBox.addTextItem(msgStr, color);
 }
 
 void Chat::ClearMessage()
@@ -329,24 +325,19 @@ void Chat::SetUsername(const string& str)
         PrintMessage("Username successfully set to '" + username + "'.", cmdOutColor);
     }
 }
+void Chat::handleScrolling(sf::Event& event, sf::RenderWindow& window)
+{
+    messageBox.handleScrolling(event, window);
+}
 
 void Chat::Update()
 {
-    for (auto& msg: msgList)
-    {
-        float msgAge = msg.age.getElapsedTime().asSeconds();
-        if (msgAge >= maxMsgAge)
-            msg.text.setColor(sf::Color::Transparent); // TODO: Actually erase it from the deque
-        else if (msgAge >= oldMsgAge)
-            msg.text.setColor(sf::Color(255, 255, 255, 128));
-    }
     currentMsg.UpdateCursor();
 }
 
 void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
-    for (auto& msg: msgList)
-        window.draw(msg.text);
+    window.draw(messageBox);
     window.draw(usernameText);
     window.draw(currentMsg);
 }

@@ -45,7 +45,7 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
     gameView.setCenter(myPlayer->GetPos());
 
-    theHud.UpdateView(gameView);
+    theHud.UpdateView(gameView, gameObjects);
 
     playing = true;
     paused = false;
@@ -100,6 +100,9 @@ void PlayGameState::handleEvents()
                 theHud.chat.ProcessInput(event.key.code);
                 break;
 
+            case sf::Event::MouseWheelMoved:
+                theHud.chat.handleScrolling(event, objects.window);
+                break;
             case sf::Event::TextEntered:
                 theHud.chat.ProcessTextEntered(event.text.unicode);
                 break;
@@ -113,7 +116,7 @@ void PlayGameState::handleEvents()
                 break;
 
             case sf::Event::Resized:
-                handleWindowResized();
+                handleWindowResized(objects);
                 break;
 
             default:
@@ -226,7 +229,7 @@ void PlayGameState::takeScreenshot()
     }
 }
 
-void PlayGameState::handleWindowResized()
+void PlayGameState::handleWindowResized(GameObjects& objects)
 {
     sf::Vector2f windowSize;
     windowSize.x = objects.window.getSize().x;
@@ -236,5 +239,5 @@ void PlayGameState::handleWindowResized()
     // objects.window.setView(gameView);
     viewDimensions = objects.window.getView().getSize();
 
-    theHud.UpdateView(gameView);
+    theHud.UpdateView(gameView, objects);
 }

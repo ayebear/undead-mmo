@@ -19,8 +19,8 @@ class ScrollBar: public sf::Drawable
         ///Slider gets smaller when actualHeight is larger, and larger when actualHeight is smaller
         void adjustScrollerHeight(float viewHeight, float actualHeight);
 
-        void scrollUp(sf::View&, sf::Vector2f, unsigned int);
-        void scrollDown(sf::View&, sf::Vector2f, unsigned int);
+        void scrollUp(sf::View&, float, sf::Vector2f, unsigned int);
+        void scrollDown(sf::View&, float, sf::Vector2f, unsigned int);
 
         void setVisible(bool);
         bool getVisible();
