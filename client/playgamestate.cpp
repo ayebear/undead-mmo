@@ -206,7 +206,10 @@ void PlayGameState::handleInput()
         else
             degrees = 90 - (90 * x);
         if (x != 0 || y != 0)
+        {
             myPlayer->SetAngle(degrees);
+            myPlayer->SetMoving(true);
+        }
     }
     elapsedTime = clock.restart().asSeconds();
 }

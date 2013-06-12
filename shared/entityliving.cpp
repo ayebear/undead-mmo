@@ -28,27 +28,36 @@ void EntityLiving::Move(float deltaTime)
         pos.x = 0;
         Move(-deltaTime);
     }
-    if(pos.y < 0)
+    if (pos.y < 0)
     {
         pos.y = 0;
         Move(-deltaTime);
     }
 
-    if(pos.x >= mapPtr->getMapWidth())
+    if (pos.x >= mapPtr->getMapWidth())
     {
         pos.x = mapPtr->getMapWidth();
         Move(-deltaTime);
     }
-    if(pos.y >= mapPtr->getMapHeight())
+    if (pos.y >= mapPtr->getMapHeight())
     {
         pos.y = mapPtr->getMapHeight();
         Move(-deltaTime);
     }
-
 }
 
 void EntityLiving::SetAngle(float deg)
 {
     angle = deg;
     moving = true;
+}
+
+void EntityLiving::SetSpeed(float theSpeed)
+{
+    speed = theSpeed;
+}
+
+void EntityLiving::SetMoving(bool isMoving)
+{
+    moving = isMoving;
 }

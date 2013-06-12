@@ -14,14 +14,18 @@ class EntityLiving: public Entity
         EntityLiving();
         void Move(float);
         void SetAngle(float);
+        void SetSpeed(float);
+        void SetMoving(bool);
+
     protected:
+        static const int defaultSpeed = 10;
+
         float angle; // in degrees
-        int currentHealth;
-        int baseHealth; // max health
-        int baseSpeed;
-        static const int defaultSpeed = 800;
-        float speed;
+        float speed; // in pixels per second
         bool moving;
+
+        int currentHealth; // current health
+        int baseHealth; // max health
 };
 
-#endif // ENTITYLIVING_H
+#endif

@@ -45,8 +45,9 @@ class Entity: public sf::Drawable
         virtual sf::Packet GetPacket() = 0;
         virtual sf::Packet& SetData(sf::Packet&) = 0;
 
-        // TODO: Instead of SetAngle, it needs to set both an angle and a speed. This could be encapsulated in a class/struct.
-        virtual void SetAngle(float deg) {}
+        virtual void SetAngle(float) {}
+        virtual void SetSpeed(float) {}
+        virtual void SetMoving(bool) {}
         void SetPos(const sf::Vector2f&);
         const sf::Vector2f GetPos() const;
 

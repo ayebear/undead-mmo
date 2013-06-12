@@ -6,6 +6,7 @@
 Player::Player()
 {
     type = Entity::Player;
+    speed = 800;
 }
 
 void Player::Update(float time)
