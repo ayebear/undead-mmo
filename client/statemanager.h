@@ -20,6 +20,8 @@ class StateManager
         StateManager(std::string, int, int); // Windowed
         StateManager(std::string); // Fullscreen
         ~StateManager();
+        void loadFonts();
+        void allocateStates();
 
         void startLoop(const StateAction&);
         const StateAction& handleAction(const StateAction&);
@@ -27,10 +29,9 @@ class StateManager
         void push(int);
         void pop();
 
-        void fail();
-
     private:
-        std::vector<State*> states; // This can change depending on how/when we want to allocate our resources, and if we need it to be like a stack
+        std::vector<unsigned int> stateStack; // Represents
+        State* statePtrs[StateType::TotalTypes];
 
         // The main game objects, which exist for the entire game, independent of the current game state
         // All states will need access to these, but do not and should not have access to this state manager class

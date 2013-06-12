@@ -21,13 +21,14 @@ class ClientNetwork: public Network
         ~ClientNetwork();
 
         // Overridden functions
+        void ReceiveUdp();
         void ReceiveTcp();
-        void StorePacket(sf::Packet&);
 
         // Packet functions
         bool ArePackets(int); // determines if there are any packets in the lists
         sf::Packet& GetPacket(int);
         void PopPacket(int);
+        void StorePacket(sf::Packet&);
 
         // Other
         bool ConnectToServer(const sf::IpAddress&);
@@ -37,6 +38,7 @@ class ClientNetwork: public Network
         bool ValidAddress(sf::IpAddress);
         bool IsConnected();
         bool IsValidType(int);
+
     private:
         // Client only needs a single TCP socket because it is only communicating with the server
         sf::TcpSocket tcpSock;

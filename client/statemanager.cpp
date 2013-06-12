@@ -9,37 +9,61 @@
 
 StateManager::StateManager(std::string windowTitle, int windowWidth, int windowHeight)
 {
+    loadFonts();
+
     // Create a normal window
     objects.vidMode = sf::VideoMode(windowWidth, windowHeight);
     objects.window.create(objects.vidMode, windowTitle);
 
     // TODO: Have an option for this
     objects.window.setVerticalSyncEnabled(true);
+
+    allocateStates();
 }
 
 StateManager::StateManager(std::string windowTitle)
 {
+    loadFonts();
+
     // Create a window in fullscreen at the current resolution
     objects.vidMode = sf::VideoMode::getDesktopMode();
     objects.window.create(objects.vidMode, windowTitle, sf::Style::Fullscreen);
 
     // TODO: Have an option for this
     objects.window.setVerticalSyncEnabled(true);
+
+    allocateStates();
 }
 
 StateManager::~StateManager()
 {
     // Deallocate the game states
-    while (!states.empty())
-    {
-        delete states.back();
-        states.pop_back();
-    }
-
+    for (auto& sPtr: statePtrs)
+        delete sPtr;
     cout << "Successfully deallocated all states.\n";
 
     // Close the window
     objects.window.close();
+}
+
+void StateManager::loadFonts()
+{
+    if (!objects.font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
+        exit(7);
+    if (!objects.fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
+        exit(7);
+    if (!objects.fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
+        exit(7);
+    if (!objects.fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
+        exit(7);
+}
+
+void StateManager::allocateStates()
+{
+    statePtrs[0] = new MainMenuState(objects);
+    statePtrs[1] = new LoginState(objects);
+    statePtrs[2] = new PlayGameState(objects);
+    statePtrs[3] = new ErrorState(objects);
 }
 
 void StateManager::startLoop(const StateAction& theAction)
@@ -69,58 +93,20 @@ const StateAction& StateManager::handleAction(const StateAction& action)
     }
 
     // Run the current state (on the top of the stack)
-    if (states.empty())
-        fail();
-    else
-        return states.back()->start(action.getArgs());
+    if (!stateStack.empty())
+        return statePtrs[stateStack.back()]->start(action.getArgs());
 
-    return action;
+    exit(123); // The game should exit when it gets here, this means the stack is empty
+    return action; // Only here to suppress the compiler warning...
 }
 
 void StateManager::push(int type)
 {
-    // Allocate a new state object based on the type
-    State* statePtr = nullptr;
-    switch (type)
-    {
-        case StateType::Menu:
-            statePtr = new MainMenuState(objects);
-            break;
-        case StateType::Login:
-            statePtr = new LoginState(objects);
-            break;
-        case StateType::Game:
-            statePtr = new PlayGameState(objects);
-            break;
-        case StateType::Error:
-            statePtr = new ErrorState(objects);
-            break;
-        default:
-            break;
-    }
-    if (statePtr == nullptr)
-        fail();
-
-    // Save that pointer in the stack
-    states.push_back(statePtr);
-
-    // Another approach could be to use a stack of numbers, and a preallocated array with all the types of states.
-    // This would be much faster and would never have to allocate more memory, or even deallocate memory.
-
-    // TODO: Use smart pointers for better safety!
+    stateStack.push_back(type);
 }
 
 void StateManager::pop()
 {
-    if (!states.empty())
-    {
-        delete states.back();
-        states.pop_back();
-    }
-}
-
-void StateManager::fail()
-{
-    std::cout << "Something with the state manager went terribly wrong.\n";
-    exit(123);
+    if (!stateStack.empty())
+        stateStack.pop_back();
 }

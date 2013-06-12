@@ -12,6 +12,7 @@ struct GameObjects: sf::NonCopyable
     sf::VideoMode vidMode;
     sf::RenderWindow window;
     ClientNetwork netManager;
+    sf::Font font, fontBold, fontMono, fontMonoBold;
 };
 
 #endif

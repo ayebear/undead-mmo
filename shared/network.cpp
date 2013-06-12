@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const unsigned short Network::defaultPort = 55001;
+const unsigned short Network::defaultPort = 1337;
 
 Network::Network() : udpThread(&Network::ReceiveUdp, this),
                      tcpThread(&Network::ReceiveTcp, this)
@@ -49,19 +49,4 @@ void Network::StopThreads()
     }
     else
         cout << "StopThreads(): No threads are running.\n";
-}
-
-void Network::ReceiveUdp()
-{
-    cout << "ReceiveUdp started.\n";
-    while (threadsRunning && udpSock.getLocalPort())
-    {
-        sf::Packet packet;
-        sf::IpAddress address;
-        unsigned short port;
-        // Will block on this line until a packet is received...
-        if (udpSock.receive(packet, address, port) == sf::Socket::Done)
-            StorePacket(packet);
-    }
-    cout << "ReceiveUdp finished.\n";
 }
