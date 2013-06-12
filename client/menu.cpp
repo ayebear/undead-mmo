@@ -13,11 +13,12 @@ Menu::~Menu()
     clearButtons();
 }
 
-void Menu::setUpMenu(std::string& backgroundFile, short fontSize, sf::Vector2f topButtonPosition, GameObjects& objects)
+void Menu::setUpMenu(const std::string& backgroundFile, short fontSize, sf::Vector2f topButtonPosition, GameObjects& theObjects)
 {
+    objects = &theObjects;
 
-    windowSize.x = objects.window.getSize().x;
-    windowSize.y = objects.window.getSize().y;
+    windowSize.x = objects->window.getSize().x;
+    windowSize.y = objects->window.getSize().y;
     menuView.reset(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 
     buttonWidthFactor = windowSize.x / topButtonPosition.x;
@@ -27,7 +28,7 @@ void Menu::setUpMenu(std::string& backgroundFile, short fontSize, sf::Vector2f t
     if (!bgTexture.loadFromFile(backgroundFile))
         exit(Errors::Graphics);
 
-    buttonFont = &objects.font;
+    buttonFont = &objects->fontBold;
 
     bgImageSize = bgTexture.getSize();
 
@@ -52,7 +53,7 @@ void Menu::setUpMenu(std::string& backgroundFile, short fontSize, sf::Vector2f t
 
 }
 
-void Menu::setBackground(std::string& backgroundFile)
+void Menu::setBackground(const std::string& backgroundFile)
 {
      //Load background and font
     if (!bgTexture.loadFromFile(backgroundFile))
@@ -62,7 +63,7 @@ void Menu::setBackground(std::string& backgroundFile)
     bgSprite.setTexture(bgTexture);
 }
 
-void Menu::setFont(std::string& fontFile)
+void Menu::setFont(const std::string& fontFile)
 {
      if (!buttonFont->loadFromFile(fontFile))
         exit(Errors::Font);
@@ -85,11 +86,6 @@ void Menu::setButtonColors(sf::Color unselectedColor, sf::Color selectedColor)
     buttonSelectedColor = selectedColor;
 }
 
-int Menu::handleEvents(sf::RenderWindow& window)
-{
-
-        return 0;
-}
 void Menu::handleMouseMovement(sf::Event& event)
 {
     uint i = 0;
@@ -101,12 +97,13 @@ void Menu::handleMouseMovement(sf::Event& event)
         i++;
     }
 }
-int Menu::handleMouseReleased(sf::Event& event, sf::RenderWindow& window)
+
+int Menu::handleMouseReleased(sf::Event& event)
 {
     uint i = 0;
     while(i < menuOptions.size())
     {
-        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(window)) && event.mouseButton.button == sf::Mouse::Left)
+        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
         {
             selection = i + 1;
             return selection;
@@ -116,7 +113,8 @@ int Menu::handleMouseReleased(sf::Event& event, sf::RenderWindow& window)
     return 0;
 
 }
-int Menu::handleKeyPressed(sf::Event& event, sf::RenderWindow& window)
+
+int Menu::handleKeyPressed(sf::Event& event)
 {
     switch (event.key.code)
     {
@@ -148,7 +146,7 @@ int Menu::handleKeyPressed(sf::Event& event, sf::RenderWindow& window)
 
         //Add the time.png to the end of the file name and save it.
         fileName += ss.str() + ".png";
-        sf::Image scrShot = window.capture();
+        sf::Image scrShot = objects->window.capture();
         scrShot.saveToFile(fileName);
         break;
     }
@@ -158,11 +156,12 @@ int Menu::handleKeyPressed(sf::Event& event, sf::RenderWindow& window)
     }
     return 0;
 }
-void Menu::handleResize(sf::Event& event, sf::RenderWindow& window)
+
+void Menu::handleResize(sf::Event& event)
 {
     sf::Vector2f windowSize;
-    windowSize.x = window.getSize().x;
-    windowSize.y = window.getSize().y;
+    windowSize.x = objects->window.getSize().x;
+    windowSize.y = objects->window.getSize().y;
     menuView.setSize(windowSize);
     //Resize the background image
     bgSprite.setScale(windowSize.x / bgImageSize.x, windowSize.y / bgImageSize.y);
@@ -171,9 +170,8 @@ void Menu::handleResize(sf::Event& event, sf::RenderWindow& window)
 
     //Adjust selection rectangles
     fixRectangles(float(event.size.width), event.size.height);
-
-
 }
+
 void Menu::updateMenu()
 {
     for(int i = 0; i < (int)menuOptions.size(); i++)
@@ -216,7 +214,7 @@ void Menu::fixRectangles(float width, float height)
 
 }
 
-void Menu::addMenuButton(std::string itemName)
+void Menu::addMenuButton(const std::string& itemName)
 {
     std::string tmpText;
 

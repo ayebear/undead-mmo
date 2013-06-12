@@ -16,7 +16,7 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     loginMenu.setUpMenu(bgFile,                                             //Background file
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
-                       objects                                     //Rendering window
+                       objects                                              //Rendering window
                        );
 
 
@@ -69,16 +69,16 @@ void LoginState::handleEvents()
                 textItemList.handleMouseClicked(event, objects.window);
 
             case sf::Event::MouseButtonReleased:
-                processChoice(loginMenu.handleMouseReleased(event, objects.window));
+                processChoice(loginMenu.handleMouseReleased(event));
                 break;
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(loginMenu.handleKeyPressed(event, objects.window));
+                processChoice(loginMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:
-                loginMenu.handleResize(event, objects.window);
+                loginMenu.handleResize(event);
                 break;
 
             default:

@@ -30,41 +30,40 @@ class Menu: public sf::Drawable
 {
     public:
 
-        virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
-
         Menu();
         ~Menu();
 
         //Background file, font file, font size, topButtonPos, the window, and the desired view
-        void setUpMenu(std::string&, short, sf::Vector2f, GameObjects&);
+        void setUpMenu(const std::string&, short, sf::Vector2f, GameObjects&);
 
         void updateMenu();
         void clearButtons();
 
-        void setBackground(std::string&);
-        void setFont(std::string&);
+        void setBackground(const std::string&);
+        void setFont(const std::string&);
         void setFontSize(short);
 
         void setTopButtonLocation(sf::Vector2f);
         void setButtonColors(sf::Color, sf::Color);
 
-        void addMenuButton(std::string);
+        void addMenuButton(const std::string&);
 
         //Returns 1 if first button is pressed, 2 if second button is pressed, etc.
         //Returns -1 if window is closed.
-        int handleEvents(sf::RenderWindow&);
+        int handleEvents();
 
         void handleMouseMovement(sf::Event&);
-        int handleMouseReleased(sf::Event&, sf::RenderWindow&);
-        int handleKeyPressed(sf::Event&, sf::RenderWindow&);
-        void handleResize(sf::Event&, sf::RenderWindow&);
+        int handleMouseReleased(sf::Event&);
+        int handleKeyPressed(sf::Event&);
+        void handleResize(sf::Event&);
+
+        virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
 
     private:
 
         //Utility Functions
         void fixRectangles(float, float);
-
 
         //Formatting variables
         sf::Color buttonUnselectedColor;
@@ -91,6 +90,8 @@ class Menu: public sf::Drawable
 
         //Array of buttons that are on the screen
         std::vector<MenuButton*> menuOptions;
+
+        GameObjects* objects;
 };
 
 #endif // MENU_H

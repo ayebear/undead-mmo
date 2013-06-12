@@ -5,7 +5,7 @@
 
 int main()
 {
-    StateManager game("Project: Brains v0.0.3.3 Dev");
+    StateManager game("Project: Brains v0.0.3.3 Dev", 950, 700);
     StateAction action;
     action.pushState(StateType::Menu);
     game.startLoop(action);

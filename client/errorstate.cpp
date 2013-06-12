@@ -66,16 +66,16 @@ void ErrorState::handleEvents()
                 break;
 
             case sf::Event::MouseButtonReleased:
-                processChoice(errorMenu.handleMouseReleased(event, objects.window));
+                processChoice(errorMenu.handleMouseReleased(event));
                 break;
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(errorMenu.handleKeyPressed(event, objects.window));
+                processChoice(errorMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:
-                errorMenu.handleResize(event, objects.window);
+                errorMenu.handleResize(event);
                 break;
 
             default:
