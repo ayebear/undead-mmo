@@ -22,6 +22,7 @@ This class is also fully thread safe, and is optimized for use with threads.
     Multiple threads can access the front and back at the same time.
     The locks that are used do not lock the entire list, only portions of it.
 */
+
 template <class T>
 class LinkedQueue
 {

@@ -4,11 +4,18 @@
 using namespace std;
 
 Client::Client(sf::TcpSocket* tcpSockPtr)
+    : loggedIn(false),
+    id(idCounter++)
 {
-    loggedIn = false;
     tcpSock = tcpSockPtr;
     ip = tcpSock->getRemoteAddress();
     port = tcpSock->getRemotePort();
+}
+
+Client::~Client()
+{
+    if (tcpSock != nullptr)
+        delete tcpSock;
 }
 
 ServerNetwork::ServerNetwork()
@@ -20,9 +27,24 @@ ServerNetwork::ServerNetwork()
     selector.add(listener);
 }
 
+void ServerNetwork::ReceiveUdp()
+{
+    cout << "ReceiveUdp started.\n";
+    while (threadsRunning && udpSock.getLocalPort())
+    {
+        sf::Packet packet;
+        sf::IpAddress address;
+        unsigned short port;
+        // Will block on this line until a packet is received...
+        if (udpSock.receive(packet, address, port) == sf::Socket::Done)
+            StorePacket(packet, address);
+    }
+    cout << "ReceiveUdp finished.\n";
+}
+
 void ServerNetwork::ReceiveTcp()
 {
-    while (true)
+    while (threadsRunning)
     {
         // Make the selector wait for data on any socket
         if (selector.wait())
@@ -36,11 +58,43 @@ void ServerNetwork::ReceiveTcp()
     }
 }
 
+bool ServerNetwork::ArePackets()
+{
+    return !packets.empty();
+}
+
+PacketExtra& ServerNetwork::GetPacket()
+{
+	return packets.front();
+}
+
+void ServerNetwork::PopPacket()
+{
+	packets.pop_front();
+}
+
+void ServerNetwork::StorePacket(sf::Packet& packet, ClientID sender)
+{
+	int type = -1;
+	if (packet >> type && IsValidType(type))
+	{
+        PacketExtra tmpPacket;
+        tmpPacket.data = packet;
+        tmpPacket.sender = sender;
+        packets.push_back(tmpPacket);
+	}
+}
+
+void ServerNetwork::StorePacket(sf::Packet& packet, sf::IpAddress& address)
+{
+
+}
+
 const string ServerNetwork::GetStatusString()
 {
     string status;
     for (auto& c: clients)
-        status += c->getRemoteAddress().toString() + '\n';
+        status += c.second.tcpSock->getRemoteAddress().toString() + '\n';
     return status;
 }
 
@@ -55,18 +109,18 @@ bool ServerNetwork::ValidAddress(sf::IpAddress address)
     return (clientsStr.find(address.toString()) != string::npos);
 }
 
-void ServerNetwork::SendToAll(sf::Packet& packet, int exclude)
+void ServerNetwork::SendToAll(sf::Packet& packet, ClientID exclude)
 {
-    for (int i = 0; i != (int)clients.size(); ++i) // loop through the connected clients
+    for (auto& client: clients) // loop through the connected clients
     {
-        if (i != exclude) // don't send the packet back to the client who sent it!
-            clients[i]->send(packet); // send the packet to the other clients
+        if (client.first != exclude) // don't send the packet back to the client who sent it!
+            clients[client.first].tcpSock->send(packet); // send the packet to the other clients
     }
 }
 
-void ServerNetwork::SendToClient(sf::Packet& packet, int clientID)
+void ServerNetwork::SendToClient(sf::Packet& packet, ClientID clientID)
 {
-    clients[clientID]->send(packet);
+    clients[clientID].tcpSock->send(packet);
 }
 
 void ServerNetwork::AddClient()
@@ -76,7 +130,7 @@ void ServerNetwork::AddClient()
     if (listener.accept(*client) == sf::Socket::Done)
     {
         // Add the new client to the clients list
-        clients.push_back(client);
+        clients.emplace_back(client);
 
         // Add the new client to the selector
         selector.add(*client);
@@ -86,11 +140,10 @@ void ServerNetwork::AddClient()
     }
 }
 
-void ServerNetwork::RemoveClient(sf::TcpSocket& client, uint i)
+void ServerNetwork::RemoveClient(ClientID id)
 {
-    selector.remove(client);
-    delete clients[i];
-    clients.erase(clients.begin() + i);
+    selector.remove(clients[id].tcpSock);
+    clients.erase(clients.begin() + id);
 }
 
 void ServerNetwork::TestSockets()
@@ -98,13 +151,13 @@ void ServerNetwork::TestSockets()
     // The listener socket is not ready, test all other sockets (the clients)
     for (uint i = 0; i < clients.size(); ++i)
     {
-        auto& client = *clients[i];
+        auto& client = *clients[i].tcpSock;
         if (selector.isReady(client))
         {
             // The client has sent some data, we can receive it
             sf::Packet packet;
             if (client.receive(packet) == sf::Socket::Done)
-                StorePacket(packet); // TODO: Store sender also
+                StorePacket(packet, i); // TODO: Store sender also
             else // the client has disconnected, so remove it
             {
                 cout << "Client " << client.getRemoteAddress() << " disconnected, here is the current list:\n";
@@ -113,4 +166,9 @@ void ServerNetwork::TestSockets()
             }
         }
     }
+}
+
+bool ServerNetwork::IsValidType(int type)
+{
+    return (type >= 0 && type < Packet::PacketTypes);
 }

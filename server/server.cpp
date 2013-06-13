@@ -26,7 +26,7 @@ void Server::Start()
 
 void Server::PrintWelcomeMsg()
 {
-    cout << "ZombieSurvivalGame Server v0.2.1.1 Dev\n\n";
+    cout << "ZombieSurvivalGame Server v0.3.0.0 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -57,12 +57,29 @@ void Server::MainLoop()
     }
 }
 
-void Server::ProcessAllPackets()
+void Server::ProcessGamePackets()
 {
-    while (clock.getElapsedTime() < desiredFrameTime)
+    while (true)
     {
         while (netManager.ArePackets())
+        {
             ProcessPacket(netManager.GetPacket());
+            netManager.PopPacket();
+        }
+        //sf::sleep(10);
+    }
+}
+
+void Server::ProcessOtherPackets()
+{
+    while (true)
+    {
+        while (netManager.ArePackets())
+        {
+            ProcessPacket(netManager.GetPacket());
+            netManager.PopPacket();
+        }
+        //sf::sleep(10);
     }
 }
 
@@ -85,7 +102,7 @@ void Server::ProcessPacket(PacketExtra& packet)
             ProcessLogIn(packet);
             break;
         default:
-            cout << "Error: Unknown received packet type.\n";
+            cout << "Error: Unknown received packet type. Type = " << type << endl;
             break;
     }
 }
@@ -93,7 +110,7 @@ void Server::ProcessPacket(PacketExtra& packet)
 void Server::ProcessChatMessage(PacketExtra& packet)
 {
     string msg;
-    packet >> msg;
+    packet.data >> msg;
     cout << "Message from " << packet.sender << ": " << msg << endl;
     netManager.SendToAll(packet.data, packet.sender);
 }
@@ -101,29 +118,10 @@ void Server::ProcessChatMessage(PacketExtra& packet)
 void Server::ProcessLogIn(PacketExtra& packet)
 {
     string username, password;
+    // Check if the username exists
+    // If it does, then check if the password is correct
+    // If it is correct, then send a successful login packet back to that client
+    sf::Packet loginStatusPacket;
+    loginStatusPacket << Packet::AuthStatus << Packet::Auth::Successful;
+    // Otherwise, it should send a packet back denying the login
 }
-
-/*
-void Server::ProcessPacket(sf::Packet& packet, uint exclude)
-{
-    int type = 1;
-    packet >> type;
-    switch (type)
-    {
-        case Packet::ChatMessage:{
-
-            break;}
-        case Packet::EntityUpdate:{
-            float x, y;
-            packet >> x >> y;
-            // x and y need to be stored in the player object in the entity list
-            // in the future this will be input and time instead of direct coordinates
-            // also, when sending the data to the clients, it needs the entity ID with it of course
-            SendToClients(packet, exclude);
-            break;}
-        default:
-            cout << "Error: Unrecognized packet type? Type was: " << type << endl;
-            break;
-    }
-}
-*/

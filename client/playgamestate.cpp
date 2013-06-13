@@ -49,6 +49,9 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 
     theHud.UpdateView(gameView, gameObjects);
 
+    playerInput.x = 0;
+    playerInput.y = 0;
+
     playing = true;
     paused = false;
 }
@@ -192,29 +195,41 @@ void PlayGameState::handleInput()
     if (!paused && !theHud.chat.GetInput())
     {
         // This is horrible code I wrote, we should make it better
-        int x = 0;
-        int y = 0;
+        oldPlayerInput = playerInput;
+        playerInput.x = 0;
+        playerInput.y = 0;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            y--; // 90
+            playerInput.y--; // 90
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            y++; // 270 (or -90)
+            playerInput.y++; // 270 (or -90)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            x--; // 180
+            playerInput.x--; // 180
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            x++; // 0 (or 360)
-        float degrees = y * 90;
+            playerInput.x++; // 0 (or 360)
+
+        // Calculate the degrees based on which keys were pressed
+        float degrees = playerInput.y * 90;
         if (degrees != 0)
-            degrees += -y * x * 45;
+            degrees += -playerInput.y * playerInput.x * 45;
         else
-            degrees = 90 - (90 * x);
-        if (x != 0 || y != 0)
+            degrees = 90 - (90 * playerInput.x);
+
+        if (playerInput != oldPlayerInput)
         {
-            myPlayer->SetAngle(degrees);
-            myPlayer->SetMoving(true);
-        }
-        else
-        {
-            myPlayer->SetMoving(false);
+            if (playerInput.x != 0 || playerInput.y != 0)
+            {
+                myPlayer->SetAngle(degrees);
+                myPlayer->SetMoving(true);
+            }
+            else
+            {
+                degrees = 0;
+                myPlayer->SetMoving(false);
+            }
+
+            sf::Packet playerPacket;
+            playerPacket << Packet::Input << myPlayer->IsMoving() << degrees;
+            objects.netManager.SendPacket(playerPacket);
         }
     }
     elapsedTime = clock.restart().asSeconds();

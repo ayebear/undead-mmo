@@ -1,56 +1,66 @@
 #ifndef SERVERNETWORK_H
 #define SERVERNETWORK_H
 
-#include <deque>
+#include <map>
 #include <string>
 #include "../shared/network.h"
 #include "../shared/linkedqueue.h"
 
+typedef unsigned int ClientID;
+
 struct PacketExtra
 {
     sf::Packet data;
-    int sender;
+    ClientID sender;
 };
 
 struct Client
 {
-    Client(): tcpSock(nullptr), port(Network::defaultPort), loggedIn(false) {}
+    Client(): tcpSock(nullptr), port(Network::defaultPort), loggedIn(false), id(idCounter++) {}
     Client(sf::TcpSocket* tcpSockPtr);
+    ~Client();
     sf::TcpSocket* tcpSock;
     // These are required for UDP
     sf::IpAddress ip;
     unsigned short port;
     std::string username;
     bool loggedIn; // They can be connected but not logged in
-    // ID will already be known by position in deque
-    // This seems to change so we cannot rely on this for the long term,
-    // unless we have never changing UIDs and use a map instead of a deque
+    ClientID id; // This will also be used for the key in the map
+
+    static ClientID idCounter;
 };
 
 class ServerNetwork: public Network
 {
     public:
         ServerNetwork();
+
+        // Overidden functions
+        void ReceiveUdp();
         void ReceiveTcp();
-        const std::string GetStatusString();
-        bool ValidAddress(sf::IpAddress);
 
         // Packet functions
         bool ArePackets();
         PacketExtra& GetPacket();
         void PopPacket();
-        void StorePacket(PacketExtra&);
+        void StorePacket(sf::Packet&, ClientID);
+        void StorePacket(sf::Packet&, sf::IpAddress&);
 
-        void SendToAll(sf::Packet&, int exclude = -1);
-        void SendToClient(sf::Packet&, int);
+        // Other functions
+        const std::string GetStatusString();
+        bool ValidAddress(sf::IpAddress);
+        bool ValidClientID(ClientID);
+        void SendToAll(sf::Packet&, ClientID exclude = -1);
+        void SendToClient(sf::Packet&, ClientID);
         void PrintClients();
         void AddClient();
-        void RemoveClient(sf::TcpSocket&, uint);
+        void RemoveClient(sf::TcpSocket&, ClientID);
         void TestSockets();
-        //void ProcessPacket(sf::Packet&, uint);
+        bool IsValidType(int);
+
     private:
         LinkedQueue<PacketExtra> packets; // Stores all received packets
-        std::deque<Client> clients; // Stores the clients
+        std::map<ClientID, Client> clients; // Stores the clients
         sf::TcpListener listener;
         sf::SocketSelector selector;
 };

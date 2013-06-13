@@ -29,6 +29,7 @@ class ClientNetwork: public Network
         sf::Packet& GetPacket(int);
         void PopPacket(int);
         void StorePacket(sf::Packet&);
+        void SendPacket(sf::Packet&);
 
         // Other
         bool ConnectToServer(const sf::IpAddress&);

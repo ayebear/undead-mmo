@@ -49,6 +49,7 @@ class PlayGameState: public State
         float elapsedTime;
         sf::Clock FPSTimer;
         sf::Texture playerTex, zombieTex;
+        sf::Vector2i playerInput, oldPlayerInput;
 };
 
 #endif

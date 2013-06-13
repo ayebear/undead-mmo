@@ -9,12 +9,6 @@
 #include "other.h"
 #include "map.h"
 
-/*
-TODO:
-    May need a type variable to determine what type the entity is.
-    May need to separate dynamic and static entities (don't need to check collision every frame on non-moving entities)
-*/
-
 class Entity: public sf::Drawable
 {
     public:
@@ -53,7 +47,6 @@ class Entity: public sf::Drawable
 
         static void setMapPtr(Map&);
 
-
         // All of the different entity types
         enum Type
         {
@@ -72,7 +65,6 @@ class Entity: public sf::Drawable
         int type;
         sf::Vector2f pos;
         sf::Sprite sprite;
-
 
         static Map* mapPtr;
 

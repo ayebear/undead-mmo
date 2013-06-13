@@ -76,6 +76,12 @@ void ClientNetwork::StorePacket(sf::Packet& packet)
     }
 }
 
+// TODO: Eventually make specific functions for building different packet types but we can just use this for now
+void ClientNetwork::SendPacket(sf::Packet& packet)
+{
+    tcpSock.send(packet);
+}
+
 // This initiates a TCP socket connection to a server
 bool ClientNetwork::ConnectToServer(const sf::IpAddress& address)
 {
