@@ -64,9 +64,11 @@ void LoginState::handleEvents()
 
             case sf::Event::MouseWheelMoved:
                 textItemList.handleScrolling(event, objects.window);
+                break;
 
             case sf::Event::MouseButtonPressed:
                 textItemList.handleMouseClicked(event, objects.window);
+                break;
 
             case sf::Event::MouseButtonReleased:
                 processChoice(loginMenu.handleMouseReleased(event));
@@ -74,7 +76,10 @@ void LoginState::handleEvents()
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(loginMenu.handleKeyPressed(event));
+                if (event.key.code == sf::Keyboard::Escape)
+                    action.popState();
+                else
+                    processChoice(loginMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:

@@ -47,7 +47,10 @@ void MainMenuState::handleEvents()
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(mainMenu.handleKeyPressed(event));
+                if (event.key.code == sf::Keyboard::Escape)
+                    action.exitGame();
+                else
+                    processChoice(mainMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:
@@ -63,10 +66,7 @@ void MainMenuState::handleEvents()
 void MainMenuState::processChoice(int choice)
 {
     if (choice == 1)
-    {
-        std::cout << "MainMenuState created a push action to LoginState.\n";
         action.pushState(StateType::Login);
-    }
     else if (choice == 2)
         action.exitGame();
 }

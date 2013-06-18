@@ -93,7 +93,7 @@ void TextItemList::addTextItem(const std::string& newText, const sf::Color& colo
             //Unhighlight the last item if it was already highlighted
             if(textItemList[currentSelection].getHighlighted())
                 textItemList[currentSelection].toggleHighlight();
-\
+
             currentSelection = textItemList.size() - 1;
 
             //Highlight the new item
