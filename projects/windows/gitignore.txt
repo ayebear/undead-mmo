@@ -1,0 +1,8 @@
+.gitignore
+/data/
+/*.cbp
+*.depend
+*.layout
+ZombieGame.exe
+ZombieServer.exe
+obj/

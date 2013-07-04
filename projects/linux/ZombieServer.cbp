@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ZombieServer" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="ZombieServer" prefix_auto="1" extension_auto="1" />
+				<Option object_output="server/obj" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add directory="lib/SFML-2.0/include" />
+		</Compiler>
+		<Linker>
+			<Add library="sfml-graphics" />
+			<Add library="sfml-window" />
+			<Add library="sfml-system" />
+			<Add library="sfml-network" />
+			<Add directory="lib/SFML-2.0/lib" />
+		</Linker>
+		<Unit filename="other/configfile.cpp" />
+		<Unit filename="other/configfile.h" />
+		<Unit filename="other/option.cpp" />
+		<Unit filename="other/option.h" />
+		<Unit filename="server/entitygrid.cpp" />
+		<Unit filename="server/entitygrid.h" />
+		<Unit filename="server/main.cpp" />
+		<Unit filename="server/masterentitylist.cpp" />
+		<Unit filename="server/masterentitylist.h" />
+		<Unit filename="server/server.cpp" />
+		<Unit filename="server/server.h" />
+		<Unit filename="server/servernetwork.cpp" />
+		<Unit filename="server/servernetwork.h" />
+		<Unit filename="shared/config.cpp" />
+		<Unit filename="shared/config.h" />
+		<Unit filename="shared/entity.cpp" />
+		<Unit filename="shared/entity.h" />
+		<Unit filename="shared/entityalloc.cpp" />
+		<Unit filename="shared/entityalloc.h" />
+		<Unit filename="shared/entityliving.cpp" />
+		<Unit filename="shared/entityliving.h" />
+		<Unit filename="shared/linkedqueue.cpp" />
+		<Unit filename="shared/linkedqueue.h" />
+		<Unit filename="shared/map.cpp" />
+		<Unit filename="shared/map.h" />
+		<Unit filename="shared/network.cpp" />
+		<Unit filename="shared/network.h" />
+		<Unit filename="shared/other.h" />
+		<Unit filename="shared/packet.h" />
+		<Unit filename="shared/player.cpp" />
+		<Unit filename="shared/player.h" />
+		<Unit filename="shared/playerdata.cpp" />
+		<Unit filename="shared/playerdata.h" />
+		<Unit filename="shared/tile.cpp" />
+		<Unit filename="shared/tile.h" />
+		<Unit filename="shared/zombie.cpp" />
+		<Unit filename="shared/zombie.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
