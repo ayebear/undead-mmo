@@ -14,15 +14,15 @@ class Tile: public sf::Drawable
     public:
         Tile();
         Tile(TileID, int, int);
-        void SetID(TileID);
-        const TileID GetID() const;
-        void SetPos(int, int);
-        bool IsWalkable();
+        void setID(TileID);
+        const TileID getID() const;
+        void setPos(int, int);
+        bool isWalkable();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
         static const int tileWidth = 128;
         static const int tileHeight = 128;
-        static void LoadTileTextures();
+        static void loadTileTextures();
 
     private:
         TileID ID;

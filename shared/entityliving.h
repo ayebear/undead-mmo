@@ -12,10 +12,10 @@ class EntityLiving: public Entity
 {
     public:
         EntityLiving();
-        void Move(float);
-        void SetAngle(float);
-        void SetSpeed(float);
-        void SetMoving(bool);
+        void move(float);
+        void setAngle(float);
+        void setSpeed(float);
+        void setMoving(bool);
 
     protected:
         static const int defaultSpeed = 10;

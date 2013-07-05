@@ -6,41 +6,41 @@ InputBox::InputBox()
 {
     input = false;
     pwdMode = false;
-    SetTextSize(16);
-    SetColor(sf::Color::White);
+    setTextSize(16);
+    setColor(sf::Color::White);
 }
 
-void InputBox::ProcessInput(sf::Keyboard::Key keyCode)
+void InputBox::processInput(sf::Keyboard::Key keyCode)
 {
     switch (keyCode)
     {
         case sf::Keyboard::BackSpace:
-            Backspace();
+            backspace();
             break;
         case sf::Keyboard::Delete:
-            Delete();
+            deleteChar();
             break;
         case sf::Keyboard::Left:
-            Left();
+            left();
             break;
         case sf::Keyboard::Right:
-            Right();
+            right();
             break;
         case sf::Keyboard::Home:
-            Home();
+            home();
             break;
         case sf::Keyboard::End:
-            End();
+            end();
             break;
         default:
             break;
     }
 }
 
-void InputBox::UpdateCursor()
+void InputBox::updateCursor()
 {
     if (input)
-        cursor.Update();
+        cursor.update();
 }
 
 void InputBox::draw(sf::RenderTarget& window, sf::RenderStates states) const
@@ -50,57 +50,57 @@ void InputBox::draw(sf::RenderTarget& window, sf::RenderStates states) const
         window.draw(cursor);
 }
 
-void InputBox::SetFont(sf::Font* theFont)
+void InputBox::setFont(sf::Font* theFont)
 {
     font = theFont;
     text.setFont(*font);
 }
 
-void InputBox::SetPosition(float x, float y)
+void InputBox::setPosition(float x, float y)
 {
     text.setPosition(x, y);
-    UpdateCursorPos();
+    updateCursorPos();
 }
 
-void InputBox::SetPasswordMode(bool mode)
+void InputBox::setPasswordMode(bool mode)
 {
     pwdMode = mode;
 }
 
-void InputBox::SetShowRectangle(bool mode)
+void InputBox::setShowRectangle(bool mode)
 {
     showRect = mode;
 }
 
-void InputBox::SetTextSize(unsigned int size)
+void InputBox::setTextSize(unsigned int size)
 {
     text.setCharacterSize(size);
 }
 
-void InputBox::SetColor(sf::Color col)
+void InputBox::setColor(sf::Color col)
 {
     text.setColor(col);
     cursor.rect.setFillColor(col);
 }
 
-void InputBox::SetString(const string& str)
+void InputBox::setString(const string& str)
 {
     textStr = str;
     pwdStr.clear();
     for (unsigned int x = 0; x < textStr.size(); x++)
         pwdStr += pwdChar;
-    UpdateText();
-    UpdateCursorPos();
+    updateText();
+    updateCursorPos();
 }
 
-void InputBox::SetInput(bool mode)
+void InputBox::setInput(bool mode)
 {
     input = mode;
     if (input)
-        cursor.RestartTimer();
+        cursor.restartTimer();
 }
 
-void InputBox::UpdateCursorPos()
+void InputBox::updateCursorPos()
 {
     auto charPos = text.findCharacterPos(cursor.pos);
     charPos.x += 1;
@@ -108,26 +108,26 @@ void InputBox::UpdateCursorPos()
     cursor.rect.setPosition(charPos);
 }
 
-const string& InputBox::GetString()
+const string& InputBox::getString()
 {
     return textStr;
 }
 
-void InputBox::Clear()
+void InputBox::clear()
 {
-    SetString("");
+    setString("");
 }
 
-void InputBox::ResetCursor()
+void InputBox::resetCursor()
 {
     cursor.pos = -1;
-    UpdateCursorPos();
+    updateCursorPos();
 }
 
 // This is called while the player is typing
-void InputBox::AddChar(char c)
+void InputBox::addChar(char c)
 {
-    cursor.RestartTimer();
+    cursor.restartTimer();
     if (textStr.empty() || cursor.pos == -1)
     {
 	    textStr += c;
@@ -139,14 +139,14 @@ void InputBox::AddChar(char c)
 		cursor.pos++;
 	}
 	pwdStr += pwdChar;
-    UpdateText();
-    UpdateCursorPos();
+    updateText();
+    updateCursorPos();
 }
 
 // This is called when backspace is pressed
-void InputBox::Backspace()
+void InputBox::backspace()
 {
-    cursor.RestartTimer();
+    cursor.restartTimer();
     if (!textStr.empty() && cursor.pos != 0)
     {
     	if (cursor.pos == -1)
@@ -157,24 +157,24 @@ void InputBox::Backspace()
 	    	textStr.erase(textStr.begin() + cursor.pos);
 	    }
 	    pwdStr.pop_back();
-        UpdateText();
-        UpdateCursorPos();
+        updateText();
+        updateCursorPos();
     }
 }
 
-void InputBox::Delete()
+void InputBox::deleteChar()
 {
-    cursor.RestartTimer();
+    cursor.restartTimer();
     if (!textStr.empty() && cursor.pos != -1 && cursor.pos < (int)textStr.size())
     {
 	    textStr.erase(textStr.begin() + cursor.pos);
 	    pwdStr.pop_back();
-        UpdateText();
-        UpdateCursorPos();
+        updateText();
+        updateCursorPos();
     }
 }
 
-void InputBox::UpdateText()
+void InputBox::updateText()
 {
     if (pwdMode)
         text.setString(pwdStr);
@@ -182,43 +182,43 @@ void InputBox::UpdateText()
         text.setString(textStr);
 }
 
-void InputBox::Left()
+void InputBox::left()
 {
-	cursor.RestartTimer();
+	cursor.restartTimer();
 	if (cursor.pos == -1)
 	{
 		cursor.pos = text.getString().getSize() - 1;
-		UpdateCursorPos();
+		updateCursorPos();
     }
 	else if (cursor.pos != 0)
 	{
 		cursor.pos--;
-		UpdateCursorPos();
+		updateCursorPos();
 	}
 }
 
-void InputBox::Right()
+void InputBox::right()
 {
-	cursor.RestartTimer();
+	cursor.restartTimer();
 	if (cursor.pos != -1)
 	{
 		cursor.pos++;
 		if (cursor.pos >= (int)textStr.size())
 			cursor.pos = -1;
-		UpdateCursorPos();
+		updateCursorPos();
 	}
 }
 
-void InputBox::Home()
+void InputBox::home()
 {
-    cursor.RestartTimer();
+    cursor.restartTimer();
     cursor.pos = 0;
-    UpdateCursorPos();
+    updateCursorPos();
 }
 
-void InputBox::End()
+void InputBox::end()
 {
-    cursor.RestartTimer();
+    cursor.restartTimer();
     cursor.pos = -1;
-    UpdateCursorPos();
+    updateCursorPos();
 }

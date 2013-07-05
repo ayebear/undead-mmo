@@ -10,19 +10,19 @@ using namespace std;
 Map::Map()
 {
     ready = false;
-    Tile::LoadTileTextures();
+    Tile::loadTileTextures();
 }
 
 Map::Map(vector<vector<TileID> > & mapData)
 {
-    Tile::LoadTileTextures();
-    LoadMapFromMemory(mapData);
+    Tile::loadTileTextures();
+    loadMapFromMemory(mapData);
 }
 
 Map::Map(const string& filename)
 {
-    Tile::LoadTileTextures();
-    LoadMapFromFile(filename);
+    Tile::loadTileTextures();
+    loadMapFromFile(filename);
 }
 
 int Map::getMapHeight()
@@ -35,7 +35,7 @@ int Map::getMapWidth()
     return tiles.front().size() * Tile::tileWidth - Tile::tileWidth;
 }
 
-void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
+void Map::loadMapFromMemory(vector<vector<TileID> > & mapData)
 {
     tiles.resize(mapData.size());
     for (unsigned int y = 0; y < mapData.size(); y++)
@@ -49,7 +49,7 @@ void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
     ready = true;
 }
 
-bool Map::LoadMapFromFile(const string& filename)
+bool Map::loadMapFromFile(const string& filename)
 {
     ifstream in(filename);
     if (!in.is_open())

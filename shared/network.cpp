@@ -10,8 +10,8 @@ using namespace std;
 
 const unsigned short Network::defaultPort = 1337;
 
-Network::Network() : udpThread(&Network::ReceiveUdp, this),
-                     tcpThread(&Network::ReceiveTcp, this)
+Network::Network() : udpThread(&Network::receiveUdp, this),
+                     tcpThread(&Network::receiveTcp, this)
 {
     udpSock.setBlocking(true);
     udpSock.bind(defaultPort);
@@ -24,10 +24,10 @@ Network::~Network()
     udpSock.setBlocking(false);
     udpSock.unbind();
     cout << "UDP Socket was unbound.\n";
-    StopThreads();
+    stopThreads();
 }
 
-void Network::LaunchThreads()
+void Network::launchThreads()
 {
     if (!threadsRunning)
     {
@@ -37,15 +37,15 @@ void Network::LaunchThreads()
     }
 }
 
-void Network::StopThreads()
+void Network::stopThreads()
 {
     if (threadsRunning)
     {
-        cout << "StopThreads(): Terminating threads now...\n";
+        cout << "stopThreads(): Terminating threads now...\n";
         udpThread.terminate();
         tcpThread.terminate();
         threadsRunning = false;
     }
     else
-        cout << "StopThreads(): No threads are running.\n";
+        cout << "stopThreads(): No threads are running.\n";
 }

@@ -15,11 +15,11 @@ class Zombie: public EntityLiving
 {
     public:
         Zombie();
-        void Update(float);
-        bool Collides(Entity*);
+        void update(float);
+        bool collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
-        sf::Packet GetPacket();
-        sf::Packet& SetData(sf::Packet&);
+        sf::Packet getPacket();
+        sf::Packet& setData(sf::Packet&);
     private:
 };
 

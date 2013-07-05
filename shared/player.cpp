@@ -9,12 +9,12 @@ Player::Player()
     speed = 800;
 }
 
-void Player::Update(float time)
+void Player::update(float time)
 {
-    Move(time);
+    move(time);
 }
 
-bool Player::Collides(Entity* ent)
+bool Player::collides(Entity* ent)
 {
     return false;
 }
@@ -24,14 +24,14 @@ void Player::draw(sf::RenderTarget& window, sf::RenderStates states) const
     window.draw(sprite);
 }
 
-sf::Packet Player::GetPacket()
+sf::Packet Player::getPacket()
 {
     sf::Packet packet;
     packet << ID << type << pos.x << pos.y;
     return packet;
 }
 
-sf::Packet& Player::SetData(sf::Packet& packet)
+sf::Packet& Player::setData(sf::Packet& packet)
 {
     return packet >> ID >> type >> pos.x >> pos.y;
 }

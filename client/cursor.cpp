@@ -9,13 +9,13 @@ Cursor::Cursor()
     rect.setFillColor(sf::Color::White);
 }
 
-void Cursor::RestartTimer()
+void Cursor::restartTimer()
 {
     timer.restart();
 	show = true;
 }
 
-void Cursor::Update()
+void Cursor::update()
 {
     if (timer.getElapsedTime().asSeconds() >= blinkRate)
     {

@@ -8,17 +8,17 @@ std::vector<sf::Texture> Tile::textures;
 
 Tile::Tile()
 {
-    SetID(0);
-    SetPos(0, 0);
+    setID(0);
+    setPos(0, 0);
 }
 
 Tile::Tile(TileID tileID, int x, int y)
 {
-    SetID(tileID);
-    SetPos(x, y);
+    setID(tileID);
+    setPos(x, y);
 }
 
-void Tile::LoadTileTextures()
+void Tile::loadTileTextures()
 {
     if (!textures.empty())
     {
@@ -49,7 +49,7 @@ void Tile::LoadTileTextures()
     std::cout << "Done loading tile textures!\n";
 }
 
-void Tile::SetID(TileID tileID)
+void Tile::setID(TileID tileID)
 {
     ID = tileID;
 
@@ -64,17 +64,17 @@ void Tile::SetID(TileID tileID)
         //std::cout << "Fatal Error: Failed to set texture. textures.size() = " << textures.size() << "\n";
 }
 
-const TileID Tile::GetID() const
+const TileID Tile::getID() const
 {
     return ID;
 }
 
-void Tile::SetPos(int x, int y)
+void Tile::setPos(int x, int y)
 {
     sprite.setPosition(x, y);
 }
 
-bool Tile::IsWalkable()
+bool Tile::isWalkable()
 {
     return walkable;
 }

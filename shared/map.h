@@ -17,8 +17,8 @@ class Map: public sf::Drawable
 
         int getMapWidth();
         int getMapHeight();
-        bool LoadMapFromFile(const std::string&);
-        void LoadMapFromMemory(std::vector< std::vector<TileID> > & mapData);
+        bool loadMapFromFile(const std::string&);
+        void loadMapFromMemory(std::vector< std::vector<TileID> > & mapData);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:

@@ -12,38 +12,38 @@ EntityList::EntityList()
 
 // TODO: We must find a way to destroy entities on the client...
 // It would be best if each client could keep track of it to lessen the load on the server.
-void EntityList::UpdateEntity(EID id, sf::Packet& packet)
+void EntityList::updateEntity(EID id, sf::Packet& packet)
 {
-    Entity* ent = Find(id);
+    Entity* ent = find(id);
     int type;
     packet >> type;
     if (ent == nullptr) // If the entity does not exist already
-        ent = Add(type, id); // Add a new default entity of that type to the list with that ID
+        ent = add(type, id); // Add a new default entity of that type to the list with that ID
     packet >> *ent; // Update the entity with the packet data
     // TODO: Maybe it would be better to just call one of the entity functions and pass in an
     // entire reference to the packet... Like this:
-    //ent->SetData(packet);
+    //ent->setData(packet);
 }
 
 // This function allocates a new entity based on type AND inserts it into the entity list
-Entity* EntityList::Add(int type, EID id)
+Entity* EntityList::add(int type, EID id)
 {
-    return Insert(AllocateEntity(type), id);
+    return insert(allocateEntity(type), id);
 }
 
 // Probably won't need this overload
-/*void EntityList::Insert(Entity* newEnt)
+/*void EntityList::insert(Entity* newEnt)
 {
-    ents[newEnt->GetID()] = newEnt;
+    ents[newEnt->getID()] = newEnt;
 }*/
 
-Entity* EntityList::Insert(Entity* newEnt, EID id)
+Entity* EntityList::insert(Entity* newEnt, EID id)
 {
     ents[id] = newEnt;
     return newEnt;
 }
 
-Entity* EntityList::Find(EID id)
+Entity* EntityList::find(EID id)
 {
     auto i = ents.find(id);
     if (i == ents.end())
@@ -52,16 +52,16 @@ Entity* EntityList::Find(EID id)
         return i->second;
 }
 
-void EntityList::Delete(EID id)
+void EntityList::deleteChar(EID id)
 {
     delete ents[id]; // Deallocate
     ents.erase(id); // Remove the pointer
 }
 
-void EntityList::Update(float time)
+void EntityList::update(float time)
 {
     for (auto& ent: ents)
-        ent.second->Update(time);
+        ent.second->update(time);
 }
 
 void EntityList::draw(sf::RenderTarget& window, sf::RenderStates states) const

@@ -20,7 +20,7 @@ ClientNetwork::~ClientNetwork()
     cout << "TCP Socket was disconnected.\n";
 }
 
-void ClientNetwork::ReceiveUdp()
+void ClientNetwork::receiveUdp()
 {
     cout << "ReceiveUdp started.\n";
     while (threadsRunning && udpSock.getLocalPort())
@@ -30,12 +30,12 @@ void ClientNetwork::ReceiveUdp()
         unsigned short port;
         // Will block on this line until a packet is received...
         if (udpSock.receive(packet, address, port) == sf::Socket::Done)
-            StorePacket(packet);
+            storePacket(packet);
     }
     cout << "ReceiveUdp finished.\n";
 }
 
-void ClientNetwork::ReceiveTcp()
+void ClientNetwork::receiveTcp()
 {
     cout << "ReceiveTcp started.\n";
     while (threadsRunning && tcpSock.getLocalPort())
@@ -44,32 +44,32 @@ void ClientNetwork::ReceiveTcp()
         sf::Packet packet;
         // Will block on this line until a packet is received...
         if (tcpSock.receive(packet) == sf::Socket::Done)
-            StorePacket(packet);
+            storePacket(packet);
     }
     cout << "ReceiveTcp finished.\n";
 }
 
-bool ClientNetwork::ArePackets(int type)
+bool ClientNetwork::arePackets(int type)
 {
     return !packets[type].empty();
 }
 
-sf::Packet& ClientNetwork::GetPacket(int type)
+sf::Packet& ClientNetwork::getPacket(int type)
 {
 	sf::Lock lock(packetMutexes[type]);
 	return packets[type].front();
 }
 
-void ClientNetwork::PopPacket(int type)
+void ClientNetwork::popPacket(int type)
 {
 	sf::Lock lock(packetMutexes[type]);
 	packets[type].pop_front();
 }
 
-void ClientNetwork::StorePacket(sf::Packet& packet)
+void ClientNetwork::storePacket(sf::Packet& packet)
 {
 	int type = -1;
-	if (packet >> type && IsValidType(type))
+	if (packet >> type && isValidType(type))
 	{
         sf::Lock lock(packetMutexes[type]);
         packets[type].push_back(packet);
@@ -77,13 +77,13 @@ void ClientNetwork::StorePacket(sf::Packet& packet)
 }
 
 // TODO: Eventually make specific functions for building different packet types but we can just use this for now
-void ClientNetwork::SendPacket(sf::Packet& packet)
+void ClientNetwork::sendPacket(sf::Packet& packet)
 {
     tcpSock.send(packet);
 }
 
 // This initiates a TCP socket connection to a server
-bool ClientNetwork::ConnectToServer(const sf::IpAddress& address)
+bool ClientNetwork::connectToServer(const sf::IpAddress& address)
 {
     serverAddress = address;
     tcpSock.setBlocking(true);
@@ -96,12 +96,12 @@ bool ClientNetwork::ConnectToServer(const sf::IpAddress& address)
     tcpSock.setBlocking(false);
     connected = (status == sf::Socket::Done);
     if (connected)
-        LaunchThreads();
+        launchThreads();
     return connected;
 }
 
 // This will send a login request to the currently connected server
-int ClientNetwork::Login(const string& username, const string& password)
+int ClientNetwork::login(const string& username, const string& password)
 {
     sf::Packet loginPacket;
     loginPacket << Packet::LogIn << username << password;
@@ -111,16 +111,16 @@ int ClientNetwork::Login(const string& username, const string& password)
     // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
 
     // Wait until you get a response from the server for your login request
-    while (!ArePackets(Packet::AuthStatus)); // TODO: Have a timeout and sleep inside of the loop
+    while (!arePackets(Packet::AuthStatus)); // TODO: Have a timeout and sleep inside of the loop
 
     int status = Packet::Auth::UnknownFailure;
-    GetPacket(Packet::AuthStatus) >> status;
-    PopPacket(Packet::AuthStatus);
+    getPacket(Packet::AuthStatus) >> status;
+    popPacket(Packet::AuthStatus);
 
     return status;
 }
 
-void ClientNetwork::SendChatMessage(const string& msg)
+void ClientNetwork::sendChatMessage(const string& msg)
 {
     if (!msg.empty() && msg.front() != '/')
     {
@@ -130,7 +130,7 @@ void ClientNetwork::SendChatMessage(const string& msg)
     }
 }
 
-const string ClientNetwork::GetStatusString()
+const string ClientNetwork::getStatusString()
 {
     string status;
     if (!connected)
@@ -143,17 +143,17 @@ const string ClientNetwork::GetStatusString()
     return status;
 }
 
-bool ClientNetwork::ValidAddress(sf::IpAddress address)
+bool ClientNetwork::validAddress(sf::IpAddress address)
 {
     return (address == serverAddress);
 }
 
-bool ClientNetwork::IsConnected()
+bool ClientNetwork::isConnected()
 {
     return connected;
 }
 
-bool ClientNetwork::IsValidType(int type)
+bool ClientNetwork::isValidType(int type)
 {
     return (type >= 0 && type < Packet::PacketTypes);
 }

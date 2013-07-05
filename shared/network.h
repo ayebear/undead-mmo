@@ -17,11 +17,11 @@ class Network
         Network();
         virtual ~Network();
 
-        void LaunchThreads();
-        void StopThreads();
+        void launchThreads();
+        void stopThreads();
 
-        virtual void ReceiveUdp() = 0;
-        virtual void ReceiveTcp() = 0;
+        virtual void receiveUdp() = 0;
+        virtual void receiveTcp() = 0;
 
         static const unsigned short defaultPort;
 

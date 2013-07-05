@@ -8,8 +8,8 @@ class Cursor: public sf::Drawable
 {
     public:
         Cursor();
-        void Update();
-        void RestartTimer();
+        void update();
+        void restartTimer();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
         // TODO: Move these to private and encapsulate the -1 cursor position stuff

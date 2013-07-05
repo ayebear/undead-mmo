@@ -21,24 +21,24 @@ class ClientNetwork: public Network
         ~ClientNetwork();
 
         // Overridden functions
-        void ReceiveUdp();
-        void ReceiveTcp();
+        void receiveUdp();
+        void receiveTcp();
 
         // Packet functions
-        bool ArePackets(int); // determines if there are any packets in the lists
-        sf::Packet& GetPacket(int);
-        void PopPacket(int);
-        void StorePacket(sf::Packet&);
-        void SendPacket(sf::Packet&);
+        bool arePackets(int); // determines if there are any packets in the lists
+        sf::Packet& getPacket(int);
+        void popPacket(int);
+        void storePacket(sf::Packet&);
+        void sendPacket(sf::Packet&);
 
         // Other
-        bool ConnectToServer(const sf::IpAddress&);
-        int Login(const std::string&, const std::string&);
-        void SendChatMessage(const std::string&);
-        const std::string GetStatusString();
-        bool ValidAddress(sf::IpAddress);
-        bool IsConnected();
-        bool IsValidType(int);
+        bool connectToServer(const sf::IpAddress&);
+        int login(const std::string&, const std::string&);
+        void sendChatMessage(const std::string&);
+        const std::string getStatusString();
+        bool validAddress(sf::IpAddress);
+        bool isConnected();
+        bool isValidType(int);
 
     private:
         // Client only needs a single TCP socket because it is only communicating with the server

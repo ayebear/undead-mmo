@@ -13,7 +13,7 @@ EntityLiving::EntityLiving()
     moving = false;
 }
 
-void EntityLiving::Move(float deltaTime)
+void EntityLiving::move(float deltaTime)
 {
     if (moving)
     {
@@ -28,38 +28,38 @@ void EntityLiving::Move(float deltaTime)
         if (pos.x < 0)
         {
             pos.x = 0;
-            Move(-deltaTime);
+            move(-deltaTime);
         }
         if (pos.y < 0)
         {
             pos.y = 0;
-            Move(-deltaTime);
+            move(-deltaTime);
         }
 
         if (pos.x >= mapPtr->getMapWidth())
         {
             pos.x = mapPtr->getMapWidth();
-            Move(-deltaTime);
+            move(-deltaTime);
         }
         if (pos.y >= mapPtr->getMapHeight())
         {
             pos.y = mapPtr->getMapHeight();
-            Move(-deltaTime);
+            move(-deltaTime);
         }
     }
 }
 
-void EntityLiving::SetAngle(float deg)
+void EntityLiving::setAngle(float deg)
 {
     angle = deg;
 }
 
-void EntityLiving::SetSpeed(float theSpeed)
+void EntityLiving::setSpeed(float theSpeed)
 {
     speed = theSpeed;
 }
 
-void EntityLiving::SetMoving(bool isMoving)
+void EntityLiving::setMoving(bool isMoving)
 {
     moving = isMoving;
 }

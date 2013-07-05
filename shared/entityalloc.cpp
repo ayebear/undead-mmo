@@ -3,7 +3,7 @@
 #include "zombie.h"
 
 // This function allocates a new specific entity object from a type and returns its pointer
-Entity* AllocateEntity(int type)
+Entity* allocateEntity(int type)
 {
     switch (type)
     {

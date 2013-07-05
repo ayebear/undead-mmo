@@ -14,40 +14,40 @@ class InputBox: public sf::Drawable
         InputBox();
 
         // Stuff you would mainly use in a loop
-        void ProcessInput(sf::Keyboard::Key); // In the future this can also take in mouse input (or make another function for that)
-        void UpdateCursor();
+        void processInput(sf::Keyboard::Key); // In the future this can also take in mouse input (or make another function for that)
+        void updateCursor();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
         // Settings
-        void SetFont(sf::Font*);
-        void SetPosition(float, float);
-        void SetPasswordMode(bool);
-        void SetShowRectangle(bool);
-        void SetTextSize(unsigned int);
-        void SetColor(sf::Color);
-        void SetString(const string& str);
-        void SetInput(bool);
+        void setFont(sf::Font*);
+        void setPosition(float, float);
+        void setPasswordMode(bool);
+        void setShowRectangle(bool);
+        void setTextSize(unsigned int);
+        void setColor(sf::Color);
+        void setString(const string& str);
+        void setInput(bool);
 
         // Other
-        void UpdateCursorPos();
-        const string& GetString();
-        void Clear();
-        void ResetCursor();
-        void AddChar(char);
+        void updateCursorPos();
+        const string& getString();
+        void clear();
+        void resetCursor();
+        void addChar(char);
 
     private:
         static const char pwdChar;
 
         // Text manipulation
-        void Backspace();
-        void Delete();
-        void UpdateText();
+        void backspace();
+        void deleteChar();
+        void updateText();
 
         // Cursor stuff
-        void Left();
-        void Right();
-        void Home();
-        void End();
+        void left();
+        void right();
+        void home();
+        void end();
 
         // Variables
         string textStr;

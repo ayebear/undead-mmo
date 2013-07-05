@@ -15,36 +15,36 @@ class Entity: public sf::Drawable
     public:
         Entity();
         virtual ~Entity();
-        const EID GetID() const;
-        void SetID(EID);
+        const EID getID() const;
+        void setID(EID);
 
         // These are the functions that all entities will have (Which need to be defined by classes which inherit from Entity)
-        virtual void Update(float) = 0;
-        virtual bool Collides(Entity*);
+        virtual void update(float) = 0;
+        virtual bool collides(Entity*);
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
 
         // Use a vector of sprites, and each inheriting entity class has an enum
         // Also, all of this code should be able to be cut out on the server side
         // We should be able to get rid of this and have it in the constructor, after we make a resource manager class.
-        void SetTexture(const sf::Texture&);
+        void setTexture(const sf::Texture&);
 
         // This will be great for optimizing stuff, and doubly acts as a way to separate dynamic/static entities!
         // It also can be false even with dynamic entities.
         // Note that there is already a bool variable for this in the EntityLiving class. We just need this function in the Entity class to access it.
-        virtual bool IsMoving();
+        virtual bool isMoving();
 
         // For setting/getting if the entity is ready or not
-        void SetReady(bool);
-        const bool GetReady() const;
+        void setReady(bool);
+        const bool getReady() const;
 
-        virtual sf::Packet GetPacket() = 0;
-        virtual sf::Packet& SetData(sf::Packet&) = 0;
+        virtual sf::Packet getPacket() = 0;
+        virtual sf::Packet& setData(sf::Packet&) = 0;
 
-        virtual void SetAngle(float) {}
-        virtual void SetSpeed(float) {}
-        virtual void SetMoving(bool) {}
-        void SetPos(const sf::Vector2f&);
-        const sf::Vector2f GetPos() const;
+        virtual void setAngle(float) {}
+        virtual void setSpeed(float) {}
+        virtual void setMoving(bool) {}
+        void setPos(const sf::Vector2f&);
+        const sf::Vector2f getPos() const;
 
         static void setMapPtr(Map&);
 

@@ -21,41 +21,41 @@ class Chat: public sf::Drawable
     public:
         Chat();
 
-        void SetNetManager(ClientNetwork*);
-        void SetFont(sf::Font*);
+        void setNetManager(ClientNetwork*);
+        void setFont(sf::Font*);
         void setUp(float, float, float, float, GameObjects&);
 
-        void SetInput(bool);
-        bool GetInput();
-        void ToggleInput();
-        void ProcessInput(sf::Keyboard::Key);
-        void ProcessTextEntered(sf::Uint32);
+        void setInput(bool);
+        bool getInput();
+        void toggleInput();
+        void processInput(sf::Keyboard::Key);
+        void processTextEntered(sf::Uint32);
 
-        void MessageHistoryUp();
-        void MessageHistoryDown();
+        void messageHistoryUp();
+        void messageHistoryDown();
 
-        const string ParseMessage();
-        void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
+        const string parseMessage();
+        void printMessage(const string&, const sf::Color& color = sf::Color::White);
 
-        void SetUsername(const string&);
-        bool ConnectToServer(const string&);
-        void LoginToServer(const string&);
+        void setUsername(const string&);
+        bool connectToServer(const string&);
+        void loginToServer(const string&);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
 
-        void Update();
+        void update();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
-        void FixMessagePositions();
-        void FixInputPositions();
-        void FixAllPositions();
-        void ClearMessage();
+        void fixMessagePositions();
+        void fixInputPositions();
+        void fixAllPositions();
+        void clearMessage();
         //void SendMessage(const string&);
-        void ParseCommand(const string&);
-        void SaveCurrentMessage();
-        void AddToHistory(const string&);
-        void ShowHelp(const string&);
+        void parseCommand(const string&);
+        void saveCurrentMessage();
+        void addToHistory(const string&);
+        void showHelp(const string&);
 
         // Constants
         static const unsigned short maxMessages;

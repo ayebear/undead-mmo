@@ -20,58 +20,58 @@ void Entity::setMapPtr(Map& tileMap)
 {
     mapPtr = &tileMap;
 }
-const EID Entity::GetID() const
+const EID Entity::getID() const
 {
     return ID;
 }
 
-void Entity::SetID(EID newID)
+void Entity::setID(EID newID)
 {
     ID = newID;
 }
 
-bool Entity::Collides(Entity*)
+bool Entity::collides(Entity*)
 {
     return false;
 }
 
-void Entity::SetTexture(const sf::Texture& texture)
+void Entity::setTexture(const sf::Texture& texture)
 {
     sprite.setTexture(texture);
 }
 
-bool Entity::IsMoving()
+bool Entity::isMoving()
 {
     return false;
 }
 
-void Entity::SetReady(bool state)
+void Entity::setReady(bool state)
 {
     ready = state;
 }
 
-const bool Entity::GetReady() const
+const bool Entity::getReady() const
 {
     return ready;
 }
 
-void Entity::SetPos(const sf::Vector2f& position)
+void Entity::setPos(const sf::Vector2f& position)
 {
     pos = position;
     sprite.setPosition(pos);
 }
 
-const sf::Vector2f Entity::GetPos() const
+const sf::Vector2f Entity::getPos() const
 {
     return pos;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, Entity& ent)
 {
-    return packet << ent.GetPacket();
+    return packet << ent.getPacket();
 }
 
 sf::Packet& operator>>(sf::Packet& packet, Entity& ent)
 {
-    return ent.SetData(packet);
+    return ent.setData(packet);
 }
