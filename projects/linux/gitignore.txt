@@ -1,0 +1,7 @@
+.gitignore
+/data/
+*.depend
+*.layout
+obj/
+run.sh
+run_server.sh
