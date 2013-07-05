@@ -87,7 +87,7 @@ void Menu::setButtonColors(sf::Color unselectedColor, sf::Color selectedColor)
 
 void Menu::handleMouseMovement(sf::Event& event)
 {
-    uint i = 0;
+    unsigned int i = 0;
     while(menuOptions.size() > i)
     {
         //First Menu Choice
@@ -99,7 +99,7 @@ void Menu::handleMouseMovement(sf::Event& event)
 
 int Menu::handleMouseReleased(sf::Event& event)
 {
-    uint i = 0;
+    unsigned int i = 0;
     while(i < menuOptions.size())
     {
         if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
@@ -203,7 +203,7 @@ void Menu::fixRectangles(float width, float height)
     if(buttonHeightFactor != 0)
         topButtonPos.y = height / buttonHeightFactor;
 
-    for(uint i = 0; i < menuOptions.size(); i++)
+    for(unsigned int i = 0; i < menuOptions.size(); i++)
     {
         menuOptions[i]->buttonName.setOrigin(0,0);
         menuOptions[i]->buttonName.setPosition(topButtonPos.x, topButtonPos.y + (i * (buttonFontSize + 75)));

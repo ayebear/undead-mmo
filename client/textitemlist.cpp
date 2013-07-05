@@ -190,7 +190,7 @@ void TextItemList::handleMouseClicked(sf::Event& event, sf::RenderWindow& window
         //Get the mouse coordinates relative to the message box view to determine which item is selected
         mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window),itemListView);
 
-        uint i = 0;
+        unsigned int i = 0;
         while(i < textItemList.size())
         {
 

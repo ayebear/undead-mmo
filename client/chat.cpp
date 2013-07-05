@@ -11,11 +11,11 @@ TODO:
 #include "chat.h"
 #include "../shared/packet.h"
 
-const ushort Chat::maxMessages = 10;
+const unsigned short Chat::maxMessages = 10;
 const short Chat::textSize = 16;
 const float Chat::oldMsgAge = 50;
 const float Chat::maxMsgAge = 60;
-const ushort Chat::maxMsgHistory = 100;
+const unsigned short Chat::maxMsgHistory = 100;
 const sf::Color Chat::cmdOutColor = sf::Color::Cyan;
 const map<string,string> Chat::help = {
     {"echo", "Prints out the text after the command. Usage: /echo text goes here"},
@@ -156,7 +156,7 @@ const string Chat::ParseMessage()
 // These will need to be executed using a different character or a special command in here...
 void Chat::ParseCommand(const string& msgStr)
 {
-    uint spacePos = msgStr.find(" ");
+    unsigned int spacePos = msgStr.find(" ");
     string cmdStr = msgStr.substr(1, spacePos - 1);
     string content;
     if (spacePos != string::npos && spacePos < msgStr.size())

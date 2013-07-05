@@ -58,11 +58,11 @@ class Chat: public sf::Drawable
         void ShowHelp(const string&);
 
         // Constants
-        static const ushort maxMessages;
+        static const unsigned short maxMessages;
         static const short textSize;
         static const float oldMsgAge;
         static const float maxMsgAge;
-        static const ushort maxMsgHistory;
+        static const unsigned short maxMsgHistory;
         static const sf::Color cmdOutColor;
         static const map<string,string> help;
 

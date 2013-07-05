@@ -38,9 +38,9 @@ int Map::getMapWidth()
 void Map::LoadMapFromMemory(vector<vector<TileID> > & mapData)
 {
     tiles.resize(mapData.size());
-    for (uint y = 0; y < mapData.size(); y++)
+    for (unsigned int y = 0; y < mapData.size(); y++)
     {
-        for (uint x = 0; x < mapData[y].size(); x++)
+        for (unsigned int x = 0; x < mapData[y].size(); x++)
         {
             tiles[y].emplace_back(mapData[y][x], x * Tile::tileWidth, y * Tile::tileHeight);
         }
