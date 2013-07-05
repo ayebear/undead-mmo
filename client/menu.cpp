@@ -1,5 +1,4 @@
 #include "menu.h"
-#include "../shared/other.h"
 #include <sstream>
 
 Menu::Menu()
@@ -26,7 +25,7 @@ void Menu::setUpMenu(const std::string& backgroundFile, short fontSize, sf::Vect
 
     //Load background and font
     if (!bgTexture.loadFromFile(backgroundFile))
-        exit(Errors::Graphics);
+        exit(1);
 
     buttonFont = &objects->fontBold;
 
@@ -57,7 +56,7 @@ void Menu::setBackground(const std::string& backgroundFile)
 {
      //Load background and font
     if (!bgTexture.loadFromFile(backgroundFile))
-        exit(Errors::Graphics);
+        exit(1);
 
     bgTexture.setSmooth(true);
     bgSprite.setTexture(bgTexture);
@@ -66,7 +65,7 @@ void Menu::setBackground(const std::string& backgroundFile)
 void Menu::setFont(const std::string& fontFile)
 {
      if (!buttonFont->loadFromFile(fontFile))
-        exit(Errors::Font);
+        exit(2);
 }
 
 void Menu::setFontSize(short fontSize)

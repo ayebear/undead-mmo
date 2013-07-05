@@ -24,7 +24,6 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 
     std::string test("Kevin Millerajk");
     textItemList.addTextItem(test);
-\
     textItemList.addTextItem("This is a test...");
 
     for (int x = 1; x <= 100; x++)

@@ -4,7 +4,6 @@
 #include <iostream>
 #include <fstream>
 #include "map.h"
-#include "other.h"
 
 using namespace std;
 

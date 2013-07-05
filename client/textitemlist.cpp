@@ -2,7 +2,6 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "textitemlist.h"
-#include "../shared/other.h"
 #include <iostream>
 
 TextItemList::TextItemList()
@@ -154,7 +153,7 @@ void TextItemList::scrollUp(unsigned int distance)
 void TextItemList::setTextFont(std::string& fontFile)
 {
     if (!textItemFont->loadFromFile(fontFile))
-        exit(Errors::Font);
+        exit(2);
 }
 
 

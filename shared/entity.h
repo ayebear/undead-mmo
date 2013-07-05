@@ -6,8 +6,9 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-#include "other.h"
 #include "map.h"
+
+typedef sf::Uint32 EID;
 
 class Entity: public sf::Drawable
 {

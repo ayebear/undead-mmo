@@ -5,7 +5,6 @@
 #include <SFML/Network.hpp>
 #include "network.h"
 #include "../shared/packet.h"
-#include "../shared/other.h"
 
 using namespace std;
 

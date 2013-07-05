@@ -12,10 +12,10 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
     // Load character textures
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
-        exit(Errors::Graphics);
+        exit(1);
     playerTex.setSmooth(true);
     if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
-        exit(Errors::Graphics);
+        exit(1);
     zombieTex.setSmooth(true);
 
     // TODO: Have it download the map from the server instead

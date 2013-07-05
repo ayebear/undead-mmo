@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include "tile.h"
-#include "other.h"
 
 std::vector<sf::Texture> Tile::textures;
 
@@ -41,7 +40,7 @@ void Tile::LoadTileTextures()
             if (!textures[y * tileCount + x].loadFromImage(*tilesImage,
                 sf::IntRect(x * tileWidth, y * tileWidth,
                 (x + 1) * tileWidth, (y + 1) * tileWidth)))
-                    exit(Errors::Graphics);
+                    exit(1);
             textures[y * tileCount + x].setSmooth(false);
         }
     }

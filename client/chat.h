@@ -7,7 +7,6 @@
 #include <string>
 #include <deque>
 #include <SFML/Graphics.hpp>
-#include "../shared/other.h"
 #include "clientnetwork.h"
 #include "inputbox.h"
 #include "textitemlist.h"

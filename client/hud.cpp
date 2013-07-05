@@ -1,5 +1,4 @@
 #include "hud.h"
-#include "../shared/other.h"
 
 Hud::Hud()
 {

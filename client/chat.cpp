@@ -10,7 +10,6 @@ TODO:
 #include <sstream>
 #include "chat.h"
 #include "../shared/packet.h"
-#include "../shared/other.h"
 
 const ushort Chat::maxMessages = 10;
 const short Chat::textSize = 16;
@@ -176,7 +175,7 @@ void Chat::ParseCommand(const string& msgStr)
     else if (cmdStr == "help")
         ShowHelp(content);
     else if (cmdStr == "exit")
-        exit(Errors::Ok);
+        exit(0);
     else
         PrintMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
 }
