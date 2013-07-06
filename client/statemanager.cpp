@@ -71,18 +71,6 @@ void StateManager::createWindow(string windowTitle, int windowWidth, int windowH
     objects.window.create(objects.vidMode, windowTitle, sf::Style::Close);
 }
 
-void StateManager::loadFonts()
-{
-    if (!objects.font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
-        exit(7);
-    if (!objects.fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(7);
-    if (!objects.fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
-        exit(7);
-    if (!objects.fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
-        exit(7);
-}
-
 void StateManager::allocateStates()
 {
     statePtrs[0] = new MainMenuState(objects);

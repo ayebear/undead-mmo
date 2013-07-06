@@ -26,7 +26,6 @@ class StateManager
         void setupWindow(string); // Calls createWindow based on configuration
         void createWindow(string); // Fullscreen
         void createWindow(string, int, int); // Windowed
-        void loadFonts();
         void allocateStates();
 
         void startLoop(const StateAction&);
