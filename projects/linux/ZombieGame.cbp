@@ -23,6 +23,8 @@
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add directory="lib/linux/sfml2/include" />
+			<Add directory="shared" />
+			<Add directory="other" />
 		</Compiler>
 		<Linker>
 			<Add library="sfml-graphics" />
@@ -42,6 +44,7 @@
 		<Unit filename="client/entitylist.h" />
 		<Unit filename="client/errorstate.cpp" />
 		<Unit filename="client/errorstate.h" />
+		<Unit filename="client/gameobjects.cpp" />
 		<Unit filename="client/gameobjects.h" />
 		<Unit filename="client/hud.cpp" />
 		<Unit filename="client/hud.h" />

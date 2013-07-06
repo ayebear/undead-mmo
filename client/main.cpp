@@ -5,8 +5,12 @@
 
 int main()
 {
-    StateManager game("Project: Brains v0.0.3.3 Dev", 950, 700);
+    const string title = "Project: Brains v0.0.4.3 Dev";
+
+    StateManager game(title); // Create the game
+
     StateAction action;
-    action.pushState(StateType::Menu);
-    game.startLoop(action);
+    action.pushState(StateType::Menu); // This will make it go to the menu first
+
+    game.startLoop(action); // Start the game
 }

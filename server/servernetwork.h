@@ -3,8 +3,8 @@
 
 #include <map>
 #include <string>
-#include "../shared/network.h"
-#include "../shared/linkedqueue.h"
+#include "network.h"
+#include "linkedqueue.h"
 
 typedef unsigned int ClientID;
 

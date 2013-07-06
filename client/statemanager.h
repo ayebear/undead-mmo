@@ -11,15 +11,21 @@
 #include "gameobjects.h"
 #include "state.h"
 
+using namespace std;
+
 /*
 This class handles the allocation/deallocation/starting/changing of all types of game states.
+Also handles creating the window and game objects.
 */
 class StateManager
 {
     public:
-        StateManager(std::string, int, int); // Windowed
-        StateManager(std::string); // Fullscreen
+        StateManager(string); // Takes window title
         ~StateManager();
+
+        void setupWindow(string); // Calls createWindow based on configuration
+        void createWindow(string); // Fullscreen
+        void createWindow(string, int, int); // Windowed
         void loadFonts();
         void allocateStates();
 
@@ -30,7 +36,9 @@ class StateManager
         void pop();
 
     private:
-        std::vector<unsigned int> stateStack; // Represents
+        void setVSync();
+
+        vector<unsigned int> stateStack; // Represents a stack of the states
         State* statePtrs[StateType::TotalTypes];
 
         // The main game objects, which exist for the entire game, independent of the current game state

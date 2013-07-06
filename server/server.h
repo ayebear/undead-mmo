@@ -6,7 +6,7 @@
 
 #include <iostream>
 #include <SFML/Network.hpp>
-#include "../shared/packet.h"
+#include "packet.h"
 #include "servernetwork.h"
 #include "masterentitylist.h"
 

@@ -1,0 +1,7 @@
+// This file contains all of the settings for the client.
+
+// Window options
+useVerticalSync = true
+// Fullscreen is used if both of these are not set
+windowWidth = 1024
+windowHeight = 768

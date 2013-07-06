@@ -20,7 +20,7 @@ Caveats:
 
 #include <vector>
 #include <set>
-#include "../shared/other.h"
+#include "entity.h"
 
 using namespace std;
 

@@ -6,13 +6,20 @@
 
 #include <SFML/Graphics.hpp>
 #include "clientnetwork.h"
+#include "configfile.h"
 
-struct GameObjects: sf::NonCopyable
+class GameObjects: sf::NonCopyable
 {
-    sf::VideoMode vidMode;
-    sf::RenderWindow window;
-    ClientNetwork netManager;
-    sf::Font font, fontBold, fontMono, fontMonoBold;
+    public:
+        void loadConfig();
+        void loadFonts();
+        sf::VideoMode vidMode;
+        sf::RenderWindow window;
+        ClientNetwork netManager;
+        sf::Font font, fontBold, fontMono, fontMonoBold;
+        ConfigFile config;
+    private:
+        static const string configFilename;
 };
 
 #endif

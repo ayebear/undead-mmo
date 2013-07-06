@@ -2,7 +2,7 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "entitylist.h"
-#include "../shared/entityalloc.h"
+#include "entityalloc.h"
 
 using namespace std;
 

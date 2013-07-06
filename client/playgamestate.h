@@ -6,11 +6,11 @@
 
 #include <string>
 #include "state.h"
-#include "../shared/entity.h"
+#include "entity.h"
 #include "entitylist.h"
 #include "hud.h"
 #include "mainmenustate.h"
-#include "../shared/map.h"
+#include "map.h"
 
 /*
 This class manages the window and input for the game

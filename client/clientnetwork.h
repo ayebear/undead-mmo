@@ -6,8 +6,8 @@
 
 #include <string>
 #include <list>
-#include "../shared/network.h"
-#include "../shared/packet.h"
+#include "network.h"
+#include "packet.h"
 
 /*
 This class handles all of the client side networking.

@@ -9,7 +9,7 @@ TODO:
 
 #include <sstream>
 #include "chat.h"
-#include "../shared/packet.h"
+#include "packet.h"
 
 const unsigned short Chat::maxMessages = 10;
 const short Chat::textSize = 16;

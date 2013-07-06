@@ -16,7 +16,7 @@ The client will only need to instantiate 1 EntityList object, which can hold eve
 #define ENTITYLIST_H
 
 #include <map>
-#include "../shared/entity.h"
+#include "entity.h"
 
 class EntityList: public sf::Drawable
 {

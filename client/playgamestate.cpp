@@ -5,8 +5,8 @@
 #include <string>
 #include <sstream>
 #include "playgamestate.h"
-#include "../shared/packet.h"
-#include "../shared/tile.h"
+#include "packet.h"
+#include "tile.h"
 
 PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {

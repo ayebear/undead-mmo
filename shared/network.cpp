@@ -4,7 +4,7 @@
 #include <iostream>
 #include <SFML/Network.hpp>
 #include "network.h"
-#include "../shared/packet.h"
+#include "packet.h"
 
 using namespace std;
 
