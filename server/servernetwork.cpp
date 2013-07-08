@@ -85,7 +85,7 @@ void ServerNetwork::addClient()
     // The listener is ready: there is a pending connection
     sf::TcpSocket* tcpSock = new sf::TcpSocket;
     //unique_ptr<sf::TcpSocket> tcpSock(new sf::TcpSocket);
-    // USE A SHARED POINTER INSTEAD
+    // TODO: Maybe use a shared_ptr?
     if (listener.accept(*tcpSock) == sf::Socket::Done)
     {
         // Add the new client to the selector
@@ -101,8 +101,14 @@ void ServerNetwork::removeClient(ClientID id)
 {
     if (clients.validClientID(id))
     {
-        selector.remove(*(clients.getClientFromId(id).tcpSock));
-        clients.removeClient(id);
+        auto clientToRemove = clients.getClientFromId(id);
+        if (clientToRemove != nullptr)
+        {
+            selector.remove(*(clientToRemove->tcpSock));
+            clients.removeClient(id);
+        }
+        else
+            cerr << "Error: Failed to remove client because it doesn't exist?\n";
     }
 }
 

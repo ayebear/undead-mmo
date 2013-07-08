@@ -13,12 +13,11 @@ class ClientManager
         typedef std::map<IpPort, ClientID> ClientIDMap;
 
         ClientManager();
-        ~ClientManager();
 
         bool validAddress(const IpPort&);
         bool validClientID(ClientID);
         ClientID getIdFromAddress(const IpPort&);
-        Client& getClientFromId(ClientID);
+        Client* getClientFromId(ClientID);
         ClientMap& getClientMap();
 
         void addClient(sf::TcpSocket*);
@@ -26,8 +25,11 @@ class ClientManager
 
         void sendToAll(sf::Packet&, ClientID exclude = -1);
         void sendToClient(sf::Packet&, ClientID);
+        void sendToClient(sf::Packet&, const IpPort&);
 
         void printClients();
+
+        static const ClientID invalidID;
 
     private:
         ClientID getNewID(); // Used to assign IDs to clients

@@ -4,35 +4,38 @@
 using namespace std;
 
 ClientID ClientManager::idCounter = 0;
+const ClientID ClientManager::invalidID = -1;
 
 ClientManager::ClientManager()
 {
-    //ctor
-}
-
-ClientManager::~ClientManager()
-{
-    //dtor
 }
 
 bool ClientManager::validAddress(const IpPort& address)
 {
-    return false;
+    return (clientIDs.find(address) != clientIDs.end());
 }
 
-bool ClientManager::validClientID(ClientID)
+bool ClientManager::validClientID(ClientID id)
 {
-    return false;
+    return (clients.find(id) != clients.end());
 }
 
 ClientID ClientManager::getIdFromAddress(const IpPort& address)
 {
-    return clientIDs[address];
+    auto found = clientIDs.find(address);
+    if (found != clientIDs.end())
+        return found->second;
+    else
+        return invalidID;
 }
 
-Client& ClientManager::getClientFromId(ClientID id)
+Client* ClientManager::getClientFromId(ClientID id)
 {
-    return *clients[id];
+    auto found = clients.find(id);
+    if (found != clients.end())
+        return found->second.get();
+    else
+        return nullptr;
 }
 
 ClientManager::ClientMap& ClientManager::getClientMap()
@@ -42,21 +45,23 @@ ClientManager::ClientMap& ClientManager::getClientMap()
 
 void ClientManager::addClient(sf::TcpSocket* tcpSock)
 {
-    // Generate an ID for the new client
-    ClientID newID = getNewID();
+    ClientID newID = getNewID(); // Generate an ID for the new client
 
-    // Add the new client to the clients list
-    clients[newID] = ClientPtr(new Client(newID, tcpSock));
+    clients[newID] = ClientPtr(new Client(newID, tcpSock)); // Add the new client to the clients list
+    //clients.emplace(newID, new Client(newID, tcpSock)); // Not supported with GCC 4.7.3?
+    auto addr = clients[newID]->address; // Get the address of the new client
+    clientIDs[addr] = newID; // Store the ID of the new client in the address map
 
-    cout << "Client " << clients[newID]->address.ip << ":" << clients[newID]->address.port << " connected, here is the current list:\n";
+    cout << "Client " << addr.ip << ":" << addr.port << " connected.\n";
     printClients();
 }
 
 void ClientManager::removeClient(ClientID id)//, sf::SocketSelector& selector)
 {
-    cout << "Client " << clients[id]->address.ip << ":" << clients[id]->address.port << " disconnected, here is the current list:\n";
-    //selector.remove(*(clients[id]->tcpSock));
+    auto addr = clients[id]->address;
+    cout << "Client " << addr.ip << ":" << addr.port << " disconnected.\n";
     clients.erase(id);
+    clientIDs.erase(addr);
     printClients();
 }
 
@@ -74,10 +79,23 @@ void ClientManager::sendToClient(sf::Packet& packet, ClientID clientID)
     clients[clientID]->tcpSock->send(packet);
 }
 
+void ClientManager::sendToClient(sf::Packet& packet, const IpPort& address)
+{
+    ClientID id = getIdFromAddress(address);
+    if (id != invalidID)
+        clients[id]->tcpSock->send(packet);
+}
+
 void ClientManager::printClients()
 {
-    for (auto& c: clients)
-        cout << "ID: " << c.second->id << ", Address: " << c.second->address.ip << ":" << c.second->address.port << endl;
+    if (clients.empty())
+        cout << "No clients are currently connected.\n";
+    else
+    {
+        cout << "Currently connected clients:\n";
+        for (auto& c: clients)
+            cout << "ID: " << c.second->id << ", Address: " << c.second->address.ip << ":" << c.second->address.port << endl;
+    }
 }
 
 ClientID ClientManager::getNewID()
