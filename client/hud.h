@@ -10,14 +10,15 @@ class Hud: public sf::Drawable
 {
     public:
         Hud();
-        void updateView(sf::View&, GameObjects&);
-        Chat& getChat();
-        void update();
+        void UpdateView(sf::View&, GameObjects&);
+        Chat& GetChat();
+        void Update();
+        void setUp(GameObjects&);
 
         void setWindow(sf::RenderWindow&);
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-        // TODO: I guess we could use getChat() but it is so annoying... And then you still have full access from the outside anyway...
+        // TODO: I guess we could use GetChat() but it is so annoying... And then you still have full access from the outside anyway...
         Chat chat;
         // Add other HUD elements later, like mini-map/health/infection/etc.
 

@@ -7,6 +7,7 @@
 #include <string>
 #include <deque>
 #include <SFML/Graphics.hpp>
+#include "../shared/other.h"
 #include "clientnetwork.h"
 #include "inputbox.h"
 #include "textitemlist.h"
@@ -21,48 +22,48 @@ class Chat: public sf::Drawable
     public:
         Chat();
 
-        void setNetManager(ClientNetwork*);
-        void setFont(sf::Font*);
-        void setUp(float, float, float, float, GameObjects&);
+        void SetNetManager(ClientNetwork*);
+        void SetFont(sf::Font*);
+        void setUp(sf::FloatRect, GameObjects&);
 
-        void setInput(bool);
-        bool getInput();
-        void toggleInput();
-        void processInput(sf::Keyboard::Key);
-        void processTextEntered(sf::Uint32);
+        void SetInput(bool);
+        bool GetInput();
+        void ToggleInput();
+        void ProcessInput(sf::Keyboard::Key);
+        void ProcessTextEntered(sf::Uint32);
 
-        void messageHistoryUp();
-        void messageHistoryDown();
+        void MessageHistoryUp();
+        void MessageHistoryDown();
 
-        const string parseMessage();
-        void printMessage(const string&, const sf::Color& color = sf::Color::White);
+        const string ParseMessage();
+        void PrintMessage(const string&, const sf::Color& color = sf::Color::White);
 
-        void setUsername(const string&);
-        bool connectToServer(const string&);
-        void loginToServer(const string&);
+        void SetUsername(const string&);
+        bool ConnectToServer(const string&);
+        void LoginToServer(const string&);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
 
-        void update();
+        void Update();
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
-        void fixMessagePositions();
-        void fixInputPositions();
-        void fixAllPositions();
-        void clearMessage();
+        void FixMessagePositions();
+        void FixInputPositions();
+        void FixAllPositions();
+        void ClearMessage();
         //void SendMessage(const string&);
-        void parseCommand(const string&);
-        void saveCurrentMessage();
-        void addToHistory(const string&);
-        void showHelp(const string&);
+        void ParseCommand(const string&);
+        void SaveCurrentMessage();
+        void AddToHistory(const string&);
+        void ShowHelp(const string&);
 
         // Constants
-        static const unsigned short maxMessages;
+        static const ushort maxMessages;
         static const short textSize;
         static const float oldMsgAge;
         static const float maxMsgAge;
-        static const unsigned short maxMsgHistory;
+        static const ushort maxMsgHistory;
         static const sf::Color cmdOutColor;
         static const map<string,string> help;
 
@@ -81,6 +82,7 @@ class Chat: public sf::Drawable
         // Other variables
         bool input;
         sf::Vector2f mainPos;
+        sf::Vector2f chatSize;
         string username;
         sf::Text usernameText;
 };

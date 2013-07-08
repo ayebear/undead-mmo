@@ -19,8 +19,8 @@ class ScrollBar: public sf::Drawable
         ///Slider gets smaller when actualHeight is larger, and larger when actualHeight is smaller
         void adjustScrollerHeight(float viewHeight, float actualHeight);
 
-        void scrollUp(sf::View&, float, sf::Vector2f, unsigned int);
-        void scrollDown(sf::View&, float, sf::Vector2f, unsigned int);
+        float scrollUp(sf::View&, float, sf::Vector2f, unsigned int);
+        float scrollDown(sf::View&, float, sf::Vector2f, unsigned int);
 
         void setVisible(bool);
         bool getVisible();
@@ -30,10 +30,12 @@ class ScrollBar: public sf::Drawable
         const int scrollBarWidth = 10;
     private:
 
-        ///The slider that is connected to the scroll bar and rhe actual scroll bar
-        sf::RectangleShape slider;
+        ///The scroll bar
         sf::RectangleShape scrollBar;
 
+        ///Colors that show whether or not there is text below
+        const sf::Color moreText = sf::Color(200, 0, 0, 75);
+        const sf::Color noMoreText = sf::Color(10, 10, 10, 75);
         bool isVisible;
 
 };
