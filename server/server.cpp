@@ -18,88 +18,84 @@ Server::Server()
 {
 }
 
-void Server::Start()
+void Server::start()
 {
-    PrintWelcomeMsg();
-    MainLoop();
+    printWelcomeMsg();
+    mainLoop();
 }
 
-void Server::PrintWelcomeMsg()
+void Server::printWelcomeMsg()
 {
-    cout << "ZombieSurvivalGame Server v0.3.0.0 Dev\n\n";
+    cout << "ZombieSurvivalGame Server v0.3.2.0 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
 
-void Server::MainLoop()
+void Server::mainLoop()
 {
-    netManager.LaunchThreads();
-    running = true;
-    while (running)
+    netManager.launchThreads();
+    sf::Thread packetProcessing(&Server::processAllPackets, this);
+    packetProcessing.launch();
+
+    while (true)
     {
-        // TODO: Put these in separate threads, so that all packets can be processed right away,
-        // and updates happen at the desired frame rate.
-
-        // Thread for ProcessAllPackets();
-        // Thread for Update();
-
-        // Do stuff with all of the received packets
-        ProcessAllPackets();
-
         // Update the current game state, also send some of this info to the clients
-        Update();
+        update();
 
         // Calculate elapsed time
         elapsedTime = clock.restart().asSeconds();
 
-        // Sleep some if everything is caught up (we will only want to do this with the update thread)
-        //sf::sleep(sf::milliseconds(desiredFrameTime - elapsedTime));
+        // Sleep some if everything is caught up, otherwise skip over this right away
+        sf::sleep(sf::milliseconds(desiredFrameTime - elapsedTime));
     }
 }
 
-void Server::ProcessGamePackets()
+void Server::processAllPackets()
 {
     while (true)
     {
-        while (netManager.ArePackets())
+        while (netManager.arePackets())
         {
-            ProcessPacket(netManager.GetPacket());
-            netManager.PopPacket();
+            processPacket(netManager.getPacket());
+            netManager.popPacket();
         }
-        //sf::sleep(10);
+        sf::sleep(sf::milliseconds(100));
     }
 }
 
+/*
+// We could use this in a separate thread later if there are really a lot of packets being processed that are separate from the game state
 void Server::ProcessOtherPackets()
 {
     while (true)
     {
-        while (netManager.ArePackets())
+        while (netManager.arePackets())
         {
-            ProcessPacket(netManager.GetPacket());
-            netManager.PopPacket();
+            processPacket(netManager.getPacket());
+            netManager.popPacket();
         }
         //sf::sleep(10);
     }
 }
+*/
 
-void Server::Update()
+void Server::update()
 {
     // TODO: Iterate through the entity grid instead
-    entList.Update(elapsedTime);
+    entList.update(elapsedTime);
 }
 
-void Server::ProcessPacket(PacketExtra& packet)
+void Server::processPacket(PacketExtra& packet)
 {
     int type = 1;
     packet.data >> type;
     switch (type)
     {
         case Packet::ChatMessage:
-            ProcessChatMessage(packet);
+            processChatMessage(packet);
             break;
         case Packet::LogIn:
-            ProcessLogIn(packet);
+            processLogIn(packet);
             break;
         default:
             cout << "Error: Unknown received packet type. Type = " << type << endl;
@@ -107,15 +103,15 @@ void Server::ProcessPacket(PacketExtra& packet)
     }
 }
 
-void Server::ProcessChatMessage(PacketExtra& packet)
+void Server::processChatMessage(PacketExtra& packet)
 {
     string msg;
     packet.data >> msg;
     cout << "Message from " << packet.sender << ": " << msg << endl;
-    netManager.SendToAll(packet.data, packet.sender);
+    netManager.sendToAll(packet.data, packet.sender);
 }
 
-void Server::ProcessLogIn(PacketExtra& packet)
+void Server::processLogIn(PacketExtra& packet)
 {
     string username, password;
     // Check if the username exists

@@ -13,12 +13,12 @@ MasterEntityList::MasterEntityList()
 {
 }
 
-Entity* MasterEntityList::Add(int type)
+Entity* MasterEntityList::add(int type)
 {
-    return Insert(AllocateEntity(type));
+    return insert(allocateEntity(type));
 }
 
-Entity* MasterEntityList::Insert(Entity* newEnt)
+Entity* MasterEntityList::insert(Entity* newEnt)
 {
     entCount++;
     EID id = 0;
@@ -35,17 +35,17 @@ Entity* MasterEntityList::Insert(Entity* newEnt)
         freeList.pop_front();
         ents[id] = newEnt;
     }
-    newEnt->SetID(id);
+    newEnt->setID(id);
     return newEnt;
 }
 
-Entity* MasterEntityList::Find(EID id)
+Entity* MasterEntityList::find(EID id)
 {
     // TODO: May need to check if within bounds!
     return ents[id];
 }
 
-void MasterEntityList::Delete(EID id)
+void MasterEntityList::erase(EID id)
 {
     entCount--;
     // TODO: May need to check if within bounds!
@@ -63,7 +63,7 @@ TODO: An alternative "lighter" method would be to try using smaller IDs for new 
     the main entity vector to the largest existing entity ID. This would free some memory without doing
     any damaging effects like re-assigning all of the IDs, which may cause many problems in the future.
 */
-bool MasterEntityList::CleanUp()
+bool MasterEntityList::cleanUp()
 {
     // If the cleanUpRatio is 4, that means that this clean up function will only run if:
     // the entity list size is greater than the actual number of entities times 4.
@@ -79,7 +79,7 @@ bool MasterEntityList::CleanUp()
         {
             if (ents[id] != nullptr)
             {
-                ents[id]->SetID(entsTmp.size());
+                ents[id]->setID(entsTmp.size());
                 entsTmp.push_back(ents[id]);
             }
         }
@@ -95,11 +95,11 @@ bool MasterEntityList::CleanUp()
         return false;
 }
 
-void MasterEntityList::Update(float time)
+void MasterEntityList::update(float time)
 {
     for (auto& ent: ents)
     {
         if (ent != nullptr)
-            ent->Update(time);
+            ent->update(time);
     }
 }

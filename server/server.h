@@ -14,20 +14,19 @@ class Server
 {
     public:
         Server();
-        void Start();
+        void start();
     private:
-        void PrintWelcomeMsg();
-        void MainLoop();
-        void ProcessAllPackets();
-        void Update();
+        void printWelcomeMsg();
+        void mainLoop();
+        void processAllPackets();
+        void update();
 
-        void ProcessPacket(PacketExtra&);
-        void ProcessChatMessage(PacketExtra&);
-        void ProcessLogIn(PacketExtra&);
+        void processPacket(PacketExtra&);
+        void processChatMessage(PacketExtra&);
+        void processLogIn(PacketExtra&);
 
         static const float desiredFrameTime;
 
-        bool running;
         float elapsedTime;
         sf::Clock clock;
         ServerNetwork netManager;
