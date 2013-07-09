@@ -15,7 +15,7 @@ TextItemList::~TextItemList()
 }
 
 
-void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect dimensions, sf::Font& font, unsigned int fontSize, bool clickable)
+void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect sizeFactor, sf::Font& font, unsigned int fontSize, bool clickable, bool backgroundVisible)
 {
 
     textItemFont = &font;
@@ -26,36 +26,55 @@ void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect dimensions,
     windowSize.x = window.getSize().x;
     windowSize.y = window.getSize().y;
 
-    viewableArea = dimensions;
 
     //Set up the view and viewPort
     sf::FloatRect viewPort;
-    viewPort.left = dimensions.left / windowSize.x;
-    viewPort.top = dimensions.top / windowSize.y;
-    viewPort.width = dimensions.width / windowSize.x;
-    viewPort.height = dimensions.height / windowSize.y;
+    viewPort.left = sizeFactor.left;
+    viewPort.top = sizeFactor.top;
+    viewPort.width = sizeFactor.width;
+    viewPort.height = sizeFactor.height;
 
-    itemListView.reset(viewableArea);
-
-    itemListView.setViewport(viewPort);
 
     //Box that the user can see
-    viewableAreaBox.setPosition(dimensions.left, dimensions.top);
-    viewableAreaBox.setSize(sf::Vector2f(dimensions.width, dimensions.height));
+    viewableAreaBox.setPosition(sizeFactor.left * window.getSize().x, sizeFactor.top * window.getSize().y);
+    viewableAreaBox.setSize(sf::Vector2f(sizeFactor.width * window.getSize().x, sizeFactor.height * window.getSize().y));
     viewableAreaBox.setFillColor(sf::Color(0, 0, 0, 75));
 
-    scrollBar.attachScrollBar(dimensions);
+    viewableArea.left = sizeFactor.left * window.getSize().x;
+    viewableArea.top = sizeFactor.top * window.getSize().y;
+    viewableArea.width = sizeFactor.width * window.getSize().x;
+    viewableArea.height = sizeFactor.height * window.getSize().y;
+
+    itemListView.reset(viewableArea);
+    itemListView.setViewport(viewPort);
+
+    scrollBar.attachScrollBar(viewableArea);
+
+    currViewTop = viewableArea.top;
+    currViewBot = viewableArea.top + viewableArea.height;
 
     isClickable = clickable;
     currentSelection = 0;
+    selectionMade = false;
+
+    backgroundBoxVisible = backgroundVisible;
+
     isReady = true;
 }
 
 
-
-void resizeBox(sf::RenderWindow& window, sf::FloatRect dimensions)
+bool TextItemList::toggleBackground()
 {
+    if (backgroundBoxVisible)
+        backgroundBoxVisible = false;
+    else
+        backgroundBoxVisible = true;
+    return backgroundBoxVisible;
+}
 
+bool TextItemList::isBackgroundVisible()
+{
+    return backgroundBoxVisible;
 }
 
 sf::FloatRect TextItemList::getListDimensions()
@@ -79,32 +98,25 @@ void TextItemList::addTextItem(const std::string& newText, const sf::Color& colo
         sf::Text text(newText, *textItemFont, textFontSize);
         sf::Vector2f newPos = getNewItemPos();
 
-
         TextItem newItem(newText, *textItemFont,textFontSize, color, newPos);
         textItemList.push_back(newItem);
+
+        //If more than 150 items are added. Start removing items starting with the oldest one
+        if(textItemList.size() > maxTextItems)
+            textItemList.pop_front();
 
         //Wrap the text as needed
         textItemList.back().wrapText(viewableArea);
 
-        //If there are selections. Default to the most recent item
-        if(isClickable)
-        {
-            //Unhighlight the last item if it was already highlighted
-            if(textItemList[currentSelection].getHighlighted())
-                textItemList[currentSelection].toggleHighlight();
-
-            currentSelection = textItemList.size() - 1;
-
-            //Highlight the new item
-            textItemList[currentSelection].toggleHighlight();
-        }
-
 
         scrollDown(textItemList.back().getTextItemHeight());
 
-        scrollBar.adjustScrollerHeight(viewableArea.height, textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y);
+  //      scrollBar.adjustScrollerHeight(viewableArea.height, textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y);
 
-
+    }
+    else
+    {
+        std::cout << "ItemList must be set up before using.\n";
     }
 
 }
@@ -116,13 +128,13 @@ sf::Vector2f TextItemList::getNewItemPos()
     if(textItemList.size() > 0)
     {
          pos = textItemList.back().getBottomPosition();
-         pos.x = viewableArea.left + scrollBar.scrollBarWidth + 3;
-         pos.y = pos.y + 3;
+         pos.x = viewableAreaBox.getPosition().x + scrollBar.scrollBarWidth + 3;
+         pos.y = pos.y + 5;
     }
     else
     {
-        pos.x = viewableArea.left + scrollBar.scrollBarWidth + 3;
-        pos.y = viewableArea.top + 3;
+        pos.x = viewableAreaBox.getPosition().x + scrollBar.scrollBarWidth + 3;
+        pos.y = viewableArea.top + 5;
     }
 
     return pos;
@@ -133,21 +145,33 @@ void TextItemList::scrollDown(unsigned int distance)
 {
     if(!textItemList.empty())
     {
+
+        float amountScrolled = 0;
         float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
-        scrollBar.scrollDown(itemListView, actualHeight, textItemList.back().getBottomPosition(), distance);
+        amountScrolled = scrollBar.scrollDown(itemListView, actualHeight, textItemList.back().getBottomPosition(), distance);
+
+        currViewTop += amountScrolled;
+        currViewBot += amountScrolled;
+
+        viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
     }
 
 
-  //  itemListView.reset(viewableArea);
 }
 void TextItemList::scrollUp(unsigned int distance)
 {
     if(!textItemList.empty())
     {
+        float amountScrolled = 0;
+
         float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
-        scrollBar.scrollUp(itemListView, actualHeight,  textItemList.front().getTopPosition(), distance);
+        amountScrolled = scrollBar.scrollUp(itemListView, actualHeight,  textItemList.front().getTopPosition(), distance);
+
+        currViewTop -= amountScrolled;
+        currViewBot-= amountScrolled;
+
+        viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
     }
-   // itemListView.reset(viewableArea);
 }
 
 void TextItemList::setTextFont(std::string& fontFile)
@@ -199,12 +223,14 @@ void TextItemList::handleMouseClicked(sf::Event& event, sf::RenderWindow& window
            //     std::cout << "Mouse x: " << mousePos.x << std::endl;
             //    std::cout << "Mouse y: " << mousePos.y << std::endl;
 
-                //Unhighlight the last selection
-                textItemList[currentSelection].toggleHighlight();
+                //Unhighlight the last selection if there was one
+                if(selectionMade)
+                    textItemList[currentSelection].toggleHighlight();
 
                 //Highlight the new selection
                 currentSelection = i;
                 textItemList[currentSelection].toggleHighlight();
+                selectionMade = true;
             }
             i++;
         }
@@ -218,16 +244,21 @@ void TextItemList::handleResize(sf::Event&, sf::RenderWindow& window)
 void TextItemList::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
 
-    window.draw(viewableAreaBox);
-    window.draw(scrollBar);
     window.setView(itemListView);
 
+    if(backgroundBoxVisible)
+    {
+        window.draw(viewableAreaBox);
+        window.draw(scrollBar);
+    }
     //Only draw text that is inside of the viewable area
+    //To do: Associate each text item with a coordinate so we can jump straight to the top
     for (auto& textItem: textItemList)
     {
         //If the bottom of the view is greater than or equal to the bottom of the text item
         if(itemListView.getCenter().y + itemListView.getSize().y / 2 >= textItem.getTopPosition().y)
             window.draw(textItem);
     }
+
 }
 

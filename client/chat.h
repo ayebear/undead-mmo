@@ -23,7 +23,7 @@ class Chat: public sf::Drawable
 
         void setNetManager(ClientNetwork*);
         void setFont(sf::Font*);
-        void setUp(float, float, float, float, GameObjects&);
+        void setUp(sf::FloatRect, GameObjects&);
 
         void setInput(bool);
         bool getInput();
@@ -47,11 +47,7 @@ class Chat: public sf::Drawable
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
-        void fixMessagePositions();
-        void fixInputPositions();
-        void fixAllPositions();
         void clearMessage();
-        //void SendMessage(const string&);
         void parseCommand(const string&);
         void saveCurrentMessage();
         void addToHistory(const string&);
@@ -81,6 +77,7 @@ class Chat: public sf::Drawable
         // Other variables
         bool input;
         sf::Vector2f mainPos;
+        sf::Vector2f chatSize;
         string username;
         sf::Text usernameText;
 };

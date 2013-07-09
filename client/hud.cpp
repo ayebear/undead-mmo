@@ -8,9 +8,6 @@ void Hud::updateView(sf::View& mainGameView, GameObjects& objects)
 {
     sf::Vector2u hudViewPos(mainGameView.getSize());
     hudView.reset(sf::Rect<float>(0, 0, hudViewPos.x, hudViewPos.y));
-
-    //MessageBox is 512.
-    chat.setUp(0, hudViewPos.y / 1.75, mainGameView.getSize().x / 3, mainGameView.getSize().y / 3, objects);
 }
 
 Chat& Hud::getChat()
@@ -23,6 +20,10 @@ void Hud::update()
     chat.update();
 }
 
+void Hud::setUp(GameObjects& objects)
+{
+    chat.setUp(sf::FloatRect(0, .77, .3, .20), objects);
+}
 
 void Hud::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {

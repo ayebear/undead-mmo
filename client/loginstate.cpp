@@ -20,17 +20,18 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(windowSize.x / 1.5, windowSize.y / 6, windowSize.x / 3, windowSize.y / 1.5), gameObjects.fontBold, 16, true);
+    textItemList.setupList(objects.window, sf::FloatRect(.5, .1, .35, .75), gameObjects.fontBold, 16, true, true);
 
     std::string test("Kevin Millerajk");
     textItemList.addTextItem(test);
+
     textItemList.addTextItem("This is a test...");
 
-    for (int x = 1; x <= 100; x++)
+    for (int x = 1; x <= 150; x++)
     {
         std::stringstream tmp;
         tmp << "Test server " << x;
-        textItemList.addTextItem(tmp.str(), sf::Color::Red);
+        textItemList.addTextItem(tmp.str(), sf::Color::Blue);
     }
 
     textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");

@@ -57,6 +57,7 @@ void Chat::setInput(bool in)
 {
     input = in;
     currentMsg.setInput(input);
+    messageBox.toggleBackground();
 }
 
 bool Chat::getInput()
@@ -94,37 +95,22 @@ void Chat::processTextEntered(sf::Uint32 text)
         currentMsg.addChar(static_cast<char>(text));
 }
 
-void Chat::setUp(float x, float y, float width, float height, GameObjects& objects)
+void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
 {
-    mainPos.x = x;
-    mainPos.y = y;
+    mainPos.x = sizeFactor.left * objects.window.getSize().x;
+    mainPos.y = sizeFactor.top * objects.window.getSize().y;
+    chatSize.x = sizeFactor.width * objects.window.getSize().x;
+    chatSize.y = sizeFactor.height * objects.window.getSize().y;
+
+    //Input box tall enough to fit one line of text, and as wide as the messagebox
+    //float inputBoxHeight = textSize;
+    //float inputBoxWidth = chatSize.x;
 
     setNetManager(&objects.netManager);
-    messageBox.setupList(objects.window, sf::FloatRect(x, y, width, height), objects.fontBold, 16, false);
+    messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
 
-    currentMsg.setPosition(x, y + height);
-    currentMsg.setFont(&objects.fontBold);
-
-    usernameText.setPosition(mainPos.x + 4, y + height - 182);
-    currentMsg.setPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, y + height - 182);
-    fixAllPositions();
-}
-
-void Chat::fixMessagePositions()
-{
-   // messageBox.reposition(mainPos.x, mainPos.y);
-}
-
-void Chat::fixInputPositions()
-{
-    usernameText.setPosition(mainPos.x + 4, messageBox.getListDimensions().top + messageBox.getListDimensions().height);
-   // currentMsg.setPosition(usernameText.findCharacterPos(-1).x + mainPos.x + 4, messageBox.);
-}
-
-void Chat::fixAllPositions()
-{
-    fixMessagePositions();
-    fixInputPositions();
+    //render window, font size, font, width of box, x Pos, Y Pos,
+    currentMsg.setUp(16, &objects.fontMono, mainPos.x, mainPos.y + chatSize.y + 3, chatSize.x, false);
 }
 
 // This is called when enter is pressed
@@ -320,13 +306,13 @@ void Chat::setUsername(const string& str)
     {
         username = str;
         usernameText.setString(username + ":");
-        fixInputPositions();
         printMessage("Username successfully set to '" + username + "'.", cmdOutColor);
     }
 }
 void Chat::handleScrolling(sf::Event& event, sf::RenderWindow& window)
 {
-    messageBox.handleScrolling(event, window);
+    if(messageBox.isBackgroundVisible())
+        messageBox.handleScrolling(event, window);
 }
 
 void Chat::update()
@@ -337,7 +323,8 @@ void Chat::update()
 void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.draw(messageBox);
-    window.draw(usernameText);
+
+    window.setView(window.getDefaultView());
     window.draw(currentMsg);
 }
 

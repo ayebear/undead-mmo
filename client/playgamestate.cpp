@@ -47,7 +47,7 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
     gameView.setCenter(myPlayer->getPos());
 
-    theHud.updateView(gameView, gameObjects);
+    theHud.setUp(gameObjects);
 
     playerInput.x = 0;
     playerInput.y = 0;
@@ -93,9 +93,13 @@ void PlayGameState::handleEvents()
 
                     case sf::Keyboard::Key::Y:
                     {
-                        StateArgs someArgs;
-                        someArgs.push_back("This is just a test error...");
-                        action.pushState(StateType::Error, someArgs);
+                        // If player is not typing in the chat
+                        if (!theHud.chat.getInput())
+                        {
+                            StateArgs someArgs;
+                            someArgs.push_back("This is just a test error...");
+                            action.pushState(StateType::Error, someArgs);
+                        }
                         break;
                     }
 

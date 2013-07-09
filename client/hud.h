@@ -13,6 +13,7 @@ class Hud: public sf::Drawable
         void updateView(sf::View&, GameObjects&);
         Chat& getChat();
         void update();
+        void setUp(GameObjects&);
 
         void setWindow(sf::RenderWindow&);
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
