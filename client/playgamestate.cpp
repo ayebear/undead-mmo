@@ -5,48 +5,52 @@
 #include <string>
 #include <sstream>
 #include "playgamestate.h"
-#include "../shared/packet.h"
-#include "../shared/tile.h"
+#include "packet.h"
+#include "tile.h"
 
 PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
     // Load character textures
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
-        exit(Errors::Graphics);
+        exit(1);
     playerTex.setSmooth(true);
     if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
-        exit(Errors::Graphics);
+        exit(1);
     zombieTex.setSmooth(true);
 
     // TODO: Have it download the map from the server instead
-    tileMap.LoadMapFromFile("data/maps/2.map");
+    tileMap.loadMapFromFile("data/maps/2.map");
     Entity::setMapPtr(tileMap);
 
-    theHud.chat.SetNetManager(&objects.netManager);
+    theHud.chat.setNetManager(&objects.netManager);
 
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
     // and then that gets sent right back to the player who just logged in, and then
     // is allocated on the client.
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
-    myPlayer = entList.Add(Entity::Player, 1001);
-    myPlayer->SetTexture(playerTex);
-    myPlayer->SetPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
+    myPlayer = entList.add(Entity::Player, 1001);
+    myPlayer->setTexture(playerTex);
+    myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
 
     // Add quite a few local test zombies for now
     for (int x = 2; x < 999; x++)
     {
-        auto* zombie = entList.Add(Entity::Zombie, x);
-        zombie->SetTexture(zombieTex);
-        zombie->SetPos(sf::Vector2f(rand() % tileMap.getMapWidth(), rand() % tileMap.getMapHeight()));
-        zombie->SetAngle(rand() % 360);
+        auto* zombie = entList.add(Entity::Zombie, x);
+        zombie->setTexture(zombieTex);
+        zombie->setPos(sf::Vector2f(rand() % tileMap.getMapWidth(), rand() % tileMap.getMapHeight()));
+        zombie->setAngle(rand() % 360);
+        zombie->setMoving(true);
+        zombie->setSpeed(rand() % 50 + 25);
     }
 
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
-    gameView.setCenter(myPlayer->GetPos());
+    gameView.setCenter(myPlayer->getPos());
 
-    theHud.setUp(gameObjects);
-   // theHud.UpdateView(gameView, gameObjects);
+    theHud.updateView(gameView, gameObjects);
+
+    playerInput.x = 0;
+    playerInput.y = 0;
 
     playing = true;
     paused = false;
@@ -71,16 +75,16 @@ void PlayGameState::handleEvents()
                 switch (event.key.code)
                 {
                     case sf::Keyboard::Escape:
-                        if (theHud.chat.GetInput())
-                            theHud.chat.SetInput(false);
+                        if (theHud.chat.getInput())
+                            theHud.chat.setInput(false);
                         else
                             action.popState();
                         break;
 
                     case sf::Keyboard::Return:
-                        if (theHud.chat.GetInput())
-                            objects.netManager.SendChatMessage(theHud.chat.ParseMessage());
-                        theHud.chat.ToggleInput();
+                        if (theHud.chat.getInput())
+                            objects.netManager.sendChatMessage(theHud.chat.parseMessage());
+                        theHud.chat.toggleInput();
                         break;
 
                     case sf::Keyboard::Key::P:
@@ -89,27 +93,23 @@ void PlayGameState::handleEvents()
 
                     case sf::Keyboard::Key::Y:
                     {
-                            // If player is not typing in the chat
-                        if (!theHud.chat.GetInput())
-                        {
-                            StateArgs someArgs;
-                            someArgs.push_back("This is just a test error...");
-                            action.pushState(StateType::Error, someArgs);
-                        }
+                        StateArgs someArgs;
+                        someArgs.push_back("This is just a test error...");
+                        action.pushState(StateType::Error, someArgs);
                         break;
                     }
 
                     default:
                         break;
                 }
-                theHud.chat.ProcessInput(event.key.code);
+                theHud.chat.processInput(event.key.code);
                 break;
 
             case sf::Event::MouseWheelMoved:
                 theHud.chat.handleScrolling(event, objects.window);
                 break;
             case sf::Event::TextEntered:
-                theHud.chat.ProcessTextEntered(event.text.unicode);
+                theHud.chat.processTextEntered(event.text.unicode);
                 break;
 
             case sf::Event::LostFocus:
@@ -134,10 +134,10 @@ void PlayGameState::handleEvents()
 
 void PlayGameState::update()
 {
-    entList.Update(elapsedTime);
+    entList.update(elapsedTime);
 
     // Update the game view center position with the player's current position
-    gameView.setCenter(myPlayer->GetPos());
+    gameView.setCenter(myPlayer->getPos());
 
     sf::Vector2f viewSize(gameView.getSize());
     sf::Vector2f viewCenter(gameView.getCenter());
@@ -168,7 +168,7 @@ void PlayGameState::update()
         viewCenter = gameView.getCenter();
     }
 
-    theHud.Update();
+    theHud.update();
 }
 
 void PlayGameState::draw()
@@ -192,26 +192,45 @@ void PlayGameState::draw()
 
 void PlayGameState::handleInput()
 {
-    if (!paused && !theHud.chat.GetInput())
+    if (!paused && !theHud.chat.getInput())
     {
         // This is horrible code I wrote, we should make it better
-        int x = 0;
-        int y = 0;
+        oldPlayerInput = playerInput;
+        playerInput.x = 0;
+        playerInput.y = 0;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            y--; // 90
+            playerInput.y--; // 90
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            y++; // 270 (or -90)
+            playerInput.y++; // 270 (or -90)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            x--; // 180
+            playerInput.x--; // 180
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            x++; // 0 (or 360)
-        float degrees = y * 90;
+            playerInput.x++; // 0 (or 360)
+
+        // Calculate the degrees based on which keys were pressed
+        float degrees = playerInput.y * 90;
         if (degrees != 0)
-            degrees += -y * x * 45;
+            degrees += -playerInput.y * playerInput.x * 45;
         else
-            degrees = 90 - (90 * x);
-        if (x != 0 || y != 0)
-            myPlayer->SetAngle(degrees);
+            degrees = 90 - (90 * playerInput.x);
+
+        if (playerInput != oldPlayerInput)
+        {
+            if (playerInput.x != 0 || playerInput.y != 0)
+            {
+                myPlayer->setAngle(degrees);
+                myPlayer->setMoving(true);
+            }
+            else
+            {
+                degrees = 0;
+                myPlayer->setMoving(false);
+            }
+
+            sf::Packet playerPacket;
+            playerPacket << Packet::Input << myPlayer->isMoving() << degrees;
+            objects.netManager.sendPacket(playerPacket);
+        }
     }
     elapsedTime = clock.restart().asSeconds();
 }
@@ -219,7 +238,7 @@ void PlayGameState::handleInput()
 void PlayGameState::takeScreenshot()
 {
     // If player is not typing in the chat
-    if (!theHud.chat.GetInput())
+    if (!theHud.chat.getInput())
     {
         //Get the current system time.
         time_t currTime = time(0);
@@ -244,5 +263,5 @@ void PlayGameState::handleWindowResized(GameObjects& objects)
     // objects.window.setView(gameView);
     viewDimensions = objects.window.getView().getSize();
 
-    theHud.UpdateView(gameView, objects);
+    theHud.updateView(gameView, objects);
 }

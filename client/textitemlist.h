@@ -22,14 +22,11 @@ class TextItemList: public sf::Drawable
         //Used when the itemList needs to be interacted with
         std::string handleEvents(sf::RenderWindow& window);
 
-        void setupList(sf::RenderWindow&, sf::FloatRect, sf::Font&, unsigned int, bool, bool);
+        void setupList(sf::RenderWindow&, sf::FloatRect, sf::Font&, unsigned int, bool);
         sf::FloatRect getListDimensions();
 
         void setClickable(bool);
         bool getClickable();
-
-        bool toggleBackground();
-        bool isBackgroundVisible();
 
         void addTextItem(const std::string&, const sf::Color& = sf::Color(sf::Color::White));
 
@@ -47,7 +44,6 @@ class TextItemList: public sf::Drawable
         void handleMouseClicked(sf::Event&, sf::RenderWindow&);
         void handleResize(sf::Event&, sf::RenderWindow&);
 
-
     private:
 
         sf::Vector2f getNewItemPos();
@@ -63,15 +59,10 @@ class TextItemList: public sf::Drawable
 
         bool isClickable;
         bool isReady;
-        bool selectionMade;
         int currentSelection;
-        const int maxTextItems = 150;
 
-        float currViewTop;
-        float currViewBot;
         sf::Font* textItemFont;
         unsigned int textFontSize;
-        bool backgroundBoxVisible;
 
 };
 

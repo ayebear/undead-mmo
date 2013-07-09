@@ -1,5 +1,4 @@
 #include "inputbox.h"
-#include <iostream>
 
 const char InputBox::pwdChar = '*';
 
@@ -11,20 +10,6 @@ InputBox::InputBox()
     setColor(sf::Color::White);
 }
 
-void InputBox::setUp(int fontSize, sf::Font* font, float xPos, float yPos, float widthInPx, bool passwordMode)
-{
-    setTextSize(fontSize);
-    setFont(font);
-    setPosition(xPos, yPos);
-    setPasswordMode(passwordMode);
-
-    //Make height in pixels 125% the point size
-    inputBorder.setSize(sf::Vector2f(widthInPx, fontSize * 1.25));
-    inputBorder.setPosition(xPos, yPos);
-    inputBorder.setFillColor(sf::Color(15, 15, 15, 75));
-    inputBorder.setOutlineColor(sf::Color(sf::Color(200, 200, 200, 100)));
-    inputBorder.setOutlineThickness(2);
-}
 void InputBox::processInput(sf::Keyboard::Key keyCode)
 {
     switch (keyCode)
@@ -60,13 +45,9 @@ void InputBox::updateCursor()
 
 void InputBox::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
-    window.draw(inputBorder);
+    window.draw(text);
     if (input)
-    {
         window.draw(cursor);
-        window.draw(text);
-    }
-
 }
 
 void InputBox::setFont(sf::Font* theFont)
@@ -79,8 +60,6 @@ void InputBox::setPosition(float x, float y)
 {
     text.setPosition(x, y);
     updateCursorPos();
-    std::cout << "Input box x: " << x << std::endl << "Input Box y: " << y << std::endl;
-
 }
 
 void InputBox::setPasswordMode(bool mode)
@@ -90,7 +69,7 @@ void InputBox::setPasswordMode(bool mode)
 
 void InputBox::setShowRectangle(bool mode)
 {
-    showBorder = mode;
+    showRect = mode;
 }
 
 void InputBox::setTextSize(unsigned int size)

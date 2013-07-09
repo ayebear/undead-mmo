@@ -16,22 +16,21 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     loginMenu.setUpMenu(bgFile,                                             //Background file
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
-                       objects                                     //Rendering window
+                       objects                                              //Rendering window
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(.5, 0, .5, .75), gameObjects.fontBold, 16, true, true);
+    textItemList.setupList(objects.window, sf::FloatRect(windowSize.x / 1.5, windowSize.y / 6, windowSize.x / 3, windowSize.y / 1.5), gameObjects.fontBold, 16, true);
 
     std::string test("Kevin Millerajk");
     textItemList.addTextItem(test);
-
     textItemList.addTextItem("This is a test...");
 
-    for (int x = 1; x <= 150; x++)
+    for (int x = 1; x <= 100; x++)
     {
         std::stringstream tmp;
         tmp << "Test server " << x;
-        textItemList.addTextItem(tmp.str(), sf::Color::Blue);
+        textItemList.addTextItem(tmp.str(), sf::Color::Red);
     }
 
     textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");
@@ -64,21 +63,26 @@ void LoginState::handleEvents()
 
             case sf::Event::MouseWheelMoved:
                 textItemList.handleScrolling(event, objects.window);
+                break;
 
             case sf::Event::MouseButtonPressed:
                 textItemList.handleMouseClicked(event, objects.window);
+                break;
 
             case sf::Event::MouseButtonReleased:
-                processChoice(loginMenu.handleMouseReleased(event, objects.window));
+                processChoice(loginMenu.handleMouseReleased(event));
                 break;
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(loginMenu.handleKeyPressed(event, objects.window));
+                if (event.key.code == sf::Keyboard::Escape)
+                    action.popState();
+                else
+                    processChoice(loginMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:
-                loginMenu.handleResize(event, objects.window);
+                loginMenu.handleResize(event);
                 break;
 
             default:

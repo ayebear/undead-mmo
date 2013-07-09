@@ -10,15 +10,11 @@ MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
     windowSize.x = objects.window.getSize().x;
     windowSize.y = objects.window.getSize().y;
 
-    std::string bgFile("data/images/ui/MenuBackground.png");
-    std::string fontFile("data/fonts/Ubuntu-B.ttf");
-    mainMenu.setUpMenu(bgFile,                             //Background file
-                       32,                                 //Font size
-                       sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),                 //Rendering window
-                       objects
+    mainMenu.setUpMenu("data/images/ui/MenuBackground.png",                 //Background file
+                       32,                                                  //Font size
+                       sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),  //Menu size
+                       objects                                              //Rendering window
                        );
-
-
 
     //Set up menuOption structs
     mainMenu.addMenuButton("Play");
@@ -46,16 +42,19 @@ void MainMenuState::handleEvents()
                 break;
 
             case sf::Event::MouseButtonReleased:
-                processChoice(mainMenu.handleMouseReleased(event, objects.window));
+                processChoice(mainMenu.handleMouseReleased(event));
                 break;
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(mainMenu.handleKeyPressed(event, objects.window));
+                if (event.key.code == sf::Keyboard::Escape)
+                    action.exitGame();
+                else
+                    processChoice(mainMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:
-                mainMenu.handleResize(event, objects.window);
+                mainMenu.handleResize(event);
                 break;
 
             default:
@@ -67,10 +66,7 @@ void MainMenuState::handleEvents()
 void MainMenuState::processChoice(int choice)
 {
     if (choice == 1)
-    {
-        std::cout << "MainMenuState created a push action to LoginState.\n";
         action.pushState(StateType::Login);
-    }
     else if (choice == 2)
         action.exitGame();
 }

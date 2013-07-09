@@ -13,10 +13,6 @@ class InputBox: public sf::Drawable
     public:
         InputBox();
 
-        //Font size, Font, x Pos, y Pos, width, password mode
-        void setUp(int, sf::Font*, float, float, float, bool);
-        //render window, font size, font, width of box, x Pos, Y Pos,
-       // void setUp(sf::RenderWindow)
         // Stuff you would mainly use in a loop
         void processInput(sf::Keyboard::Key); // In the future this can also take in mouse input (or make another function for that)
         void updateCursor();
@@ -58,14 +54,13 @@ class InputBox: public sf::Drawable
         string pwdStr;
         sf::Text text;
         sf::Vector2f pos;
-        sf::RectangleShape inputBorder;
         Cursor cursor;
 
         // Settings
         sf::Font* font;
         bool input;
         bool pwdMode;
-        bool showBorder;
+        bool showRect;
 };
 
 #endif

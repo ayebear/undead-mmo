@@ -2,9 +2,11 @@
 #include <iostream>
 ScrollBar::ScrollBar()
 {
+    //Almost white. More opaque
+    slider.setFillColor(sf::Color(255, 255, 255, 100));
 
     //Greyish color. semi-transparent
-    scrollBar.setFillColor(noMoreText);
+    scrollBar.setFillColor(sf::Color(10, 10, 10, 75));
 
     isVisible = true;
 }
@@ -22,14 +24,14 @@ void ScrollBar::attachScrollBar(sf::FloatRect& destRect)
     scrollBar.setPosition(destRect.left, destRect.top);
     scrollBar.setSize(sf::Vector2f(scrollBarWidth, destRect.height));
 
-  /*  //Start the slider out at the bottom of the scroll bar with a height of 0.
+    //Start the slider out at the bottom of the scroll bar with a height of 0.
     //Width of the slider will always be the width of the scrollBar
     slider.setPosition(scrollBar.getPosition().x, scrollBar.getPosition().y);
-    slider.setSize(sf::Vector2f(scrollBarWidth, 50));*/
+    slider.setSize(sf::Vector2f(scrollBarWidth, 50));
 
 }
 
-/*//Slider gets smaller when actualHeight is larger, and larger when actualHeight is smaller
+//Slider gets smaller when actualHeight is larger, and larger when actualHeight is smaller
 void ScrollBar::adjustScrollerHeight(float viewHeight, float actualHeight)
 {
     //If there is more text than what can fit inside of the view
@@ -43,9 +45,9 @@ void ScrollBar::adjustScrollerHeight(float viewHeight, float actualHeight)
     //If there is not enough text to warrant scrolling, or if there is no text
     else
         slider.setSize(sf::Vector2f(scrollBarWidth, 0));
-}*/
+}
 
-float ScrollBar::scrollUp(sf::View& destRect, float actualHeight,  sf::Vector2f topPos, unsigned int distance)
+void ScrollBar::scrollUp(sf::View& destRect, float actualHeight,  sf::Vector2f topPos, unsigned int distance)
 {
 
     //Only scroll up if the slider is not at the top of the scroll bar
@@ -56,18 +58,15 @@ float ScrollBar::scrollUp(sf::View& destRect, float actualHeight,  sf::Vector2f 
         {
             loops++;
             destRect.move(0, -1);
+            slider.setPosition(slider.getPosition().x, slider.getPosition().y -  slider.getSize().y * (distance / actualHeight) / distance);
         }
-        scrollBar.setPosition(scrollBar.getPosition().x, scrollBar.getPosition().y - loops);
-        scrollBar.setFillColor(moreText);
 
-        return loops;
+
     }
 
-    return 0;
 
 }
-//returns distance scrolled
-float ScrollBar::scrollDown(sf::View& destRect, float actualHeight, sf::Vector2f bottomPos, unsigned int distance)
+void ScrollBar::scrollDown(sf::View& destRect, float actualHeight, sf::Vector2f bottomPos, unsigned int distance)
 {
     //Only scroll down if the bottom of the slider is not at the bottom of the scroll bar
     if(actualHeight > 0 && distance > 0 && destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y)
@@ -77,17 +76,11 @@ float ScrollBar::scrollDown(sf::View& destRect, float actualHeight, sf::Vector2f
        {
            loops++;
            destRect.move(0, 1);
+           slider.setPosition(slider.getPosition().x, slider.getPosition().y +  slider.getSize().y * (distance / actualHeight) / distance);
        }
 
-        scrollBar.setPosition(scrollBar.getPosition().x, scrollBar.getPosition().y + loops);
-        if(destRect.getCenter().y + destRect.getSize().y / 2 >= bottomPos.y)
-            scrollBar.setFillColor(noMoreText);
-
-        return loops;
 
     }
-
-    return 0;
 }
 
 void ScrollBar::setVisible(bool visible)
@@ -102,4 +95,5 @@ bool ScrollBar::getVisible()
 void ScrollBar::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.draw(scrollBar);
+    window.draw(slider);
 }

@@ -77,20 +77,18 @@ void TextItem::wrapText(sf::FloatRect destBox)
     std::string tempText2("");
     sf::Vector2f lastLinePos(textItems.back().getPosition());
 
-    int firstCharXPos = textItems.front().findCharacterPos(0).x;
-    while(textItems.back().getGlobalBounds().left + textItems.back().getGlobalBounds().width - textItems.back().getGlobalBounds().left > destBox.width - textFontSize)
+    while(textItems.back().getGlobalBounds().left + textItems.back().getGlobalBounds().width > destBox.left + destBox.width)
     {
 
-        std::cout << textItems.back().getGlobalBounds().width << std::endl;
-        std::cout << destBox.left + destBox.width << std::endl;
+        //std::cout << textItems.back().getGlobalBounds().width << std::endl;
+        //std::cout << destBox.left + destBox.width << std::endl;
         unsigned int i = 0;
         int endChar = 0;
-        int firstCharXPos = textItems.front().findCharacterPos(0).x;
 
         tempText = textItems.back().getString();
 
         //Find fist character that is outside of the destination box
-        while(i < tempText.length() && textItems.back().findCharacterPos(i).x - firstCharXPos < destBox.width - (2 * textFontSize))
+        while(i < tempText.length() && textItems.back().findCharacterPos(i).x < destBox.left + destBox.width - textFontSize)
         {
             i++;
             endChar = i;
