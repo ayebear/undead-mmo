@@ -27,9 +27,16 @@ using namespace std;
 class EntityGrid
 {
     public:
-        EntityGrid();
+        typedef set<EID> MicroList;
+
+        EntityGrid(); // Starts out as 0x0, must call setSize after this
+        EntityGrid(int, int);
+
+        void setSize(int, int); // Sets the size of the grid, same as constructor
+        void clear(); // Removes everything and resizes the grid back to 0x0
+
     private:
-        vector<vector<set<EID>>> grid;
+        vector< vector<MicroList> > grid;
 };
 
-#endif // ENTITYGRID_H
+#endif

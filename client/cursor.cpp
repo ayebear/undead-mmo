@@ -1,6 +1,7 @@
 #include "cursor.h"
 
 const float Cursor::blinkRate = 0.3;
+const int Cursor::endPos = -1;
 
 Cursor::Cursor()
 {

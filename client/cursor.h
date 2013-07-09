@@ -20,6 +20,7 @@ class Cursor: public sf::Drawable
 
     private:
         static const float blinkRate;
+        static const int endPos;
 };
 
 #endif
