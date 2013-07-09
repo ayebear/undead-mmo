@@ -12,12 +12,11 @@ class AccountDb
         bool loadAccountList(); // Same as constructor
         bool loadAccountList(const string&); // Same as constructor
 
-        bool login(const string&, const string&, PlayerData&); // username, password, player data object to load into
-        bool loadAccount(const string&, PlayerData&); // username, player data object to load into
-        bool saveAccount(const string&, const PlayerData&); // username, player data object to read from
+        bool loadAccount(PlayerData&);
+        bool saveAccount(const PlayerData&);
 
     private:
-        ConfigFile accountList; // Stores a list of usernames and account IDs like this: username = accountID
+        ConfigFile accountList;
 
 };
 

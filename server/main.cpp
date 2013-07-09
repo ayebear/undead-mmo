@@ -6,5 +6,5 @@
 int main()
 {
     Server zombieServer;
-    zombieServer.start();
+    zombieServer.Start();
 }

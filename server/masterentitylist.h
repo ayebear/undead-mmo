@@ -35,12 +35,12 @@ class MasterEntityList
 {
     public:
         MasterEntityList();
-        Entity* add(int);
-        Entity* insert(Entity*);
-        Entity* find(EID);
-        void erase(EID);
-        bool cleanUp();
-        void update(float);
+        Entity* Add(int);
+        Entity* Insert(Entity*);
+        Entity* Find(EID);
+        void Delete(EID);
+        bool CleanUp();
+        void Update(float);
     private:
         static uint entCount;
         static const int cleanUpRatio;
