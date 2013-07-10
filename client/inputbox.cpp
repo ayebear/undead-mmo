@@ -11,10 +11,10 @@ InputBox::InputBox()
     setColor(sf::Color::White);
 }
 
-void InputBox::setUp(int fontSize, sf::Font* font, float xPos, float yPos, float widthInPx, bool passwordMode)
+void InputBox::setUp(int fontSize, sf::Font& font, float xPos, float yPos, float widthInPx, bool passwordMode)
 {
     setTextSize(fontSize);
-    setFont(font);
+    text.setFont(font);
     setPosition(xPos, yPos);
     setPasswordMode(passwordMode);
 
@@ -67,12 +67,6 @@ void InputBox::draw(sf::RenderTarget& window, sf::RenderStates states) const
         window.draw(cursor);
         window.draw(text);
     }
-}
-
-void InputBox::setFont(sf::Font* theFont)
-{
-    font = theFont;
-    text.setFont(*font);
 }
 
 void InputBox::setPosition(float x, float y)

@@ -24,28 +24,7 @@ void EntityLiving::move(float deltaTime)
         sprite.move(amount);
         sprite.setRotation(angle + 90);
         pos = sprite.getPosition();
-        // TODO: Improve this later
-        if (pos.x < 0)
-        {
-            pos.x = 0;
-            move(-deltaTime);
-        }
-        if (pos.y < 0)
-        {
-            pos.y = 0;
-            move(-deltaTime);
-        }
-
-        if (pos.x >= mapPtr->getMapWidth())
-        {
-            pos.x = mapPtr->getMapWidth();
-            move(-deltaTime);
-        }
-        if (pos.y >= mapPtr->getMapHeight())
-        {
-            pos.y = mapPtr->getMapHeight();
-            move(-deltaTime);
-        }
+        handleCollision();
     }
 }
 
@@ -62,4 +41,41 @@ void EntityLiving::setSpeed(float theSpeed)
 void EntityLiving::setMoving(bool isMoving)
 {
     moving = isMoving;
+}
+
+void EntityLiving::handleCollision()
+{
+    // TODO: Improve this later
+    if (pos.x < 0)
+    {
+        pos.x = 0;
+        flipAngle();
+    }
+
+    if (pos.y < 0)
+    {
+        pos.y = 0;
+        flipAngle();
+    }
+
+    if (pos.x >= mapWidth)
+    {
+        pos.x = mapWidth;
+        flipAngle();
+    }
+
+    if (pos.y >= mapHeight)
+    {
+        pos.y = mapHeight;
+        flipAngle();
+    }
+
+    sprite.setPosition(pos);
+}
+
+void EntityLiving::flipAngle()
+{
+    angle += 90;
+    if (angle > 360)
+        angle -= 360;
 }

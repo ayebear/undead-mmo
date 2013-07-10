@@ -8,9 +8,9 @@ Entity* allocateEntity(int type)
     switch (type)
     {
         case Entity::Player:
-            return new Player();
+            return new Player;
         case Entity::Zombie:
-            return new Zombie();
+            return new Zombie;
         default:
             return nullptr;
     }

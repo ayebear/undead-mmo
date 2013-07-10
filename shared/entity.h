@@ -45,8 +45,9 @@ class Entity: public sf::Drawable
         virtual void setMoving(bool) {}
         void setPos(const sf::Vector2f&);
         const sf::Vector2f getPos() const;
+        virtual void moveTo(const sf::Vector2f&);
 
-        static void setMapPtr(Map&);
+        static void setMapSize(int, int);
 
         // All of the different entity types
         enum Type
@@ -67,7 +68,8 @@ class Entity: public sf::Drawable
         sf::Vector2f pos;
         sf::Sprite sprite;
 
-        static Map* mapPtr;
+        static int mapWidth;
+        static int mapHeight;
 
 };
 

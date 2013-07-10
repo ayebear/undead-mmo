@@ -20,28 +20,29 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 
     // TODO: Have it download the map from the server instead
     tileMap.loadMapFromFile("data/maps/2.map");
-    Entity::setMapPtr(tileMap);
+    Entity::setMapSize(tileMap.getMapWidth(), tileMap.getMapHeight());
 
-    theHud.chat.setNetManager(&objects.netManager);
+    //theHud.chat.setNetManager(&objects.netManager);
 
     // TODO: Will need to send a request to the server (during or after the log-in process)
     // which will create a new entity on the server first, which gets a unique global ID,
     // and then that gets sent right back to the player who just logged in, and then
     // is allocated on the client.
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
-    myPlayer = entList.add(Entity::Player, 1001);
+    myPlayer = entList.add(Entity::Player, 1);
     myPlayer->setTexture(playerTex);
     myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
 
     // Add quite a few local test zombies for now
-    for (int x = 2; x < 999; x++)
+    for (int x = 2; x < 9999; x++)
     {
         auto* zombie = entList.add(Entity::Zombie, x);
         zombie->setTexture(zombieTex);
         zombie->setPos(sf::Vector2f(rand() % tileMap.getMapWidth(), rand() % tileMap.getMapHeight()));
         zombie->setAngle(rand() % 360);
         zombie->setMoving(true);
-        zombie->setSpeed(rand() % 50 + 25);
+        zombie->setSpeed(rand() % 500 + 200);
+        zombie->moveTo(sf::Vector2f(500, 500));
     }
 
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
@@ -53,7 +54,7 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     playerInput.y = 0;
 
     playing = true;
-    paused = false;
+    hasFocus = false;
 }
 
 PlayGameState::~PlayGameState()
@@ -117,11 +118,11 @@ void PlayGameState::handleEvents()
                 break;
 
             case sf::Event::LostFocus:
-                paused = true;
+                hasFocus = true;
                 break;
 
             case sf::Event::GainedFocus:
-                paused = false;
+                hasFocus = false;
                 break;
 
             case sf::Event::Resized:
@@ -196,7 +197,7 @@ void PlayGameState::draw()
 
 void PlayGameState::handleInput()
 {
-    if (!paused && !theHud.chat.getInput())
+    if (!hasFocus && !theHud.chat.getInput())
     {
         // This is horrible code I wrote, we should make it better
         oldPlayerInput = playerInput;

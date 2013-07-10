@@ -45,7 +45,7 @@ class PlayGameState: public State
         sf::View gameView;
         sf::Vector2f viewDimensions;
         bool playing;
-        bool paused;
+        bool hasFocus;
         float elapsedTime;
         sf::Clock FPSTimer;
         sf::Texture playerTex, zombieTex;

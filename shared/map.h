@@ -23,8 +23,8 @@ class Map: public sf::Drawable
 
     private:
         bool ready;
-        float mapHeight;
-        float mapWidth;
+        int mapHeight;
+        int mapWidth;
         std::vector<std::vector<Tile>> tiles;
 };
 

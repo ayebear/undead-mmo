@@ -3,8 +3,8 @@
 
 #include "entity.h"
 
-
-Map* Entity::mapPtr;
+int Entity::mapWidth = 0;
+int Entity::mapHeight = 0;
 
 Entity::Entity()
 {
@@ -16,10 +16,6 @@ Entity::~Entity()
 {
 }
 
-void Entity::setMapPtr(Map& tileMap)
-{
-    mapPtr = &tileMap;
-}
 const EID Entity::getID() const
 {
     return ID;
@@ -64,6 +60,17 @@ void Entity::setPos(const sf::Vector2f& position)
 const sf::Vector2f Entity::getPos() const
 {
     return pos;
+}
+
+void Entity::moveTo(const sf::Vector2f& posToMove)
+{
+    setPos(posToMove);
+}
+
+void Entity::setMapSize(int width, int height)
+{
+    mapWidth = width;
+    mapHeight = height;
 }
 
 sf::Packet& operator<<(sf::Packet& packet, Entity& ent)

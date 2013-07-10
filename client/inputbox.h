@@ -14,7 +14,7 @@ class InputBox: public sf::Drawable
         InputBox();
 
         // Font size, Font, x Pos, y Pos, width, password mode
-        void setUp(int, sf::Font*, float, float, float, bool);
+        void setUp(int, sf::Font&, float, float, float, bool);
         // render window, font size, font, width of box, x Pos, Y Pos,
         //void setUp(sf::RenderWindow)
         // Stuff you would mainly use in a loop
@@ -23,7 +23,6 @@ class InputBox: public sf::Drawable
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
         // Settings
-        void setFont(sf::Font*);
         void setPosition(float, float);
         void setPasswordMode(bool);
         void setShowRectangle(bool);

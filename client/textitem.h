@@ -11,7 +11,7 @@ class TextItem: public sf::Drawable
 {
     public:
 
-        TextItem();
+        //TextItem();
         TextItem(const std::string&, sf::Font&, unsigned int, sf::Color, sf::Vector2f);
 
         ~TextItem();

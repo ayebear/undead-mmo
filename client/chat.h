@@ -21,8 +21,6 @@ class Chat: public sf::Drawable
     public:
         Chat();
 
-        void setNetManager(ClientNetwork*);
-        void setFont(sf::Font*);
         void setUp(sf::FloatRect, GameObjects&);
 
         void setInput(bool);
@@ -47,6 +45,8 @@ class Chat: public sf::Drawable
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
+        void setFont(sf::Font*);
+
         void clearMessage();
         void parseCommand(const string&);
         void saveCurrentMessage();
@@ -64,7 +64,6 @@ class Chat: public sf::Drawable
 
         // Dependencies
         ClientNetwork* netManager;
-        sf::Font* font;
 
         // Visible objects
         TextItemList messageBox; // stores the current messages on the screen
@@ -79,7 +78,6 @@ class Chat: public sf::Drawable
         sf::Vector2f mainPos;
         sf::Vector2f chatSize;
         string username;
-        sf::Text usernameText;
 };
 
 #endif

@@ -5,7 +5,7 @@
 
 int main()
 {
-    const string title = "Project: Brains v0.0.4.3 Dev";
+    const string title = "Project: Brains v0.0.4.5 Dev";
 
     StateManager game(title); // Create the game
 

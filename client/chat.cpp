@@ -28,29 +28,13 @@ const map<string,string> Chat::help = {
 Chat::Chat()
 {
     netManager = nullptr;
-    font = nullptr;
 
     input = false;
     mainPos.x = 0;
     mainPos.y = 0;
     msgHistoryPos = 0;
 
-    usernameText.setCharacterSize(textSize);
-    usernameText.setColor(sf::Color::White);
-
     setUsername("Anonymous");
-}
-
-void Chat::setNetManager(ClientNetwork* theNetMan)
-{
-    netManager = theNetMan;
-}
-
-void Chat::setFont(sf::Font* theFont)
-{
-    font = theFont;
-    usernameText.setFont(*font);
-    currentMsg.setFont(font);
 }
 
 void Chat::setInput(bool in)
@@ -106,11 +90,11 @@ void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
     //float inputBoxHeight = textSize;
     //float inputBoxWidth = chatSize.x;
 
-    setNetManager(&objects.netManager);
+    netManager = &objects.netManager;
     messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
 
     //render window, font size, font, width of box, x Pos, Y Pos,
-    currentMsg.setUp(16, &objects.fontMono, mainPos.x, mainPos.y + chatSize.y + 3, chatSize.x, false);
+    currentMsg.setUp(16, objects.fontBold, mainPos.x, mainPos.y + chatSize.y + 3, chatSize.x, false);
 }
 
 // This is called when enter is pressed
@@ -305,7 +289,6 @@ void Chat::setUsername(const string& str)
     if (!str.empty())
     {
         username = str;
-        usernameText.setString(username + ":");
         printMessage("Username successfully set to '" + username + "'.", cmdOutColor);
     }
 }

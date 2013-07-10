@@ -18,6 +18,9 @@ class EntityLiving: public Entity
         void setMoving(bool);
 
     protected:
+        void handleCollision();
+        void flipAngle();
+
         static const int defaultSpeed = 10;
 
         float angle; // in degrees

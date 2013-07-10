@@ -5,10 +5,10 @@
 #include <iostream>
 
 
-TextItem::TextItem()
+/*TextItem::TextItem()
 {
     hiddenText = "";
-}
+}*/
 TextItem::TextItem(const std::string& text, sf::Font& font, unsigned int fontSize, sf::Color color, sf::Vector2f pos)
 {
     textItemBox.setFillColor(sf::Color::Transparent);
@@ -20,6 +20,7 @@ TextItem::TextItem(const std::string& text, sf::Font& font, unsigned int fontSiz
     textItems.emplace_back(text, font, fontSize);
     textItems.back().setPosition(pos);
     textItems.back().setColor(color);
+    isHighlighted = false;
 }
 
 

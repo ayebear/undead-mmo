@@ -5,3 +5,7 @@ useVerticalSync = true
 // Fullscreen is used if both of these are not set
 windowWidth = 1024
 windowHeight = 768
+
+server = ayebear.com
+username = test
+password = password
