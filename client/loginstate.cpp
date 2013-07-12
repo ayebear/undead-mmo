@@ -95,7 +95,22 @@ void LoginState::handleEvents()
 void LoginState::processChoice(int choice)
 {
     if (choice == 1)
-        action.pushState(StateType::Game);
+    {
+        // TODO: Change this later so the options (if any) are loaded into the GUI elements or something like that
+        string server = objects.config.getOption("server").asString();
+        string username = objects.config.getOption("username").asString();
+        string password = objects.config.getOption("password").asString();
+        int status = objects.netManager.login(server, username, password);
+        if (status == Packet::Login::Successful)
+            action.pushState(StateType::Game);
+        else
+        {
+            // TODO: Show a better error from the actual status code
+            StateArgs args;
+            args.push_back("Error logging into the server!");
+            action.pushState(StateType::Error, args);
+        }
+    }
     else if (choice == 2)
         action.popState();
 }

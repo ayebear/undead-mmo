@@ -84,7 +84,7 @@ void PlayGameState::handleEvents()
 
                     case sf::Keyboard::Return:
                         if (theHud.chat.getInput())
-                            objects.netManager.sendChatMessage(theHud.chat.parseMessage());
+                            theHud.chat.parseMessage();
                         theHud.chat.toggleInput();
                         break;
 

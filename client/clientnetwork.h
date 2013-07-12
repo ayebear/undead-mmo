@@ -5,7 +5,7 @@
 #define CLIENTNETWORK_H
 
 #include <string>
-#include <list>
+#include "linkedqueue.h"
 #include "network.h"
 #include "packet.h"
 
@@ -31,24 +31,33 @@ class ClientNetwork: public Network
         void storePacket(sf::Packet&);
         void sendPacket(sf::Packet&);
 
-        // Other
-        bool connectToServer(const sf::IpAddress&);
-        int login(const std::string&, const std::string&);
+        // Packet helpers
         void sendChatMessage(const std::string&);
+
+        // Server control
+        void setServerAddress(const sf::IpAddress&); // Sets the server address
+        int login(const sf::IpAddress&, const std::string&, const std::string&); // This sets the server address as well as logging in
+        int login(const std::string&, const std::string&); // Logs into the currently connected server
+        void logout();
+        const std::string getUsername();
         const std::string getStatusString();
         bool validAddress(sf::IpAddress);
         bool isConnected();
         bool isValidType(int);
 
     private:
+        bool connectToServer();
+        void disconnectFromServer();
+
         // Client only needs a single TCP socket because it is only communicating with the server
         sf::TcpSocket tcpSock;
-        sf::IpAddress serverAddress;
+        sf::IpAddress serverAddress; // TODO: Use an IpPort combo instead
         bool connected;
 
+        std::string currentUsername;
+
         // All received packets will be stored in here. Only valid packets sent from the server will be stored.
-        std::list<sf::Packet> packets[Packet::PacketTypes]; // TODO: Write a custom thread-safe linked list class instead
-        sf::Mutex packetMutexes[Packet::PacketTypes];
+        LinkedQueue<sf::Packet> packets[Packet::PacketTypes];
 };
 
 #endif

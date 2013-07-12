@@ -3,7 +3,7 @@
 // Window options
 useVerticalSync = true
 // Fullscreen is used if both of these are not set
-windowWidth = 1024
+windowWidth = 1366
 windowHeight = 768
 
 server = ayebear.com

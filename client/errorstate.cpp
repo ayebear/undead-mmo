@@ -19,6 +19,7 @@ ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
                        objects                                     //Rendering window
                        );
 
+    errorMenu.addMenuButton("Go Back (this may fail)");
     errorMenu.addMenuButton("Report Bug");
     errorMenu.addMenuButton("Restart Game");
     errorMenu.addMenuButton("Exit Game");
@@ -86,7 +87,9 @@ void ErrorState::handleEvents()
 
 void ErrorState::processChoice(int choice)
 {
-    if (choice >= 1)
+    if (choice == 1)
+        action.popState();
+    else
         action.exitGame();
 }
 

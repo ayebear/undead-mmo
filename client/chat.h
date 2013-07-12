@@ -22,6 +22,7 @@ class Chat: public sf::Drawable
         Chat();
 
         void setUp(sf::FloatRect, GameObjects&);
+        void setUsername(const string&);
 
         void setInput(bool);
         bool getInput();
@@ -34,10 +35,6 @@ class Chat: public sf::Drawable
 
         const string parseMessage();
         void printMessage(const string&, const sf::Color& color = sf::Color::White);
-
-        void setUsername(const string&);
-        bool connectToServer(const string&);
-        void loginToServer(const string&);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
 
@@ -59,7 +56,7 @@ class Chat: public sf::Drawable
         static const float oldMsgAge;
         static const float maxMsgAge;
         static const unsigned short maxMsgHistory;
-        static const sf::Color cmdOutColor;
+        static const sf::Color cmdOutColor; // TODO: Make constants for all of the colors we use
         static const map<string,string> help;
 
         // Dependencies

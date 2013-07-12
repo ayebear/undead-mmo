@@ -21,8 +21,6 @@ const map<string,string> Chat::help = {
     {"echo", "Prints out the text after the command. Usage: /echo text goes here"},
     {"username", "Sets your current username. Usage: /username YourUsername"},
     {"exit", "Exits the game. Usage: /exit"},
-    {"connect", "Connects to a server. Usage: /connect hostname"},
-    {"login", "Connects and logs into a server. Usage: /login hostname username password"}
 };
 
 Chat::Chat()
@@ -35,6 +33,35 @@ Chat::Chat()
     msgHistoryPos = 0;
 
     setUsername("Anonymous");
+}
+
+void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
+{
+    mainPos.x = sizeFactor.left * objects.window.getSize().x;
+    mainPos.y = sizeFactor.top * objects.window.getSize().y;
+    chatSize.x = sizeFactor.width * objects.window.getSize().x;
+    chatSize.y = sizeFactor.height * objects.window.getSize().y;
+
+    //Input box tall enough to fit one line of text, and as wide as the messagebox
+    //float inputBoxHeight = textSize;
+    //float inputBoxWidth = chatSize.x;
+
+    netManager = &objects.netManager;
+    username = netManager->getUsername();
+
+    messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
+
+    //render window, font size, font, width of box, x Pos, Y Pos,
+    currentMsg.setUp(16, objects.fontBold, mainPos.x, mainPos.y + chatSize.y + 3, chatSize.x, false);
+}
+
+void Chat::setUsername(const string& str)
+{
+    if (!str.empty())
+    {
+        username = str;
+        printMessage("Username successfully set to '" + username + "'.", cmdOutColor);
+    }
 }
 
 void Chat::setInput(bool in)
@@ -79,24 +106,6 @@ void Chat::processTextEntered(sf::Uint32 text)
         currentMsg.addChar(static_cast<char>(text));
 }
 
-void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
-{
-    mainPos.x = sizeFactor.left * objects.window.getSize().x;
-    mainPos.y = sizeFactor.top * objects.window.getSize().y;
-    chatSize.x = sizeFactor.width * objects.window.getSize().x;
-    chatSize.y = sizeFactor.height * objects.window.getSize().y;
-
-    //Input box tall enough to fit one line of text, and as wide as the messagebox
-    //float inputBoxHeight = textSize;
-    //float inputBoxWidth = chatSize.x;
-
-    netManager = &objects.netManager;
-    messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
-
-    //render window, font size, font, width of box, x Pos, Y Pos,
-    currentMsg.setUp(16, objects.fontBold, mainPos.x, mainPos.y + chatSize.y + 3, chatSize.x, false);
-}
-
 // This is called when enter is pressed
 const string Chat::parseMessage()
 {
@@ -112,9 +121,8 @@ const string Chat::parseMessage()
         else
         {
             string fullStr = username + ": " + msgStr;
-            if (netManager == nullptr)
-                exit(99);
-            netManager->sendChatMessage(fullStr);
+            if (netManager != nullptr)
+                netManager->sendChatMessage(msgStr);
             printMessage(fullStr, sf::Color::Green);
         }
         clearMessage();
@@ -134,10 +142,6 @@ void Chat::parseCommand(const string& msgStr)
     // TODO: Make a map of pointers to these functions
     if (cmdStr == "test")
         printMessage("Command parser seems to be working!", cmdOutColor);
-    else if (cmdStr == "connect")
-        connectToServer(content);
-    else if (cmdStr == "login")
-        loginToServer(content);
     else if (cmdStr == "echo")
         printMessage(content, cmdOutColor);
     else if (cmdStr == "username")
@@ -148,59 +152,6 @@ void Chat::parseCommand(const string& msgStr)
         exit(0);
     else
         printMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
-}
-
-bool Chat::connectToServer(const string& host)
-{
-    bool connected = false;
-    if (host.empty() || host == "status")
-        printMessage(netManager->getStatusString());
-    else
-    {
-        printMessage("Attempting a connection to '" + host + "'...", cmdOutColor);
-        connected = netManager->connectToServer(host);
-        if (connected)
-            printMessage("Successfully connected to '" + host + "'.", cmdOutColor);
-        else
-            printMessage("Error: Could not connect to '" + host + "'.", cmdOutColor);
-    }
-    return connected;
-}
-
-void Chat::loginToServer(const string& paramStr)
-{
-    if (!paramStr.empty())
-    {
-        istringstream params(paramStr);
-        string host, username, password;
-        params >> host >> username >> password;
-        if (!host.empty() && !username.empty())
-        {
-            if (connectToServer(host))
-            {
-                printMessage("Logging in...");
-                int authStatus = netManager->login(username, password);
-                switch (authStatus)
-                {
-                    case Packet::Auth::Successful:
-                        printMessage("Logged in successfully!");
-                        break;
-                    case Packet::Auth::InvalidUsername:
-                        printMessage("Error: Invalid username.");
-                        break;
-                    case Packet::Auth::InvalidPassword:
-                        printMessage("Error: Invalid password.");
-                        break;
-                    case Packet::Auth::AccountBanned:
-                        printMessage("Error: Your account has been banned.");
-                        break;
-                    default:
-                        printMessage("Error: Unknown login failure.");
-                        break;
-                }
-            }
-        }
-    }
 }
 
 void Chat::showHelp(const string& content)
@@ -284,14 +235,6 @@ void Chat::saveCurrentMessage()
         msgHistory[msgHistoryPos] = msgStr; // Overwrite the message instead of appending a new one
 }
 
-void Chat::setUsername(const string& str)
-{
-    if (!str.empty())
-    {
-        username = str;
-        printMessage("Username successfully set to '" + username + "'.", cmdOutColor);
-    }
-}
 void Chat::handleScrolling(sf::Event& event, sf::RenderWindow& window)
 {
     if(messageBox.isBackgroundVisible())

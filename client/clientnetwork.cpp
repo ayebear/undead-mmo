@@ -32,6 +32,8 @@ void ClientNetwork::receiveUdp()
         if (udpSock.receive(packet, address, port) == sf::Socket::Done)
             storePacket(packet);
     }
+    connected = false;
+    threadsRunning = false;
     cout << "ReceiveUdp finished.\n";
 }
 
@@ -40,12 +42,13 @@ void ClientNetwork::receiveTcp()
     cout << "ReceiveTcp started.\n";
     while (threadsRunning && tcpSock.getLocalPort())
     {
-        cout << "ReceiveTcp looping...\n";
         sf::Packet packet;
         // Will block on this line until a packet is received...
         if (tcpSock.receive(packet) == sf::Socket::Done)
             storePacket(packet);
     }
+    connected = false;
+    threadsRunning = false;
     cout << "ReceiveTcp finished.\n";
 }
 
@@ -56,36 +59,97 @@ bool ClientNetwork::arePackets(int type)
 
 sf::Packet& ClientNetwork::getPacket(int type)
 {
-	sf::Lock lock(packetMutexes[type]);
 	return packets[type].front();
 }
 
 void ClientNetwork::popPacket(int type)
 {
-	sf::Lock lock(packetMutexes[type]);
 	packets[type].pop_front();
 }
 
 void ClientNetwork::storePacket(sf::Packet& packet)
 {
 	int type = -1;
-	if (packet >> type && isValidType(type))
+	if (packet >> type)
 	{
-        sf::Lock lock(packetMutexes[type]);
-        packets[type].push_back(packet);
+        if (isValidType(type))
+            packets[type].push_back(packet);
     }
 }
 
 // TODO: Eventually make specific functions for building different packet types but we can just use this for now
 void ClientNetwork::sendPacket(sf::Packet& packet)
 {
-    tcpSock.send(packet);
+    if (connected)
+        tcpSock.send(packet);
+}
+
+void ClientNetwork::sendChatMessage(const string& msg)
+{
+    if (!msg.empty() && msg.front() != '/')
+    {
+        sf::Packet msgPacket;
+        msgPacket << Packet::ChatMessage << msg;
+        sendPacket(msgPacket);
+    }
+}
+
+void ClientNetwork::setServerAddress(const sf::IpAddress& address)
+{
+    serverAddress = address;
+}
+
+int ClientNetwork::login(const sf::IpAddress& address, const string& username, const string& password)
+{
+    serverAddress = address;
+    return login(username, password);
+}
+
+// This will send a login request to the currently connected server
+int ClientNetwork::login(const string& username, const string& password)
+{
+    currentUsername = username;
+    int status = Packet::Login::ErrorConnecting;
+    if (connected || connectToServer())
+    {
+        status = Packet::Login::UnknownFailure;
+
+        sf::Packet loginPacket;
+        loginPacket << Packet::LogIn << username << password;
+        tcpSock.send(loginPacket);
+
+        // Wait until you get a response from the server for your login request
+        // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
+        //      This would be nice to see a logging in thing of some sort.
+        int timeout = 10;
+        sf::Clock loginTimer;
+        while (!arePackets(Packet::LoginStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
+            sf::sleep(sf::milliseconds(10));
+
+        if (loginTimer.getElapsedTime().asSeconds() < timeout)
+        {
+            getPacket(Packet::LoginStatus) >> status;
+            popPacket(Packet::LoginStatus);
+        }
+        else
+            status = Packet::Login::Timeout;
+    }
+    return status;
+}
+
+void ClientNetwork::logout()
+{
+
+}
+
+const string ClientNetwork::getUsername()
+{
+    return currentUsername;
 }
 
 // This initiates a TCP socket connection to a server
-bool ClientNetwork::connectToServer(const sf::IpAddress& address)
+bool ClientNetwork::connectToServer()
 {
-    serverAddress = address;
     tcpSock.setBlocking(true);
     if (connected)
     {
@@ -98,36 +162,6 @@ bool ClientNetwork::connectToServer(const sf::IpAddress& address)
     if (connected)
         launchThreads();
     return connected;
-}
-
-// This will send a login request to the currently connected server
-int ClientNetwork::login(const string& username, const string& password)
-{
-    sf::Packet loginPacket;
-    loginPacket << Packet::LogIn << username << password;
-    tcpSock.send(loginPacket);
-    // Now it must wait for a packet back from the server...
-    // Then process that packet and determine if the login was successful.
-    // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
-
-    // Wait until you get a response from the server for your login request
-    while (!arePackets(Packet::AuthStatus)); // TODO: Have a timeout and sleep inside of the loop
-
-    int status = Packet::Auth::UnknownFailure;
-    getPacket(Packet::AuthStatus) >> status;
-    popPacket(Packet::AuthStatus);
-
-    return status;
-}
-
-void ClientNetwork::sendChatMessage(const string& msg)
-{
-    if (!msg.empty() && msg.front() != '/')
-    {
-        sf::Packet msgPacket;
-        msgPacket << Packet::ChatMessage << msg;
-        tcpSock.send(msgPacket);
-    }
 }
 
 const string ClientNetwork::getStatusString()
