@@ -72,7 +72,10 @@ void ErrorState::handleEvents()
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                processChoice(errorMenu.handleKeyPressed(event));
+                if (event.key.code == sf::Keyboard::Escape)
+                    action.popState();
+                else
+                    processChoice(errorMenu.handleKeyPressed(event));
                 break;
 
             case sf::Event::Resized:
@@ -89,7 +92,7 @@ void ErrorState::processChoice(int choice)
 {
     if (choice == 1)
         action.popState();
-    else
+    else if (choice > 1)
         action.exitGame();
 }
 

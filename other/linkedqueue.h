@@ -18,6 +18,13 @@ class Node
 };
 
 /*
+TODO:
+    Improve performance by preallocating large groups of nodes at a time and "cycling" through them.
+        When there is no room left, allocate another group.
+        When using a group less than the total, deallocate a free group.
+*/
+
+/*
 This class is used for creating queue like objects, implemented as a linked list.
 This class is also fully thread safe, and is optimized for use with threads.
     Multiple threads can access the front and back at the same time.
@@ -40,6 +47,7 @@ class LinkedQueue
 {
     public:
         LinkedQueue(): theSize(0) {}
+        ~LinkedQueue() { clear(); }
 
         typedef Node<T>* NodeTypePtr;
 
@@ -57,6 +65,20 @@ class LinkedQueue
         {
             sf::Lock lastLock(lastInUse);
             return last->value;
+        }
+
+        void clear()
+        {
+            sf::Lock firstLock(firstInUse); // Lock the first
+            sf::Lock lastLock(lastInUse); // Lock the last
+            if (theSize >= 1) // If there is at least one element then delete the first one
+                delete first;
+            if (theSize > 1) // If there are 2 or more then delete the last
+                delete last;
+            // Reset the pointers and size
+            first = nullptr;
+            last = nullptr;
+            theSize = 0;
         }
 
         void push_back(const T& obj)

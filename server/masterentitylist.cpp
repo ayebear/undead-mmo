@@ -41,17 +41,21 @@ Entity* MasterEntityList::insert(Entity* newEnt)
 
 Entity* MasterEntityList::find(EID id)
 {
-    // TODO: May need to check if within bounds!
-    return ents[id];
+    if (id < ents.size())
+        return ents[id];
+    else
+        return nullptr;
 }
 
 void MasterEntityList::erase(EID id)
 {
-    entCount--;
-    // TODO: May need to check if within bounds!
-    delete ents[id]; // Deallocate
-    ents[id] = nullptr; // Set pointer to null
-    freeList.push_back(id); // Add the ID to the free list
+    if (id < ents.size())
+    {
+        entCount--;
+        delete ents[id]; // Deallocate
+        ents[id] = nullptr; // Set pointer to null
+        freeList.push_back(id); // Add the ID to the free list
+    }
 }
 
 /*

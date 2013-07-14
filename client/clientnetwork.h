@@ -28,18 +28,20 @@ class ClientNetwork: public Network
         bool arePackets(int); // determines if there are any packets in the lists
         sf::Packet& getPacket(int);
         void popPacket(int);
+        void clearPackets(int);
         void storePacket(sf::Packet&);
         void sendPacket(sf::Packet&);
 
         // Packet helpers
         void sendChatMessage(const std::string&);
+        void sendChatMessage(const std::string&, const std::string&);
 
         // Server control
         void setServerAddress(const sf::IpAddress&); // Sets the server address
-        int login(const sf::IpAddress&, const std::string&, const std::string&); // This sets the server address as well as logging in
-        int login(const std::string&, const std::string&); // Logs into the currently connected server
-        void logout();
-        const std::string getUsername();
+        int logIn(const sf::IpAddress&, const std::string&, const std::string&); // This sets the server address as well as logging in
+        int logIn(const std::string&, const std::string&); // Logs into the currently connected server
+        void logOut();
+        const std::string& getUsername();
         const std::string getStatusString();
         bool validAddress(sf::IpAddress);
         bool isConnected();

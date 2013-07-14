@@ -17,15 +17,12 @@ class ClientManager
         bool validAddress(const IpPort&);
         bool validClientID(ClientID);
         ClientID getIdFromAddress(const IpPort&);
+        Client* getClientFromAddress(const IpPort&);
         Client* getClientFromId(ClientID);
         ClientMap& getClientMap();
 
         void addClient(sf::TcpSocket*);
         void removeClient(ClientID);
-
-        void sendToAll(sf::Packet&, ClientID exclude = -1);
-        void sendToClient(sf::Packet&, ClientID);
-        void sendToClient(sf::Packet&, const IpPort&);
 
         void printClients();
 

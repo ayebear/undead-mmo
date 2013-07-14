@@ -89,6 +89,7 @@ bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines
         string line;
         while (getline(file, line)) // Read a line
         {
+            stripNewLines(line); // Strip any CR or LF characters from the line
             stripComments(line); // Strip any comments from the line
             if (!line.empty()) // If the line is not empty
                 lines.push_back(line); // Store the line
@@ -145,11 +146,26 @@ bool ConfigFile::trimQuotes(string& str)
     return false;
 }
 
+void ConfigFile::stripNewLines(string& str)
+{
+    if (!str.empty())
+    {
+        for (auto& newLineChar: {'\r', '\n'})
+        {
+            auto pos = str.find(newLineChar);
+            while (pos != string::npos)
+            {
+                str.erase(pos, 1);
+                pos = str.find(newLineChar);
+            }
+        }
+    }
+}
+
 void ConfigFile::stripComments(string& str)
 {
-    const string commentSymbols[] = {"//", "#", "::", ";"};
     size_t minPos = string::npos;
-    for (auto& cSymbol: commentSymbols) // Loop through the possible comment symbols
+    for (auto& cSymbol: {"//", "#", "::", ";"}) // Loop through the possible comment symbols
     {
         size_t found = str.find(cSymbol); // Look for that comment symbol
         // If the symbol was found and the found position is less than the current minimum position (or there is no current position)

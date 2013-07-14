@@ -67,6 +67,11 @@ void ClientNetwork::popPacket(int type)
 	packets[type].pop_front();
 }
 
+void ClientNetwork::clearPackets(int type)
+{
+    packets[type].clear();
+}
+
 void ClientNetwork::storePacket(sf::Packet& packet)
 {
 	int type = -1;
@@ -86,10 +91,20 @@ void ClientNetwork::sendPacket(sf::Packet& packet)
 
 void ClientNetwork::sendChatMessage(const string& msg)
 {
-    if (!msg.empty() && msg.front() != '/')
+    if (!msg.empty())
     {
         sf::Packet msgPacket;
-        msgPacket << Packet::ChatMessage << msg;
+        msgPacket << Packet::ChatMessage << Packet::Chat::Public << msg;
+        sendPacket(msgPacket);
+    }
+}
+
+void ClientNetwork::sendChatMessage(const string& msg, const string& username)
+{
+    if (!msg.empty() && !username.empty())
+    {
+        sf::Packet msgPacket;
+        msgPacket << Packet::ChatMessage << Packet::Chat::Private << username << msg;
         sendPacket(msgPacket);
     }
 }
@@ -99,14 +114,14 @@ void ClientNetwork::setServerAddress(const sf::IpAddress& address)
     serverAddress = address;
 }
 
-int ClientNetwork::login(const sf::IpAddress& address, const string& username, const string& password)
+int ClientNetwork::logIn(const sf::IpAddress& address, const string& username, const string& password)
 {
     serverAddress = address;
-    return login(username, password);
+    return logIn(username, password);
 }
 
-// This will send a login request to the currently connected server
-int ClientNetwork::login(const string& username, const string& password)
+// This will send a log in request to the currently connected server
+int ClientNetwork::logIn(const string& username, const string& password)
 {
     currentUsername = username;
     int status = Packet::Login::ErrorConnecting;
@@ -114,11 +129,20 @@ int ClientNetwork::login(const string& username, const string& password)
     {
         status = Packet::Login::UnknownFailure;
 
+        clearPackets(Packet::LoginStatus);
+
         sf::Packet loginPacket;
         loginPacket << Packet::LogIn << username << password;
         tcpSock.send(loginPacket);
 
-        // Wait until you get a response from the server for your login request
+        if (connected)
+            cout << "Currently connected to server.\n";
+        else
+            cout << "Currently NOT connected to server.\n";
+
+        cout << "Sent log in packet. Now waiting for a response...\n";
+
+        // Wait until you get a response from the server for your log in request
         // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
         //      This would be nice to see a logging in thing of some sort.
         int timeout = 10;
@@ -126,23 +150,30 @@ int ClientNetwork::login(const string& username, const string& password)
         while (!arePackets(Packet::LoginStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
             sf::sleep(sf::milliseconds(10));
 
-        if (loginTimer.getElapsedTime().asSeconds() < timeout)
+        if (arePackets(Packet::LoginStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
         {
             getPacket(Packet::LoginStatus) >> status;
             popPacket(Packet::LoginStatus);
         }
         else
+        {
             status = Packet::Login::Timeout;
+            cout << "Log in timed out.\n";
+        }
     }
+    cout << "Login status: " << status << endl;
     return status;
 }
 
-void ClientNetwork::logout()
+void ClientNetwork::logOut()
 {
-
+    cout << "Logged out from server.\n";
+    sf::Packet logOutPacket;
+    logOutPacket << Packet::LogOut;
+    tcpSock.send(logOutPacket);
 }
 
-const string ClientNetwork::getUsername()
+const string& ClientNetwork::getUsername()
 {
     return currentUsername;
 }

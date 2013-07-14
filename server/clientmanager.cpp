@@ -29,6 +29,18 @@ ClientID ClientManager::getIdFromAddress(const IpPort& address)
         return invalidID;
 }
 
+Client* ClientManager::getClientFromAddress(const IpPort& address)
+{
+    auto foundId = clientIDs.find(address); // Try to get an ID from the address
+    if (foundId != clientIDs.end())
+    {
+        auto foundPtr = clients.find(foundId->second); // Try to get the client pointer from the ID
+        if (foundPtr != clients.end())
+            return foundPtr->second.get();
+    }
+    return nullptr;
+}
+
 Client* ClientManager::getClientFromId(ClientID id)
 {
     auto found = clients.find(id);
@@ -63,27 +75,6 @@ void ClientManager::removeClient(ClientID id)//, sf::SocketSelector& selector)
     clients.erase(id);
     clientIDs.erase(addr);
     printClients();
-}
-
-void ClientManager::sendToAll(sf::Packet& packet, ClientID exclude)
-{
-    for (auto& client: clients) // loop through the connected clients
-    {
-        if (client.first != exclude) // don't send the packet back to the client who sent it!
-            client.second->tcpSock->send(packet); // send the packet to the other clients
-    }
-}
-
-void ClientManager::sendToClient(sf::Packet& packet, ClientID clientID)
-{
-    clients[clientID]->tcpSock->send(packet);
-}
-
-void ClientManager::sendToClient(sf::Packet& packet, const IpPort& address)
-{
-    ClientID id = getIdFromAddress(address);
-    if (id != invalidID)
-        clients[id]->tcpSock->send(packet);
 }
 
 void ClientManager::printClients()

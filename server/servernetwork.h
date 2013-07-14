@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include <deque>
 #include "network.h"
 #include "linkedqueue.h"
 #include "clientmanager.h"
@@ -22,21 +21,31 @@ class ServerNetwork: public Network
         bool arePackets();
         PacketExtra& getPacket();
         void popPacket();
+
+        // Send packets over the network
+        // TCP
+        void sendToAllTcp(sf::Packet&, ClientID exclude = -1, bool mustBeLoggedIn = true);
+        void sendToClientTcp(sf::Packet&, ClientID, bool mustBeLoggedIn = true);
+        void sendToClientTcp(sf::Packet&, const IpPort&, bool mustBeLoggedIn = true);
+        // UDP
+        void sendToAllUdp(sf::Packet&, ClientID exclude = -1, bool mustBeLoggedIn = true);
+        void sendToClientUdp(sf::Packet&, ClientID, bool mustBeLoggedIn = true);
+        void sendToClientUdp(sf::Packet&, const IpPort&, bool mustBeLoggedIn = true);
+        void udpSend(Client*, sf::Packet&, bool mustBeLoggedIn = true);
+
+        Client* getClientFromUsername(const std::string&);
+        Client* getClientFromId(ClientID);
+
+    private:
         void storePacket(sf::Packet&, ClientID);
         void storePacket(sf::Packet&, const IpPort&);
 
-        // Clients
         void addClient();
         void removeClient(ClientID);
-
-        // Other functions
-        void sendToAll(sf::Packet&, ClientID exclude = -1);
-        void sendToClient(sf::Packet&, ClientID);
         void testSockets();
         bool isValidType(int);
 
-    private:
-        std::deque<PacketExtra> packets; // Stores all received packets
+        LinkedQueue<PacketExtra> packets; // Stores all received packets
         sf::TcpListener listener;
         sf::SocketSelector selector;
         ClientManager clients;

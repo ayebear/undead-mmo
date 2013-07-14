@@ -81,6 +81,7 @@ class ConfigFile
         void parseLines(vector<string>&); // Processes the lines in memory and adds them to the options map
         void trimWhiteSpace(string&); // Trims all whitespace on both sides of the string
         bool trimQuotes(string&); // Trims quotes on ends of string, returns true if the string was modified
+        void stripNewLines(string&); // Removes all new lines/carriage returns from a string
         void stripComments(string&); // Removes all comments from a string
         bool isWhitespace(char); // Returns true if the character is a form of whitespace
         bool areQuotes(char, char); // Returns true if both characters are either single or double quotes

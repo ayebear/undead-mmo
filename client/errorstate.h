@@ -12,7 +12,7 @@ class ErrorState: public State
 
         const StateAction& start(const StateArgs&);
 
-        void processArgs(const StateArgs& args);
+        void processArgs(const StateArgs&);
 
         void handleEvents();
         void update();

@@ -23,6 +23,8 @@ class PlayGameState: public State
 
         const StateAction& start(const StateArgs&);
 
+        void processArgs(const StateArgs&);
+
         void handleEvents();
         void update();
         void draw();

@@ -3,9 +3,9 @@
 // Window options
 useVerticalSync = true
 // Fullscreen is used if both of these are not set
-windowWidth = 1366
-windowHeight = 768
+windowWidth = 800
+windowHeight = 600
 
-server = ayebear.com
-username = test
-password = password
+server = 10.0.0.19
+username = "test"
+password = "password"

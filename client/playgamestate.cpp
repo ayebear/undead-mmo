@@ -34,7 +34,7 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
 
     // Add quite a few local test zombies for now
-    for (int x = 2; x < 9999; x++)
+    for (int x = 2; x < 999; x++)
     {
         auto* zombie = entList.add(Entity::Zombie, x);
         zombie->setTexture(zombieTex);
@@ -61,6 +61,11 @@ PlayGameState::~PlayGameState()
 {
 }
 
+void PlayGameState::processArgs(const StateArgs& args)
+{
+    theHud.chat.setUsername(objects.netManager.getUsername());
+}
+
 void PlayGameState::handleEvents()
 {
     sf::Event event;
@@ -69,6 +74,7 @@ void PlayGameState::handleEvents()
         switch (event.type)
         {
             case sf::Event::Closed:
+                objects.netManager.logOut();
                 action.exitGame();
                 break;
 
@@ -79,7 +85,10 @@ void PlayGameState::handleEvents()
                         if (theHud.chat.getInput())
                             theHud.chat.setInput(false);
                         else
+                        {
+                            objects.netManager.logOut();
                             action.popState();
+                        }
                         break;
 
                     case sf::Keyboard::Return:

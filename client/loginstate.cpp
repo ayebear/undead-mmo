@@ -98,9 +98,11 @@ void LoginState::processChoice(int choice)
     {
         // TODO: Change this later so the options (if any) are loaded into the GUI elements or something like that
         string server = objects.config.getOption("server").asString();
+        sf::IpAddress serverAddr(server);
         string username = objects.config.getOption("username").asString();
         string password = objects.config.getOption("password").asString();
-        int status = objects.netManager.login(server, username, password);
+        cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
+        int status = objects.netManager.logIn(serverAddr, username, password);
         if (status == Packet::Login::Successful)
             action.pushState(StateType::Game);
         else

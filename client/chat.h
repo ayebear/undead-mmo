@@ -42,6 +42,8 @@ class Chat: public sf::Drawable
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
+        void receiveMessages();
+
         void setFont(sf::Font*);
 
         void clearMessage();
@@ -49,6 +51,7 @@ class Chat: public sf::Drawable
         void saveCurrentMessage();
         void addToHistory(const string&);
         void showHelp(const string&);
+        void sendPrivateMessage(const string&);
 
         // Constants
         static const unsigned short maxMessages;
@@ -56,8 +59,16 @@ class Chat: public sf::Drawable
         static const float oldMsgAge;
         static const float maxMsgAge;
         static const unsigned short maxMsgHistory;
-        static const sf::Color cmdOutColor; // TODO: Make constants for all of the colors we use
         static const map<string,string> help;
+
+        struct Colors
+        {
+            static const sf::Color normal;
+            static const sf::Color privateMsg;
+            static const sf::Color server;
+            static const sf::Color commandEntered;
+            static const sf::Color commandOutput;
+        };
 
         // Dependencies
         ClientNetwork* netManager;

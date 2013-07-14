@@ -42,6 +42,7 @@ namespace Packet
             InvalidUsername,
             InvalidPassword,
             AccountBanned,
+            AlreadyLoggedIn,
             ProtocolVersionMismatch,
             Timeout,
             ErrorConnecting,

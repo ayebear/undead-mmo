@@ -3,14 +3,17 @@
 
 typedef unsigned int ClientID;
 
+// Used for storing packets along with necessary information such as the sender and type of packet
 struct PacketExtra
 {
-    PacketExtra() {}
-    PacketExtra(const sf::Packet& d, ClientID s): data(d), sender(s) {}
+    PacketExtra(): sender(0), type(0) {}
+    PacketExtra(const sf::Packet& d, ClientID s, int t): data(d), sender(s), type(t) {}
     sf::Packet data;
     ClientID sender;
+    int type;
 };
 
+// Used for storing an IP address and port; is also usable in associative containers
 struct IpPort
 {
     IpPort(): port(Network::defaultPort) {}

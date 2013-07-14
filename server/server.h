@@ -24,6 +24,7 @@ class Server
         void processPacket(PacketExtra&);
         void processChatMessage(PacketExtra&);
         void processLogIn(PacketExtra&);
+        void processLogOut(PacketExtra&);
 
         static const float desiredFrameTime;
 

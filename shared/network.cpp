@@ -39,13 +39,8 @@ void Network::launchThreads()
 
 void Network::stopThreads()
 {
-    if (threadsRunning)
-    {
-        cout << "stopThreads(): Terminating threads now...\n";
-        udpThread.terminate();
-        tcpThread.terminate();
-        threadsRunning = false;
-    }
-    else
-        cout << "stopThreads(): No threads are running.\n";
+    cout << "stopThreads(): Terminating threads now...\n";
+    udpThread.terminate();
+    tcpThread.terminate();
+    threadsRunning = false;
 }

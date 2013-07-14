@@ -29,6 +29,7 @@ void ServerNetwork::receiveUdp()
 
 void ServerNetwork::receiveTcp()
 {
+    cout << "ReceiveTcp started.\n";
     while (threadsRunning)
     {
         // Make the selector wait for data on any socket
@@ -41,6 +42,7 @@ void ServerNetwork::receiveTcp()
                 testSockets();
         }
     }
+    cout << "ReceiveTcp finished.\n";
 }
 
 bool ServerNetwork::arePackets()
@@ -60,9 +62,18 @@ void ServerNetwork::popPacket()
 
 void ServerNetwork::storePacket(sf::Packet& packet, ClientID sender)
 {
-	int type = -1;
-	if (packet >> type && isValidType(type))
-        packets.emplace_back(packet, sender);
+    if (sender != ClientManager::invalidID)
+    {
+        int type = -1;
+        if (packet >> type)
+        {
+            //cout << "storePacket(): type = " << type << ", sender = " << sender << endl;
+            if (isValidType(type))
+                packets.push_back(PacketExtra(packet, sender, type)); // TODO: Write an emplace_back function or maybe use move semantics
+            else
+                cerr << "storePacket(): Error: Packet type " << type << " is invalid!\n";
+        }
+	}
 }
 
 void ServerNetwork::storePacket(sf::Packet& packet, const IpPort& address)
@@ -70,14 +81,75 @@ void ServerNetwork::storePacket(sf::Packet& packet, const IpPort& address)
     storePacket(packet, clients.getIdFromAddress(address));
 }
 
-void ServerNetwork::sendToAll(sf::Packet& packet, ClientID exclude)
+void ServerNetwork::sendToAllTcp(sf::Packet& packet, ClientID exclude, bool mustBeLoggedIn)
 {
-    clients.sendToAll(packet, exclude);
+    for (auto& client: clients.getClientMap()) // Loop through the connected clients
+    {
+        // Only send the packet if they are not excluded (which is normally because that client sent the packet)
+        if (client.first != exclude)
+            client.second->tcpSend(packet, mustBeLoggedIn); // Send the packet
+    }
 }
 
-void ServerNetwork::sendToClient(sf::Packet& packet, ClientID clientID)
+void ServerNetwork::sendToClientTcp(sf::Packet& packet, ClientID clientID, bool mustBeLoggedIn)
 {
-    clients.sendToClient(packet, clientID);
+    Client* c = clients.getClientFromId(clientID);
+    if (c != nullptr)
+        c->tcpSend(packet, mustBeLoggedIn);
+}
+
+void ServerNetwork::sendToClientTcp(sf::Packet& packet, const IpPort& address, bool mustBeLoggedIn)
+{
+    Client* c = clients.getClientFromAddress(address);
+    if (c != nullptr)
+        c->tcpSend(packet, mustBeLoggedIn);
+}
+
+void ServerNetwork::sendToAllUdp(sf::Packet& packet, ClientID exclude, bool mustBeLoggedIn)
+{
+    for (auto& client: clients.getClientMap()) // Loop through the connected clients
+    {
+        // Only send the packet if they are not excluded (which is normally because that client sent the packet)
+        if (client.first != exclude)
+            udpSend(client.second.get(), packet, mustBeLoggedIn); // Send the packet
+    }
+}
+
+void ServerNetwork::sendToClientUdp(sf::Packet& packet, ClientID clientID, bool mustBeLoggedIn)
+{
+    Client* c = clients.getClientFromId(clientID);
+    if (c != nullptr)
+        udpSend(c, packet, mustBeLoggedIn);
+}
+
+void ServerNetwork::sendToClientUdp(sf::Packet& packet, const IpPort& address, bool mustBeLoggedIn)
+{
+    Client* c = clients.getClientFromAddress(address);
+    if (c != nullptr)
+        udpSend(c, packet, mustBeLoggedIn);
+}
+
+void ServerNetwork::udpSend(Client* c, sf::Packet& packet, bool mustBeLoggedIn)
+{
+    if (c->loggedIn || !mustBeLoggedIn)
+        udpSock.send(packet, c->address.ip, defaultPort); // TODO: Figure out a solution for UDP to not have to be port forwarded, and maybe if necessary have the port OS defined to prevent conflicts
+        //udpSock.send(packet, c->address.ip, c->address.port);
+}
+
+// TODO: Get rid of the address map and this crap, and use some kind of multiple-key map or a multi-comparable class as the key
+Client* ServerNetwork::getClientFromUsername(const string& username)
+{
+    for (auto& c: clients.getClientMap())
+    {
+        if (c.second->username == username)
+            return c.second.get();
+    }
+    return nullptr;
+}
+
+Client* ServerNetwork::getClientFromId(ClientID id)
+{
+    return clients.getClientFromId(id);
 }
 
 void ServerNetwork::addClient()
@@ -133,5 +205,5 @@ void ServerNetwork::testSockets()
 
 bool ServerNetwork::isValidType(int type)
 {
-    return (type >= 0 && type < Packet::PacketTypes);
+    return (type >= 0 && type < Packet::TotalPacketTypes);
 }

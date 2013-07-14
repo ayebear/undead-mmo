@@ -7,6 +7,7 @@ TODO:
     Maybe animate the PrintMessage command - would need to update the animation in update()
 */
 
+#include <iostream>
 #include <sstream>
 #include "chat.h"
 #include "packet.h"
@@ -16,11 +17,17 @@ const short Chat::textSize = 16;
 const float Chat::oldMsgAge = 50;
 const float Chat::maxMsgAge = 60;
 const unsigned short Chat::maxMsgHistory = 100;
-const sf::Color Chat::cmdOutColor = sf::Color::Cyan;
+
+const sf::Color Chat::Colors::normal = sf::Color::White;
+const sf::Color Chat::Colors::privateMsg = sf::Color::Green;
+const sf::Color Chat::Colors::server = sf::Color::Yellow;
+const sf::Color Chat::Colors::commandEntered = sf::Color::Red;
+const sf::Color Chat::Colors::commandOutput = sf::Color::Cyan;
+
 const map<string,string> Chat::help = {
     {"echo", "Prints out the text after the command. Usage: /echo text goes here"},
-    {"username", "Sets your current username. Usage: /username YourUsername"},
     {"exit", "Exits the game. Usage: /exit"},
+    {"pm", "Sends a private message to a player. Usage: /pm username message"},
 };
 
 Chat::Chat()
@@ -47,7 +54,6 @@ void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
     //float inputBoxWidth = chatSize.x;
 
     netManager = &objects.netManager;
-    username = netManager->getUsername();
 
     messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
 
@@ -60,7 +66,7 @@ void Chat::setUsername(const string& str)
     if (!str.empty())
     {
         username = str;
-        printMessage("Username successfully set to '" + username + "'.", cmdOutColor);
+        cout << "Chat username set to: " << username << endl;
     }
 }
 
@@ -115,7 +121,7 @@ const string Chat::parseMessage()
         addToHistory(msgStr);
         if (msgStr.front() == '/')
         {
-            printMessage(msgStr, sf::Color::Red);
+            printMessage(msgStr, Colors::commandEntered);
             parseCommand(msgStr);
         }
         else
@@ -123,7 +129,7 @@ const string Chat::parseMessage()
             string fullStr = username + ": " + msgStr;
             if (netManager != nullptr)
                 netManager->sendChatMessage(msgStr);
-            printMessage(fullStr, sf::Color::Green);
+            printMessage(fullStr, Colors::normal);
         }
         clearMessage();
     }
@@ -134,24 +140,24 @@ const string Chat::parseMessage()
 // These will need to be executed using a different character or a special command in here...
 void Chat::parseCommand(const string& msgStr)
 {
-    unsigned int spacePos = msgStr.find(" ");
+    auto spacePos = msgStr.find(" ");
     string cmdStr = msgStr.substr(1, spacePos - 1);
     string content;
     if (spacePos != string::npos && spacePos < msgStr.size())
         content = msgStr.substr(spacePos + 1);
     // TODO: Make a map of pointers to these functions
     if (cmdStr == "test")
-        printMessage("Command parser seems to be working!", cmdOutColor);
+        printMessage("Command parser seems to be working!", Colors::commandOutput);
+    else if (cmdStr == "pm")
+        sendPrivateMessage(content);
     else if (cmdStr == "echo")
-        printMessage(content, cmdOutColor);
-    else if (cmdStr == "username")
-        setUsername(content);
+        printMessage(content, Colors::commandOutput);
     else if (cmdStr == "help")
         showHelp(content);
     else if (cmdStr == "exit")
         exit(0);
     else
-        printMessage("Error: '" + cmdStr + "' is not a recognized command!", cmdOutColor);
+        printMessage("Error: '" + cmdStr + "' is not a recognized command!", Colors::commandOutput);
 }
 
 void Chat::showHelp(const string& content)
@@ -161,15 +167,30 @@ void Chat::showHelp(const string& content)
         string commands;
         for (auto& cmd: help)
             commands += cmd.first + ", ";
-        printMessage("Shows how to use commands. Commands: " + commands + "help. Usage: /help command", cmdOutColor);
+        printMessage("Shows how to use commands. Commands: " + commands + "help. Usage: /help command", Colors::commandOutput);
     }
     else
     {
         auto i = help.find(content);
         if (i != help.end())
-            printMessage(i->second, cmdOutColor);
+            printMessage(i->second, Colors::commandOutput);
         else
-            printMessage("Hmm, not quite sure how to help you with that!", cmdOutColor);
+            printMessage("Hmm, not quite sure how to help you with that!", Colors::commandOutput);
+    }
+}
+
+void Chat::sendPrivateMessage(const string& content)
+{
+    auto spacePos = content.find(" ");
+    string usernameStr = content.substr(1, spacePos - 1);
+    if (spacePos != string::npos && spacePos < content.size())
+    {
+        string msgStr = content.substr(spacePos + 1);
+        if (netManager != nullptr)
+        {
+            netManager->sendChatMessage(msgStr, usernameStr);
+            printMessage("Private message sent to server.", Colors::commandOutput);
+        }
     }
 }
 
@@ -243,7 +264,26 @@ void Chat::handleScrolling(sf::Event& event, sf::RenderWindow& window)
 
 void Chat::update()
 {
+    receiveMessages();
     currentMsg.updateCursor();
+}
+
+void Chat::receiveMessages()
+{
+    if (netManager != nullptr)
+    {
+        while (netManager->arePackets(Packet::ChatMessage))
+        {
+            int subType = -1;
+            if (netManager->getPacket(Packet::ChatMessage) >> subType)
+            {
+                if (subType == Packet::Chat::Private)
+                {
+
+                }
+            }
+        }
+    }
 }
 
 void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
