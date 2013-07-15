@@ -2,7 +2,7 @@
 
 // Window options
 useVerticalSync = true
-// Fullscreen is used if both of these are not set
+// Fullscreen is used if either of these are not set
 windowWidth = 800
 windowHeight = 600
 

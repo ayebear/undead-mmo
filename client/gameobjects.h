@@ -15,6 +15,7 @@ This also handles creating the window and setting up the objects it contains so 
 class GameObjects: sf::NonCopyable
 {
     public:
+        ~GameObjects();
         void loadConfig(); // Loads the config file
         void loadFonts(); // Loads font files
         void setupWindow(string); // Calls createWindow based on configuration

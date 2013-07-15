@@ -158,7 +158,7 @@ void Server::processLogIn(PacketExtra& packet)
     // Check if the username exists
     // If it does, then check if the password is correct
     // TODO: Use AccountDb class instead!!!
-    if (username == "test" && password == "password")
+    if ((username == "test" || username == "test2") && password == "password")
     {
         // Make sure the user is NOT already logged in
         if (netManager.getClientFromUsername(username) == nullptr)

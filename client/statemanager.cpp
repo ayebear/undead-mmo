@@ -19,12 +19,7 @@ StateManager::StateManager(std::string windowTitle)
 StateManager::~StateManager()
 {
     // Deallocate the game states
-    for (auto& sPtr: statePtrs)
-        delete sPtr;
-    cout << "Successfully deallocated all states.\n";
-
-    // Close the window
-    objects.window.close();
+    deallocateStates();
 }
 
 void StateManager::allocateStates()
@@ -33,6 +28,13 @@ void StateManager::allocateStates()
     statePtrs[1] = new LoginState(objects);
     statePtrs[2] = new PlayGameState(objects);
     statePtrs[3] = new ErrorState(objects);
+}
+
+void StateManager::deallocateStates()
+{
+    for (auto& sPtr: statePtrs)
+        delete sPtr;
+    cout << "Successfully deallocated all states.\n";
 }
 
 void StateManager::startLoop(const StateAction& theAction)

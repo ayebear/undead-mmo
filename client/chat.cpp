@@ -274,14 +274,18 @@ void Chat::receiveMessages()
     {
         while (netManager->arePackets(Packet::ChatMessage))
         {
-            int subType = -1;
-            if (netManager->getPacket(Packet::ChatMessage) >> subType)
+            int subType;
+            string msg;
+            if (netManager->getPacket(Packet::ChatMessage) >> subType >> msg)
             {
                 if (subType == Packet::Chat::Private)
-                {
-
-                }
+                    printMessage(msg, Colors::privateMsg);
+                else if (subType == Packet::Chat::Public)
+                    printMessage(msg, Colors::normal);
+                else if (subType == Packet::Chat::Server)
+                    printMessage(msg, Colors::server);
             }
+            netManager->popPacket(Packet::ChatMessage);
         }
     }
 }
@@ -293,5 +297,3 @@ void Chat::draw(sf::RenderTarget& window, sf::RenderStates states) const
     window.setView(window.getDefaultView());
     window.draw(currentMsg);
 }
-
-

@@ -24,15 +24,16 @@ class ClientNetwork: public Network
         void receiveUdp();
         void receiveTcp();
 
-        // Packet functions
+        // Packet storage functions
         bool arePackets(int); // determines if there are any packets in the lists
         sf::Packet& getPacket(int);
         void popPacket(int);
         void clearPackets(int);
         void storePacket(sf::Packet&);
-        void sendPacket(sf::Packet&);
 
         // Packet helpers
+        void sendPacketTcp(sf::Packet&);
+        void sendPacketUdp(sf::Packet&);
         void sendChatMessage(const std::string&);
         void sendChatMessage(const std::string&, const std::string&);
 

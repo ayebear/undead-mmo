@@ -10,6 +10,11 @@ const ConfigFile::ConfigMap GameObjects::defaultOptions = {
 {"useVerticalSync", Option("true")}
 };
 
+GameObjects::~GameObjects()
+{
+    window.close();
+}
+
 void GameObjects::loadConfig()
 {
     // TODO: Make sure to setup default values as well as ranges in memory

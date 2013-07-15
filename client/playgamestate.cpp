@@ -243,7 +243,7 @@ void PlayGameState::handleInput()
 
             sf::Packet playerPacket;
             playerPacket << Packet::Input << myPlayer->isMoving() << degrees;
-            objects.netManager.sendPacket(playerPacket);
+            objects.netManager.sendPacketUdp(playerPacket);
         }
     }
     elapsedTime = clock.restart().asSeconds();

@@ -23,12 +23,12 @@ class StateManager
         StateManager(string); // Takes window title
         ~StateManager();
 
-        void allocateStates();
-        void deallocateStates();
-
         void startLoop(const StateAction&);
 
     private:
+        void allocateStates();
+        void deallocateStates();
+
         const StateAction& handleAction(const StateAction&);
         void push(int);
         void pop();

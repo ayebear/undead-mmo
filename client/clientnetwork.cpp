@@ -83,10 +83,16 @@ void ClientNetwork::storePacket(sf::Packet& packet)
 }
 
 // TODO: Eventually make specific functions for building different packet types but we can just use this for now
-void ClientNetwork::sendPacket(sf::Packet& packet)
+void ClientNetwork::sendPacketTcp(sf::Packet& packet)
 {
     if (connected)
         tcpSock.send(packet);
+}
+
+void ClientNetwork::sendPacketUdp(sf::Packet& packet)
+{
+    if (connected)
+        udpSock.send(packet, serverAddress, defaultPort);
 }
 
 void ClientNetwork::sendChatMessage(const string& msg)
@@ -95,7 +101,7 @@ void ClientNetwork::sendChatMessage(const string& msg)
     {
         sf::Packet msgPacket;
         msgPacket << Packet::ChatMessage << Packet::Chat::Public << msg;
-        sendPacket(msgPacket);
+        sendPacketTcp(msgPacket);
     }
 }
 
@@ -105,7 +111,7 @@ void ClientNetwork::sendChatMessage(const string& msg, const string& username)
     {
         sf::Packet msgPacket;
         msgPacket << Packet::ChatMessage << Packet::Chat::Private << username << msg;
-        sendPacket(msgPacket);
+        sendPacketTcp(msgPacket);
     }
 }
 
