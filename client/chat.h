@@ -37,6 +37,7 @@ class Chat: public sf::Drawable
         void printMessage(const string&, const sf::Color& color = sf::Color::White);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
+        void handleMouseClicked(sf::Event&, sf::RenderWindow&);
 
         void update();
         void draw(sf::RenderTarget&, sf::RenderStates) const;

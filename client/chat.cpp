@@ -58,7 +58,7 @@ void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
     messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
 
     //render window, font size, font, width of box, x Pos, Y Pos,
-    currentMsg.setUp(16, objects.fontBold, mainPos.x, mainPos.y + chatSize.y + 3, chatSize.x, false);
+    currentMsg.setUp(16, objects.fontBold, mainPos.x + 3, mainPos.y + chatSize.y + 3, chatSize.x, false);
 }
 
 void Chat::setUsername(const string& str)
@@ -108,8 +108,7 @@ void Chat::processInput(sf::Keyboard::Key keyCode)
 
 void Chat::processTextEntered(sf::Uint32 text)
 {
-    if (input && text >= 32 && text <= 126)
-        currentMsg.addChar(static_cast<char>(text));
+    currentMsg.processTextEntered(text);
 }
 
 // This is called when enter is pressed
@@ -260,6 +259,21 @@ void Chat::handleScrolling(sf::Event& event, sf::RenderWindow& window)
 {
     if(messageBox.isBackgroundVisible())
         messageBox.handleScrolling(event, window);
+}
+
+void Chat::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
+{
+    if(!currentMsg.isActive())
+    {
+        currentMsg.handleMouseClicked(event, window);
+
+        if(currentMsg.isActive())
+        {
+            input = true;
+            messageBox.toggleBackground();
+        }
+    }
+
 }
 
 void Chat::update()

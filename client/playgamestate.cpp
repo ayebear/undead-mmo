@@ -118,6 +118,9 @@ void PlayGameState::handleEvents()
                 }
                 theHud.chat.processInput(event.key.code);
                 break;
+            case sf::Event::MouseButtonPressed:
+                theHud.chat.handleMouseClicked(event, objects.window);
+                break;
 
             case sf::Event::MouseWheelMoved:
                 theHud.chat.handleScrolling(event, objects.window);
