@@ -39,16 +39,10 @@ void InputBox::setUp(int fontSize, sf::Font& font, float xPos, float yPos, float
     viewableChars.width = collisionBox.width;
     viewableChars.height = collisionBox.height;
 
-    charsBeforeLeft.setFont(font);
-    charsBeforeLeft.setCharacterSize(fontSize);
-    charsBeforeLeft.setPosition(collisionBox.left, collisionBox.top);
-
-    charsBeforeRight.setFont(font);
-    charsBeforeRight.setCharacterSize(fontSize);
-    charsBeforeRight.setPosition(collisionBox.left, collisionBox.top);
 
     leftCharIndex = 0;
     rightCharIndex = 0;
+
 
 }
 
@@ -112,13 +106,13 @@ void InputBox::shiftViewCharsLeft()
 {
     if(leftCharIndex > 0)
     {
-        viewableChars.left -= 2 * text.getCharacterSize();
+        viewableChars.left -= text.getCharacterSize();
     }
 }
 
 void InputBox::shiftViewCharsRight()
 {
-    viewableChars.left += 2 * text.getCharacterSize();
+    viewableChars.left += text.getCharacterSize();
 }
 
 void InputBox::updateCursor()
@@ -136,6 +130,7 @@ void InputBox::updateText()
     else
         text.setString(textStr);
 
+
     std::string temp("");
     findLeftChar();
     findRightChar();
@@ -146,36 +141,71 @@ void InputBox::updateText()
 
 
 }
+/*
 
+//Need to improve this algorithm to estimate starting points
+
+int InputBox::optimizeSearchStart(float desiredPos, sf::Text& fullText)
+{
+    int textSize = fullText.getString().getSize();
+    int start = (textSize) / 2;
+    int oldStart = (textSize) / 2;
+
+
+    //Find start position
+    if (fullText.findCharacterPos(start).x > desiredPos)
+    {
+        while(fullText.findCharacterPos(start).x > desiredPos && start / 2 >= 0)
+        {
+            oldStart = start;
+            start /= 2;
+        }
+        start = oldStart;
+    }
+    else if (fullText.findCharacterPos(start).x < desiredPos)
+    {
+        while (fullText.findCharacterPos(start).x < desiredPos && start < textSize)
+        {std::cout << "OPTIMIZING\n";
+            oldStart = start;
+            start += ((textSize - 1) + start) / 2;
+        }
+        start = oldStart;
+    }
+    else
+    {
+        std::cout << "SETTING START TO 0\n";
+        start = 0;
+    }
+
+    return start;
+}*/
 //Runs verry slow when a lot of characters are in the string. Need to improve this search function later on
 void InputBox::findLeftChar()
 {
 
     leftCharIndex = 0;
-    std::string temp("");
-    charsBeforeLeft.setString("");
 
-    while(leftCharIndex < textStr.size() && charsBeforeLeft.getGlobalBounds().left + charsBeforeLeft.getGlobalBounds().width < viewableChars.left)
+    while(leftCharIndex < textStr.size() && text.findCharacterPos(leftCharIndex).x < viewableChars.left)
     {
-        temp = textStr.substr(0, leftCharIndex);
-        charsBeforeLeft.setString(temp);
         leftCharIndex++;
-    }std::cout << "UPDATING TEXT\n";
+    }
+
+
 }
 
 //Runs verry slow when a lot of characters are in the string. Need to improve this search functionm later on
 void InputBox::findRightChar()
 {
     rightCharIndex = 0;
-    std::string temp("");
-    charsBeforeRight.setString("");
 
-    while(rightCharIndex < textStr.size() && charsBeforeRight.getGlobalBounds().left +  charsBeforeRight.getGlobalBounds().width < viewableChars.left + viewableChars.width - fontSize)
+
+    while(rightCharIndex < textStr.size() && text.findCharacterPos(rightCharIndex).x < viewableChars.left + viewableChars.width - fontSize)
     {
-        temp = textStr.substr(0, rightCharIndex);
-        charsBeforeRight.setString(temp);
         rightCharIndex++;
     }
+    std::cout << "RIGHT CHAR\n";
+
+
 }
 
 void InputBox::setPosition(float x, float y)
@@ -217,6 +247,8 @@ void InputBox::setString(const string& str)
         pwdStr += pwdChar;
     updateText();
     updateCursorPos();
+    end();
+
 }
 
 void InputBox::setInput(bool mode)
@@ -246,6 +278,8 @@ void InputBox::clear()
     setString("");
     viewableChars.left = collisionBox.left;
     invisibleCursor.rect.setPosition(collisionBox.left + 1, collisionBox.top + 2);
+    leftCharIndex = 0;
+    rightCharIndex = 0;
 }
 
 void InputBox::resetCursor()
@@ -351,8 +385,10 @@ void InputBox::right()
 void InputBox::home()
 {
     cursor.restartTimer();
+    viewableChars.left = collisionBox.left;
     invisibleCursor.pos = 0;
     cursor.pos = 0;
+    updateText();
     updateCursorPos();
 }
 
@@ -361,6 +397,8 @@ void InputBox::end()
     cursor.restartTimer();
     invisibleCursor.pos = -1;
     cursor.pos = -1;
+    viewableChars.left = text.getGlobalBounds().left + text.getGlobalBounds().width - viewableChars.width;
+    updateText();
     updateCursorPos();
 }
 

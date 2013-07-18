@@ -52,6 +52,8 @@ class InputBox: public sf::Drawable
         void shiftViewCharsLeft();
 
         //Used to find beginning and end of viewable characters
+        //Returns a starting index and an ending index with the desired index somewhere in between
+        int optimizeSearchStart(float, sf::Text&);
         void findLeftChar();
         void findRightChar();
 
@@ -79,6 +81,7 @@ class InputBox: public sf::Drawable
         sf::FloatRect collisionBox;
         sf::FloatRect viewableChars;
 
+
         //Cursor that is visible
         Cursor cursor;
 
@@ -86,10 +89,6 @@ class InputBox: public sf::Drawable
         Cursor invisibleCursor;
         unsigned int leftCharIndex;
         unsigned int rightCharIndex;
-
-        //Used to find the position of the first and last characters using the width of the sub string before them
-        sf::Text charsBeforeLeft;
-        sf::Text charsBeforeRight;
 
         // Settings
         sf::Font* font;
