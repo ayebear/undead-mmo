@@ -16,7 +16,7 @@ struct PacketExtra
 // Used for storing an IP address and port; is also usable in associative containers
 struct IpPort
 {
-    IpPort(): port(Network::defaultPort) {}
+    IpPort(): port(Network::clientPort) {}
     bool operator<(const IpPort& addr) const
     {
         if (ip == addr.ip)

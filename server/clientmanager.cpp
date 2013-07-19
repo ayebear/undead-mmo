@@ -12,16 +12,19 @@ ClientManager::ClientManager()
 
 bool ClientManager::validAddress(const IpPort& address)
 {
+    sf::Lock lock(clientsMutex);
     return (clientIDs.find(address) != clientIDs.end());
 }
 
 bool ClientManager::validClientID(ClientID id)
 {
+    sf::Lock lock(clientsMutex);
     return (clients.find(id) != clients.end());
 }
 
 ClientID ClientManager::getIdFromAddress(const IpPort& address)
 {
+    sf::Lock lock(clientsMutex);
     auto found = clientIDs.find(address);
     if (found != clientIDs.end())
         return found->second;
@@ -31,6 +34,7 @@ ClientID ClientManager::getIdFromAddress(const IpPort& address)
 
 Client* ClientManager::getClientFromAddress(const IpPort& address)
 {
+    sf::Lock lock(clientsMutex);
     auto foundId = clientIDs.find(address); // Try to get an ID from the address
     if (foundId != clientIDs.end())
     {
@@ -43,6 +47,7 @@ Client* ClientManager::getClientFromAddress(const IpPort& address)
 
 Client* ClientManager::getClientFromId(ClientID id)
 {
+    sf::Lock lock(clientsMutex);
     auto found = clients.find(id);
     if (found != clients.end())
         return found->second.get();
@@ -55,8 +60,15 @@ ClientManager::ClientMap& ClientManager::getClientMap()
     return clients;
 }
 
+sf::Mutex& ClientManager::getClientsMutex()
+{
+    return clientsMutex;
+}
+
 void ClientManager::addClient(sf::TcpSocket* tcpSock)
 {
+    sf::Lock lock(clientsMutex);
+
     ClientID newID = getNewID(); // Generate an ID for the new client
 
     clients[newID] = ClientPtr(new Client(newID, tcpSock)); // Add the new client to the clients list
@@ -70,6 +82,7 @@ void ClientManager::addClient(sf::TcpSocket* tcpSock)
 
 void ClientManager::removeClient(ClientID id)//, sf::SocketSelector& selector)
 {
+    sf::Lock lock(clientsMutex);
     auto addr = clients[id]->address;
     cout << "Client " << addr.ip << ":" << addr.port << " disconnected.\n";
     clients.erase(id);
@@ -79,6 +92,7 @@ void ClientManager::removeClient(ClientID id)//, sf::SocketSelector& selector)
 
 void ClientManager::printClients()
 {
+    sf::Lock lock(clientsMutex);
     if (clients.empty())
         cout << "No clients are currently connected.\n";
     else

@@ -8,6 +8,9 @@ using namespace std;
 
 ClientNetwork::ClientNetwork()
 {
+    // Bind the UDP port
+    udpSock.bind(clientPort);
+
     connected = false;
     serverAddress = sf::IpAddress::LocalHost;
     tcpSock.setBlocking(true);
@@ -23,7 +26,7 @@ ClientNetwork::~ClientNetwork()
 void ClientNetwork::receiveUdp()
 {
     cout << "ReceiveUdp started.\n";
-    while (threadsRunning && udpSock.getLocalPort())
+    while (udpThreadRunning && udpSock.getLocalPort())
     {
         sf::Packet packet;
         sf::IpAddress address;
@@ -33,14 +36,14 @@ void ClientNetwork::receiveUdp()
             storePacket(packet);
     }
     connected = false;
-    threadsRunning = false;
+    udpThreadRunning = false;
     cout << "ReceiveUdp finished.\n";
 }
 
 void ClientNetwork::receiveTcp()
 {
     cout << "ReceiveTcp started.\n";
-    while (threadsRunning && tcpSock.getLocalPort())
+    while (tcpThreadRunning && tcpSock.getLocalPort())
     {
         sf::Packet packet;
         // Will block on this line until a packet is received...
@@ -48,7 +51,7 @@ void ClientNetwork::receiveTcp()
             storePacket(packet);
     }
     connected = false;
-    threadsRunning = false;
+    tcpThreadRunning = false;
     cout << "ReceiveTcp finished.\n";
 }
 
@@ -92,7 +95,7 @@ void ClientNetwork::sendPacketTcp(sf::Packet& packet)
 void ClientNetwork::sendPacketUdp(sf::Packet& packet)
 {
     if (connected)
-        udpSock.send(packet, serverAddress, defaultPort);
+        udpSock.send(packet, serverAddress, serverPort);
 }
 
 void ClientNetwork::sendChatMessage(const string& msg)
@@ -193,7 +196,7 @@ bool ClientNetwork::connectToServer()
         tcpSock.disconnect();
         connected = false;
     }
-    sf::Socket::Status status = tcpSock.connect(serverAddress, defaultPort);
+    sf::Socket::Status status = tcpSock.connect(serverAddress, serverPort);
     tcpSock.setBlocking(false);
     connected = (status == sf::Socket::Done);
     if (connected)

@@ -9,6 +9,7 @@
 #include "packet.h"
 #include "servernetwork.h"
 #include "masterentitylist.h"
+#include "accountdb.h"
 
 class Server
 {
@@ -25,6 +26,7 @@ class Server
         void processChatMessage(PacketExtra&);
         void processLogIn(PacketExtra&);
         void processLogOut(PacketExtra&);
+        void processCreateAccount(PacketExtra&);
 
         static const float desiredFrameTime;
 
@@ -32,6 +34,7 @@ class Server
         sf::Clock clock;
         ServerNetwork netManager;
         MasterEntityList entList;
+        AccountDb accounts;
 };
 
 #endif

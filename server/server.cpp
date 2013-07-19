@@ -19,7 +19,7 @@ void Server::start()
 
 void Server::printWelcomeMsg()
 {
-    cout << "Undead MMO Server v0.3.4.1 Dev\n\n";
+    cout << "Undead MMO Server v0.3.5.0 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -92,6 +92,9 @@ void Server::processPacket(PacketExtra& packet)
         case Packet::LogOut:
             processLogOut(packet);
             break;
+        case Packet::CreateAccount:
+            processCreateAccount(packet);
+            break;
         default:
             cout << "Error: Unknown received packet type. Type = " << type << endl;
             break;
@@ -154,31 +157,39 @@ void Server::processLogIn(PacketExtra& packet)
     cout << "Login attempt from user: " << username << ", password: " << password << endl;
 
     bool successfulLogin = false;
-    sf::Packet loginStatusPacket;
-    // Check if the username exists
-    // If it does, then check if the password is correct
-    // TODO: Use AccountDb class instead!!!
-    if ((username == "test" || username == "test2") && password == "password")
+    int loginStatusCode = Packet::Login::UnknownFailure;
+    // Try logging into the account database with the received username and password
+    unique_ptr<PlayerData> pData(new PlayerData);
+    int dbLoginStatus = accounts.logIn(username, password, *pData);
+    if (dbLoginStatus == Packet::Login::Successful)
     {
+        bool userLoggedIn = false;
+        Client* tmpClient = netManager.getClientFromUsername(username);
+        if (tmpClient != nullptr)
+            userLoggedIn = tmpClient->loggedIn;
         // Make sure the user is NOT already logged in
-        if (netManager.getClientFromUsername(username) == nullptr)
+        if (!userLoggedIn)
         {
             successfulLogin = true;
-            loginStatusPacket << Packet::LoginStatus << Packet::Login::Successful; // If it is correct, then send a successful login packet back to that client
+            loginStatusCode = Packet::Login::Successful; // The client has successfully logged in!
             Client* c = netManager.getClientFromId(packet.sender);
             if (c != nullptr)
             {
                 // Set the client's username and logged in status
                 c->username = username;
                 c->loggedIn = true;
+                c->pData.swap(pData);
             }
         }
         else
-            loginStatusPacket << Packet::LoginStatus << Packet::Login::AlreadyLoggedIn;
+            loginStatusCode = Packet::Login::AlreadyLoggedIn;
     }
     else
-        loginStatusPacket << Packet::LoginStatus << Packet::Login::InvalidPassword; // Otherwise, send a packet back denying the login
+        loginStatusCode = dbLoginStatus;
 
+    // Send a packet back to the client with their login status
+    sf::Packet loginStatusPacket;
+    loginStatusPacket << Packet::LoginStatus << loginStatusCode;
     netManager.sendToClientTcp(loginStatusPacket, packet.sender, false);
 
     if (successfulLogin)
@@ -189,6 +200,8 @@ void Server::processLogIn(PacketExtra& packet)
         netManager.sendToAllTcp(packetToSend, packet.sender);
         cout << loginMessage << endl;
     }
+    else
+        cout << "Denied login request. Error code = " << loginStatusCode << endl;
 }
 
 void Server::processLogOut(PacketExtra& packet)
@@ -199,4 +212,9 @@ void Server::processLogOut(PacketExtra& packet)
         c->logOut();
         cout << "Client #" << packet.sender << " has logged out.\n";
     }
+}
+
+void Server::processCreateAccount(PacketExtra& packet)
+{
+
 }

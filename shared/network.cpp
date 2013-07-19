@@ -8,14 +8,17 @@
 
 using namespace std;
 
-const unsigned short Network::defaultPort = 1337;
+// TODO: Figure out a better solution for UDP ports...
+const unsigned short Network::serverPort = 1337;
+const unsigned short Network::clientPort = 1338;
 
 Network::Network() : udpThread(&Network::receiveUdp, this),
                      tcpThread(&Network::receiveTcp, this)
 {
     udpSock.setBlocking(true);
-    udpSock.bind(defaultPort);
-    threadsRunning = false;
+    //udpSock.bind(defaultPort);
+    tcpThreadRunning = false;
+    udpThreadRunning = false;
 }
 
 Network::~Network()
@@ -29,11 +32,15 @@ Network::~Network()
 
 void Network::launchThreads()
 {
-    if (!threadsRunning)
+    if (!udpThreadRunning)
     {
+        udpThreadRunning = true;
         udpThread.launch();
+    }
+    if (!tcpThreadRunning)
+    {
+        tcpThreadRunning = true;
         tcpThread.launch();
-        threadsRunning = true;
     }
 }
 
@@ -42,5 +49,6 @@ void Network::stopThreads()
     cout << "stopThreads(): Terminating threads now...\n";
     udpThread.terminate();
     tcpThread.terminate();
-    threadsRunning = false;
+    udpThreadRunning = false;
+    tcpThreadRunning = false;
 }
