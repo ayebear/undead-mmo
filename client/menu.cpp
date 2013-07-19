@@ -135,7 +135,7 @@ int Menu::handleKeyPressed(sf::Event& event)
             selection = menuOptions.size();
         break;
 
-    case sf::Keyboard::Key::P:
+    case sf::Keyboard::Key::F1:
     {
         //Get the current system time.
         time_t currTime = time(0);

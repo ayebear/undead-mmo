@@ -139,7 +139,10 @@ void InputBox::updateText()
     findRightChar();
     //Generate a substring with only the visible characters
 
-    temp = textStr.substr(leftCharIndex, rightCharIndex - leftCharIndex + 1);
+    if(pwdMode)
+        temp = pwdStr.substr(leftCharIndex, rightCharIndex - leftCharIndex + 1);
+    else
+        temp = textStr.substr(leftCharIndex, rightCharIndex - leftCharIndex + 1);
     viewableText.setString(temp);
 
 
@@ -268,7 +271,7 @@ void InputBox::updateCursorPos()
     charPos.x += 1;
     charPos.y += 2;
     invisibleCursor.rect.setPosition(charPos);
-    cursor.rect.setPosition(cursorPos);
+    cursor.rect.setPosition(cursorPos.x, cursorPos.y + 2);
 }
 
 const string& InputBox::getString()

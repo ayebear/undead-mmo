@@ -20,14 +20,14 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(0, 0, .4, .5), gameObjects.fontBold, 16, true, true);
+    textItemList.setupList(objects.window, sf::FloatRect(0, 0, .5, .5), gameObjects.fontBold, 16, true, true);
 
     textItemList.addTextItem("This is a test...");
 
     for (int x = 1; x <= 150; x++)
     {
         std::stringstream tmp;
-        tmp << "Test server " << x;
+        tmp << "Test server " << x << "\t\t\tDescription: This is a game server where we play zombies!!!!!\t\t\tPlayers: 30/32";
         textItemList.addTextItem(tmp.str(), sf::Color(190, 190, 190, 255));
     }
 
@@ -38,8 +38,8 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     loginMenu.addMenuButton("Login");
     loginMenu.addMenuButton("Create Account");
     loginMenu.addMenuButton("Return to Main Menu");
-    usernameBox.setUp(16, objects.fontMonoBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.5, windowSize.x / 8, false);
-    passwordBox.setUp(16, objects.fontMonoBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.4, windowSize.x / 8, true);
+    usernameBox.setUp(16, objects.fontBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.5, windowSize.x / 8, false);
+    passwordBox.setUp(16, objects.fontBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.4, windowSize.x / 8, true);
 }
 
 LoginState::~LoginState()
@@ -87,10 +87,6 @@ void LoginState::handleEvents()
 
                     case sf::Keyboard::Return:
                         processChoice(loginMenu.handleKeyPressed(event));
-                        break;
-
-                    case sf::Keyboard::Key::F1:
-                        takeScreenshot();
                         break;
 
                     default:
@@ -151,9 +147,9 @@ void LoginState::processChoice(int choice)
         string password = passwordBox.getString();
         cout << "Creating account on " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.createAccount(serverAddr, username, password);
-        if (status == Packet::Login::Successful)
-            action.pushState(StateType::Game);
-        else
+        if (status != Packet::Login::Successful)
+            //action.pushState(StateType::Game);
+    //    else
         {
             // TODO: Show a better error from the actual status code
             StateArgs args;
@@ -168,20 +164,6 @@ void LoginState::processChoice(int choice)
 void LoginState::update()
 {
     loginMenu.updateMenu();
-}
-
-void LoginState::takeScreenshot()
-{
-    //Get the current system time.
-    time_t currTime = time(0);
-    string fileName = "data/screenshots/";
-    stringstream ss;
-    ss << currTime;
-
-    //Add the time.png to the end of the file name and save it.
-    fileName += ss.str() + ".png";
-    sf::Image scrShot = objects.window.capture();
-    scrShot.saveToFile(fileName);
 }
 
 void LoginState::draw()
