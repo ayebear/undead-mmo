@@ -22,9 +22,6 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 
     textItemList.setupList(objects.window, sf::FloatRect(.5, .1, .35, .75), gameObjects.fontBold, 16, true, true);
 
-
-    textItemList.addTextItem(test);
-
     textItemList.addTextItem("This is a test...");
 
     for (int x = 1; x <= 150; x++)
@@ -88,6 +85,9 @@ void LoginState::handleEvents()
 
                     case sf::Keyboard::Key::F1:
                         takeScreenshot();
+                        break;
+
+                    default:
                         break;
                 }
                 break;
