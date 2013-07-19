@@ -22,7 +22,7 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 
     textItemList.setupList(objects.window, sf::FloatRect(.5, .1, .35, .75), gameObjects.fontBold, 16, true, true);
 
-    std::string test("Kevin Millerajk");
+
     textItemList.addTextItem(test);
 
     textItemList.addTextItem("This is a test...");
@@ -31,10 +31,10 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     {
         std::stringstream tmp;
         tmp << "Test server " << x;
-        textItemList.addTextItem(tmp.str(), sf::Color::Blue);
+        textItemList.addTextItem(tmp.str(), sf::Color(190, 190, 190, 255));
     }
 
-    textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");
+  //  textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");
 
   //  textItemList.addTextItem(test2);
     //Set up menuOption structs
@@ -76,12 +76,21 @@ void LoginState::handleEvents()
 
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
-                if (event.key.code == sf::Keyboard::Escape)
-                    action.popState();
-                else
-                    processChoice(loginMenu.handleKeyPressed(event));
-                break;
+                switch (event.key.code)
+                {
+                    case sf::Keyboard::Escape:
+                        action.popState();
+                        break;
 
+                    case sf::Keyboard::Return:
+                        processChoice(loginMenu.handleKeyPressed(event));
+                        break;
+
+                    case sf::Keyboard::Key::F1:
+                        takeScreenshot();
+                        break;
+                }
+                break;
             case sf::Event::Resized:
                 loginMenu.handleResize(event);
                 break;
@@ -120,6 +129,20 @@ void LoginState::processChoice(int choice)
 void LoginState::update()
 {
     loginMenu.updateMenu();
+}
+
+void LoginState::takeScreenshot()
+{
+    //Get the current system time.
+    time_t currTime = time(0);
+    string fileName = "data/screenshots/";
+    stringstream ss;
+    ss << currTime;
+
+    //Add the time.png to the end of the file name and save it.
+    fileName += ss.str() + ".png";
+    sf::Image scrShot = objects.window.capture();
+    scrShot.saveToFile(fileName);
 }
 
 void LoginState::draw()

@@ -19,6 +19,7 @@ class LoginState: public State
         ~LoginState();
 
         const StateAction& start(const StateArgs&);
+        void takeScreenshot();
 
         void handleEvents();
         void update();

@@ -97,7 +97,7 @@ void PlayGameState::handleEvents()
                         theHud.chat.toggleInput();
                         break;
 
-                    case sf::Keyboard::Key::P:
+                    case sf::Keyboard::Key::F1:
                         takeScreenshot();
                         break;
 
@@ -254,20 +254,16 @@ void PlayGameState::handleInput()
 
 void PlayGameState::takeScreenshot()
 {
-    // If player is not typing in the chat
-    if (!theHud.chat.getInput())
-    {
-        //Get the current system time.
-        time_t currTime = time(0);
-        string fileName = "data/screenshots/";
-        stringstream ss;
-        ss << currTime;
+    //Get the current system time.
+    time_t currTime = time(0);
+    string fileName = "data/screenshots/";
+    stringstream ss;
+    ss << currTime;
 
-        //Add the time.png to the end of the file name and save it.
-        fileName += ss.str() + ".png";
-        sf::Image scrShot = objects.window.capture();
-        scrShot.saveToFile(fileName);
-    }
+    //Add the time.png to the end of the file name and save it.
+    fileName += ss.str() + ".png";
+    sf::Image scrShot = objects.window.capture();
+    scrShot.saveToFile(fileName);
 }
 
 void PlayGameState::handleWindowResized(GameObjects& objects)
