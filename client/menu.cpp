@@ -88,7 +88,7 @@ void Menu::setButtonColors(sf::Color unselectedColor, sf::Color selectedColor)
 void Menu::handleMouseMovement(sf::Event& event)
 {
     unsigned int i = 0;
-    while(menuOptions.size() > i)
+    while(menuOptions.size() >  i)
     {
         //First Menu Choice
         if(menuOptions[i]->rect.contains(event.mouseMove.x, event.mouseMove.y))
@@ -208,7 +208,7 @@ void Menu::fixRectangles(float width, float height)
         menuOptions[i]->buttonName.setOrigin(0,0);
         menuOptions[i]->buttonName.setPosition(topButtonPos.x, topButtonPos.y + (i * (buttonFontSize + 75)));
         menuOptions[i]->rect.left = topButtonPos.x;
-        menuOptions[i]->rect.top = topButtonPos.y + i * (buttonFontSize + 75);
+        menuOptions[i]->rect.top = topButtonPos.y + i * (buttonFontSize + buttonPadding);
     }
 
 }
@@ -225,12 +225,34 @@ void Menu::addMenuButton(const std::string& itemName)
     menuItem->buttonName.setCharacterSize(buttonFontSize);
     menuItem->buttonName.setColor(buttonUnselectedColor);
     menuItem->buttonName.setFont(*buttonFont);
-    menuItem->buttonName.setPosition(topButtonPos.x, topButtonPos.y + i * (buttonFontSize + 75));   //Extra 75 pixels of space
+    menuItem->buttonName.setPosition(topButtonPos.x, topButtonPos.y + i * (buttonFontSize + buttonPadding));   //Extra pixels of space
 
     tmpText = menuItem->buttonName.getString();
 
     menuItem->rect.left = topButtonPos.x;
-    menuItem->rect.top = topButtonPos.y + i * (buttonFontSize + 75);       //Multiply (fontsize + 75) by however many menu options come before it.
+    menuItem->rect.top = topButtonPos.y + i * (buttonFontSize + buttonPadding);       //Multiply (fontsize + 75) by however many menu options come before it.
+    menuItem->rect.width = (tmpText.length() * buttonFontSize / 1.8);            //Adjust rectangles width based on the text
+    menuItem->rect.height = buttonFontSize;
+
+    menuOptions.push_back(menuItem);
+}
+
+void Menu::addMenuButton(const std::string& itemName, sf::Vector2f position)
+{
+    std::string tmpText;
+
+    MenuButton* menuItem = new MenuButton();
+
+    menuItem->buttonName.setString(itemName);
+    menuItem->buttonName.setCharacterSize(buttonFontSize);
+    menuItem->buttonName.setColor(buttonUnselectedColor);
+    menuItem->buttonName.setFont(*buttonFont);
+    menuItem->buttonName.setPosition(position);   //Extra pixels of space
+
+    tmpText = menuItem->buttonName.getString();
+
+    menuItem->rect.left = position.x;
+    menuItem->rect.top = position.y;       //Multiply (fontsize + 75) by however many menu options come before it.
     menuItem->rect.width = (tmpText.length() * buttonFontSize / 1.8);            //Adjust rectangles width based on the text
     menuItem->rect.height = buttonFontSize;
 

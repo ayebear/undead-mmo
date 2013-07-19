@@ -14,13 +14,13 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     std::string bgFile("data/images/ui/MenuBackground.png");
 
     loginMenu.setUpMenu(bgFile,                                             //Background file
-                       32,                                                  //Font size
-                       sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
+                       16,                                                  //Font size
+                       sf::Vector2f(windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.2),    //Button position
                        objects                                              //Rendering window
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(.5, .1, .35, .75), gameObjects.fontBold, 16, true, true);
+    textItemList.setupList(objects.window, sf::FloatRect(0, 0, .4, .5), gameObjects.fontBold, 16, true, true);
 
     textItemList.addTextItem("This is a test...");
 
@@ -36,7 +36,10 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
   //  textItemList.addTextItem(test2);
     //Set up menuOption structs
     loginMenu.addMenuButton("Login");
+    loginMenu.addMenuButton("Create Account");
     loginMenu.addMenuButton("Return to Main Menu");
+    usernameBox.setUp(16, objects.fontMonoBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.5, windowSize.x / 8, false);
+    passwordBox.setUp(16, objects.fontMonoBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.4, windowSize.x / 8, true);
 }
 
 LoginState::~LoginState()
@@ -64,7 +67,10 @@ void LoginState::handleEvents()
                 break;
 
             case sf::Event::MouseButtonPressed:
+
                 textItemList.handleMouseClicked(event, objects.window);
+                usernameBox.handleMouseClicked(event, objects.window);
+                passwordBox.handleMouseClicked(event, objects.window);
                 break;
 
             case sf::Event::MouseButtonReleased:
@@ -90,7 +96,18 @@ void LoginState::handleEvents()
                     default:
                         break;
                 }
+                usernameBox.processInput(event.key.code);
+                passwordBox.processInput(event.key.code);
+                loginMenu.handleKeyPressed(event);
                 break;
+
+            case sf::Event::TextEntered:
+                if(usernameBox.isActive())
+                    usernameBox.processTextEntered(event.text.unicode);
+                else if(passwordBox.isActive())
+                    passwordBox.processTextEntered(event.text.unicode);
+                break;
+
             case sf::Event::Resized:
                 loginMenu.handleResize(event);
                 break;
@@ -99,6 +116,8 @@ void LoginState::handleEvents()
                 break;
         }
     }
+    usernameBox.updateCursor();
+    passwordBox.updateCursor();
 }
 
 void LoginState::processChoice(int choice)
@@ -108,8 +127,10 @@ void LoginState::processChoice(int choice)
         // TODO: Change this later so the options (if any) are loaded into the GUI elements or something like that
         string server = objects.config.getOption("server").asString();
         sf::IpAddress serverAddr(server);
-        string username = objects.config.getOption("username").asString();
-        string password = objects.config.getOption("password").asString();
+        //string username = objects.config.getOption("username").asString();
+        //string password = objects.config.getOption("password").asString();
+        string username = usernameBox.getString();
+        string password = passwordBox.getString();
         cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.logIn(serverAddr, username, password);
         if (status == Packet::Login::Successful)
@@ -122,7 +143,12 @@ void LoginState::processChoice(int choice)
             action.pushState(StateType::Error, args);
         }
     }
-    else if (choice == 2)
+  /*  else if (choice == 2)
+    {
+        string username = usernameBox.getString();
+        string password = passwordBox.getString();
+    }*/
+    else if (choice == 2 || choice == 3)
         action.popState();
 }
 
@@ -148,9 +174,11 @@ void LoginState::takeScreenshot()
 void LoginState::draw()
 {
     objects.window.clear();
-
     objects.window.draw(loginMenu);
     objects.window.draw(textItemList);
+
+    objects.window.draw(usernameBox);
+    objects.window.draw(passwordBox);
 
     objects.window.display();
 }

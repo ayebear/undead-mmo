@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "textitemlist.h"
 #include "state.h"
+#include "inputbox.h"
 
 /*
 This is for the login screen, which shows a list of servers that you can pick from.
@@ -30,6 +31,8 @@ class LoginState: public State
 
         Menu loginMenu;
         TextItemList textItemList;
+        InputBox usernameBox;
+        InputBox passwordBox;
 };
 
 #endif

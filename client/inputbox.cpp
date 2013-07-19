@@ -48,28 +48,31 @@ void InputBox::setUp(int fontSize, sf::Font& font, float xPos, float yPos, float
 
 void InputBox::processInput(sf::Keyboard::Key keyCode)
 {
-    switch (keyCode)
+    if(input)
     {
-        case sf::Keyboard::BackSpace:
-            backspace();
-            break;
-        case sf::Keyboard::Delete:
-            deleteChar();
-            break;
-        case sf::Keyboard::Left:
-            left();
-            break;
-        case sf::Keyboard::Right:
-            right();
-            break;
-        case sf::Keyboard::Home:
-            home();
-            break;
-        case sf::Keyboard::End:
-            end();
-            break;
-        default:
-            break;
+        switch (keyCode)
+        {
+            case sf::Keyboard::BackSpace:
+                backspace();
+                break;
+            case sf::Keyboard::Delete:
+                deleteChar();
+                break;
+            case sf::Keyboard::Left:
+                left();
+                break;
+            case sf::Keyboard::Right:
+                right();
+                break;
+            case sf::Keyboard::Home:
+                home();
+                break;
+            case sf::Keyboard::End:
+                end();
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -91,14 +94,14 @@ void InputBox::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
     mousePos.x = sf::Mouse::getPosition(window).x;
     mousePos.y = sf::Mouse::getPosition(window).y;
 
-    if(!input)
+    //If left mouse button is clicked while cursor is inside of the input box, allow input
+    if(collisionBox.contains(mousePos) && event.mouseButton.button == sf::Mouse::Left)
     {
-        //If left mouse button is clicked while cursor is inside of the input box, allow input
-        if(collisionBox.contains(mousePos) && event.mouseButton.button == sf::Mouse::Left)
-        {
-            setInput(true);
-        }
+        setInput(true);
     }
+    else
+        setInput(false);
+
 
 }
 
@@ -404,10 +407,13 @@ void InputBox::end()
 
 void InputBox::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
+
+    window.setView(window.getDefaultView());
     window.draw(inputBorder);
     if (input)
     {
         window.draw(cursor);
-        window.draw(viewableText);
+
     }
+	window.draw(viewableText);
 }

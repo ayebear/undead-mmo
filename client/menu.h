@@ -47,6 +47,7 @@ class Menu: public sf::Drawable
         void setButtonColors(sf::Color, sf::Color);
 
         void addMenuButton(const std::string&);
+        void addMenuButton(const std::string&, sf::Vector2f);
 
         //Returns 1 if first button is pressed, 2 if second button is pressed, etc.
         //Returns -1 if window is closed.
@@ -87,6 +88,8 @@ class Menu: public sf::Drawable
 
         int selection;
         bool selectionMade;
+
+        const int buttonPadding = 20;
 
         //Array of buttons that are on the screen
         std::vector<MenuButton*> menuOptions;
