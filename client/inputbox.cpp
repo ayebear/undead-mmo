@@ -206,7 +206,7 @@ void InputBox::findRightChar()
     {
         rightCharIndex++;
     }
-    std::cout << "RIGHT CHAR\n";
+    std::cout << "RIGHT CHAR: " << rightCharIndex << endl;
 
 
 }

@@ -41,6 +41,8 @@ class ClientNetwork: public Network
         void setServerAddress(const sf::IpAddress&); // Sets the server address
         int logIn(const sf::IpAddress&, const std::string&, const std::string&); // This sets the server address as well as logging in
         int logIn(const std::string&, const std::string&); // Logs into the currently connected server
+        int createAccount(const sf::IpAddress&, const std::string&, const std::string&); // This also sets the server address
+        int createAccount(const std::string&, const std::string&); // Requests a server to create a new account on it
         void logOut();
         const std::string& getUsername();
         const std::string getStatusString();

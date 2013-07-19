@@ -143,12 +143,25 @@ void LoginState::processChoice(int choice)
             action.pushState(StateType::Error, args);
         }
     }
-  /*  else if (choice == 2)
+    else if (choice == 2)
     {
+        string server = objects.config.getOption("server").asString();
+        sf::IpAddress serverAddr(server);
         string username = usernameBox.getString();
         string password = passwordBox.getString();
-    }*/
-    else if (choice == 2 || choice == 3)
+        cout << "Creating account on " << server << " with username = " << username << ", password = " << password << endl;
+        int status = objects.netManager.createAccount(serverAddr, username, password);
+        if (status == Packet::Login::Successful)
+            action.pushState(StateType::Game);
+        else
+        {
+            // TODO: Show a better error from the actual status code
+            StateArgs args;
+            args.push_back("Error creating account on the server!");
+            action.pushState(StateType::Error, args);
+        }
+    }
+    else if (choice == 3)
         action.popState();
 }
 

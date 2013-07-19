@@ -174,6 +174,56 @@ int ClientNetwork::logIn(const string& username, const string& password)
     return status;
 }
 
+int ClientNetwork::createAccount(const sf::IpAddress& address, const string& username, const string& password)
+{
+    serverAddress = address;
+    return createAccount(username, password);
+}
+
+// This will send a create account request to the currently connected server
+int ClientNetwork::createAccount(const string& username, const string& password)
+{
+    int status = Packet::Login::ErrorConnecting;
+    if (connected || connectToServer())
+    {
+        status = Packet::Login::UnknownFailure;
+
+        clearPackets(Packet::LoginStatus);
+
+        sf::Packet createAccountPacket;
+        createAccountPacket << Packet::CreateAccount << username << password;
+        tcpSock.send(createAccountPacket);
+
+        if (connected)
+            cout << "Currently connected to server.\n";
+        else
+            cout << "Currently NOT connected to server.\n";
+
+        cout << "Sent create account packet. Now waiting for a response...\n";
+
+        // Wait until you get a response from the server for your log in request
+        // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
+        //      This would be nice to see a logging in thing of some sort.
+        int timeout = 10;
+        sf::Clock createAccountTimer;
+        while (!arePackets(Packet::LoginStatus) && createAccountTimer.getElapsedTime().asSeconds() < timeout)
+            sf::sleep(sf::milliseconds(10));
+
+        if (arePackets(Packet::LoginStatus) && createAccountTimer.getElapsedTime().asSeconds() < timeout)
+        {
+            getPacket(Packet::LoginStatus) >> status;
+            popPacket(Packet::LoginStatus);
+        }
+        else
+        {
+            status = Packet::Login::Timeout;
+            cout << "Create account timed out.\n";
+        }
+    }
+    cout << "Create account status: " << status << endl;
+    return status;
+}
+
 void ClientNetwork::logOut()
 {
     cout << "Logged out from server.\n";
