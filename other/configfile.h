@@ -73,18 +73,13 @@ class ConfigFile
         bool writeConfigFile(const string&); // Saves current options to a file
 
         Option& getOption(const string&); // Returns a reference to an option with the specified name. If it does not exist, it will be automatically created
+        bool optionExists(const string&); // Returns if an option already exists
         void setDefaultOptions(const ConfigMap&); // Just sets initial values in the map from another map in memory
         string buildString(); // This just builds up a string of all of the options in memory
 
     private:
         bool readLinesFromFile(const string&, vector<string>&); // Simply reads a file into memory in separate lines
         void parseLines(vector<string>&); // Processes the lines in memory and adds them to the options map
-        void trimWhiteSpace(string&); // Trims all whitespace on both sides of the string
-        bool trimQuotes(string&); // Trims quotes on ends of string, returns true if the string was modified
-        void stripNewLines(string&); // Removes all new lines/carriage returns from a string
-        void stripComments(string&); // Removes all comments from a string
-        bool isWhitespace(char); // Returns true if the character is a form of whitespace
-        bool areQuotes(char, char); // Returns true if both characters are either single or double quotes
 
         string configFilename;
         ConfigMap options;

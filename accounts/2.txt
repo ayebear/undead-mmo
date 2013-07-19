@@ -1,0 +1,5 @@
+username = test2
+password = password
+banned = false
+level = 1
+health = 100

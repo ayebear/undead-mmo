@@ -1,9 +1,46 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #ifndef ACCOUNTDB_H
 #define ACCOUNTDB_H
 
-#include "configfile.h"
 #include "playerdata.h"
+#include "accountindex.h"
 
+using namespace std;
+
+/*
+TODO:
+    Automatically create the accounts directory if it doesn't already exist
+*/
+
+/*
+This class will temporarily be used as the account database for the game server.
+It relies on the ConfigFile class for storing each account in a separate file.
+It relies on the AccountIndex class for storing a list of all of the accounts.
+It probably isn't the best thing to use, but it will be good enough for now, and will simplify debugging as
+    all of the accounts are just plain text files that can easily be edited.
+
+The directory/file structure looks like this:
+accounts/
+    accounts.txt // Stores a list of usernames and account IDs
+    1.txt // Named as account ID; starts at 1, not 0
+    2.txt
+    3.txt
+
+Only accounts.txt is loaded into RAM, the rest is loaded/saved on demand.
+As new accounts are created, the account ID increments each time.
+    The account is also added to the accounts.txt file.
+The main reason for using account IDs instead of just usernames is to allow more symbols in usernames.
+
+Accounts.txt:
+    test
+    1
+    someAccount
+    2
+    anotherAccount
+    3
+*/
 class AccountDb
 {
     public:
@@ -12,12 +49,17 @@ class AccountDb
         bool loadAccountList(); // Same as constructor
         bool loadAccountList(const string&); // Same as constructor
 
-        bool login(const string&, const string&, PlayerData&); // username, password, player data object to load into
-        bool loadAccount(const string&, PlayerData&); // username, player data object to load into
-        bool saveAccount(const string&, const PlayerData&); // username, player data object to read from
+        int logIn(const string&, const string&, PlayerData&); // Username, password, player data object to load into
+        int createAccount(const PlayerData&); // Player data object to read from (username and password are stored in here)
+        bool saveAccount(const PlayerData&); // Reads from the player data object and writes the account file
 
     private:
-        ConfigFile accountList; // Stores a list of usernames and account IDs like this: username = accountID
+        string accountIdToFilename(int);
+
+        static const string accountDir;
+        static const string accountListFilename;
+
+        AccountIndex accountList; // Stores a list of usernames and account IDs
 
 };
 

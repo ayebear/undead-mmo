@@ -23,13 +23,15 @@ class Network
         virtual void receiveUdp() = 0;
         virtual void receiveTcp() = 0;
 
-        static const unsigned short defaultPort;
+        static const unsigned short serverPort;
+        static const unsigned short clientPort;
 
     protected:
         sf::UdpSocket udpSock;
         sf::Thread udpThread;
         sf::Thread tcpThread;
-        std::atomic_bool threadsRunning;
+        std::atomic_bool tcpThreadRunning;
+        std::atomic_bool udpThreadRunning;
 };
 
 #endif

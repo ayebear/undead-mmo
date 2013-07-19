@@ -2,6 +2,7 @@
 #define CLIENTMANAGER_H
 
 #include <string>
+#include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 #include "client.h"
 
@@ -20,6 +21,7 @@ class ClientManager
         Client* getClientFromAddress(const IpPort&);
         Client* getClientFromId(ClientID);
         ClientMap& getClientMap();
+        sf::Mutex& getClientsMutex();
 
         void addClient(sf::TcpSocket*);
         void removeClient(ClientID);
@@ -31,6 +33,9 @@ class ClientManager
     private:
         ClientID getNewID(); // Used to assign IDs to clients
 
+        // TODO: Make this fully thread safe by having locks on the client pointers
+        // Also actually use these locks outside of this class for things that access the clients
+        sf::Mutex clientsMutex; // Lock for the clients map
         ClientMap clients; // Stores the clients, accessed by client ID
         ClientIDMap clientIDs; // Stores client IDs, accessed by IP address + port
         static ClientID idCounter; // Used by getNewID()

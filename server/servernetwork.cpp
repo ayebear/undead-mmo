@@ -6,8 +6,11 @@ using namespace std;
 
 ServerNetwork::ServerNetwork()
 {
+    // Bind the UDP port
+    udpSock.bind(serverPort);
+
     // Have the listener listen on the port
-    listener.listen(defaultPort);
+    listener.listen(serverPort);
 
     // Add the listener to the selector
     selector.add(listener);
@@ -16,7 +19,7 @@ ServerNetwork::ServerNetwork()
 void ServerNetwork::receiveUdp()
 {
     cout << "ReceiveUdp started.\n";
-    while (threadsRunning && udpSock.getLocalPort())
+    while (udpThreadRunning && udpSock.getLocalPort())
     {
         sf::Packet packet;
         IpPort address;
@@ -30,7 +33,7 @@ void ServerNetwork::receiveUdp()
 void ServerNetwork::receiveTcp()
 {
     cout << "ReceiveTcp started.\n";
-    while (threadsRunning)
+    while (tcpThreadRunning)
     {
         // Make the selector wait for data on any socket
         if (selector.wait())
@@ -83,6 +86,7 @@ void ServerNetwork::storePacket(sf::Packet& packet, const IpPort& address)
 
 void ServerNetwork::sendToAllTcp(sf::Packet& packet, ClientID exclude, bool mustBeLoggedIn)
 {
+    sf::Lock lock(clients.getClientsMutex());
     for (auto& client: clients.getClientMap()) // Loop through the connected clients
     {
         // Only send the packet if they are not excluded (which is normally because that client sent the packet)
@@ -107,6 +111,7 @@ void ServerNetwork::sendToClientTcp(sf::Packet& packet, const IpPort& address, b
 
 void ServerNetwork::sendToAllUdp(sf::Packet& packet, ClientID exclude, bool mustBeLoggedIn)
 {
+    sf::Lock lock(clients.getClientsMutex());
     for (auto& client: clients.getClientMap()) // Loop through the connected clients
     {
         // Only send the packet if they are not excluded (which is normally because that client sent the packet)
@@ -132,13 +137,14 @@ void ServerNetwork::sendToClientUdp(sf::Packet& packet, const IpPort& address, b
 void ServerNetwork::udpSend(Client* c, sf::Packet& packet, bool mustBeLoggedIn)
 {
     if (c->loggedIn || !mustBeLoggedIn)
-        udpSock.send(packet, c->address.ip, defaultPort); // TODO: Figure out a solution for UDP to not have to be port forwarded, and maybe if necessary have the port OS defined to prevent conflicts
+        udpSock.send(packet, c->address.ip, clientPort); // TODO: Figure out a solution for UDP to not have to be port forwarded, and maybe if necessary have the port OS defined to prevent conflicts
         //udpSock.send(packet, c->address.ip, c->address.port);
 }
 
 // TODO: Get rid of the address map and this crap, and use some kind of multiple-key map or a multi-comparable class as the key
 Client* ServerNetwork::getClientFromUsername(const string& username)
 {
+    sf::Lock lock(clients.getClientsMutex());
     for (auto& c: clients.getClientMap())
     {
         if (c.second->username == username)

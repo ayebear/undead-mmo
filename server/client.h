@@ -6,6 +6,7 @@
 #include <SFML/Network.hpp>
 #include "network.h"
 #include "miscnetwork.h"
+#include "playerdata.h"
 
 class Client
 {
@@ -22,6 +23,7 @@ class Client
         IpPort address; // IP address and port
         std::string username; // Client's username
         bool loggedIn; // They could be connected but not logged in
+        std::unique_ptr<PlayerData> pData; // Stores the player data for the client
 };
 
 #endif
