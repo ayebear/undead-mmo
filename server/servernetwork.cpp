@@ -77,6 +77,8 @@ void ServerNetwork::storePacket(sf::Packet& packet, ClientID sender)
                 cerr << "storePacket(): Error: Packet type " << type << " is invalid!\n";
         }
 	}
+    else
+        cout << "storePacket(): Invalid sender ID.\n";
 }
 
 void ServerNetwork::storePacket(sf::Packet& packet, const IpPort& address)

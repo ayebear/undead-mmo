@@ -216,5 +216,19 @@ void Server::processLogOut(PacketExtra& packet)
 
 void Server::processCreateAccount(PacketExtra& packet)
 {
+    string username, password;
+    packet.data >> username >> password;
 
+    cout << "Create account request: " << username << ", password: " << password << endl;
+
+    unique_ptr<PlayerData> pData(new PlayerData);
+    pData->username = username;
+    pData->passwordHash = password;
+
+    int createAccountStatus = accounts.createAccount(*pData);
+
+    if (createAccountStatus == Packet::Login::Successful)
+        cout << "Account was successfully created!\n";
+    else
+        cout << "Error: Account was not created. Status code = " << createAccountStatus << endl;
 }
