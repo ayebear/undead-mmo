@@ -29,6 +29,7 @@ class ClientNetwork: public Network
         sf::Packet& getPacket(int);
         void popPacket(int);
         void clearPackets(int);
+        void clearAllPackets();
         void storePacket(sf::Packet&);
 
         // Packet helpers

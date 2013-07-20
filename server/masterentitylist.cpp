@@ -6,7 +6,7 @@
 
 using namespace std;
 
-uint MasterEntityList::entCount = 0;
+unsigned int MasterEntityList::entCount = 0;
 const int MasterEntityList::cleanUpRatio = 4;
 
 MasterEntityList::MasterEntityList()

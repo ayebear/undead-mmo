@@ -75,6 +75,13 @@ void ClientNetwork::clearPackets(int type)
     packets[type].clear();
 }
 
+void ClientNetwork::clearAllPackets()
+{
+    // Clear all packets
+    for (auto& p: packets)
+        p.clear();
+}
+
 void ClientNetwork::storePacket(sf::Packet& packet)
 {
 	int type = -1;
@@ -132,6 +139,7 @@ int ClientNetwork::logIn(const sf::IpAddress& address, const string& username, c
 // This will send a log in request to the currently connected server
 int ClientNetwork::logIn(const string& username, const string& password)
 {
+    clearAllPackets();
     currentUsername = username;
     int status = Packet::LogInCode::ErrorConnecting;
     if (connected || connectToServer())
@@ -143,11 +151,6 @@ int ClientNetwork::logIn(const string& username, const string& password)
         sf::Packet loginPacket;
         loginPacket << Packet::LogIn << Packet::ProtocolVersion << username << password;
         tcpSock.send(loginPacket);
-
-        if (connected)
-            cout << "Currently connected to server.\n";
-        else
-            cout << "Currently NOT connected to server.\n";
 
         cout << "Sent log in packet. Now waiting for a response...\n";
 
@@ -183,6 +186,7 @@ int ClientNetwork::createAccount(const sf::IpAddress& address, const string& use
 // This will send a create account request to the currently connected server
 int ClientNetwork::createAccount(const string& username, const string& password)
 {
+    clearAllPackets();
     int status = Packet::CreateAccountCode::ErrorConnecting;
     if (connected || connectToServer())
     {
@@ -193,11 +197,6 @@ int ClientNetwork::createAccount(const string& username, const string& password)
         sf::Packet createAccountPacket;
         createAccountPacket << Packet::CreateAccount << Packet::ProtocolVersion << username << password;
         tcpSock.send(createAccountPacket);
-
-        if (connected)
-            cout << "Currently connected to server.\n";
-        else
-            cout << "Currently NOT connected to server.\n";
 
         cout << "Sent create account packet. Now waiting for a response...\n";
 
@@ -230,6 +229,10 @@ void ClientNetwork::logOut()
     sf::Packet logOutPacket;
     logOutPacket << Packet::LogOut;
     tcpSock.send(logOutPacket);
+    tcpSock.disconnect();
+    tcpThreadRunning = false;
+    connected = false;
+    clearAllPackets();
 }
 
 const string& ClientNetwork::getUsername()

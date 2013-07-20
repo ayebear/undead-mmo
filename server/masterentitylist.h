@@ -41,7 +41,7 @@ class MasterEntityList
         bool cleanUp();
         void update(float);
     private:
-        static uint entCount;
+        static unsigned int entCount;
         static const int cleanUpRatio;
         std::vector <Entity*> ents; // all of the entity pointers are stored here, and accessed by ID directly
         std::list <EID> freeList; // unused IDs go here
