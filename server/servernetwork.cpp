@@ -160,6 +160,13 @@ Client* ServerNetwork::getClientFromId(ClientID id)
     return clients.getClientFromId(id);
 }
 
+void ServerNetwork::sendServerChatMessage(const string& msg, ClientID exclude)
+{
+    sf::Packet packetToSend;
+    packetToSend << Packet::ChatMessage << Packet::Chat::Server << msg;
+    sendToAllTcp(packetToSend, exclude);
+}
+
 void ServerNetwork::addClient()
 {
     // The listener is ready: there is a pending connection

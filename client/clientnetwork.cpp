@@ -133,15 +133,15 @@ int ClientNetwork::logIn(const sf::IpAddress& address, const string& username, c
 int ClientNetwork::logIn(const string& username, const string& password)
 {
     currentUsername = username;
-    int status = Packet::Login::ErrorConnecting;
+    int status = Packet::LogInCode::ErrorConnecting;
     if (connected || connectToServer())
     {
-        status = Packet::Login::UnknownFailure;
+        status = Packet::LogInCode::UnknownFailure;
 
-        clearPackets(Packet::LoginStatus);
+        clearPackets(Packet::LogInStatus);
 
         sf::Packet loginPacket;
-        loginPacket << Packet::LogIn << username << password;
+        loginPacket << Packet::LogIn << Packet::ProtocolVersion << username << password;
         tcpSock.send(loginPacket);
 
         if (connected)
@@ -156,17 +156,17 @@ int ClientNetwork::logIn(const string& username, const string& password)
         //      This would be nice to see a logging in thing of some sort.
         int timeout = 10;
         sf::Clock loginTimer;
-        while (!arePackets(Packet::LoginStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
+        while (!arePackets(Packet::LogInStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
             sf::sleep(sf::milliseconds(10));
 
-        if (arePackets(Packet::LoginStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
+        if (arePackets(Packet::LogInStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
         {
-            getPacket(Packet::LoginStatus) >> status;
-            popPacket(Packet::LoginStatus);
+            getPacket(Packet::LogInStatus) >> status;
+            popPacket(Packet::LogInStatus);
         }
         else
         {
-            status = Packet::Login::Timeout;
+            status = Packet::LogInCode::Timeout;
             cout << "Log in timed out.\n";
         }
     }
@@ -183,15 +183,15 @@ int ClientNetwork::createAccount(const sf::IpAddress& address, const string& use
 // This will send a create account request to the currently connected server
 int ClientNetwork::createAccount(const string& username, const string& password)
 {
-    int status = Packet::Login::ErrorConnecting;
+    int status = Packet::CreateAccountCode::ErrorConnecting;
     if (connected || connectToServer())
     {
-        status = Packet::Login::UnknownFailure;
+        status = Packet::CreateAccountCode::UnknownFailure;
 
-        clearPackets(Packet::LoginStatus);
+        clearPackets(Packet::CreateAccountStatus);
 
         sf::Packet createAccountPacket;
-        createAccountPacket << Packet::CreateAccount << username << password;
+        createAccountPacket << Packet::CreateAccount << Packet::ProtocolVersion << username << password;
         tcpSock.send(createAccountPacket);
 
         if (connected)
@@ -206,17 +206,17 @@ int ClientNetwork::createAccount(const string& username, const string& password)
         //      This would be nice to see a logging in thing of some sort.
         int timeout = 10;
         sf::Clock createAccountTimer;
-        while (!arePackets(Packet::LoginStatus) && createAccountTimer.getElapsedTime().asSeconds() < timeout)
+        while (!arePackets(Packet::CreateAccountStatus) && createAccountTimer.getElapsedTime().asSeconds() < timeout)
             sf::sleep(sf::milliseconds(10));
 
-        if (arePackets(Packet::LoginStatus) && createAccountTimer.getElapsedTime().asSeconds() < timeout)
+        if (arePackets(Packet::CreateAccountStatus) && createAccountTimer.getElapsedTime().asSeconds() < timeout)
         {
-            getPacket(Packet::LoginStatus) >> status;
-            popPacket(Packet::LoginStatus);
+            getPacket(Packet::CreateAccountStatus) >> status;
+            popPacket(Packet::CreateAccountStatus);
         }
         else
         {
-            status = Packet::Login::Timeout;
+            status = Packet::CreateAccountCode::Timeout;
             cout << "Create account timed out.\n";
         }
     }

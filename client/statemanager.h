@@ -32,7 +32,6 @@ class StateManager
         const StateAction& handleAction(const StateAction&);
         void push(int);
         void pop();
-        void setVSync();
 
         vector<unsigned int> stateStack; // Represents a stack of the states
         State* statePtrs[StateType::TotalTypes];

@@ -31,7 +31,7 @@ bool AccountDb::loadAccountList(const string& filename)
 
 int AccountDb::logIn(const string& username, const string& password, PlayerData& pData)
 {
-    int status = Packet::Login::UnknownFailure;
+    int status = Packet::LogInCode::UnknownFailure;
     int accountId = accountList.getAccountId(username); // Get the account ID from the username
     if (accountId > 0) // Make sure the account ID is valid
     {
@@ -44,23 +44,23 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
                 if (!accountCfg.getOption("banned").asBool()) // Check if the account is banned
                 {
                     pData.loadFromConfig(accountCfg); // Load the data from the config file into the player data object
-                    status = Packet::Login::Successful;
+                    status = Packet::LogInCode::Successful;
                 }
                 else
-                    status = Packet::Login::AccountBanned;
+                    status = Packet::LogInCode::AccountBanned;
             }
             else
-                status = Packet::Login::InvalidPassword;
+                status = Packet::LogInCode::InvalidPassword;
         }
     }
     else
-        status = Packet::Login::InvalidUsername;
+        status = Packet::LogInCode::InvalidUsername;
     return status;
 }
 
 int AccountDb::createAccount(const PlayerData& pData)
 {
-    int status = Packet::Login::UnknownFailure;
+    int status = Packet::CreateAccountCode::UnknownFailure;
     int accountId = accountList.getAccountId(pData.username); // Get the account ID from the username
     // TODO: We could also check if the password is strong enough, but this should be user-configurable, like minimum length, different characters, etc.
     if (accountId == -1) // Don't try to create a new account if it already exists!
@@ -73,11 +73,11 @@ int AccountDb::createAccount(const PlayerData& pData)
             pData.saveToConfig(accountCfg); // Set the values in the config file in memory from the player data object
 
             if (accountCfg.writeConfigFile(accountFilename)) // Write the account to a file
-                status = Packet::Login::Successful;
+                status = Packet::CreateAccountCode::Successful;
         }
     }
     else
-        status = Packet::Login::InvalidUsername;
+        status = Packet::CreateAccountCode::UsernameExists;
     return status;
 }
 

@@ -129,7 +129,7 @@ void LoginState::processChoice(int choice)
         string password = passwordBox.getString();
         cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.logIn(serverAddr, username, password);
-        if (status == Packet::Login::Successful)
+        if (status == Packet::LogInCode::Successful)
             action.pushState(StateType::Game);
         else
         {
@@ -147,7 +147,7 @@ void LoginState::processChoice(int choice)
         string password = passwordBox.getString();
         cout << "Creating account on " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.createAccount(serverAddr, username, password);
-        if (status != Packet::Login::Successful)
+        if (status != Packet::CreateAccountCode::Successful)
             //action.pushState(StateType::Game);
     //    else
         {

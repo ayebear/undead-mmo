@@ -36,6 +36,8 @@ class ServerNetwork: public Network
         Client* getClientFromUsername(const std::string&);
         Client* getClientFromId(ClientID);
 
+        void sendServerChatMessage(const std::string&, ClientID exclude = -1);
+
     private:
         void storePacket(sf::Packet&, ClientID);
         void storePacket(sf::Packet&, const IpPort&);

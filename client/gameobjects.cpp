@@ -43,6 +43,8 @@ void GameObjects::setupWindow(string windowTitle)
         createWindow(windowTitle, windowWidth, windowHeight);
     else
         createWindow(windowTitle);
+
+    window.setVerticalSyncEnabled(config.getOption("useVerticalSync").asBool()); // Set vsync from setting
 }
 
 void GameObjects::createWindow(string windowTitle)

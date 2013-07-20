@@ -19,7 +19,7 @@ void Server::start()
 
 void Server::printWelcomeMsg()
 {
-    cout << "Undead MMO Server v0.3.5.0 Dev\n\n";
+    cout << "Undead MMO Server v0.3.5.1 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -151,54 +151,60 @@ void Server::processChatMessage(PacketExtra& packet)
 
 void Server::processLogIn(PacketExtra& packet)
 {
+    int protocolVersion = -1;
     string username, password;
-    packet.data >> username >> password;
+    int loginStatusCode = Packet::LogInCode::UnknownFailure;
 
-    cout << "Login attempt from user: " << username << ", password: " << password << endl;
-
-    bool successfulLogin = false;
-    int loginStatusCode = Packet::Login::UnknownFailure;
-    // Try logging into the account database with the received username and password
-    unique_ptr<PlayerData> pData(new PlayerData);
-    int dbLoginStatus = accounts.logIn(username, password, *pData);
-    if (dbLoginStatus == Packet::Login::Successful)
+    if (packet.data >> protocolVersion)
     {
-        bool userLoggedIn = false;
-        Client* tmpClient = netManager.getClientFromUsername(username);
-        if (tmpClient != nullptr)
-            userLoggedIn = tmpClient->loggedIn;
-        // Make sure the user is NOT already logged in
-        if (!userLoggedIn)
+        if (protocolVersion == Packet::ProtocolVersion)
         {
-            successfulLogin = true;
-            loginStatusCode = Packet::Login::Successful; // The client has successfully logged in!
-            Client* c = netManager.getClientFromId(packet.sender);
-            if (c != nullptr)
+            packet.data >> username >> password;
+
+            cout << "Login attempt from user: " << username << ", password: " << password << endl;
+
+            // Try logging into the account database with the received username and password
+            unique_ptr<PlayerData> pData(new PlayerData);
+            int dbLogInStatus = accounts.logIn(username, password, *pData);
+            if (dbLogInStatus == Packet::LogInCode::Successful)
             {
-                // Set the client's username and logged in status
-                c->username = username;
-                c->loggedIn = true;
-                c->pData.swap(pData);
+                bool userLoggedIn = false;
+                Client* tmpClient = netManager.getClientFromUsername(username);
+                if (tmpClient != nullptr)
+                    userLoggedIn = tmpClient->loggedIn;
+                // Make sure the user is NOT already logged in
+                if (!userLoggedIn)
+                {
+                    loginStatusCode = Packet::LogInCode::Successful; // The client has successfully logged in!
+                    Client* c = netManager.getClientFromId(packet.sender);
+                    if (c != nullptr)
+                    {
+                        // Set the client's username and logged in status
+                        c->username = username;
+                        c->loggedIn = true;
+                        c->pData.swap(pData);
+                    }
+                }
+                else
+                    loginStatusCode = Packet::LogInCode::AlreadyLoggedIn;
             }
+            else
+                loginStatusCode = dbLogInStatus;
         }
         else
-            loginStatusCode = Packet::Login::AlreadyLoggedIn;
+            loginStatusCode = Packet::LogInCode::ProtocolVersionMismatch;
     }
-    else
-        loginStatusCode = dbLoginStatus;
 
     // Send a packet back to the client with their login status
     sf::Packet loginStatusPacket;
-    loginStatusPacket << Packet::LoginStatus << loginStatusCode;
+    loginStatusPacket << Packet::LogInStatus << loginStatusCode;
     netManager.sendToClientTcp(loginStatusPacket, packet.sender, false);
 
-    if (successfulLogin)
+    if (loginStatusCode == Packet::LogInCode::Successful)
     {
-        string loginMessage = username + " logged in.";
-        sf::Packet packetToSend;
-        packetToSend << Packet::ChatMessage << Packet::Chat::Server << loginMessage;
-        netManager.sendToAllTcp(packetToSend, packet.sender);
-        cout << loginMessage << endl;
+        string logInMessage = username + " logged in.";
+        netManager.sendServerChatMessage(logInMessage, packet.sender);
+        cout << logInMessage << endl;
     }
     else
         cout << "Denied login request. Error code = " << loginStatusCode << endl;
@@ -209,25 +215,44 @@ void Server::processLogOut(PacketExtra& packet)
     Client* c = netManager.getClientFromId(packet.sender);
     if (c != nullptr)
     {
+        string logOutMessage = c->username + " has logged out.";
         c->logOut();
-        cout << "Client #" << packet.sender << " has logged out.\n";
+        netManager.sendServerChatMessage(logOutMessage, packet.sender);
+        cout << logOutMessage << endl;
     }
+    else
+        cout << "Client #" << packet.sender << " has logged out.\n";
 }
 
 void Server::processCreateAccount(PacketExtra& packet)
 {
-    string username, password;
-    packet.data >> username >> password;
+    int protocolVersion = -1;
+    int createAccountStatus = Packet::CreateAccountCode::UnknownFailure;
 
-    cout << "Create account request: " << username << ", password: " << password << endl;
+    if (packet.data >> protocolVersion)
+    {
+        if (protocolVersion == Packet::ProtocolVersion)
+        {
+            PlayerData pData;
+            packet.data >> pData.username >> pData.passwordHash;
 
-    unique_ptr<PlayerData> pData(new PlayerData);
-    pData->username = username;
-    pData->passwordHash = password;
+            cout << "Create account request: " << pData.username << ", password: " << pData.passwordHash << endl;
 
-    int createAccountStatus = accounts.createAccount(*pData);
+            if (!pData.username.empty() && !pData.passwordHash.empty())
+            {
+                createAccountStatus = accounts.createAccount(pData);
 
-    if (createAccountStatus == Packet::Login::Successful)
+                // Send a packet back to the client with their create account status
+                sf::Packet statusPacket;
+                statusPacket << Packet::CreateAccountStatus << createAccountStatus;
+                netManager.sendToClientTcp(statusPacket, packet.sender, false);
+            }
+        }
+        else
+            createAccountStatus = Packet::CreateAccountCode::ProtocolVersionMismatch;
+    }
+
+    if (createAccountStatus == Packet::CreateAccountCode::Successful)
         cout << "Account was successfully created!\n";
     else
         cout << "Error: Account was not created. Status code = " << createAccountStatus << endl;

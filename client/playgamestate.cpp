@@ -63,7 +63,17 @@ PlayGameState::~PlayGameState()
 
 void PlayGameState::processArgs(const StateArgs& args)
 {
+    // Nothing for now, possibly will use this in the future for logging in or something
+}
+
+void PlayGameState::onPush()
+{
     theHud.chat.setUsername(objects.netManager.getUsername());
+}
+
+void PlayGameState::onPop()
+{
+    objects.netManager.logOut();
 }
 
 void PlayGameState::handleEvents()
@@ -74,7 +84,7 @@ void PlayGameState::handleEvents()
         switch (event.type)
         {
             case sf::Event::Closed:
-                objects.netManager.logOut();
+
                 action.exitGame();
                 break;
 
@@ -85,10 +95,7 @@ void PlayGameState::handleEvents()
                         if (theHud.chat.getInput())
                             theHud.chat.setInput(false);
                         else
-                        {
-                            objects.netManager.logOut();
                             action.popState();
-                        }
                         break;
 
                     case sf::Keyboard::Return:

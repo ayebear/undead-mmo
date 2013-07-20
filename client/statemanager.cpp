@@ -12,7 +12,6 @@ StateManager::StateManager(std::string windowTitle)
     objects.loadConfig();
     objects.loadFonts();
     objects.setupWindow(windowTitle);
-    setVSync();
     allocateStates();
 }
 
@@ -32,6 +31,13 @@ void StateManager::allocateStates()
 
 void StateManager::deallocateStates()
 {
+    // Call the remaining onPop functions
+    while (!stateStack.empty())
+    {
+        statePtrs[stateStack.back()]->onPop();
+        stateStack.pop_back();
+    }
+    // Delete the allocated states
     for (auto& sPtr: statePtrs)
         delete sPtr;
     cout << "Successfully deallocated all states.\n";
@@ -42,7 +48,7 @@ void StateManager::startLoop(const StateAction& theAction)
     StateAction action = theAction;
     while (action.isNotExit())
         action = handleAction(action);
-    std::cout << "StateManager loop has ended.\n";
+    cout << "StateManager loop has ended.\n";
 }
 
 const StateAction& StateManager::handleAction(const StateAction& action)
@@ -51,15 +57,15 @@ const StateAction& StateManager::handleAction(const StateAction& action)
     switch (action.getCommand())
     {
         case StateCommand::Push:
-            std::cout << "Received push command for state type " << action.getType() << endl;
+            cout << "Received push command for state type " << action.getType() << endl;
             push(action.getType());
             break;
         case StateCommand::Pop:
-            std::cout << "Received pop command.\n";
+            cout << "Received pop command.\n";
             pop();
             break;
         default:
-            std::cout << "Received unknown command.\n";
+            cout << "Received unknown command.\n";
             break;
     }
 
@@ -74,15 +80,14 @@ const StateAction& StateManager::handleAction(const StateAction& action)
 void StateManager::push(int type)
 {
     stateStack.push_back(type);
+    statePtrs[type]->onPush();
 }
 
 void StateManager::pop()
 {
     if (!stateStack.empty())
+    {
+        statePtrs[stateStack.back()]->onPop();
         stateStack.pop_back();
-}
-
-void StateManager::setVSync()
-{
-    objects.window.setVerticalSyncEnabled(objects.config.getOption("useVerticalSync").asBool());
+    }
 }
