@@ -49,9 +49,24 @@ void ScrollBar::adjustScrollerHeight(float viewHeight, float actualHeight)
         slider.setSize(sf::Vector2f(scrollBarWidth, 0));
 }*/
 
+void ScrollBar::scrollToTop(sf::View& destRect, float actualHeight, sf::Vector2f topPos)
+{
+    while(destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
+    {
+        scrollUp(destRect, actualHeight, topPos, actualHeight);
+    }
+}
+
+void ScrollBar::scrollToBottom(sf::View& destRect, float actualHeight, sf::Vector2f bottomPos)
+{
+    while(destRect.getCenter().y + destRect.getSize().y / 2 <= bottomPos.y + 8)
+    {
+        scrollDown(destRect, actualHeight, bottomPos, actualHeight);
+    }
+}
+
 float ScrollBar::scrollUp(sf::View& destRect, float actualHeight,  sf::Vector2f topPos, unsigned int distance)
 {
-
     //Only scroll up if the slider is not at the top of the scroll bar
     if(actualHeight > 0 && distance > 0 && destRect.getCenter().y - destRect.getSize().y / 2 >= topPos.y)
     {

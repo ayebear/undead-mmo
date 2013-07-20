@@ -93,6 +93,12 @@ void LoginState::handleEvents()
                     case sf::Keyboard::Return:
                         processChoice(loginMenu.handleKeyPressed(event));
                         break;
+                    case sf::Keyboard::Key::T:
+                        textItemList.scrollToTop();
+                        break;
+                    case sf::Keyboard::Key::B:
+                        textItemList.scrollToBottom();
+                        break;
 
                     default:
                         break;

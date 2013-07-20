@@ -121,6 +121,11 @@ void TextItemList::addTextItem(const std::string& newText, const sf::Color& colo
 
 }
 
+void TextItemList::clearList()
+{
+    textItemList.clear();
+}
+
 sf::Vector2f TextItemList::getNewItemPos()
 {
     sf::Vector2f pos(0,0);
@@ -141,11 +146,36 @@ sf::Vector2f TextItemList::getNewItemPos()
 
 }
 
+void TextItemList::scrollToTop()
+{
+
+    float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
+    scrollBar.scrollToTop(itemListView, actualHeight, textItemList.front().getTopPosition());
+
+    currViewTop = itemListView.getCenter().y - itemListView.getSize().y / 2;
+    currViewBot = itemListView.getCenter().y - itemListView.getSize().y / 2;
+
+    viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
+
+}
+
+void TextItemList::scrollToBottom()
+{
+
+    float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
+    scrollBar.scrollToBottom(itemListView, actualHeight, textItemList.back().getBottomPosition());
+
+    currViewTop = itemListView.getCenter().y - itemListView.getSize().y / 2;
+    currViewBot = itemListView.getCenter().y - itemListView.getSize().y / 2;
+
+    viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
+
+}
+
 void TextItemList::scrollDown(unsigned int distance)
 {
     if(!textItemList.empty())
     {
-
         float amountScrolled = 0;
         float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
         amountScrolled = scrollBar.scrollDown(itemListView, actualHeight, textItemList.back().getBottomPosition(), distance);
@@ -154,6 +184,7 @@ void TextItemList::scrollDown(unsigned int distance)
         currViewBot += amountScrolled;
 
         viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
+
     }
 
 

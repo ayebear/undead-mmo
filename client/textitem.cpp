@@ -82,8 +82,8 @@ void TextItem::wrapText(sf::FloatRect destBox)
     while(textItems.back().getGlobalBounds().left + textItems.back().getGlobalBounds().width - textItems.back().getGlobalBounds().left > destBox.width - textFontSize)
     {
 
-        std::cout << textItems.back().getGlobalBounds().width << std::endl;
-        std::cout << destBox.left + destBox.width << std::endl;
+        //std::cout << textItems.back().getGlobalBounds().width << std::endl;
+        //std::cout << destBox.left + destBox.width << std::endl;
         unsigned int i = 0;
         int endChar = 0;
         int firstCharXPos = textItems.front().findCharacterPos(0).x;

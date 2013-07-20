@@ -32,9 +32,12 @@ class TextItemList: public sf::Drawable
         bool isBackgroundVisible();
 
         void addTextItem(const std::string&, const sf::Color& = sf::Color(sf::Color::White));
+        void clearList();
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
+        void scrollToBottom();
+        void scrollToTop();
         void scrollDown(unsigned int);
         void scrollUp(unsigned int);
 
