@@ -5,12 +5,20 @@
 
 int main()
 {
-    const string title = "Undead MMO v0.0.5.2 Dev";
+    const string title = "Undead MMO v0.0.5.3 Dev";
 
     StateManager game(title); // Create the game
 
     StateAction action;
     action.pushState(StateType::Menu); // This will make it go to the menu first
 
-    game.startLoop(action); // Start the game
+    game.startLoop(action); // Start the game (at the menu)
 }
+
+/*
+Exit codes:
+1xx: Graphics
+2xx: Audio
+3xx: Fonts
+9xx: Other error
+*/

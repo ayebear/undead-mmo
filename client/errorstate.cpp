@@ -1,9 +1,9 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include "errorstate.h"
 #include <iostream>
 #include <sstream>
-#include "errorstate.h"
 
 ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
 {

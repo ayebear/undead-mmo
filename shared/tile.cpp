@@ -1,8 +1,8 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include <iostream>
 #include "tile.h"
+#include <iostream>
 
 std::vector<sf::Texture> Tile::textures;
 
@@ -40,7 +40,7 @@ void Tile::loadTileTextures()
             if (!textures[y * tileCount + x].loadFromImage(*tilesImage,
                 sf::IntRect(x * tileWidth, y * tileWidth,
                 (x + 1) * tileWidth, (y + 1) * tileWidth)))
-                    exit(1);
+                    exit(103);
             textures[y * tileCount + x].setSmooth(false);
         }
     }

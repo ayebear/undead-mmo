@@ -1,9 +1,9 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include "network.h"
 #include <iostream>
 #include <SFML/Network.hpp>
-#include "network.h"
 #include "packet.h"
 
 using namespace std;

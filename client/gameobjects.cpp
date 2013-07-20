@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include "gameobjects.h"
 #include <iostream>
 #include <string>
@@ -25,13 +28,13 @@ void GameObjects::loadConfig()
 void GameObjects::loadFonts()
 {
     if (!font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
-        exit(7);
+        exit(301);
     if (!fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(7);
+        exit(302);
     if (!fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
-        exit(7);
+        exit(303);
     if (!fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
-        exit(7);
+        exit(304);
 }
 
 void GameObjects::setupWindow(string windowTitle)

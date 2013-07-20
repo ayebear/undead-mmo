@@ -73,7 +73,7 @@ const StateAction& StateManager::handleAction(const StateAction& action)
     if (!stateStack.empty())
         return statePtrs[stateStack.back()]->start(action.getArgs());
 
-    exit(123); // The game should exit when it gets here, this means the stack is empty
+    exit(901); // The game should exit when it gets here, this means the stack is empty
     return action; // Only here to suppress the compiler warning...
 }
 

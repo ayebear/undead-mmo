@@ -1,8 +1,8 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include <iostream>
 #include "option.h"
+#include <iostream>
 
 Option::Option():
     str(""),

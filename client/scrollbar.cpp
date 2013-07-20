@@ -1,5 +1,9 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include "scrollbar.h"
 #include <iostream>
+
 ScrollBar::ScrollBar()
 {
 
@@ -15,7 +19,7 @@ ScrollBar::~ScrollBar()
 }
 
 
-///Attach the scrollBar to a view,
+//Attach the scrollBar to a view
 void ScrollBar::attachScrollBar(sf::FloatRect& destRect)
 {
 

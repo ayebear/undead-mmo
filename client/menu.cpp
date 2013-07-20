@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #include "menu.h"
 #include <sstream>
 
@@ -25,7 +28,7 @@ void Menu::setUpMenu(const std::string& backgroundFile, short fontSize, sf::Vect
 
     //Load background and font
     if (!bgTexture.loadFromFile(backgroundFile))
-        exit(1);
+        exit(104);
 
     buttonFont = &objects->fontBold;
 
@@ -56,7 +59,7 @@ void Menu::setBackground(const std::string& backgroundFile)
 {
      //Load background and font
     if (!bgTexture.loadFromFile(backgroundFile))
-        exit(1);
+        exit(105);
 
     bgTexture.setSmooth(true);
     bgSprite.setTexture(bgTexture);
@@ -65,7 +68,7 @@ void Menu::setBackground(const std::string& backgroundFile)
 void Menu::setFont(const std::string& fontFile)
 {
      if (!buttonFont->loadFromFile(fontFile))
-        exit(2);
+        exit(305);
 }
 
 void Menu::setFontSize(short fontSize)

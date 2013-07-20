@@ -1,10 +1,10 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include "playgamestate.h"
 #include <ctime>
 #include <string>
 #include <sstream>
-#include "playgamestate.h"
 #include "packet.h"
 #include "tile.h"
 
@@ -12,10 +12,10 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
     // Load character textures
     if (!playerTex.loadFromFile("data/images/characters/character.png"))
-        exit(1);
+        exit(101);
     playerTex.setSmooth(true);
     if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
-        exit(1);
+        exit(102);
     zombieTex.setSmooth(true);
 
     // TODO: Have it download the map from the server instead

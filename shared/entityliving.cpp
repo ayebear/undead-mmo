@@ -2,7 +2,6 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "entityliving.h"
-//#include <cmath>
 
 EntityLiving::EntityLiving()
 {

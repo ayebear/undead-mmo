@@ -177,7 +177,7 @@ void TextItemList::scrollUp(unsigned int distance)
 void TextItemList::setTextFont(std::string& fontFile)
 {
     if (!textItemFont->loadFromFile(fontFile))
-        exit(2);
+        exit(308);
 }
 
 

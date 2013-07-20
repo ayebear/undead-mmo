@@ -1,9 +1,9 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+#include "loginstate.h"
 #include <iostream>
 #include <sstream>
-#include "loginstate.h"
 
 LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 {
@@ -40,6 +40,11 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     loginMenu.addMenuButton("Return to Main Menu");
     usernameBox.setUp(16, objects.fontBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.5, windowSize.x / 8, false);
     passwordBox.setUp(16, objects.fontBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.4, windowSize.x / 8, true);
+
+    string username = objects.config.getOption("username").asString();
+    string password = objects.config.getOption("password").asString();
+    usernameBox.setString(username);
+    passwordBox.setString(password);
 }
 
 LoginState::~LoginState()
@@ -123,8 +128,6 @@ void LoginState::processChoice(int choice)
         // TODO: Change this later so the options (if any) are loaded into the GUI elements or something like that
         string server = objects.config.getOption("server").asString();
         sf::IpAddress serverAddr(server);
-        //string username = objects.config.getOption("username").asString();
-        //string password = objects.config.getOption("password").asString();
         string username = usernameBox.getString();
         string password = passwordBox.getString();
         cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;

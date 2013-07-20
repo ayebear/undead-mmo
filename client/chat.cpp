@@ -1,15 +1,9 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-/*
-TODO:
-    Change the transparency of the chat input and username text when focus is lost
-    Maybe animate the PrintMessage command - would need to update the animation in update()
-*/
-
+#include "chat.h"
 #include <iostream>
 #include <sstream>
-#include "chat.h"
 #include "packet.h"
 
 const unsigned short Chat::maxMessages = 10;
@@ -181,11 +175,11 @@ void Chat::showHelp(const string& content)
 void Chat::sendPrivateMessage(const string& content)
 {
     auto spacePos = content.find(" ");
-    string usernameStr = content.substr(1, spacePos - 1);
     if (spacePos != string::npos && spacePos < content.size())
     {
+        string usernameStr = content.substr(0, spacePos);
         string msgStr = content.substr(spacePos + 1);
-        if (netManager != nullptr)
+        if (!msgStr.empty() && netManager != nullptr)
         {
             netManager->sendChatMessage(msgStr, usernameStr);
             printMessage("Private message sent to server.", Colors::commandOutput);
