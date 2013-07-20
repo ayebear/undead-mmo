@@ -196,7 +196,6 @@ void InputBox::findLeftChar()
         leftCharIndex++;
     }
 
-
 }
 
 //Runs verry slow when a lot of characters are in the string. Need to improve this search functionm later on
@@ -209,8 +208,6 @@ void InputBox::findRightChar()
     {
         rightCharIndex++;
     }
-    std::cout << "RIGHT CHAR: " << rightCharIndex << endl;
-
 
 }
 
@@ -254,6 +251,12 @@ void InputBox::setString(const string& str)
     updateText();
     updateCursorPos();
     end();
+
+    //This is temporary until I stop being lazy
+    addChar(' ');
+    backspace();
+    updateText();
+
 
 }
 
