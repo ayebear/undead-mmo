@@ -268,6 +268,9 @@ void Chat::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
         }
     }
 
+    if(input)
+        messageBox.handleMouseClicked(event, window);
+
 }
 
 void Chat::update()

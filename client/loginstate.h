@@ -26,6 +26,8 @@ class LoginState: public State
         void update();
         void draw();
 
+        const int fontSize = 16;
+
     private:
         void processChoice(int);
 
@@ -33,6 +35,7 @@ class LoginState: public State
         TextItemList textItemList;
         InputBox usernameBox;
         InputBox passwordBox;
+        InputBox directConnectBox;
 };
 
 #endif

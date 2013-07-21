@@ -20,7 +20,7 @@ class TextItem: public sf::Drawable
         void setTextItem(const std::string&);
         sf::Text getText();
 
-        void setHiddenText(std::string&);
+        void setHiddenText(const std::string&);
         std::string& getHiddenText();
 
         void setTextColor(sf::Color);

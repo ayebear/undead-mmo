@@ -30,8 +30,10 @@ class TextItemList: public sf::Drawable
 
         bool toggleBackground();
         bool isBackgroundVisible();
+        bool listContainsMouse(sf::RenderWindow&);
 
         void addTextItem(const std::string&, const sf::Color& = sf::Color(sf::Color::White));
+        void addItemWithHiddenText(const std::string&, const std::string&, const sf::Color& = sf::Color(sf::Color::White));
         void clearList();
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -47,7 +49,7 @@ class TextItemList: public sf::Drawable
         void resizeBox(sf::RenderWindow&, sf::FloatRect);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
-        void handleMouseClicked(sf::Event&, sf::RenderWindow&);
+        std::string& handleMouseClicked(sf::Event&, sf::RenderWindow&);
         void handleResize(sf::Event&, sf::RenderWindow&);
 
     private:

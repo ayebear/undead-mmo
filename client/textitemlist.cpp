@@ -91,6 +91,15 @@ bool TextItemList::getClickable()
     return isClickable;
 }
 
+bool TextItemList::listContainsMouse(sf::RenderWindow& window)
+{
+    sf::Vector2f mousePos;
+    mousePos.x = sf::Mouse::getPosition(window).x;
+    mousePos.y = sf::Mouse::getPosition(window).y;
+    return viewableArea.contains(mousePos);
+
+}
+
 void TextItemList::addTextItem(const std::string& newText, const sf::Color& color)
 {
     if(isReady)
@@ -119,6 +128,12 @@ void TextItemList::addTextItem(const std::string& newText, const sf::Color& colo
         std::cout << "ItemList must be set up before using.\n";
     }
 
+}
+
+void TextItemList::addItemWithHiddenText(const std::string& newText, const std::string& hiddenText, const sf::Color& color)
+{
+    addTextItem(newText, color);
+    textItemList.back().setHiddenText(hiddenText);
 }
 
 void TextItemList::clearList()
@@ -233,44 +248,58 @@ void TextItemList::handleScrolling(sf::Event& event, sf::RenderWindow& window)
             }
     }
 }
-void TextItemList::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
+std::string& TextItemList::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
 {
     //Get the mouse coordinates relative to the window to determine if it's inside of the item list
     sf::Vector2f mousePos;
     mousePos.x = sf::Mouse::getPosition(window).x;
     mousePos.y = sf::Mouse::getPosition(window).y;
-
-    if(isClickable && viewableArea.contains(mousePos))
+    std::string temp("");
+    if(viewableArea.contains(mousePos))
     {
         //Get the mouse coordinates relative to the message box view to determine which item is selected
         mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window),itemListView);
 
         unsigned int i = 0;
-        while(i < textItemList.size())
+
+        if(isClickable && event.mouseButton.button == sf::Mouse::Left)
         {
-
-            if(textItemList[i].getTextBounds().contains(mousePos) && event.mouseButton.button == sf::Mouse::Left)
+            while(i < textItemList.size())
             {
-           //     std::cout << "Mouse x: " << mousePos.x << std::endl;
-            //    std::cout << "Mouse y: " << mousePos.y << std::endl;
 
-                //Unhighlight the last selection if there was one
-                if(selectionMade)
+                if(textItemList[i].getTextBounds().contains(mousePos))
+                {
+               //     std::cout << "Mouse x: " << mousePos.x << std::endl;
+                //    std::cout << "Mouse y: " << mousePos.y << std::endl;
+
+                    //Unhighlight the last selection if there was one
+                    if(selectionMade)
+                        textItemList[currentSelection].toggleHighlight();
+
+                    //Highlight the new selection
+                    currentSelection = i;
                     textItemList[currentSelection].toggleHighlight();
+                    selectionMade = true;
+                }
+                i++;
+            }//end while
 
-                //Highlight the new selection
-                currentSelection = i;
-                textItemList[currentSelection].toggleHighlight();
-                selectionMade = true;
-            }
-            i++;
+
         }
-    }
-}
-void TextItemList::handleResize(sf::Event&, sf::RenderWindow& window)
-{
+        else if(sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) && event.mouseButton.button == sf::Mouse::Middle)
+        {
+            scrollToTop();
+        }
+        else if(event.mouseButton.button == sf::Mouse::Middle)
+        {
+            scrollToBottom();
+        }
+    }//end if
+
+    return textItemList[currentSelection].getHiddenText();
 
 }
+
 
 void TextItemList::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {

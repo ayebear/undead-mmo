@@ -1,4 +1,4 @@
-// See the file COPYRIGHT.txt for authors and copyright information.
+ // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
 #include "textitem.h"
@@ -20,6 +20,7 @@ TextItem::TextItem(const std::string& text, sf::Font& font, unsigned int fontSiz
     textItems.emplace_back(text, font, fontSize);
     textItems.back().setPosition(pos);
     textItems.back().setColor(color);
+    hiddenText = "";
     isHighlighted = false;
 }
 
@@ -61,7 +62,7 @@ sf::Text TextItem::getText()
     return fullText;
 }
 
-void TextItem::setHiddenText(std::string& text)
+void TextItem::setHiddenText(const std::string& text)
 {
     hiddenText = text;
 }
