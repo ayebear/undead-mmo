@@ -6,6 +6,7 @@
 #include "loginstate.h"
 #include "playgamestate.h"
 #include "errorstate.h"
+#include "messagestate.h"
 
 StateManager::StateManager(std::string windowTitle)
 {
@@ -27,6 +28,7 @@ void StateManager::allocateStates()
     statePtrs[1] = new LoginState(objects);
     statePtrs[2] = new PlayGameState(objects);
     statePtrs[3] = new ErrorState(objects);
+    statePtrs[4] = new MessageState(objects);
 }
 
 void StateManager::deallocateStates()

@@ -179,10 +179,9 @@ void LoginState::processChoice(int choice)
             action.pushState(StateType::Game);
         else
         {
-            // TODO: Show a better error from the actual status code
             StateArgs args;
-            args.push_back("Error logging into the server!");
-            action.pushState(StateType::Error, args);
+            args.push_back(Packet::LogInMessages[status - 1]);
+            action.pushState(StateType::Message, args);
         }
     }
     else if (choice == 2)
@@ -194,15 +193,9 @@ void LoginState::processChoice(int choice)
         string password = passwordBox.getString();
         cout << "Creating account on " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.createAccount(serverAddr, username, password);
-        if (status != Packet::CreateAccountCode::Successful)
-            //action.pushState(StateType::Game);
-    //    else
-        {
-            // TODO: Show a better error from the actual status code
-            StateArgs args;
-            args.push_back("Error creating account on the server!");
-            action.pushState(StateType::Error, args);
-        }
+        StateArgs args;
+        args.push_back(Packet::CreateAccountMessages[status - 1]);
+        action.pushState(StateType::Message, args);
     }
     else if (choice == 3)
         action.popState();

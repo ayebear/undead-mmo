@@ -29,6 +29,7 @@ class Chat: public sf::Drawable
         void toggleInput();
         void processInput(sf::Keyboard::Key);
         void processTextEntered(sf::Uint32);
+        void clear();
 
         void messageHistoryUp();
         void messageHistoryDown();

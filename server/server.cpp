@@ -7,7 +7,8 @@ using namespace std;
 
 const float Server::desiredFrameTime = 1.0 / 120.0;
 
-Server::Server()
+Server::Server():
+    netManager(accounts)
 {
 }
 
@@ -19,7 +20,7 @@ void Server::start()
 
 void Server::printWelcomeMsg()
 {
-    cout << "Undead MMO Server v0.3.5.1 Dev\n\n";
+    cout << "Undead MMO Server v0.3.5.6 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -121,7 +122,7 @@ void Server::processChatMessage(PacketExtra& packet)
                     // Relay the message back to everyone else
                     sf::Packet packetToSend;
                     packetToSend << Packet::ChatMessage << Packet::Chat::Public << msg;
-                    netManager.sendToAllTcp(packetToSend, packet.sender);
+                    netManager.sendToAllTcp(packetToSend);
                 }
             }
             else if (subType == Packet::Chat::Private)
@@ -130,19 +131,32 @@ void Server::processChatMessage(PacketExtra& packet)
                 string username;
                 packet.data >> username;
                 Client* c = netManager.getClientFromUsername(username);
+                string msg;
+                sf::Packet packetToSend;
                 if (c != nullptr)
                 {
                     // Process the message
-                    string msg;
                     if (packet.data >> msg)
                     {
                         msg.insert(0, msgPrefix);
                         cout << "Message to " << username << ": " << msg << endl;
-                        sf::Packet packetToSend;
                         packetToSend << Packet::ChatMessage << Packet::Chat::Private << msg;
                         //netManager.sendToClientTcp(packetToSend, c->id);
-                        c->tcpSend(packetToSend);
+                        c->tcpSend(packetToSend); // Send the private message
+
+                        // Send a message back to the person who requested to send the message
+                        packetToSend.clear();
+                        msg = "Message to \"" + username + "\" was successfully sent.";
+                        packetToSend << Packet::ChatMessage << Packet::Chat::Server << msg;
+                        netManager.sendToClientTcp(packetToSend, packet.sender);
                     }
+                }
+                else
+                {
+                    // Send a message back to the person who requested to send the message
+                    msg = "Error sending message to \"" + username + "\".";
+                    packetToSend << Packet::ChatMessage << Packet::Chat::Server << msg;
+                    netManager.sendToClientTcp(packetToSend, packet.sender);
                 }
             }
         }
@@ -204,7 +218,6 @@ void Server::processLogIn(PacketExtra& packet)
     {
         string logInMessage = username + " logged in.";
         netManager.sendServerChatMessage(logInMessage, packet.sender);
-        cout << logInMessage << endl;
     }
     else
         cout << "Denied login request. Error code = " << loginStatusCode << endl;
@@ -212,7 +225,8 @@ void Server::processLogIn(PacketExtra& packet)
 
 void Server::processLogOut(PacketExtra& packet)
 {
-    Client* c = netManager.getClientFromId(packet.sender);
+    cout << "Received logout packet, but these are not handled anymore.\n";
+    /*Client* c = netManager.getClientFromId(packet.sender);
     if (c != nullptr)
     {
         string logOutMessage = c->username + " has logged out.";
@@ -221,7 +235,7 @@ void Server::processLogOut(PacketExtra& packet)
         cout << logOutMessage << endl;
     }
     else
-        cout << "Client #" << packet.sender << " has logged out.\n";
+        cout << "Client #" << packet.sender << " has logged out.\n";*/
 }
 
 void Server::processCreateAccount(PacketExtra& packet)

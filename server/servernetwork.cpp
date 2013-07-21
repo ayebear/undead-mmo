@@ -4,7 +4,8 @@
 
 using namespace std;
 
-ServerNetwork::ServerNetwork()
+ServerNetwork::ServerNetwork(AccountDb& acctDb):
+    accounts(acctDb)
 {
     // Bind the UDP port
     udpSock.bind(serverPort);
@@ -162,6 +163,7 @@ Client* ServerNetwork::getClientFromId(ClientID id)
 
 void ServerNetwork::sendServerChatMessage(const string& msg, ClientID exclude)
 {
+    cout << msg << endl;
     sf::Packet packetToSend;
     packetToSend << Packet::ChatMessage << Packet::Chat::Server << msg;
     sendToAllTcp(packetToSend, exclude);
@@ -191,6 +193,9 @@ void ServerNetwork::removeClient(ClientID id)
         auto clientToRemove = clients.getClientFromId(id);
         if (clientToRemove != nullptr)
         {
+            sendServerChatMessage(clientToRemove->username + " has logged out.", id);
+            accounts.saveAccount(*(clientToRemove->pData));
+            clientToRemove->logOut();
             selector.remove(*(clientToRemove->tcpSock));
             clients.removeClient(id);
         }

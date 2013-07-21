@@ -8,7 +8,7 @@
 #include "miscnetwork.h"
 #include "playerdata.h"
 
-class Client
+class Client: sf::NonCopyable
 {
     public:
         Client(ClientID, sf::TcpSocket* tcpSockPtr);

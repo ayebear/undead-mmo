@@ -7,11 +7,12 @@
 #include "linkedqueue.h"
 #include "clientmanager.h"
 #include "miscnetwork.h"
+#include "accountdb.h"
 
 class ServerNetwork: public Network
 {
     public:
-        ServerNetwork();
+        ServerNetwork(AccountDb&);
 
         // Overidden functions
         void receiveUdp();
@@ -51,6 +52,7 @@ class ServerNetwork: public Network
         sf::TcpListener listener;
         sf::SocketSelector selector;
         ClientManager clients;
+        AccountDb& accounts;
 };
 
 #endif

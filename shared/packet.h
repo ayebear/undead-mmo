@@ -4,6 +4,8 @@
 #ifndef PACKET_H
 #define PACKET_H
 
+#include <string>
+
 namespace Packet
 {
     // This is sent with the login packet
@@ -78,6 +80,28 @@ namespace Packet
             Private
         };
     }
+    const std::string LogInMessages[] = {
+        "Successfully logged in.",
+        "Invalid username.",
+        "Invalid password.",
+        "Account has been banned.",
+        "Account is already logged in.",
+        "Protocol version mismatch.",
+        "Other server error.",
+        "Response timed out.",
+        "Error connecting to server.",
+        "Unknown failure."
+    };
+    const std::string CreateAccountMessages[] = {
+        "Successfully created account.",
+        "Username already exists.",
+        "Password does not meet requirements of server.",
+        "Protocol version mismatch.",
+        "Other server error.",
+        "Response timed out.",
+        "Error connecting to server.",
+        "Unknown failure."
+    };
 }
 
 #endif

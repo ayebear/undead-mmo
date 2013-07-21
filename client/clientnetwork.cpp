@@ -174,6 +174,9 @@ int ClientNetwork::logIn(const string& username, const string& password)
         }
     }
     cout << "Login status: " << status << endl;
+    // Prevent possibility of client receiving invalid status code from server
+    if (status < 1 || status > Packet::LogInCode::UnknownFailure)
+        status = Packet::LogInCode::UnknownFailure;
     return status;
 }
 
@@ -220,15 +223,18 @@ int ClientNetwork::createAccount(const string& username, const string& password)
         }
     }
     cout << "Create account status: " << status << endl;
+    // Prevent possibility of client receiving invalid status code from server
+    if (status < 1 || status > Packet::CreateAccountCode::UnknownFailure)
+        status = Packet::CreateAccountCode::UnknownFailure;
     return status;
 }
 
 void ClientNetwork::logOut()
 {
     cout << "Logged out from server.\n";
-    sf::Packet logOutPacket;
+    /*sf::Packet logOutPacket;
     logOutPacket << Packet::LogOut;
-    tcpSock.send(logOutPacket);
+    tcpSock.send(logOutPacket);*/
     tcpSock.disconnect();
     tcpThreadRunning = false;
     connected = false;

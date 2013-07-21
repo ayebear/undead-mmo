@@ -32,6 +32,7 @@ namespace StateType
         Login,
         Game,
         Error,
+        Message,
         TotalTypes
     };
 }

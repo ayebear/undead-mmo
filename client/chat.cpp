@@ -105,6 +105,11 @@ void Chat::processTextEntered(sf::Uint32 text)
     currentMsg.processTextEntered(text);
 }
 
+void Chat::clear()
+{
+    messageBox.clearList();
+}
+
 // This is called when enter is pressed
 const string Chat::parseMessage()
 {
@@ -122,7 +127,7 @@ const string Chat::parseMessage()
             string fullStr = username + ": " + msgStr;
             if (netManager != nullptr)
                 netManager->sendChatMessage(msgStr);
-            printMessage(fullStr, Colors::normal);
+            //printMessage(fullStr, Colors::normal);
         }
         clearMessage();
     }
@@ -182,7 +187,6 @@ void Chat::sendPrivateMessage(const string& content)
         if (!msgStr.empty() && netManager != nullptr)
         {
             netManager->sendChatMessage(msgStr, usernameStr);
-            printMessage("Private message sent to server.", Colors::commandOutput);
         }
     }
 }

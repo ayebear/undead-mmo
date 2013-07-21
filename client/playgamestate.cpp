@@ -68,6 +68,7 @@ void PlayGameState::processArgs(const StateArgs& args)
 
 void PlayGameState::onPush()
 {
+    theHud.chat.clear();
     theHud.chat.setUsername(objects.netManager.getUsername());
 }
 
