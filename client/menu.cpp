@@ -228,8 +228,8 @@ void Menu::fixRectangles(float width, float height)
 
     for(unsigned int i = 0; i < menuOptions.size(); i++)
     {
-        menuOptions[i]->buttonName.setOrigin(0,0);
-        menuOptions[i]->buttonName.setPosition(topButtonPos.x, topButtonPos.y + (i * (buttonFontSize + 75)));
+        //menuOptions[i]->buttonName.setOrigin(0,0);
+        //menuOptions[i]->buttonName.setPosition(topButtonPos.x, topButtonPos.y + (i * (buttonFontSize + 75)));
         menuOptions[i]->rect.left = topButtonPos.x;
         menuOptions[i]->rect.top = topButtonPos.y + i * (buttonFontSize + buttonPadding);
     }
