@@ -14,6 +14,7 @@ ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
     std::string bgFile("data/images/ui/MenuBackground.png");
     std::string fontFile("data/fonts/Ubuntu-B.ttf");
     errorMenu.setUpMenu(bgFile,                                             //Background file
+                        sf::Color (25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
                        objects                                     //Rendering window
