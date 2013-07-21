@@ -248,7 +248,7 @@ void Menu::addMenuButton(const std::string& itemName)
     menuItem->buttonName.setCharacterSize(buttonFontSize);
     menuItem->buttonName.setColor(sf::Color::White);
     menuItem->buttonName.setFont(*buttonFont);
-    menuItem->buttonName.setPosition(topButtonPos.x, topButtonPos.y + i * (buttonFontSize + buttonPadding));   //Extra pixels of space
+
 
     tmpText = menuItem->buttonName.getString();
 
@@ -263,6 +263,8 @@ void Menu::addMenuButton(const std::string& itemName)
     menuItem->buttonBackground.setOutlineColor(sf::Color::White);
     menuItem->buttonBackground.setOutlineThickness(1);
 
+    menuItem->buttonName.setPosition(topButtonPos.x + (menuItem->buttonBackground.getSize().x - menuItem->buttonName.getGlobalBounds().width) / 2, topButtonPos.y + i * (buttonFontSize + buttonPadding));   //Extra pixels of space
+
     menuOptions.push_back(menuItem);
 }
 
@@ -276,7 +278,7 @@ void Menu::addMenuButton(const std::string& itemName, sf::Vector2f position)
     menuItem->buttonName.setCharacterSize(buttonFontSize);
     menuItem->buttonName.setColor(sf::Color::White);
     menuItem->buttonName.setFont(*buttonFont);
-    menuItem->buttonName.setPosition(position);   //Extra pixels of space
+
 
     tmpText = menuItem->buttonName.getString();
 
@@ -290,6 +292,8 @@ void Menu::addMenuButton(const std::string& itemName, sf::Vector2f position)
     menuItem->buttonBackground.setFillColor(buttonUnselectedColor);
     menuItem->buttonBackground.setOutlineColor(sf::Color::White);
     menuItem->buttonBackground.setOutlineThickness(1);
+
+    menuItem->buttonName.setPosition(position.x + (menuItem->buttonBackground.getSize().x - menuItem->buttonName.getGlobalBounds().width) / 2, position.y);
 
     menuOptions.push_back(menuItem);
 }
