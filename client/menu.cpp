@@ -15,7 +15,7 @@ Menu::~Menu()
     clearButtons();
 }
 
-void Menu::setUpMenu(const std::string& backgroundFile, short fontSize, sf::Vector2f topButtonPosition, GameObjects& theObjects)
+void Menu::setUpMenu(const std::string& backgroundFile, sf::Color buttonSelectColor, short fontSize, sf::Vector2f topButtonPosition, GameObjects& theObjects)
 {
     objects = &theObjects;
 
@@ -48,8 +48,8 @@ void Menu::setUpMenu(const std::string& backgroundFile, short fontSize, sf::Vect
     bgSprite.setScale(windowSize.x / bgImageSize.x, windowSize.y / bgImageSize.y);
     bgSprite.setOrigin(0, 0);
 
-    buttonUnselectedColor = sf::Color::White;
-    buttonSelectedColor = sf::Color::Yellow;
+    setButtonColors(buttonSelectColor);
+
     selection = 1;
     selectionMade = false;
 
@@ -82,10 +82,13 @@ void Menu::setTopButtonLocation(sf::Vector2f topButtonPosition)
     topButtonPos.y = topButtonPosition.y;
 }
 
-void Menu::setButtonColors(sf::Color unselectedColor, sf::Color selectedColor)
+void Menu::setButtonColors(sf::Color pressedColor)
 {
-    buttonUnselectedColor = unselectedColor;
-    buttonSelectedColor = selectedColor;
+
+    //Will be the darkest
+    buttonPressedColor = pressedColor;
+    buttonUnselectedColor = pressedColor + sf::Color(25, 25, 25, 0);
+    buttonSelectedColor = buttonUnselectedColor + sf::Color(25, 25, 25, 0);
 }
 
 void Menu::handleMouseMovement(sf::Event& event)
@@ -96,6 +99,19 @@ void Menu::handleMouseMovement(sf::Event& event)
         //First Menu Choice
         if(menuOptions[i]->rect.contains(event.mouseMove.x, event.mouseMove.y))
             selection = i + 1;
+        i++;
+    }
+}
+
+void Menu::handleMousePressed(sf::Event& event)
+{
+    unsigned int i = 0;
+    while(i < menuOptions.size())
+    {
+        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
+        {
+            menuOptions[i]->buttonBackground.setFillColor(buttonPressedColor);
+        }
         i++;
     }
 }
@@ -179,9 +195,11 @@ void Menu::updateMenu()
     for(int i = 0; i < (int)menuOptions.size(); i++)
     {
         if(selection == i + 1)
-            menuOptions[i]->buttonName.setColor(buttonSelectedColor);
+        {
+            menuOptions[i]->buttonBackground.setFillColor(buttonSelectedColor);
+        }
         else
-            menuOptions[i]->buttonName.setColor(buttonUnselectedColor);
+            menuOptions[i]->buttonBackground.setFillColor(buttonUnselectedColor);
     }
 }
 
@@ -189,6 +207,8 @@ void Menu::clearButtons()
 {
     for(auto& menuItem: menuOptions)
         delete menuItem;
+
+    labels.clear();
 
     //Make sure there is nothing in the vector.
     menuOptions.clear();
@@ -226,7 +246,7 @@ void Menu::addMenuButton(const std::string& itemName)
 
     menuItem->buttonName.setString(itemName);
     menuItem->buttonName.setCharacterSize(buttonFontSize);
-    menuItem->buttonName.setColor(buttonUnselectedColor);
+    menuItem->buttonName.setColor(sf::Color::White);
     menuItem->buttonName.setFont(*buttonFont);
     menuItem->buttonName.setPosition(topButtonPos.x, topButtonPos.y + i * (buttonFontSize + buttonPadding));   //Extra pixels of space
 
@@ -234,8 +254,14 @@ void Menu::addMenuButton(const std::string& itemName)
 
     menuItem->rect.left = topButtonPos.x;
     menuItem->rect.top = topButtonPos.y + i * (buttonFontSize + buttonPadding);       //Multiply (fontsize + 75) by however many menu options come before it.
-    menuItem->rect.width = (tmpText.length() * buttonFontSize / 1.8);            //Adjust rectangles width based on the text
-    menuItem->rect.height = buttonFontSize;
+    menuItem->rect.width = (tmpText.length() * buttonFontSize / 1.5);            //Adjust rectangles width based on the text
+    menuItem->rect.height = buttonFontSize * 1.3;
+
+    menuItem->buttonBackground.setPosition(menuItem->rect.left, menuItem->rect.top);
+    menuItem->buttonBackground.setSize( sf::Vector2f(menuItem->rect.width, menuItem->rect.height));
+    menuItem->buttonBackground.setFillColor(buttonUnselectedColor);
+    menuItem->buttonBackground.setOutlineColor(sf::Color::White);
+    menuItem->buttonBackground.setOutlineThickness(1);
 
     menuOptions.push_back(menuItem);
 }
@@ -248,7 +274,7 @@ void Menu::addMenuButton(const std::string& itemName, sf::Vector2f position)
 
     menuItem->buttonName.setString(itemName);
     menuItem->buttonName.setCharacterSize(buttonFontSize);
-    menuItem->buttonName.setColor(buttonUnselectedColor);
+    menuItem->buttonName.setColor(sf::Color::White);
     menuItem->buttonName.setFont(*buttonFont);
     menuItem->buttonName.setPosition(position);   //Extra pixels of space
 
@@ -256,10 +282,29 @@ void Menu::addMenuButton(const std::string& itemName, sf::Vector2f position)
 
     menuItem->rect.left = position.x;
     menuItem->rect.top = position.y;       //Multiply (fontsize + 75) by however many menu options come before it.
-    menuItem->rect.width = (tmpText.length() * buttonFontSize / 1.8);            //Adjust rectangles width based on the text
-    menuItem->rect.height = buttonFontSize;
+    menuItem->rect.width = (tmpText.length() * buttonFontSize / 1.5);            //Adjust rectangles width based on the text
+    menuItem->rect.height = buttonFontSize * 1.3;
+
+    menuItem->buttonBackground.setPosition(sf::Vector2f(menuItem->rect.left, menuItem->rect.top));
+    menuItem->buttonBackground.setSize(sf::Vector2f(menuItem->rect.width, menuItem->rect.height));
+    menuItem->buttonBackground.setFillColor(buttonUnselectedColor);
+    menuItem->buttonBackground.setOutlineColor(sf::Color::White);
+    menuItem->buttonBackground.setOutlineThickness(1);
 
     menuOptions.push_back(menuItem);
+}
+
+void Menu::createLabel(const std::string& labelName, sf::Vector2f position)
+{
+    sf::Text label;
+    label.setString(labelName);
+    label.setFont(*buttonFont);
+    label.setCharacterSize(buttonFontSize);
+    label.setPosition(position);
+
+    labels.push_back(label);
+
+
 }
 
 void Menu::draw(sf::RenderTarget& window, sf::RenderStates states) const
@@ -270,7 +315,15 @@ void Menu::draw(sf::RenderTarget& window, sf::RenderStates states) const
 
     // Draw menu choices
     for(auto& i: menuOptions)
+    {
+        window.draw(i->buttonBackground);
         window.draw(i->buttonName);
+    }
+
+    for(auto i: labels)
+    {
+        window.draw(i);
+    }
 
 
 }

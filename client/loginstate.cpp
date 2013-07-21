@@ -14,13 +14,14 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     std::string bgFile("data/images/ui/MenuBackground.png");
 
     loginMenu.setUpMenu(bgFile,                                             //Background file
+                        sf::Color( 25, 25, 25, 200),
                        16,                                                  //Font size
                        sf::Vector2f(windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.2),    //Button position
                        objects                                              //Rendering window
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(0, 0, .5, .5), gameObjects.fontBold, 16, true, true);
+    textItemList.setupList(objects.window, sf::FloatRect(0, 0, 1, .5), gameObjects.fontBold, 16, true, true);
 
     textItemList.addTextItem("This is a test...");
 
@@ -30,14 +31,17 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
         tmp << "Test server " << x << "\t\t\tDescription: This is a game server where we play zombies!!!!!\t\t\tPlayers: 30/32";
         textItemList.addTextItem(tmp.str(), sf::Color(190, 190, 190, 255));
     }
+    textItemList.scrollToBottom();
 
-  //  textItemList.addTextItem("This is to test the wrapping feature to make sure the text is wrapped properly......                                                                                                                                                                                         With multiple spaces and veryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy long words.");
 
-  //  textItemList.addTextItem(test2);
     //Set up menuOption structs
     loginMenu.addMenuButton("Login");
     loginMenu.addMenuButton("Create Account");
     loginMenu.addMenuButton("Return to Main Menu");
+
+    loginMenu.createLabel("Username: ", sf::Vector2f(windowSize.x / 2 - (windowSize.x / 16) - (16 * 8), windowSize.y / 1.5));
+    loginMenu.createLabel("Password: ", sf::Vector2f(windowSize.x / 2 - (windowSize.x / 16) - (16 * 8), windowSize.y / 1.4));
+
     usernameBox.setUp(16, objects.fontBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.5, windowSize.x / 8, false);
     passwordBox.setUp(16, objects.fontBold, windowSize.x / 2 - (windowSize.x / 16), windowSize.y / 1.4, windowSize.x / 8, true);
 
@@ -76,6 +80,7 @@ void LoginState::handleEvents()
                 textItemList.handleMouseClicked(event, objects.window);
                 usernameBox.handleMouseClicked(event, objects.window);
                 passwordBox.handleMouseClicked(event, objects.window);
+                loginMenu.handleMousePressed(event);
                 break;
 
             case sf::Event::MouseButtonReleased:

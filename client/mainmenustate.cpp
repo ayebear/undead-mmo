@@ -11,6 +11,7 @@ MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
     windowSize.y = objects.window.getSize().y;
 
     mainMenu.setUpMenu("data/images/ui/MenuBackground.png",                 //Background file
+                       sf::Color ( 25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),  //Menu size
                        objects                                              //Rendering window
@@ -39,6 +40,10 @@ void MainMenuState::handleEvents()
 
             case sf::Event::MouseMoved:
                 mainMenu.handleMouseMovement(event);
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                mainMenu.handleMousePressed(event);
                 break;
 
             case sf::Event::MouseButtonReleased:

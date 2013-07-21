@@ -19,6 +19,7 @@ struct MenuButton
     //The name of the button
     sf::Text buttonName;
     sf::Rect<int> rect;
+    sf::RectangleShape buttonBackground;
     sf::Color unselectedColor;
     sf::Color selectedColor;
 
@@ -34,7 +35,7 @@ class Menu: public sf::Drawable
         ~Menu();
 
         //Background file, font file, font size, topButtonPos, the window, and the desired view
-        void setUpMenu(const std::string&, short, sf::Vector2f, GameObjects&);
+        void setUpMenu(const std::string&, sf::Color, short, sf::Vector2f, GameObjects&);
 
         void updateMenu();
         void clearButtons();
@@ -44,10 +45,11 @@ class Menu: public sf::Drawable
         void setFontSize(short);
 
         void setTopButtonLocation(sf::Vector2f);
-        void setButtonColors(sf::Color, sf::Color);
+        void setButtonColors(sf::Color);
 
         void addMenuButton(const std::string&);
         void addMenuButton(const std::string&, sf::Vector2f);
+        void createLabel(const std::string&, sf::Vector2f);
 
         //Returns 1 if first button is pressed, 2 if second button is pressed, etc.
         //Returns -1 if window is closed.
@@ -55,6 +57,7 @@ class Menu: public sf::Drawable
 
         void handleMouseMovement(sf::Event&);
         int handleMouseReleased(sf::Event&);
+        void handleMousePressed(sf::Event&);
         int handleKeyPressed(sf::Event&);
         void handleResize(sf::Event&);
 
@@ -69,6 +72,9 @@ class Menu: public sf::Drawable
         //Formatting variables
         sf::Color buttonUnselectedColor;
         sf::Color buttonSelectedColor;
+        sf::Color buttonPressedColor;
+        sf::Color buttonStandardColor;
+        sf::Color buttonHighlightedColor;
         sf::Font* buttonFont;
         short buttonFontSize;
         sf::Vector2f topButtonPos;
@@ -93,6 +99,7 @@ class Menu: public sf::Drawable
 
         //Array of buttons that are on the screen
         std::vector<MenuButton*> menuOptions;
+        std::vector<sf::Text> labels;
 
         GameObjects* objects;
 };
