@@ -126,6 +126,7 @@ void PlayGameState::handleEvents()
                 }
                 theHud.chat.processInput(event.key.code);
                 break;
+
             case sf::Event::MouseButtonPressed:
                 theHud.chat.handleMouseClicked(event, objects.window);
                 break;
@@ -133,10 +134,13 @@ void PlayGameState::handleEvents()
             case sf::Event::MouseWheelMoved:
                 theHud.chat.handleScrolling(event, objects.window);
                 break;
+
             case sf::Event::TextEntered:
                 theHud.chat.processTextEntered(event.text.unicode);
                 break;
+
             case sf::Event::MouseMoved:
+                handleMouseInput();
                 theHud.handleMouseMoved(event, objects.window);
                 break;
 
@@ -261,6 +265,20 @@ void PlayGameState::handleInput()
         }
     }
     elapsedTime = clock.restart().asSeconds();
+}
+
+void PlayGameState::handleMouseInput()
+{
+    if (!hasFocus)
+    {
+        sf::Vector2i mousePos = sf::Mouse::getPosition(objects.window);
+        sf::Vector2f playerPos = myPlayer->getPos();
+        sf::Vector2f viewMousePos = objects.window.mapPixelToCoords(mousePos, gameView);
+        float angle = atan2(viewMousePos.y - playerPos.y, viewMousePos.x - playerPos.x);
+        angle *= (180.0 / 3.14159265358979); // TODO: Make radian/degree converting functions
+        //cout << "Angle: " << angle << endl;
+        myPlayer->setVisualAngle(angle);
+    }
 }
 
 void PlayGameState::takeScreenshot()

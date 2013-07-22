@@ -16,6 +16,7 @@ class EntityLiving: public Entity
         void setAngle(float);
         void setSpeed(float);
         void setMoving(bool);
+        virtual void updateSpriteRotation();
 
     protected:
         void handleCollision();

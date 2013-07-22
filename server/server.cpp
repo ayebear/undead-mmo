@@ -20,7 +20,7 @@ void Server::start()
 
 void Server::printWelcomeMsg()
 {
-    cout << "Undead MMO Server v0.3.5.6 Dev\n\n";
+    cout << "Undead MMO Server v0.3.5.7 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 }
@@ -84,6 +84,9 @@ void Server::processPacket(PacketExtra& packet)
     int type = packet.type;
     switch (type)
     {
+        case Packet::Input:
+            processInputPacket(packet);
+            break;
         case Packet::ChatMessage:
             processChatMessage(packet);
             break;
@@ -100,6 +103,11 @@ void Server::processPacket(PacketExtra& packet)
             cout << "Error: Unknown received packet type. Type = " << type << endl;
             break;
     }
+}
+
+void Server::processInputPacket(PacketExtra& packet)
+{
+    cout << "Received input packet from client #" << packet.sender << endl;
 }
 
 void Server::processChatMessage(PacketExtra& packet)

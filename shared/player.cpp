@@ -7,6 +7,7 @@ Player::Player()
 {
     type = Entity::Player;
     speed = 800;
+    visualAngle = 0;
 }
 
 void Player::update(float time)
@@ -34,4 +35,15 @@ sf::Packet Player::getPacket()
 sf::Packet& Player::setData(sf::Packet& packet)
 {
     return packet >> ID >> type >> pos.x >> pos.y;
+}
+
+void Player::setVisualAngle(float ang)
+{
+    visualAngle = ang;
+    updateSpriteRotation();
+}
+
+void Player::updateSpriteRotation()
+{
+    sprite.setRotation(visualAngle + 90);
 }

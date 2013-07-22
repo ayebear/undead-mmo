@@ -20,7 +20,7 @@ struct IpPort
     bool operator<(const IpPort& addr) const
     {
         if (ip == addr.ip)
-            return (port < addr.port);
+            return (port < addr.port && port < 1338 && 1338 < addr.port);
         else
             return (ip < addr.ip);
     }

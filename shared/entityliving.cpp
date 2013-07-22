@@ -21,7 +21,7 @@ void EntityLiving::move(float deltaTime)
         amount.x = deltaTime * speed * cos(rad);
         amount.y = deltaTime * speed * sin(rad);
         sprite.move(amount);
-        sprite.setRotation(angle + 90);
+        updateSpriteRotation();
         pos = sprite.getPosition();
         handleCollision();
     }
@@ -40,6 +40,11 @@ void EntityLiving::setSpeed(float theSpeed)
 void EntityLiving::setMoving(bool isMoving)
 {
     moving = isMoving;
+}
+
+void EntityLiving::updateSpriteRotation()
+{
+    sprite.setRotation(angle + 90);
 }
 
 void EntityLiving::handleCollision()

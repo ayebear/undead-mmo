@@ -35,6 +35,7 @@ class PlayGameState: public State
         // Functions
         //void ReceiveData();
         void handleInput();
+        void handleMouseInput();
         void takeScreenshot();
         void handleWindowResized(GameObjects&);
 

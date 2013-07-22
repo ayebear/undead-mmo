@@ -41,6 +41,7 @@ class Entity: public sf::Drawable
         virtual sf::Packet& setData(sf::Packet&) = 0;
 
         virtual void setAngle(float) {}
+        virtual void setVisualAngle(float) {}
         virtual void setSpeed(float) {}
         virtual void setMoving(bool) {}
         void setPos(const sf::Vector2f&);

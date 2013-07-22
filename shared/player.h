@@ -15,7 +15,11 @@ class Player: public EntityLiving
         void draw(sf::RenderTarget&, sf::RenderStates) const;
         sf::Packet getPacket();
         sf::Packet& setData(sf::Packet&);
+        void setVisualAngle(float);
+        void updateSpriteRotation();
+
     private:
+        float visualAngle;
 
 };
 

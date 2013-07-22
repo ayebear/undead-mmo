@@ -22,6 +22,7 @@ class Server
         void processAllPackets();
         void update();
 
+        void processInputPacket(PacketExtra&);
         void processPacket(PacketExtra&);
         void processChatMessage(PacketExtra&);
         void processLogIn(PacketExtra&);
