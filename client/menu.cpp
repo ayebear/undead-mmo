@@ -111,6 +111,7 @@ void Menu::handleMousePressed(sf::Event& event)
         if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
         {
             menuOptions[i]->buttonBackground.setFillColor(buttonPressedColor);
+            menuOptions[i]->buttonBackground.setOutlineColor(sf::Color::Black);
         }
         i++;
     }
@@ -121,6 +122,7 @@ int Menu::handleMouseReleased(sf::Event& event)
     unsigned int i = 0;
     while(i < menuOptions.size())
     {
+        menuOptions[i]->buttonBackground.setOutlineColor(sf::Color::White);
         if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
         {
             selection = i + 1;

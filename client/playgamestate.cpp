@@ -136,6 +136,9 @@ void PlayGameState::handleEvents()
             case sf::Event::TextEntered:
                 theHud.chat.processTextEntered(event.text.unicode);
                 break;
+            case sf::Event::MouseMoved:
+                theHud.handleMouseMoved(event, objects.window);
+                break;
 
             case sf::Event::LostFocus:
                 hasFocus = true;

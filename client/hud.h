@@ -7,6 +7,7 @@
 #include "SFML/Graphics.hpp"
 #include "chat.h"
 #include "gameobjects.h"
+#include "statusbar.h"
 
 // This class contains all of the user interface elements for the game.
 class Hud: public sf::Drawable
@@ -19,10 +20,14 @@ class Hud: public sf::Drawable
         void setUp(GameObjects&);
 
         void setWindow(sf::RenderWindow&);
+
+        void handleMouseMoved(sf::Event&, sf::RenderWindow&);
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-        // TODO: I guess we could use getChat() but it is so annoying... And then you still have full access from the outside anyway...
+
         Chat chat;
+        StatusBar healthBar;
+        StatusBar infectionBar;
         // Add other HUD elements later, like mini-map/health/infection/etc.
 
     private:
