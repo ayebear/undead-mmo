@@ -9,7 +9,7 @@
 namespace Packet
 {
     // This is sent with the login packet
-    const int ProtocolVersion = 3;
+    const int ProtocolVersion = 4;
 
     // This type is sent with every packet so the code that receives it can determine how to process it
     // Please refer to the documentation for more information about these types
@@ -20,6 +20,7 @@ namespace Packet
         CreateAccountStatus, // Sent from the server to tell the client if their account was created successfully
         ChatMessage, // Includes private/public/server messages
         EntityUpdate,
+        PlayerEntityId,
         MapData, // All of the logical tiles for the map; is automatically sent from the server on successful login
         MultiPacket,
 
@@ -78,6 +79,19 @@ namespace Packet
             Public = 1,
             Server,
             Private
+        };
+    }
+    namespace InputType
+    {
+        enum Type
+        {
+            StartMoving = 1,
+            StopMoving,
+            ChangeVisualAngle,
+            UsePrimaryItem,
+            UseSecondaryItem,
+            PickupItem,
+            WieldItem
         };
     }
     const std::string LogInMessages[] = {

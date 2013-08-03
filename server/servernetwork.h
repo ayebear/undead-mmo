@@ -8,11 +8,12 @@
 #include "clientmanager.h"
 #include "miscnetwork.h"
 #include "accountdb.h"
+#include "masterentitylist.h"
 
 class ServerNetwork: public Network
 {
     public:
-        ServerNetwork(AccountDb&);
+        ServerNetwork(AccountDb&, ClientManager&, MasterEntityList&);
 
         // Overidden functions
         void receiveUdp();
@@ -34,9 +35,7 @@ class ServerNetwork: public Network
         void sendToClientUdp(sf::Packet&, const IpPort&, bool mustBeLoggedIn = true);
         void udpSend(Client*, sf::Packet&, bool mustBeLoggedIn = true);
 
-        Client* getClientFromUsername(const std::string&);
-        Client* getClientFromId(ClientID);
-
+        // Build and send packets
         void sendServerChatMessage(const std::string&, ClientID exclude = -1);
 
     private:
@@ -51,8 +50,9 @@ class ServerNetwork: public Network
         LinkedQueue<PacketExtra> packets; // Stores all received packets
         sf::TcpListener listener;
         sf::SocketSelector selector;
-        ClientManager clients;
         AccountDb& accounts;
+        ClientManager& clients;
+        MasterEntityList& entList;
 };
 
 #endif

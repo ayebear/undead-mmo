@@ -4,8 +4,10 @@
 
 using namespace std;
 
-ServerNetwork::ServerNetwork(AccountDb& acctDb):
-    accounts(acctDb)
+ServerNetwork::ServerNetwork(AccountDb& a, ClientManager& c, MasterEntityList& e):
+    accounts(a),
+    clients(c),
+    entList(e)
 {
     // Bind the UDP port
     udpSock.bind(serverPort);
@@ -144,23 +146,6 @@ void ServerNetwork::udpSend(Client* c, sf::Packet& packet, bool mustBeLoggedIn)
         //udpSock.send(packet, c->address.ip, c->address.port);
 }
 
-// TODO: Get rid of the address map and this crap, and use some kind of multiple-key map or a multi-comparable class as the key
-Client* ServerNetwork::getClientFromUsername(const string& username)
-{
-    sf::Lock lock(clients.getClientsMutex());
-    for (auto& c: clients.getClientMap())
-    {
-        if (c.second->username == username)
-            return c.second.get();
-    }
-    return nullptr;
-}
-
-Client* ServerNetwork::getClientFromId(ClientID id)
-{
-    return clients.getClientFromId(id);
-}
-
 void ServerNetwork::sendServerChatMessage(const string& msg, ClientID exclude)
 {
     cout << msg << endl;
@@ -193,6 +178,7 @@ void ServerNetwork::removeClient(ClientID id)
         auto clientToRemove = clients.getClientFromId(id);
         if (clientToRemove != nullptr)
         {
+            entList.erase(clientToRemove->playerEid);
             sendServerChatMessage(clientToRemove->username + " has logged out.", id);
             accounts.saveAccount(*(clientToRemove->pData));
             clientToRemove->logOut();

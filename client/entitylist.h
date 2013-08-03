@@ -24,14 +24,16 @@ class EntityList: public sf::Drawable
         EntityList();
         void updateEntity(EID, sf::Packet&);
         Entity* add(int, EID);
-        //void insert(Entity*);
         Entity* insert(Entity*, EID);
         Entity* find(EID);
-        void deleteChar(EID);
+        void erase(EID);
+        void clear();
         void update(float);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
+
     private:
         std::map<EID,Entity*> ents; // stores entity pointers, accessed by searching for ID
+        sf::Texture textures[2];
 };
 
 #endif

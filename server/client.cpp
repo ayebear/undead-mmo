@@ -3,7 +3,8 @@
 Client::Client(ClientID newID, sf::TcpSocket* tcpSockPtr)
     : id(newID),
     tcpSock(tcpSockPtr),
-    loggedIn(false)
+    loggedIn(false),
+    playerEid(0)
 {
     address.ip = tcpSockPtr->getRemoteAddress();
     address.port = tcpSockPtr->getRemotePort();
@@ -21,9 +22,10 @@ void Client::tcpSend(sf::Packet& packet, bool mustBeLoggedIn)
         tcpSock->send(packet);
 }
 
-void Client::logIn(const std::string& usernameStr)
+void Client::logIn(const std::string& usernameStr, EID entId)
 {
     username = usernameStr;
+    playerEid = entId;
     loggedIn = true;
 }
 
@@ -31,4 +33,5 @@ void Client::logOut()
 {
     loggedIn = false;
     username.clear();
+    playerEid = 0;
 }

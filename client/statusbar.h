@@ -43,8 +43,8 @@ class StatusBar: public sf::Drawable
         bool isFull();
         bool isMousedOver(sf::RenderWindow&);
 
-        bool setAlwaysVisible(bool);
-        bool setTextAsPercent(bool);
+        void setAlwaysVisible(bool);
+        void setTextAsPercent(bool);
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

@@ -33,9 +33,11 @@ class PlayGameState: public State
 
     private:
         // Functions
-        //void ReceiveData();
         void handleInput();
         void handleMouseInput();
+        void sendAngleInputPacket();
+        void processEntityPackets();
+        void processPlayerIdPackets();
         void takeScreenshot();
         void handleWindowResized(GameObjects&);
 
@@ -53,8 +55,13 @@ class PlayGameState: public State
         bool hasFocus;
         float elapsedTime;
         sf::Clock FPSTimer;
-        sf::Texture playerTex, zombieTex;
         sf::Vector2i playerInput, oldPlayerInput;
+        bool playerIsMoving;
+        EID myPlayerId;
+        float currentAngle;
+        float lastSentAngle;
+        sf::Clock angleTimer;
+        bool mouseMoved;
 };
 
 #endif

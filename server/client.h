@@ -7,6 +7,7 @@
 #include "network.h"
 #include "miscnetwork.h"
 #include "playerdata.h"
+#include "entity.h"
 
 class Client: sf::NonCopyable
 {
@@ -15,7 +16,7 @@ class Client: sf::NonCopyable
         ~Client();
 
         void tcpSend(sf::Packet&, bool mustBeLoggedIn = true);
-        void logIn(const std::string&);
+        void logIn(const std::string&, EID);
         void logOut();
 
         ClientID id; // This will also be used for the key in the clients map
@@ -24,6 +25,7 @@ class Client: sf::NonCopyable
         std::string username; // Client's username
         bool loggedIn; // They could be connected but not logged in
         std::unique_ptr<PlayerData> pData; // Stores the player data for the client
+        EID playerEid; // The entity ID of the client's player entity
 };
 
 #endif

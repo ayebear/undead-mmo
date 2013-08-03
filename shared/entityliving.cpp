@@ -30,16 +30,19 @@ void EntityLiving::move(float deltaTime)
 void EntityLiving::setAngle(float deg)
 {
     angle = deg;
+    changed = true;
 }
 
 void EntityLiving::setSpeed(float theSpeed)
 {
     speed = theSpeed;
+    changed = true;
 }
 
 void EntityLiving::setMoving(bool isMoving)
 {
     moving = isMoving;
+    changed = true;
 }
 
 void EntityLiving::updateSpriteRotation()
@@ -79,6 +82,7 @@ void EntityLiving::handleCollision()
 
 void EntityLiving::flipAngle()
 {
+    changed = true;
     angle += 90;
     if (angle > 360)
         angle -= 360;

@@ -1,8 +1,10 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "entityalloc.h"
 #include "masterentitylist.h"
+#include <iostream>
+#include "entityalloc.h"
+#include "packet.h"
 
 using namespace std;
 
@@ -20,22 +22,25 @@ Entity* MasterEntityList::add(int type)
 
 Entity* MasterEntityList::insert(Entity* newEnt)
 {
-    entCount++;
-    EID id = 0;
-    if (freeList.empty()) // If the free list is empty
+    if (newEnt != nullptr) // Don't add a null pointer to the list!
     {
-        // Simply append this entity to the end of the master list
-        id = entCount - 1;
-        ents.push_back(newEnt);
+        entCount++;
+        EID id = 0;
+        if (freeList.empty()) // If the free list is empty
+        {
+            // Simply append this entity to the end of the master list
+            id = entCount - 1;
+            ents.push_back(newEnt);
+        }
+        else // If the free list is not empty
+        {
+            // Use the oldest ID from the free list
+            id = freeList.front();
+            freeList.pop_front();
+            ents[id] = newEnt;
+        }
+        newEnt->setID(id);
     }
-    else // If the free list is not empty
-    {
-        // Use the oldest ID from the free list
-        id = freeList.front();
-        freeList.pop_front();
-        ents[id] = newEnt;
-    }
-    newEnt->setID(id);
     return newEnt;
 }
 
@@ -55,6 +60,7 @@ void MasterEntityList::erase(EID id)
         delete ents[id]; // Deallocate
         ents[id] = nullptr; // Set pointer to null
         freeList.push_back(id); // Add the ID to the free list
+        deletedEnts.push_back(id); // Add the ID to the deleted entity list
     }
 }
 
@@ -84,6 +90,8 @@ bool MasterEntityList::cleanUp()
             if (ents[id] != nullptr)
             {
                 ents[id]->setID(entsTmp.size());
+                ents[id]->setChanged(true);
+                deletedEnts.push_back(id);
                 entsTmp.push_back(ents[id]);
             }
         }
@@ -106,4 +114,52 @@ void MasterEntityList::update(float time)
         if (ent != nullptr)
             ent->update(time);
     }
+}
+
+bool MasterEntityList::getAllEntities(sf::Packet& packet)
+{
+    if (entCount > 0)
+    {
+        cout << "getAllEntities()\n";
+        packet << Packet::EntityUpdate;
+        for (auto& ent: ents)
+        {
+            if (ent != nullptr)
+                ent->getData(packet);
+        }
+        return true;
+    }
+    else
+        return false;
+}
+
+bool MasterEntityList::getChangedEntities(sf::Packet& packet)
+{
+    bool anyChanged = false;
+    packet << Packet::EntityUpdate;
+    // Get deleted entities
+    if (!deletedEnts.empty())
+    {
+        for (auto& entId: deletedEnts)
+            packet << entId << -1;
+        deletedEnts.clear();
+    }
+    // Get changed entities
+    if (entCount > 0)
+    {
+        for (auto& ent: ents)
+        {
+            if (ent != nullptr && ent->hasChanged())
+            {
+                ent->getData(packet);
+                ent->setChanged(false);
+                anyChanged = true;
+            }
+        }
+        if (anyChanged)
+            cout << "getChangedEntities()\n";
+        return anyChanged;
+    }
+    else
+        return false;
 }

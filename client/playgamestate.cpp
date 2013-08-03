@@ -10,14 +10,6 @@
 
 PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
-    // Load character textures
-    if (!playerTex.loadFromFile("data/images/characters/character.png"))
-        exit(101);
-    playerTex.setSmooth(true);
-    if (!zombieTex.loadFromFile("data/images/characters/zombie.png"))
-        exit(102);
-    zombieTex.setSmooth(true);
-
     // TODO: Have it download the map from the server instead
     tileMap.loadMapFromFile("data/maps/2.map");
     Entity::setMapSize(tileMap.getMapWidth(), tileMap.getMapHeight());
@@ -29,12 +21,15 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     // and then that gets sent right back to the player who just logged in, and then
     // is allocated on the client.
     // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
-    myPlayer = entList.add(Entity::Player, 1);
-    myPlayer->setTexture(playerTex);
-    myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
+    //myPlayer = entList.add(Entity::Player, 1);
+    //myPlayer->setTexture(playerTex);
+    //myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
+    myPlayer = nullptr;
+    myPlayerId = 0;
+    playerIsMoving = false;
 
     // Add quite a few local test zombies for now
-    for (int x = 2; x < 999; x++)
+    /*for (int x = 2; x < 999; x++)
     {
         auto* zombie = entList.add(Entity::Zombie, x);
         zombie->setTexture(zombieTex);
@@ -43,18 +38,21 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
         zombie->setMoving(true);
         zombie->setSpeed(rand() % 500 + 200);
         zombie->moveTo(sf::Vector2f(500, 500));
-    }
+    }*/
 
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
-    gameView.setCenter(myPlayer->getPos());
+    //gameView.setCenter(myPlayer->getPos());
 
     theHud.setUp(gameObjects);
 
     playerInput.x = 0;
     playerInput.y = 0;
+    currentAngle = 0;
+    lastSentAngle = 0;
 
     playing = true;
     hasFocus = false;
+    mouseMoved = false;
 }
 
 PlayGameState::~PlayGameState()
@@ -75,6 +73,9 @@ void PlayGameState::onPush()
 void PlayGameState::onPop()
 {
     objects.netManager.logOut();
+    myPlayer = nullptr;
+    myPlayerId = 0;
+    entList.clear();
 }
 
 void PlayGameState::handleEvents()
@@ -140,7 +141,7 @@ void PlayGameState::handleEvents()
                 break;
 
             case sf::Event::MouseMoved:
-                handleMouseInput();
+                mouseMoved = true;
                 theHud.handleMouseMoved(event, objects.window);
                 break;
 
@@ -161,15 +162,28 @@ void PlayGameState::handleEvents()
         }
     }
     handleInput();
-
 }
 
 void PlayGameState::update()
 {
+    processEntityPackets();
+
+    if (myPlayer == nullptr)
+        processPlayerIdPackets();
+
     entList.update(elapsedTime);
 
+    if (mouseMoved)
+    {
+        handleMouseInput();
+        mouseMoved = false;
+    }
+
+    sendAngleInputPacket();
+
     // Update the game view center position with the player's current position
-    gameView.setCenter(myPlayer->getPos());
+    if (myPlayer != nullptr)
+        gameView.setCenter(myPlayer->getPos());
 
     sf::Vector2f viewSize(gameView.getSize());
     sf::Vector2f viewCenter(gameView.getCenter());
@@ -248,20 +262,24 @@ void PlayGameState::handleInput()
 
         if (playerInput != oldPlayerInput)
         {
+            sf::Packet inputPacket;
+            inputPacket << Packet::Input;
+
             if (playerInput.x != 0 || playerInput.y != 0)
             {
-                myPlayer->setAngle(degrees);
-                myPlayer->setMoving(true);
+                //myPlayer->setAngle(degrees);
+                //myPlayer->setMoving(true);
+                playerIsMoving = true;
+                inputPacket << Packet::InputType::StartMoving << degrees;
             }
             else
             {
-                degrees = 0;
-                myPlayer->setMoving(false);
+                //myPlayer->setMoving(false);
+                playerIsMoving = false;
+                inputPacket << Packet::InputType::StopMoving;
             }
 
-            sf::Packet playerPacket;
-            playerPacket << Packet::Input << myPlayer->isMoving() << degrees;
-            objects.netManager.sendPacketUdp(playerPacket);
+            objects.netManager.sendPacketUdp(inputPacket);
         }
     }
     elapsedTime = clock.restart().asSeconds();
@@ -269,8 +287,9 @@ void PlayGameState::handleInput()
 
 void PlayGameState::handleMouseInput()
 {
-    if (!hasFocus)
+    if (!hasFocus && myPlayer != nullptr)
     {
+        // Handle aiming with mouse
         sf::Vector2i mousePos = sf::Mouse::getPosition(objects.window);
         sf::Vector2f playerPos = myPlayer->getPos();
         sf::Vector2f viewMousePos = objects.window.mapPixelToCoords(mousePos, gameView);
@@ -278,7 +297,43 @@ void PlayGameState::handleMouseInput()
         angle *= (180.0 / 3.14159265358979); // TODO: Make radian/degree converting functions
         //cout << "Angle: " << angle << endl;
         myPlayer->setVisualAngle(angle);
+        currentAngle = angle;
     }
+}
+
+void PlayGameState::sendAngleInputPacket()
+{
+    // Update the server with your player's visual angle up to 5 times per second
+    if (myPlayer != nullptr && angleTimer.getElapsedTime().asSeconds() >= 0.2 && lastSentAngle != currentAngle)
+    {
+        sf::Packet anglePacket;
+        anglePacket << Packet::Input << Packet::InputType::ChangeVisualAngle << currentAngle;
+        objects.netManager.sendPacketUdp(anglePacket);
+        lastSentAngle = currentAngle;
+        angleTimer.restart();
+    }
+}
+
+void PlayGameState::processEntityPackets()
+{
+    while (objects.netManager.arePackets(Packet::EntityUpdate))
+    {
+        EID entId;
+        sf::Packet& packet = objects.netManager.getPacket(Packet::EntityUpdate);
+        while (packet >> entId)
+            entList.updateEntity(entId, packet);
+        objects.netManager.popPacket(Packet::EntityUpdate);
+    }
+}
+
+void PlayGameState::processPlayerIdPackets()
+{
+    while (objects.netManager.arePackets(Packet::PlayerEntityId))
+    {
+        objects.netManager.getPacket(Packet::PlayerEntityId) >> myPlayerId;
+        objects.netManager.popPacket(Packet::PlayerEntityId);
+    }
+    myPlayer = entList.find(myPlayerId);
 }
 
 void PlayGameState::takeScreenshot()

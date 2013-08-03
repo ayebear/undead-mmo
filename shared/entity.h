@@ -17,6 +17,7 @@ class Entity: public sf::Drawable
         virtual ~Entity();
         const EID getID() const;
         void setID(EID);
+        int getType() const;
 
         // These are the functions that all entities will have (Which need to be defined by classes which inherit from Entity)
         virtual void update(float) = 0;
@@ -31,21 +32,26 @@ class Entity: public sf::Drawable
         // This will be great for optimizing stuff, and doubly acts as a way to separate dynamic/static entities!
         // It also can be false even with dynamic entities.
         // Note that there is already a bool variable for this in the EntityLiving class. We just need this function in the Entity class to access it.
-        virtual bool isMoving();
+        virtual bool isMoving() const;
 
         // For setting/getting if the entity is ready or not
         void setReady(bool);
-        const bool getReady() const;
+        bool getReady() const;
 
-        virtual sf::Packet getPacket() = 0;
-        virtual sf::Packet& setData(sf::Packet&) = 0;
+        // For setting/getting if the entity state has changed
+        void setChanged(bool);
+        bool hasChanged() const;
+
+        virtual void getData(sf::Packet&) = 0; // get data from entity into a packet
+        virtual void setData(sf::Packet&) = 0; // set data from a packet into entity
 
         virtual void setAngle(float) {}
+        virtual float getVisualAngle() const;
         virtual void setVisualAngle(float) {}
         virtual void setSpeed(float) {}
         virtual void setMoving(bool) {}
         void setPos(const sf::Vector2f&);
-        const sf::Vector2f getPos() const;
+        const sf::Vector2f& getPos() const;
         virtual void moveTo(const sf::Vector2f&);
 
         static void setMapSize(int, int);
@@ -55,13 +61,14 @@ class Entity: public sf::Drawable
         {
             Player = 0,
             Zombie,
-            Weapon
+            Item
         };
 
     protected:
         // We could also have a mutex for use with threads, but this is good for determining
         // whether the entity is fully initialized and its textures are all set and stuff
         bool ready;
+        bool changed;
         // Contains the entity's unique ID
         EID ID;
         // Represents what type the entity is
@@ -73,9 +80,5 @@ class Entity: public sf::Drawable
         static int mapHeight;
 
 };
-
-sf::Packet& operator<<(sf::Packet&, const Entity&);
-
-sf::Packet& operator>>(sf::Packet&, Entity&);
 
 #endif

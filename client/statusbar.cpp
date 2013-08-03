@@ -253,12 +253,12 @@ bool StatusBar::isMousedOver(sf::RenderWindow& window)
     return mousedOver;
 }
 
-bool StatusBar::setAlwaysVisible(bool textVisible)
+void StatusBar::setAlwaysVisible(bool textVisible)
 {
     textAlwaysShown = textVisible;
 }
 
-bool StatusBar::setTextAsPercent(bool valsAsPercent)
+void StatusBar::setTextAsPercent(bool valsAsPercent)
 {
     valuesAsPercent = valsAsPercent;
 }

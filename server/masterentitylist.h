@@ -40,11 +40,17 @@ class MasterEntityList
         void erase(EID);
         bool cleanUp();
         void update(float);
+
+        // These only return true if they modified the packet
+        bool getAllEntities(sf::Packet&);
+        bool getChangedEntities(sf::Packet&);
+
     private:
         static unsigned int entCount;
         static const int cleanUpRatio;
         std::vector <Entity*> ents; // all of the entity pointers are stored here, and accessed by ID directly
         std::list <EID> freeList; // unused IDs go here
+        std::vector <EID> deletedEnts; // used for sending which entities have been deleted to the clients
 };
 
 #endif

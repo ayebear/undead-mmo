@@ -16,11 +16,14 @@ class Server
     public:
         Server();
         void start();
+
     private:
-        void printWelcomeMsg();
+        void setup();
         void mainLoop();
         void processAllPackets();
         void update();
+
+        void sendChangedEntities();
 
         void processInputPacket(PacketExtra&);
         void processPacket(PacketExtra&);
@@ -34,8 +37,10 @@ class Server
         float elapsedTime;
         sf::Clock clock;
         ServerNetwork netManager;
-        MasterEntityList entList;
+        sf::Thread packetProcessing;
         AccountDb accounts;
+        ClientManager clients;
+        MasterEntityList entList;
 };
 
 #endif

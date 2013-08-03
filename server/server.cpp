@@ -8,29 +8,47 @@ using namespace std;
 const float Server::desiredFrameTime = 1.0 / 120.0;
 
 Server::Server():
-    netManager(accounts)
+    netManager(accounts, clients, entList),
+    packetProcessing(&Server::processAllPackets, this)
 {
 }
 
 void Server::start()
 {
-    printWelcomeMsg();
+    cout << "setup()\n";
+    setup();
+    cout << "mainLoop()\n";
     mainLoop();
+    cout << "start() has ended.\n";
 }
 
-void Server::printWelcomeMsg()
+void Server::setup()
 {
-    cout << "Undead MMO Server v0.3.5.7 Dev\n\n";
+    // First release will be v0.1.0 Dev
+    cout << "Undead MMO Server v0.0.9.9 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
+
+    Entity::setMapSize(1024, 1024); // Until we get a tile map setup on the server
+
+    netManager.launchThreads();
+    packetProcessing.launch();
+
+    // Spawn some test zombies
+    for (int x = 0; x < 5; x++)
+    {
+        auto* zombie = entList.add(Entity::Zombie);
+        //zombie->setTexture(zombieTex);
+        zombie->setPos(sf::Vector2f(rand() % 1024, rand() % 1024));
+        zombie->setAngle(rand() % 360);
+        zombie->setMoving(true);
+        zombie->setSpeed(rand() % 100 + 50);
+        //zombie->moveTo(sf::Vector2f(500, 500));
+    }
 }
 
 void Server::mainLoop()
 {
-    netManager.launchThreads();
-    sf::Thread packetProcessing(&Server::processAllPackets, this);
-    packetProcessing.launch();
-
     while (true)
     {
         // Update the current game state, also send some of this info to the clients
@@ -40,7 +58,12 @@ void Server::mainLoop()
         elapsedTime = clock.restart().asSeconds();
 
         // Sleep some if everything is caught up, otherwise skip over this right away
-        sf::sleep(sf::seconds(desiredFrameTime - elapsedTime));
+        // (If this is skipped, it means the server is running BELOW the desired FPS)
+        float sleepTime = desiredFrameTime - elapsedTime;
+        if (sleepTime > 0)
+            sf::sleep(sf::seconds(sleepTime));
+        //else
+            //cout << "WARNING: Server running below desired FPS!\n";
     }
 }
 
@@ -77,6 +100,15 @@ void Server::update()
 {
     // TODO: Iterate through the entity grid instead
     entList.update(elapsedTime);
+    sendChangedEntities();
+}
+
+void Server::sendChangedEntities()
+{
+    // Later this will be client-specific as soon as we have spatial partitioning
+    sf::Packet changedEntitiesPacket;
+    if (entList.getChangedEntities(changedEntitiesPacket))
+        netManager.sendToAllUdp(changedEntitiesPacket);
 }
 
 void Server::processPacket(PacketExtra& packet)
@@ -108,6 +140,40 @@ void Server::processPacket(PacketExtra& packet)
 void Server::processInputPacket(PacketExtra& packet)
 {
     cout << "Received input packet from client #" << packet.sender << endl;
+    Client* senderClient = clients.getClientFromId(packet.sender);
+    if (senderClient != nullptr && senderClient->loggedIn)
+    {
+        Entity* playerEnt = entList.find(senderClient->playerEid);
+        int inputCode = -1;
+        packet.data >> inputCode;
+        switch (inputCode)
+        {
+            case Packet::InputType::StartMoving:
+            {
+                float angle;
+                if (packet.data >> angle)
+                {
+                    cout << "Entity ID: " << playerEnt->getID() << ", Angle: " << angle << ", Has changed: " << playerEnt->hasChanged() << ".\n";
+                    playerEnt->setAngle(angle);
+                    playerEnt->setMoving(true);
+                }
+            }
+                break;
+            case Packet::InputType::StopMoving:
+                playerEnt->setMoving(false);
+                break;
+            case Packet::InputType::ChangeVisualAngle:
+            {
+                float angle;
+                if (packet.data >> angle)
+                    playerEnt->setVisualAngle(angle);
+            }
+                break;
+            default:
+                cout << inputCode << " is an unknown or not yet implemented code.\n";
+                break;
+        }
+    }
 }
 
 void Server::processChatMessage(PacketExtra& packet)
@@ -115,7 +181,7 @@ void Server::processChatMessage(PacketExtra& packet)
     int subType = -1;
     if (packet.data >> subType)
     {
-        Client* senderClient = netManager.getClientFromId(packet.sender);
+        Client* senderClient = clients.getClientFromId(packet.sender);
         if (senderClient != nullptr)
         {
             string msgPrefix = senderClient->username + ": ";
@@ -138,7 +204,7 @@ void Server::processChatMessage(PacketExtra& packet)
                 // Process the username
                 string username;
                 packet.data >> username;
-                Client* c = netManager.getClientFromUsername(username);
+                Client* c = clients.getClientFromUsername(username);
                 string msg;
                 sf::Packet packetToSend;
                 if (c != nullptr)
@@ -191,20 +257,37 @@ void Server::processLogIn(PacketExtra& packet)
             if (dbLogInStatus == Packet::LogInCode::Successful)
             {
                 bool userLoggedIn = false;
-                Client* tmpClient = netManager.getClientFromUsername(username);
+                Client* tmpClient = clients.getClientFromUsername(username);
                 if (tmpClient != nullptr)
                     userLoggedIn = tmpClient->loggedIn;
                 // Make sure the user is NOT already logged in
                 if (!userLoggedIn)
                 {
                     loginStatusCode = Packet::LogInCode::Successful; // The client has successfully logged in!
-                    Client* c = netManager.getClientFromId(packet.sender);
+                    Client* c = clients.getClientFromId(packet.sender);
                     if (c != nullptr)
                     {
-                        // Set the client's username and logged in status
-                        c->username = username;
-                        c->loggedIn = true;
+                        // Make a new player entity for this client
+                        Entity* newPlayer = entList.add(Entity::Type::Player);
+                        EID newPlayerId = 0;
+                        if (newPlayer != nullptr)
+                        {
+                            newPlayerId = newPlayer->getID();
+                            newPlayer->setPos(sf::Vector2f(rand() % 100 + 50, rand() % 100 + 50));
+                        }
+                        cout << "New player entity, ID = " << newPlayerId << endl;
+                        // TODO: Setup the player entity data like position and/or health from the account database
+                        // Set the client's username and logged in status, also attach the new entity
+                        c->logIn(username, newPlayerId);
                         c->pData.swap(pData);
+                        // Send the new player entity ID to the player
+                        sf::Packet playerIdPacket;
+                        playerIdPacket << Packet::PlayerEntityId << newPlayerId;
+                        c->tcpSend(playerIdPacket);
+                        // Send all of the entities to the player
+                        sf::Packet allEntsPacket;
+                        if (entList.getAllEntities(allEntsPacket))
+                            c->tcpSend(allEntsPacket);
                     }
                 }
                 else

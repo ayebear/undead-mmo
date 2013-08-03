@@ -55,6 +55,18 @@ Client* ClientManager::getClientFromId(ClientID id)
         return nullptr;
 }
 
+// TODO: Get rid of the address map and this crap, and use some kind of multiple-key map or a multi-comparable class as the key
+Client* ClientManager::getClientFromUsername(const string& username)
+{
+    sf::Lock lock(clientsMutex);
+    for (auto& c: clients)
+    {
+        if (c.second->username == username)
+            return c.second.get();
+    }
+    return nullptr;
+}
+
 ClientManager::ClientMap& ClientManager::getClientMap()
 {
     return clients;

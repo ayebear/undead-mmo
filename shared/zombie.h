@@ -18,8 +18,8 @@ class Zombie: public EntityLiving
         void update(float);
         bool collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
-        sf::Packet getPacket();
-        sf::Packet& setData(sf::Packet&);
+        void getData(sf::Packet&);
+        void setData(sf::Packet&);
     private:
 };
 

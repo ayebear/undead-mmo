@@ -20,6 +20,7 @@ class ClientManager
         ClientID getIdFromAddress(const IpPort&);
         Client* getClientFromAddress(const IpPort&);
         Client* getClientFromId(ClientID);
+        Client* getClientFromUsername(const std::string&);
         ClientMap& getClientMap();
         sf::Mutex& getClientsMutex();
 
