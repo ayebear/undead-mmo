@@ -12,6 +12,8 @@ client
     The code for the actual game that people can play.
 data
     Resources that the client loads, such as textures and audio.
+serverdata
+    Resources that the server loads, such as map files.
 doc
     Documentation on everything.
 lib

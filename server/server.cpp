@@ -11,21 +11,13 @@ Server::Server():
     netManager(accounts, clients, entList),
     packetProcessing(&Server::processAllPackets, this)
 {
-}
-
-void Server::start()
-{
-    cout << "setup()\n";
     setup();
-    cout << "mainLoop()\n";
-    mainLoop();
-    cout << "start() has ended.\n";
 }
 
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.9.9 Dev\n\n";
+    cout << "Undead MMO Server v0.0.9.13 Dev\n\n";
     cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
     //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
 
@@ -35,7 +27,7 @@ void Server::setup()
     packetProcessing.launch();
 
     // Spawn some test zombies
-    for (int x = 0; x < 5; x++)
+    for (int x = 0; x < 10; x++)
     {
         auto* zombie = entList.add(Entity::Zombie);
         //zombie->setTexture(zombieTex);
@@ -47,7 +39,7 @@ void Server::setup()
     }
 }
 
-void Server::mainLoop()
+void Server::start()
 {
     while (true)
     {
@@ -153,7 +145,7 @@ void Server::processInputPacket(PacketExtra& packet)
                 float angle;
                 if (packet.data >> angle)
                 {
-                    cout << "Entity ID: " << playerEnt->getID() << ", Angle: " << angle << ", Has changed: " << playerEnt->hasChanged() << ".\n";
+                    cout << "Entity ID: " << playerEnt->getID() << ", Angle: " << angle << ".\n";
                     playerEnt->setAngle(angle);
                     playerEnt->setMoving(true);
                 }
@@ -273,10 +265,9 @@ void Server::processLogIn(PacketExtra& packet)
                         if (newPlayer != nullptr)
                         {
                             newPlayerId = newPlayer->getID();
-                            newPlayer->setPos(sf::Vector2f(rand() % 100 + 50, rand() % 100 + 50));
+                            newPlayer->setPos(sf::Vector2f(pData->positionX, pData->positionY));
                         }
                         cout << "New player entity, ID = " << newPlayerId << endl;
-                        // TODO: Setup the player entity data like position and/or health from the account database
                         // Set the client's username and logged in status, also attach the new entity
                         c->logIn(username, newPlayerId);
                         c->pData.swap(pData);

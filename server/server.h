@@ -19,7 +19,6 @@ class Server
 
     private:
         void setup();
-        void mainLoop();
         void processAllPackets();
         void update();
 

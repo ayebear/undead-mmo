@@ -7,7 +7,9 @@ PlayerData::PlayerData()
     : salt(0),
     banned(false),
     health(0),
-    level(0)
+    level(0),
+    positionX(100),
+    positionY(100)
 {
 }
 
@@ -24,6 +26,8 @@ void PlayerData::loadFromConfig(ConfigFile& cfg)
     health = cfg.getOption("health").asInt();
     level = cfg.getOption("level").asInt();
     banned = cfg.getOption("banned").asBool();
+    positionX = cfg.getOption("positionX").asDouble();
+    positionY = cfg.getOption("positionY").asDouble();
 }
 
 void PlayerData::saveToConfig(ConfigFile& cfg) const
@@ -34,4 +38,6 @@ void PlayerData::saveToConfig(ConfigFile& cfg) const
     cfg.getOption("health").setInt(health);
     cfg.getOption("level").setInt(level);
     cfg.getOption("banned").setBool(banned);
+    cfg.getOption("positionX").setDouble(positionX);
+    cfg.getOption("positionY").setDouble(positionY);
 }

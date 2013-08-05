@@ -32,6 +32,7 @@ class PlayerData
         bool banned;
         int health;
         int level;
+        float positionX, positionY;
 
     private:
 };

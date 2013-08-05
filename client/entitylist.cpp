@@ -43,11 +43,17 @@ void EntityList::updateEntity(EID id, sf::Packet& packet)
         // It would be best if each client could keep track of it to lessen the load on the server.
         // Maybe some kind of timeout or out of range of the client's entity area.
         if (type == -1)
+        {
             erase(id); // Delete the entity
+            cout << "Deleted entity " << id << endl;
+        }
         else
         {
             if (ent->getType() == type)
+            {
                 ent->setData(packet); // Update the entity with data from the packet
+                //cout << "Set entity " << ent->getID() << " with data from packet.\n";
+            }
             else
                 cout << "ERROR: Non-matching entity type update received!\n";
         }

@@ -140,8 +140,14 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
     // Get deleted entities
     if (!deletedEnts.empty())
     {
+        cout << "Deleted entities: ";
         for (auto& entId: deletedEnts)
+        {
+            cout << entId << " ";
             packet << entId << -1;
+            anyChanged = true;
+        }
+        cout << endl;
         deletedEnts.clear();
     }
     // Get changed entities
@@ -156,8 +162,8 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
                 anyChanged = true;
             }
         }
-        if (anyChanged)
-            cout << "getChangedEntities()\n";
+        /*if (anyChanged)
+            cout << "getChangedEntities()\n";*/
         return anyChanged;
     }
     else
