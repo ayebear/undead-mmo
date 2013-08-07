@@ -249,14 +249,12 @@ const string& ClientNetwork::getUsername()
 // This initiates a TCP socket connection to a server
 bool ClientNetwork::connectToServer()
 {
-    tcpSock.setBlocking(true);
     if (connected)
     {
         tcpSock.disconnect();
         connected = false;
     }
     sf::Socket::Status status = tcpSock.connect(serverAddress, serverPort);
-    tcpSock.setBlocking(false);
     connected = (status == sf::Socket::Done);
     if (connected)
         launchThreads();
