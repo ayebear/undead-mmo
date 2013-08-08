@@ -57,6 +57,8 @@
 		<Unit filename="client/mainmenustate.h" />
 		<Unit filename="client/menu.cpp" />
 		<Unit filename="client/menu.h" />
+		<Unit filename="client/messagestate.cpp" />
+		<Unit filename="client/messagestate.h" />
 		<Unit filename="client/playgamestate.cpp" />
 		<Unit filename="client/playgamestate.h" />
 		<Unit filename="client/scrollbar.cpp" />
@@ -67,6 +69,8 @@
 		<Unit filename="client/stateaction.h" />
 		<Unit filename="client/statemanager.cpp" />
 		<Unit filename="client/statemanager.h" />
+		<Unit filename="client/statusbar.cpp" />
+		<Unit filename="client/statusbar.h" />
 		<Unit filename="client/textitem.cpp" />
 		<Unit filename="client/textitem.h" />
 		<Unit filename="client/textitemlist.cpp" />
@@ -76,12 +80,16 @@
 		<Unit filename="other/linkedqueue.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
+		<Unit filename="other/stringutils.cpp" />
+		<Unit filename="other/stringutils.h" />
 		<Unit filename="shared/entity.cpp" />
 		<Unit filename="shared/entity.h" />
 		<Unit filename="shared/entityalloc.cpp" />
 		<Unit filename="shared/entityalloc.h" />
 		<Unit filename="shared/entityliving.cpp" />
 		<Unit filename="shared/entityliving.h" />
+		<Unit filename="shared/ipport.cpp" />
+		<Unit filename="shared/ipport.h" />
 		<Unit filename="shared/map.cpp" />
 		<Unit filename="shared/map.h" />
 		<Unit filename="shared/network.cpp" />

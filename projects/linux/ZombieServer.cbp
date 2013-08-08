@@ -38,8 +38,12 @@
 		<Unit filename="other/linkedqueue.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
+		<Unit filename="other/stringutils.cpp" />
+		<Unit filename="other/stringutils.h" />
 		<Unit filename="server/accountdb.cpp" />
 		<Unit filename="server/accountdb.h" />
+		<Unit filename="server/accountindex.cpp" />
+		<Unit filename="server/accountindex.h" />
 		<Unit filename="server/client.cpp" />
 		<Unit filename="server/client.h" />
 		<Unit filename="server/clientmanager.cpp" />
@@ -62,6 +66,8 @@
 		<Unit filename="shared/entityalloc.h" />
 		<Unit filename="shared/entityliving.cpp" />
 		<Unit filename="shared/entityliving.h" />
+		<Unit filename="shared/ipport.cpp" />
+		<Unit filename="shared/ipport.h" />
 		<Unit filename="shared/map.cpp" />
 		<Unit filename="shared/map.h" />
 		<Unit filename="shared/network.cpp" />

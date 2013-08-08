@@ -8,6 +8,7 @@
 #include "linkedqueue.h"
 #include "network.h"
 #include "packet.h"
+#include "ipport.h"
 
 /*
 This class handles all of the client side networking.
@@ -57,7 +58,7 @@ class ClientNetwork: public Network
 
         // Client only needs a single TCP socket because it is only communicating with the server
         sf::TcpSocket tcpSock;
-        sf::IpAddress serverAddress; // TODO: Use an IpPort combo instead
+        IpPort serverAddress;
         bool connected;
 
         std::string currentUsername;

@@ -12,7 +12,8 @@ ClientNetwork::ClientNetwork()
     udpSock.bind(clientPort);
 
     connected = false;
-    serverAddress = sf::IpAddress::LocalHost;
+    serverAddress.ip = sf::IpAddress::LocalHost;
+    serverAddress.port = serverPort;
     tcpSock.setBlocking(true);
 }
 
@@ -29,11 +30,14 @@ void ClientNetwork::receiveUdp()
     while (udpThreadRunning && udpSock.getLocalPort())
     {
         sf::Packet packet;
-        sf::IpAddress address;
-        unsigned short port;
+        IpPort address;
         // Will block on this line until a packet is received...
-        if (udpSock.receive(packet, address, port) == sf::Socket::Done)
-            storePacket(packet);
+        if (udpSock.receive(packet, address.ip, address.port) == sf::Socket::Done)
+        {
+            // Only accept packets from the server!
+            if (address == serverAddress)
+                storePacket(packet);
+        }
     }
     connected = false;
     udpThreadRunning = false;
@@ -102,7 +106,7 @@ void ClientNetwork::sendPacketTcp(sf::Packet& packet)
 void ClientNetwork::sendPacketUdp(sf::Packet& packet)
 {
     if (connected)
-        udpSock.send(packet, serverAddress, serverPort);
+        udpSock.send(packet, serverAddress.ip, serverAddress.port);
 }
 
 void ClientNetwork::sendChatMessage(const string& msg)
@@ -127,12 +131,13 @@ void ClientNetwork::sendChatMessage(const string& msg, const string& username)
 
 void ClientNetwork::setServerAddress(const sf::IpAddress& address)
 {
-    serverAddress = address;
+    serverAddress.ip = address;
 }
 
+// TODO: Use an ip/port combo instead so that a single IP can host multiple servers
 int ClientNetwork::logIn(const sf::IpAddress& address, const string& username, const string& password)
 {
-    serverAddress = address;
+    serverAddress.ip = address;
     return logIn(username, password);
 }
 
@@ -182,7 +187,7 @@ int ClientNetwork::logIn(const string& username, const string& password)
 
 int ClientNetwork::createAccount(const sf::IpAddress& address, const string& username, const string& password)
 {
-    serverAddress = address;
+    serverAddress.ip = address;
     return createAccount(username, password);
 }
 
@@ -231,7 +236,6 @@ int ClientNetwork::createAccount(const string& username, const string& password)
 
 void ClientNetwork::logOut()
 {
-    cout << "Logged out from server.\n";
     /*sf::Packet logOutPacket;
     logOutPacket << Packet::LogOut;
     tcpSock.send(logOutPacket);*/
@@ -239,6 +243,7 @@ void ClientNetwork::logOut()
     tcpThreadRunning = false;
     connected = false;
     clearAllPackets();
+    cout << "Logged out from server.\n";
 }
 
 const string& ClientNetwork::getUsername()
@@ -254,7 +259,7 @@ bool ClientNetwork::connectToServer()
         tcpSock.disconnect();
         connected = false;
     }
-    sf::Socket::Status status = tcpSock.connect(serverAddress, serverPort);
+    sf::Socket::Status status = tcpSock.connect(serverAddress.ip, serverAddress.port);
     connected = (status == sf::Socket::Done);
     if (connected)
         launchThreads();
@@ -269,14 +274,14 @@ const string ClientNetwork::getStatusString()
     else
     {
         status = "Currently connected to: ";
-        status += serverAddress.toString();
+        status += serverAddress.ip.toString();
     }
     return status;
 }
 
 bool ClientNetwork::validAddress(sf::IpAddress address)
 {
-    return (address == serverAddress);
+    return (address == serverAddress.ip);
 }
 
 bool ClientNetwork::isConnected()

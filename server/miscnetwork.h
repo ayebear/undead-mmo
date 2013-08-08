@@ -1,6 +1,8 @@
 #ifndef MISCNETWORK_H
 #define MISCNETWORK_H
 
+#include "ipport.h"
+
 typedef unsigned int ClientID;
 
 // Used for storing packets along with necessary information such as the sender and type of packet
@@ -11,21 +13,6 @@ struct PacketExtra
     sf::Packet data;
     ClientID sender;
     int type;
-};
-
-// Used for storing an IP address and port; is also usable in associative containers
-struct IpPort
-{
-    IpPort(): port(Network::clientPort) {}
-    bool operator<(const IpPort& addr) const
-    {
-        if (ip == addr.ip)
-            return (port < addr.port && port < 1338 && 1338 < addr.port);
-        else
-            return (ip < addr.ip);
-    }
-    sf::IpAddress ip;
-    unsigned short port;
 };
 
 #endif
