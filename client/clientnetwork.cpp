@@ -242,6 +242,7 @@ void ClientNetwork::logOut()
     tcpSock.disconnect();
     tcpThreadRunning = false;
     connected = false;
+    tcpThread.terminate();
     clearAllPackets();
     cout << "Logged out from server.\n";
 }

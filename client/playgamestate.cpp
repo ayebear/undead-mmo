@@ -110,18 +110,6 @@ void PlayGameState::handleEvents()
                         takeScreenshot();
                         break;
 
-                    case sf::Keyboard::Key::Y:
-                    {
-                        // If player is not typing in the chat
-                        if (!theHud.chat.getInput())
-                        {
-                            StateArgs someArgs;
-                            someArgs.push_back("This is just a test error...");
-                            action.pushState(StateType::Error, someArgs);
-                        }
-                        break;
-                    }
-
                     default:
                         break;
                 }
