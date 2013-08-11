@@ -28,8 +28,8 @@ class EntityLiving: public Entity
         float speed; // in pixels per second
         bool moving;
 
-        int currentHealth; // current health
-        int baseHealth; // max health
+        sf::Int32 currentHealth; // current health
+        sf::Int32 baseHealth; // max health
 };
 
 #endif

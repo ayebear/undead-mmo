@@ -33,11 +33,13 @@ class PlayGameState: public State
 
     private:
         // Functions
+        void updateGameView();
         void handleInput();
         void handleMouseInput();
         void sendAngleInputPacket();
         void processEntityPackets();
         void processPlayerIdPackets();
+        void processMapDataPackets();
         void takeScreenshot();
         void handleWindowResized(GameObjects&);
 

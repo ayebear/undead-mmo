@@ -82,8 +82,11 @@ void EntityLiving::handleCollision()
 
 void EntityLiving::flipAngle()
 {
-    changed = true;
-    angle += 90;
-    if (angle > 360)
-        angle -= 360;
+    if (type == Zombie)
+    {
+        changed = true;
+        angle += 90;
+        if (angle > 360)
+            angle -= 360;
+    }
 }

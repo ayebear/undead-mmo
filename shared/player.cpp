@@ -27,7 +27,7 @@ void Player::draw(sf::RenderTarget& window, sf::RenderStates states) const
 
 void Player::getData(sf::Packet& packet)
 {
-    packet << ID << type << pos.x << pos.y << angle << speed << moving << currentHealth << baseHealth << visualAngle;
+    packet << id << type << pos.x << pos.y << angle << speed << moving << currentHealth << baseHealth << visualAngle;
 }
 
 void Player::setData(sf::Packet& packet)

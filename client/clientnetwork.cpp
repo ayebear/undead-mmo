@@ -76,6 +76,7 @@ void ClientNetwork::popPacket(int type)
 
 void ClientNetwork::clearPackets(int type)
 {
+    cout << "Cleared " << packets[type].size() << " packets of type " << type << ".\n";
     packets[type].clear();
 }
 
@@ -84,6 +85,7 @@ void ClientNetwork::clearAllPackets()
     // Clear all packets
     for (auto& p: packets)
         p.clear();
+    cout << "Cleared ALL packets.\n";
 }
 
 void ClientNetwork::storePacket(sf::Packet& packet)
@@ -162,7 +164,7 @@ int ClientNetwork::logIn(const string& username, const string& password)
         // Wait until you get a response from the server for your log in request
         // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
         //      This would be nice to see a logging in thing of some sort.
-        int timeout = 10;
+        int timeout = 60;
         sf::Clock loginTimer;
         while (!arePackets(Packet::LogInStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
             sf::sleep(sf::milliseconds(10));

@@ -3,6 +3,7 @@
 
 #include "tile.h"
 #include <iostream>
+#include <memory>
 
 std::vector<sf::Texture> Tile::textures;
 
@@ -28,7 +29,7 @@ void Tile::loadTileTextures()
 
     std::cout << "Loading tile textures...\n";
     // Load the entire image into memory
-    sf::Image* tilesImage = new sf::Image;
+    std::unique_ptr<sf::Image> tilesImage(new sf::Image);
     tilesImage->loadFromFile("data/images/tiles/tiles.png");
     // Split up the image into separate textures on your GPU
     int tileCount = 1024 / tileWidth; // 16 = 1024 / 128
@@ -44,8 +45,6 @@ void Tile::loadTileTextures()
             textures[y * tileCount + x].setSmooth(false);
         }
     }
-    // Delete the image from memory
-    delete tilesImage;
     std::cout << "Done loading tile textures!\n";
 }
 
@@ -53,10 +52,7 @@ void Tile::setID(TileID tileID)
 {
     ID = tileID;
 
-    if (ID < 128)
-        walkable = true;
-    else
-        walkable = false;
+    walkable = (ID < 128);
 
     if (ID < textures.size())
         sprite.setTexture(textures[ID]);

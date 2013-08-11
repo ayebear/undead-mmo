@@ -6,6 +6,13 @@
 using namespace std;
 
 const float Server::desiredFrameTime = 1.0 / 120.0;
+const float Server::frameTimeTolerance = -10.0 / 120.0;
+
+const ConfigFile::ConfigMap Server::defaultOptions = {
+    {"port", Option("1337")},
+    {"map", Option("serverdata/maps/2.map")},
+    {"maxZombies", Option("20")}
+};
 
 Server::Server():
     netManager(accounts, clients, entList),
@@ -17,17 +24,26 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.9.13 Dev\n\n";
-    cout << "The server's LAN IP Address is: " << sf::IpAddress::getLocalAddress() << endl;
-    //cout << "The server's WAN IP Address is: " << sf::IpAddress::getPublicAddress() << endl;
+    cout << "Undead MMO Server v0.0.10.4 Dev\n\n";
+    cout << "The server's LAN IP address is: " << sf::IpAddress::getLocalAddress() << "\n\n";
+    //cout << "The server's WAN IP address is: " << sf::IpAddress::getPublicAddress() << endl;
 
-    Entity::setMapSize(1024, 1024); // Until we get a tile map setup on the server
+    // Load the config file
+    config.setDefaultOptions(defaultOptions);
+    config.loadConfigFile("server.cfg");
 
+    // Load the map file (in the future this can also be randomly generated)
+    tileMap.loadFromFile(config.getOption("map").asString());
+
+    Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
+
+    // Launch the networking and packet processing threads
     netManager.launchThreads();
     packetProcessing.launch();
 
     // Spawn some test zombies
-    for (int x = 0; x < 10; x++)
+    int maxZombies = config.getOption("maxZombies").asInt();
+    for (int x = 0; x < maxZombies; x++)
     {
         auto* zombie = entList.add(Entity::Zombie);
         //zombie->setTexture(zombieTex);
@@ -52,10 +68,13 @@ void Server::start()
         // Sleep some if everything is caught up, otherwise skip over this right away
         // (If this is skipped, it means the server is running BELOW the desired FPS)
         float sleepTime = desiredFrameTime - elapsedTime;
-        if (sleepTime > 0)
+        if (sleepTime > frameTimeTolerance)
             sf::sleep(sf::seconds(sleepTime));
-        //else
-            //cout << "WARNING: Server running below desired FPS!\n";
+        else if (warningTimer.getElapsedTime().asSeconds() >= 5)
+        {
+            cout << "WARNING: Last frame took " << -sleepTime << " seconds too long! FPS: " << 1.0 / elapsedTime << "\n";
+            warningTimer.restart();
+        }
     }
 }
 
@@ -68,7 +87,8 @@ void Server::processAllPackets()
             processPacket(netManager.getPacket());
             netManager.popPacket();
         }
-        sf::sleep(sf::milliseconds(100));
+        // TODO: Figure out a better way to not waste CPU usage than sleeping
+        sf::sleep(sf::milliseconds(10));
     }
 }
 
@@ -99,7 +119,7 @@ void Server::sendChangedEntities()
 {
     // Later this will be client-specific as soon as we have spatial partitioning
     sf::Packet changedEntitiesPacket;
-    if (entList.getChangedEntities(changedEntitiesPacket))
+    while (entList.getChangedEntities(changedEntitiesPacket))
         netManager.sendToAllUdp(changedEntitiesPacket);
 }
 
@@ -131,7 +151,7 @@ void Server::processPacket(PacketExtra& packet)
 
 void Server::processInputPacket(PacketExtra& packet)
 {
-    cout << "Received input packet from client #" << packet.sender << endl;
+    //cout << "Received input packet from client #" << packet.sender << endl;
     Client* senderClient = clients.getClientFromId(packet.sender);
     if (senderClient != nullptr && senderClient->loggedIn)
     {
@@ -145,7 +165,7 @@ void Server::processInputPacket(PacketExtra& packet)
                 float angle;
                 if (packet.data >> angle)
                 {
-                    cout << "Entity ID: " << playerEnt->getID() << ", Angle: " << angle << ".\n";
+                    //cout << "Entity ID: " << playerEnt->getID() << ", Angle: " << angle << ".\n";
                     playerEnt->setAngle(angle);
                     playerEnt->setMoving(true);
                 }
@@ -162,7 +182,7 @@ void Server::processInputPacket(PacketExtra& packet)
             }
                 break;
             default:
-                cout << inputCode << " is an unknown or not yet implemented code.\n";
+                cout << inputCode << " is an unknown or not yet implemented input type.\n";
                 break;
         }
     }
@@ -279,6 +299,10 @@ void Server::processLogIn(PacketExtra& packet)
                         sf::Packet allEntsPacket;
                         if (entList.getAllEntities(allEntsPacket))
                             c->tcpSend(allEntsPacket);
+                        // Send the map to the player
+                        sf::Packet tileMapPacket;
+                        tileMap.saveToPacket(tileMapPacket);
+                        c->tcpSend(tileMapPacket);
                     }
                 }
                 else

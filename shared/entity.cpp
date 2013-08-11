@@ -8,7 +8,7 @@ int Entity::mapHeight = 0;
 
 Entity::Entity()
 {
-    ID = 0;
+    id = 0;
     ready = false;
     changed = true;
 }
@@ -19,15 +19,15 @@ Entity::~Entity()
 
 const EID Entity::getID() const
 {
-    return ID;
+    return id;
 }
 
-void Entity::setID(EID newID)
+void Entity::setID(EID newId)
 {
-    ID = newID;
+    id = newId;
 }
 
-int Entity::getType() const
+EType Entity::getType() const
 {
     return type;
 }

@@ -140,7 +140,7 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
     // Get deleted entities
     if (!deletedEnts.empty())
     {
-        cout << "Deleted entities: ";
+        cout << "Deleted entity IDs: ";
         for (auto& entId: deletedEnts)
         {
             cout << entId << " ";
@@ -155,12 +155,14 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
     {
         for (auto& ent: ents)
         {
-            if (ent != nullptr && ent->hasChanged())
+            if (ent != nullptr && ent->hasChanged() && packet.getDataSize() < sf::UdpSocket::MaxDatagramSize - 256)
             {
                 ent->getData(packet);
                 ent->setChanged(false);
                 anyChanged = true;
             }
+            else if (packet.getDataSize() >= sf::UdpSocket::MaxDatagramSize - 256)
+                return anyChanged;
         }
         /*if (anyChanged)
             cout << "getChangedEntities()\n";*/

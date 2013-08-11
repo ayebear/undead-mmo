@@ -10,35 +10,16 @@
 
 PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
-    // TODO: Have it download the map from the server instead
-    tileMap.loadMapFromFile("data/maps/2.map");
-    Entity::setMapSize(tileMap.getMapWidth(), tileMap.getMapHeight());
+    Tile::loadTileTextures();
 
     //theHud.chat.setNetManager(&objects.netManager);
 
-    // TODO: Will need to send a request to the server (during or after the log-in process)
-    // which will create a new entity on the server first, which gets a unique global ID,
-    // and then that gets sent right back to the player who just logged in, and then
-    // is allocated on the client.
-    // Normally this would be called when a packet is received of type "new entity". And the ID would be received from the server.
     //myPlayer = entList.add(Entity::Player, 1);
     //myPlayer->setTexture(playerTex);
     //myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
     myPlayer = nullptr;
     myPlayerId = 0;
     playerIsMoving = false;
-
-    // Add quite a few local test zombies for now
-    /*for (int x = 2; x < 999; x++)
-    {
-        auto* zombie = entList.add(Entity::Zombie, x);
-        zombie->setTexture(zombieTex);
-        zombie->setPos(sf::Vector2f(rand() % tileMap.getMapWidth(), rand() % tileMap.getMapHeight()));
-        zombie->setAngle(rand() % 360);
-        zombie->setMoving(true);
-        zombie->setSpeed(rand() % 500 + 200);
-        zombie->moveTo(sf::Vector2f(500, 500));
-    }*/
 
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
     //gameView.setCenter(myPlayer->getPos());
@@ -154,6 +135,9 @@ void PlayGameState::handleEvents()
 
 void PlayGameState::update()
 {
+    if (!tileMap.isReady())
+        processMapDataPackets();
+
     processEntityPackets();
 
     if (myPlayer == nullptr)
@@ -161,46 +145,15 @@ void PlayGameState::update()
 
     entList.update(elapsedTime);
 
-    if (mouseMoved)
+    updateGameView();
+
+    // TODO: Figure out the best way to do this
+    if (mouseMoved || playerIsMoving)
     {
         handleMouseInput();
         mouseMoved = false;
     }
-
     sendAngleInputPacket();
-
-    // Update the game view center position with the player's current position
-    if (myPlayer != nullptr)
-        gameView.setCenter(myPlayer->getPos());
-
-    sf::Vector2f viewSize(gameView.getSize());
-    sf::Vector2f viewCenter(gameView.getCenter());
-    if (viewCenter.x - (viewSize.x / 2) < 0)
-    {
-        gameView.setCenter(viewSize.x / 2, viewCenter.y);
-        viewSize = gameView.getSize();
-        viewCenter = gameView.getCenter();
-    }
-    if (viewCenter.y - (viewSize.y / 2) < 0)
-    {
-        gameView.setCenter(viewCenter.x, viewSize.y / 2);
-        viewSize = gameView.getSize();
-        viewCenter = gameView.getCenter();
-    }
-
-    if (viewCenter.x + (viewSize.x /2) >= tileMap.getMapWidth())
-    {
-        gameView.setCenter(tileMap.getMapWidth() - viewSize.x / 2, viewCenter.y);
-        viewSize = gameView.getSize();
-        viewCenter = gameView.getCenter();
-
-    }
-    if (viewCenter.y + (viewSize.y / 2) >= tileMap.getMapHeight())
-    {
-        gameView.setCenter(viewCenter.x, tileMap.getMapHeight() - viewSize.y  / 2);
-        viewSize = gameView.getSize();
-        viewCenter = gameView.getCenter();
-    }
 
     theHud.update();
 }
@@ -222,6 +175,40 @@ void PlayGameState::draw()
     objects.window.draw(theHud);
 
     objects.window.display();
+}
+
+void PlayGameState::updateGameView()
+{
+    // Update the game view center position with the player's current position
+    if (myPlayer != nullptr)
+        gameView.setCenter(myPlayer->getPos());
+
+    // Do not show anything past the boundaries of the map
+    if (tileMap.isReady())
+    {
+        sf::Vector2f viewSize(gameView.getSize());
+        sf::Vector2f viewCenter(gameView.getCenter());
+        if (viewCenter.x - (viewSize.x / 2) < 0)
+        {
+            gameView.setCenter(viewSize.x / 2, viewCenter.y);
+            viewCenter = gameView.getCenter();
+        }
+        if (viewCenter.y - (viewSize.y / 2) < 0)
+        {
+            gameView.setCenter(viewCenter.x, viewSize.y / 2);
+            viewCenter = gameView.getCenter();
+        }
+        if (viewCenter.x + (viewSize.x / 2) >= tileMap.getWidthPx())
+        {
+            gameView.setCenter(tileMap.getWidthPx() - viewSize.x / 2, viewCenter.y);
+            viewCenter = gameView.getCenter();
+        }
+        if (viewCenter.y + (viewSize.y / 2) >= tileMap.getHeightPx())
+        {
+            gameView.setCenter(viewCenter.x, tileMap.getHeightPx() - viewSize.y  / 2);
+            viewCenter = gameView.getCenter();
+        }
+    }
 }
 
 void PlayGameState::handleInput()
@@ -308,8 +295,14 @@ void PlayGameState::processEntityPackets()
     {
         EID entId;
         sf::Packet& packet = objects.netManager.getPacket(Packet::EntityUpdate);
+        int count = 0;
         while (packet >> entId)
+        {
             entList.updateEntity(entId, packet);
+            ++count;
+        }
+        if (count >= 10)
+            cout << "Updated " << count << " entities from server.\n";
         objects.netManager.popPacket(Packet::EntityUpdate);
     }
 }
@@ -322,6 +315,17 @@ void PlayGameState::processPlayerIdPackets()
         objects.netManager.popPacket(Packet::PlayerEntityId);
     }
     myPlayer = entList.find(myPlayerId);
+}
+
+void PlayGameState::processMapDataPackets()
+{
+    while (objects.netManager.arePackets(Packet::MapData))
+    {
+        tileMap.loadFromPacket(objects.netManager.getPacket(Packet::MapData));
+        Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
+        objects.netManager.popPacket(Packet::MapData);
+        cout << "Received map from server. Size: " << tileMap.getWidth() << " by " << tileMap.getHeight() << ".\n";
+    }
 }
 
 void PlayGameState::takeScreenshot()

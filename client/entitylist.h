@@ -23,7 +23,8 @@ class EntityList: public sf::Drawable
     public:
         EntityList();
         void updateEntity(EID, sf::Packet&);
-        Entity* add(int, EID);
+        Entity* addWithTexture(sf::Int32, EID);
+        Entity* add(EType, EID);
         Entity* insert(Entity*, EID);
         Entity* find(EID);
         void erase(EID);

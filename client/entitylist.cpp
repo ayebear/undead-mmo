@@ -23,19 +23,10 @@ EntityList::EntityList()
 void EntityList::updateEntity(EID id, sf::Packet& packet)
 {
     Entity* ent = find(id);
-    int type;
+    EType type;
     packet >> type;
     if (ent == nullptr) // If the entity does not exist already
-    {
-        ent = add(type, id); // Add a new default entity of that type to the list with that ID
-        if (ent != nullptr)
-        {
-            if (type >= 0 && type <= 1)
-                ent->setTexture(textures[type]);
-            else
-                cout << "ERROR: Missing texture for entity type " << type << endl;
-        }
-    }
+        ent = addWithTexture(type, id); // Add a new default entity of that type to the list with that ID
 
     if (ent != nullptr) // If the entity exists
     {
@@ -55,15 +46,34 @@ void EntityList::updateEntity(EID id, sf::Packet& packet)
                 //cout << "Set entity " << ent->getID() << " with data from packet.\n";
             }
             else
-                cout << "ERROR: Non-matching entity type update received!\n";
+            {
+                //cout << "ERROR: Non-matching entity type update received!\n";
+                // Recreate the entity with a new type
+                erase(id);
+                addWithTexture(type, id);
+                cout << "Recreated entity " << id << " with type " << type << endl;
+            }
         }
     }
     else
-        cout << "ERROR: Problem allocating new entity in updateEntity()!\n";
+        cerr << "ERROR: Problem allocating new entity in updateEntity()!\n";
+}
+
+Entity* EntityList::addWithTexture(EType type, EID id)
+{
+    Entity* ent = add(type, id);
+    if (ent != nullptr)
+    {
+        if (type >= 0 && type <= 1)
+            ent->setTexture(textures[type]);
+        else
+            cerr << "ERROR: Missing texture for entity type " << type << endl;
+    }
+    return ent;
 }
 
 // This function allocates a new entity based on type AND inserts it into the entity list
-Entity* EntityList::add(int type, EID id)
+Entity* EntityList::add(EType type, EID id)
 {
     return insert(allocateEntity(type), id);
 }
@@ -98,6 +108,7 @@ void EntityList::clear()
     for (auto& ent: ents) // Go through the entities
         delete ent.second; // Deallocate them
     ents.clear(); // Remove all pointers
+    cout << "Cleared entity list.\n";
 }
 
 void EntityList::update(float time)

@@ -4,83 +4,134 @@
 #include "map.h"
 #include <iostream>
 #include <fstream>
+#include "packet.h"
 
 using namespace std;
 
 Map::Map()
 {
     ready = false;
-    mapHeight = 0;
     mapWidth = 0;
-    Tile::loadTileTextures();
+    mapHeight = 0;
+    mapWidthPx = 0;
+    mapHeightPx = 0;
 }
 
-Map::Map(vector<vector<TileID> > & mapData)
+Map::Map(TileIDVector2D& mapData, bool loadTextures)
 {
-    Tile::loadTileTextures();
-    loadMapFromMemory(mapData);
+    if (loadTextures)
+        Tile::loadTileTextures();
+    loadFromMemory(mapData);
 }
 
-Map::Map(const string& filename)
+Map::Map(const string& filename, bool loadTextures)
 {
-    Tile::loadTileTextures();
-    loadMapFromFile(filename);
+    if (loadTextures)
+        Tile::loadTileTextures();
+    loadFromFile(filename);
 }
 
-int Map::getMapHeight()
-{
-    return mapHeight;
-}
-
-int Map::getMapWidth()
+sf::Uint32 Map::getWidth()
 {
     return mapWidth;
 }
 
-void Map::loadMapFromMemory(vector<vector<TileID> > & mapData)
+sf::Uint32 Map::getHeight()
+{
+    return mapHeight;
+}
+
+sf::Uint32 Map::getWidthPx()
+{
+    return mapWidthPx;
+}
+
+sf::Uint32 Map::getHeightPx()
+{
+    return mapHeightPx;
+}
+
+bool Map::isReady()
+{
+    return ready;
+}
+
+void Map::loadFromMemory(TileIDVector2D& mapData)
 {
     tiles.resize(mapData.size());
     for (unsigned int y = 0; y < mapData.size(); y++)
     {
         for (unsigned int x = 0; x < mapData[y].size(); x++)
-        {
             tiles[y].emplace_back(mapData[y][x], x * Tile::tileWidth, y * Tile::tileHeight);
-        }
     }
-    mapHeight = tiles.size() * Tile::tileHeight - Tile::tileHeight;
-    mapWidth = tiles.front().size() * Tile::tileWidth - Tile::tileWidth;
+
+    updateMapSize();
 
     ready = true;
 }
 
-bool Map::loadMapFromFile(const string& filename)
+bool Map::loadFromFile(const string& filename)
 {
-    ifstream in(filename);
-    if (!in.is_open())
+    ifstream inFile(filename);
+    if (!inFile.is_open())
+    {
+        cerr << "Error loading map file: \"" << filename << "\"\n";
         return false;
+    }
 
-    string temp;
-    int tmpID = 0;
+    TileID tmpID = 0;
     int width, height;
-    in >> width >> height;
+    inFile >> width >> height;
 
     tiles.resize(height);
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
         {
-            in >> tmpID;
+            inFile >> tmpID;
             tiles[y].emplace_back(tmpID, x * Tile::tileWidth, y * Tile::tileHeight);
         }
     }
-    in.close();
+    inFile.close();
 
-    mapHeight = tiles.size() * Tile::tileHeight - Tile::tileHeight;
-    mapWidth = tiles.front().size() * Tile::tileWidth - Tile::tileWidth;
+    updateMapSize();
+
+    cout << "Loaded map \"" << filename << "\". Size: " << mapWidth << " by " << mapHeight << ".\n";
 
     ready = true;
 
     return true;
+}
+
+void Map::loadFromPacket(sf::Packet& packet)
+{
+    // Extract data from packet into a TileIDVector2D
+    TileIDVector2D tileIds;
+    tileIds.resize(1);
+    TileID id;
+    sf::Uint32 width, height;
+    if (packet >> width >> height)
+    {
+        while (packet >> id)
+        {
+            tileIds.back().push_back(id); // Add the tile to the current row
+            if (tileIds.back().size() >= width) // If the row is wide enough
+                tileIds.resize(tileIds.size() + 1); // Add a new row
+        }
+    }
+    tileIds.resize(height);
+    // Load the tiles from the vector in memory
+    loadFromMemory(tileIds);
+}
+
+void Map::saveToPacket(sf::Packet& packet)
+{
+    packet << Packet::MapData << mapWidth << mapHeight;
+    for (auto& row: tiles)
+    {
+        for (auto& tile: row)
+            packet << tile.getID();
+    }
 }
 
 void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
@@ -126,4 +177,12 @@ void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
             window.draw(tiles[y][x]);
         }
     }
+}
+
+void Map::updateMapSize()
+{
+    mapWidth = tiles.front().size();
+    mapHeight = tiles.size();
+    mapWidthPx = mapWidth * Tile::tileWidth - Tile::tileWidth;
+    mapHeightPx = mapHeight * Tile::tileHeight - Tile::tileHeight;
 }

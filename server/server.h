@@ -10,6 +10,8 @@
 #include "servernetwork.h"
 #include "masterentitylist.h"
 #include "accountdb.h"
+#include "map.h"
+#include "configfile.h"
 
 class Server
 {
@@ -32,14 +34,18 @@ class Server
         void processCreateAccount(PacketExtra&);
 
         static const float desiredFrameTime;
+        static const float frameTimeTolerance;
+        static const ConfigFile::ConfigMap defaultOptions;
 
         float elapsedTime;
-        sf::Clock clock;
+        sf::Clock clock, warningTimer;
         ServerNetwork netManager;
         sf::Thread packetProcessing;
         AccountDb accounts;
         ClientManager clients;
         MasterEntityList entList;
+        Map tileMap;
+        ConfigFile config;
 };
 
 #endif
