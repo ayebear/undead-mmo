@@ -1,0 +1,10 @@
+/*.cbp
+/*.sh
+/bin/
+obj/
+ZombieGame
+ZombieServer
+ZombieGame.exe
+ZombieServer.exe
+*.depend
+*.layout

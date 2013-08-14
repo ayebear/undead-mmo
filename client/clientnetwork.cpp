@@ -164,7 +164,7 @@ int ClientNetwork::logIn(const string& username, const string& password)
         // Wait until you get a response from the server for your log in request
         // Maybe the Game class can sort of handle this... So we can just use the threaded receive loops.
         //      This would be nice to see a logging in thing of some sort.
-        int timeout = 60;
+        int timeout = 10;
         sf::Clock loginTimer;
         while (!arePackets(Packet::LogInStatus) && loginTimer.getElapsedTime().asSeconds() < timeout)
             sf::sleep(sf::milliseconds(10));
