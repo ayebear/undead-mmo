@@ -1,5 +1,8 @@
-username = test2
-password = password
 banned = false
-level = 1
 health = 100
+level = 1
+password = password
+positionX = 200
+positionY = 200
+salt = 0
+username = test2

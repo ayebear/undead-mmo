@@ -4,7 +4,11 @@
 obj/
 ZombieGame
 ZombieServer
+ZombieGameDebug
+ZombieServerDebug
 ZombieGame.exe
+ZombieGameDebug.exe
 ZombieServer.exe
+ZombieServerDebug.exe
 *.depend
 *.layout
