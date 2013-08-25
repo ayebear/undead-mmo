@@ -29,7 +29,7 @@ class StateManager
         void allocateStates();
         void deallocateStates();
 
-        const StateAction& handleAction(const StateAction&);
+        void handleAction();
         void push(int);
         void pop();
 
@@ -40,6 +40,8 @@ class StateManager
         // All states will need access to these, but do not and should not have access to this state manager class
         // This is convienent to have in an object so we can pass a single reference to the states.
         GameObjects objects;
+
+        StateAction action;
 };
 
 #endif

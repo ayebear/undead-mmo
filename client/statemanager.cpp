@@ -47,13 +47,13 @@ void StateManager::deallocateStates()
 
 void StateManager::startLoop(const StateAction& theAction)
 {
-    StateAction action = theAction;
+    action = theAction;
     while (action.isNotExit())
-        action = handleAction(action);
+        handleAction();
     cout << "StateManager loop has ended.\n";
 }
 
-const StateAction& StateManager::handleAction(const StateAction& action)
+void StateManager::handleAction()
 {
     // Do something depending on the command
     switch (action.getCommand())
@@ -73,10 +73,9 @@ const StateAction& StateManager::handleAction(const StateAction& action)
 
     // Run the current state (on the top of the stack)
     if (!stateStack.empty())
-        return statePtrs[stateStack.back()]->start(action.getArgs());
-
-    exit(901); // The game should exit when it gets here, this means the stack is empty
-    return action; // Only here to suppress the compiler warning...
+        action = statePtrs[stateStack.back()]->start(action.getArgs());
+    else // If the stack is empty
+        action.exitGame(); // Exit the game
 }
 
 void StateManager::push(int type)
