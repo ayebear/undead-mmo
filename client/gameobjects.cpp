@@ -13,6 +13,12 @@ const ConfigFile::ConfigMap GameObjects::defaultOptions = {
 {"useVerticalSync", Option("true")}
 };
 
+GameObjects::GameObjects()
+{
+    loadConfig();
+    loadFonts();
+}
+
 GameObjects::~GameObjects()
 {
     window.close();

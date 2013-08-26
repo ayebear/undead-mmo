@@ -10,8 +10,6 @@
 
 StateManager::StateManager(std::string windowTitle)
 {
-    objects.loadConfig();
-    objects.loadFonts();
     objects.setupWindow(windowTitle);
     allocateStates();
 }
@@ -24,11 +22,11 @@ StateManager::~StateManager()
 
 void StateManager::allocateStates()
 {
-    statePtrs[0] = new MainMenuState(objects);
-    statePtrs[1] = new LoginState(objects);
-    statePtrs[2] = new PlayGameState(objects);
-    statePtrs[3] = new ErrorState(objects);
-    statePtrs[4] = new MessageState(objects);
+    statePtrs[0].reset(new MainMenuState(objects));
+    statePtrs[1].reset(new LoginState(objects));
+    statePtrs[2].reset(new PlayGameState(objects));
+    statePtrs[3].reset(new ErrorState(objects));
+    statePtrs[4].reset(new MessageState(objects));
 }
 
 void StateManager::deallocateStates()
@@ -41,19 +39,19 @@ void StateManager::deallocateStates()
     }
     // Delete the allocated states
     for (auto& sPtr: statePtrs)
-        delete sPtr;
+        sPtr.reset();
     cout << "Successfully deallocated all states.\n";
 }
 
 void StateManager::startLoop(const StateAction& theAction)
 {
-    action = theAction;
+    StateAction action = theAction;
     while (action.isNotExit())
-        handleAction();
+        handleAction(action);
     cout << "StateManager loop has ended.\n";
 }
 
-void StateManager::handleAction()
+void StateManager::handleAction(StateAction& action)
 {
     // Do something depending on the command
     switch (action.getCommand())
@@ -80,8 +78,12 @@ void StateManager::handleAction()
 
 void StateManager::push(int type)
 {
-    stateStack.push_back(type);
-    statePtrs[type]->onPush();
+    if (type >= 0 && type < StateType::TotalTypes)
+    {
+        stateStack.push_back(type);
+        statePtrs[type]->onPush();
+    }
+    // If this fails due to a bad type, the current state will just start again.
 }
 
 void StateManager::pop()

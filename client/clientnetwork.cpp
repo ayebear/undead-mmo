@@ -76,7 +76,7 @@ void ClientNetwork::popPacket(int type)
 
 void ClientNetwork::clearPackets(int type)
 {
-    cout << "Cleared " << packets[type].size() << " packets of type " << type << ".\n";
+    //cout << "Cleared " << packets[type].size() << " packets of type " << type << ".\n";
     packets[type].clear();
 }
 
@@ -85,7 +85,7 @@ void ClientNetwork::clearAllPackets()
     // Clear all packets
     for (auto& p: packets)
         p.clear();
-    cout << "Cleared ALL packets.\n";
+    //cout << "Cleared ALL packets.\n";
 }
 
 void ClientNetwork::storePacket(sf::Packet& packet)
@@ -238,15 +238,16 @@ int ClientNetwork::createAccount(const string& username, const string& password)
 
 void ClientNetwork::logOut()
 {
+    cout << "Logging out of server...\n";
     /*sf::Packet logOutPacket;
     logOutPacket << Packet::LogOut;
     tcpSock.send(logOutPacket);*/
     tcpSock.disconnect();
     tcpThreadRunning = false;
     connected = false;
-    tcpThread.terminate();
+    //tcpThread.terminate();
     clearAllPackets();
-    cout << "Logged out from server.\n";
+    cout << "Logged out of server.\n";
 }
 
 const string& ClientNetwork::getUsername()

@@ -72,16 +72,9 @@ class LinkedQueue
 
         void clear()
         {
-            sf::Lock firstLock(firstInUse); // Lock the first
-            sf::Lock lastLock(lastInUse); // Lock the last
-            if (theSize >= 1) // If there is at least one element then delete the first one
-                delete first;
-            if (theSize > 1) // If there are 2 or more then delete the last
-                delete last;
-            // Reset the pointers and size
-            first = nullptr;
-            last = nullptr;
-            theSize = 0;
+            // Pop all of the nodes until there are none left
+            while (theSize > 0)
+                pop_front();
         }
 
         void push_back(const T& obj)

@@ -48,7 +48,9 @@ void Network::stopThreads()
 {
     cout << "stopThreads(): Terminating threads now...\n";
     udpThread.terminate();
+    cout << "UDP thread terminated.\n";
     tcpThread.terminate();
+    cout << "TCP thread terminated.\n";
     udpThreadRunning = false;
     tcpThreadRunning = false;
 }
