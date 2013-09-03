@@ -64,6 +64,9 @@ class PlayGameState: public State
         float lastSentAngle;
         sf::Clock angleTimer;
         bool mouseMoved;
+
+        sf::Clock inventoryTimer;
+        bool inventoryKeyReleased;
 };
 
 #endif

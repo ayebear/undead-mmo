@@ -12,6 +12,7 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
     Tile::loadTileTextures();
 
+
     //theHud.chat.setNetManager(&objects.netManager);
 
     //myPlayer = entList.add(Entity::Player, 1);
@@ -23,7 +24,6 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 
     gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
     //gameView.setCenter(myPlayer->getPos());
-
     theHud.setUp(gameObjects);
 
     playerInput.x = 0;
@@ -49,6 +49,7 @@ void PlayGameState::onPush()
 {
     theHud.chat.clear();
     theHud.chat.setUsername(objects.netManager.getUsername());
+    inventoryKeyReleased = true;
 }
 
 void PlayGameState::onPop()
@@ -87,6 +88,22 @@ void PlayGameState::handleEvents()
                         theHud.chat.toggleInput();
                         break;
 
+                    case sf::Keyboard::Key::Space:
+                    case sf::Keyboard::Key::B:
+                        if(inventoryKeyReleased)
+                        {
+                            inventoryTimer.restart();
+                            theHud.inventory.toggleInventory();
+                        }
+                        inventoryKeyReleased = false;
+                        break;
+                    case sf::Keyboard::Key::K:
+                        theHud.inventory.addSlots(1);
+                        break;
+                    case sf::Keyboard::Key::L:
+                        theHud.inventory.addSlots(-1);
+                        break;
+
                     case sf::Keyboard::Key::F1:
                         takeScreenshot();
                         break;
@@ -96,9 +113,24 @@ void PlayGameState::handleEvents()
                 }
                 theHud.chat.processInput(event.key.code);
                 break;
+            case sf::Event::KeyReleased:
+                 switch(event.key.code)
+                 {
+                    case sf::Keyboard::Key::Space:
+                    case sf::Keyboard::Key::B:
+                          if(inventoryTimer.getElapsedTime().asMilliseconds() >= 500 && theHud.inventory.getVisibility())
+                                theHud.inventory.toggleInventory();
+                            inventoryKeyReleased = true;
+                        break;
+
+                    default:
+                        break;
+                 }
+                break;
 
             case sf::Event::MouseButtonPressed:
                 theHud.chat.handleMouseClicked(event, objects.window);
+                theHud.inventory.handleMouseClicked(event, objects.window);
                 break;
 
             case sf::Event::MouseWheelMoved:
@@ -112,6 +144,7 @@ void PlayGameState::handleEvents()
             case sf::Event::MouseMoved:
                 mouseMoved = true;
                 theHud.handleMouseMoved(event, objects.window);
+                theHud.inventory.handleMouseMoved(event, objects.window);
                 break;
 
             case sf::Event::LostFocus:

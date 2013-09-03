@@ -5,6 +5,7 @@
 #define HUD_H
 
 #include "SFML/Graphics.hpp"
+#include "inventorygui.h"
 #include "chat.h"
 #include "gameobjects.h"
 #include "statusbar.h"
@@ -28,6 +29,7 @@ class Hud: public sf::Drawable
         Chat chat;
         StatusBar healthBar;
         StatusBar infectionBar;
+        InventoryGUI inventory;
         // Add other HUD elements later, like mini-map/health/infection/etc.
 
     private:

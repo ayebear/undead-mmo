@@ -30,8 +30,11 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
         textItemList.addItemWithHiddenText(tmp.str(), "ayebear.com", sf::Color(190, 190, 190, 255));
     }
     */
-    textItemList.addItemWithHiddenText("My Local Server", "192.168.1.4", sf::Color(190, 190, 190, 255));
     textItemList.addItemWithHiddenText("Eric's Server", "ayebear.com", sf::Color(190, 190, 190, 255));
+    textItemList.addItemWithHiddenText("My Local Server", "192.168.1.4", sf::Color(190, 190, 190, 255));
+    textItemList.addItemWithHiddenText("HCC", "10.10.198.22", sf::Color(190, 190, 190, 255));
+
+
 
 
     textItemList.scrollToBottom();

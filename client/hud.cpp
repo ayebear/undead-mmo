@@ -45,6 +45,8 @@ void Hud::setUp(GameObjects& objects)
     chat.setUp(sf::FloatRect(0, .77, .3, .20), objects);
     healthBar.setUp(healthBarName, healthBarPos, healthBarSize, 0, 1000, 1000, 1, statusBarBackgroundCol, healthBarFillColor, objects.fontBold, false, false);
     infectionBar.setUp(infectionBarName, infectionBarPos, infectionBarSize, 0, 50, 100, 2, statusBarBackgroundCol, infectionBarFillColor, objects.fontBold, false, true);
+
+    inventory.setUp(1, sf::Vector2f(0, 0), sf::Vector2f(150 , 150), objects.fontBold, objects.window);
 }
 
 void Hud::handleMouseMoved(sf::Event& event, sf::RenderWindow& window)
@@ -60,8 +62,9 @@ void Hud::draw(sf::RenderTarget& window, sf::RenderStates states) const
 
     // Draw the chat
     window.draw(chat);
+    // Other HUD elements will simply be drawn here
+
     window.draw(healthBar);
     window.draw(infectionBar);
-
-    // Other HUD elements will simply be drawn here
+    window.draw(inventory);
 }
