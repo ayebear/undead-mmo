@@ -116,6 +116,12 @@ void MasterEntityList::update(float time)
     }
 }
 
+Entity* MasterEntityList::findCollision(Entity* ent)
+{
+    // TODO: Write this function
+    return nullptr;
+}
+
 bool MasterEntityList::getAllEntities(sf::Packet& packet)
 {
     if (entCount > 0)

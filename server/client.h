@@ -12,6 +12,7 @@
 #include "playerdata.h"
 #include "entity.h"
 
+// This class contains all of the temporary things needed for when a client is logged in
 class Client: sf::NonCopyable
 {
     public:

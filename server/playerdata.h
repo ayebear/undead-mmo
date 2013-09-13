@@ -6,6 +6,7 @@
 
 #include <string>
 #include "configfile.h"
+#include "inventory.h"
 
 using namespace std;
 
@@ -32,7 +33,8 @@ class PlayerData
         bool banned;
         int health;
         int level;
-        float positionX, positionY;
+        float positionX, positionY; // TODO: Store the entire entity so that the wielded items and stuff are stored
+        Inventory inventory; // The player's inventory
 
     private:
 };

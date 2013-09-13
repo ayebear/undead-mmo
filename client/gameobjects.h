@@ -31,7 +31,7 @@ class GameObjects: sf::NonCopyable
 
     private:
         static const string configFilename;
-        static const ConfigFile::ConfigMap defaultOptions;
+        static const ConfigFile::Section defaultOptions;
 };
 
 #endif

@@ -75,7 +75,7 @@ int AccountIndex::addAccount(const string& username)
         if (outFile.is_open())
         {
             numOfAccounts++; // Generate a new account ID
-            string idStr = toString<int>(numOfAccounts);
+            string idStr = to_string(numOfAccounts);
             index[username] = idStr; // Store the new account in memory
             outFile << username + '\n' + idStr + '\n'; // Append the username and ID to the file
             outFile.close();

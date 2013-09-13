@@ -45,11 +45,19 @@ void StringUtils::stripNewLines(std::string& str)
 void StringUtils::stripComments(std::string& str)
 {
     size_t minPos = std::string::npos;
-    for (auto& cSymbol: {"//", "#", "::", ";"}) // Loop through the possible comment symbols
+    size_t rightQuote = str.rfind('"'); // Try to find the rightmost quote
+    size_t startPos = (rightQuote == std::string::npos) ? 0 : rightQuote; // Start at the right quote position if it was found, otherwise start at the beginning
+    for (const std::string& commentSymbol: {"//", "#", "::", ";"}) // Loop through the possible comment symbols
     {
-        size_t found = str.find(cSymbol); // Look for that comment symbol
-        // If the symbol was found and the found position is less than the current minimum position (or there is no current position)
-        if (found != std::string::npos && (found < minPos || minPos == std::string::npos))
+        if (str.compare(0, commentSymbol.size(), commentSymbol) == 0) // Check the very beginning of the string for the comment symbol
+        {
+            minPos = 0; // Beginning of the string
+            break; // No need to look for any more symbols
+        }
+        size_t found = str.find(commentSymbol, startPos); // Look for that comment symbol (or after the rightmost quote if it was found)
+        // If the symbol was found, and the found position is less than the current minimum position (or there is no current position),
+        // and if the rightmost quote exists, the comment symbol must be more to the right than it (comment symbols should be allowed in strings)
+        if (found != std::string::npos && (minPos == std::string::npos || found < minPos) && (rightQuote == std::string::npos || found > rightQuote))
             minPos = found; // Set the new current minimum position to the one that was just found
     }
     if (minPos != std::string::npos) // If a comment symbol was found
@@ -65,7 +73,15 @@ bool StringUtils::isWhitespace(char c)
 bool StringUtils::areQuotes(char c1, char c2)
 {
     // Both characters must be the same
-    // One of them must be either a single quote or a double quote
+    // Both of them must be either single quotes or double quotes
     // Only need to compare one char instead of both, because they must be equal due to the first check
     return ((c1 == c2) && (c1 == '"' || c1 == '\''));
+}
+
+bool StringUtils::strToBool(std::string data)
+{
+    for (char& c: data)
+        c = tolower(c); // Make all of the characters lowercase
+    std::size_t found = data.find("true"); // If "true" exists somewhere then the boolean is true
+    return (found != std::string::npos);
 }

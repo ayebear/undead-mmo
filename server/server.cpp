@@ -8,7 +8,7 @@ using namespace std;
 const float Server::desiredFrameTime = 1.0 / 120.0;
 const float Server::frameTimeTolerance = -10.0 / 120.0;
 
-const ConfigFile::ConfigMap Server::defaultOptions = {
+const ConfigFile::Section Server::defaultOptions = {
     {"port", Option("1337")},
     {"map", Option("serverdata/maps/2.map")},
     {"maxZombies", Option("20")}
@@ -24,7 +24,7 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.10.4 Dev\n\n";
+    cout << "Undead MMO Server v0.0.11.0 Dev\n\n";
     cout << "The server's LAN IP address is: " << sf::IpAddress::getLocalAddress() << "\n\n";
     //cout << "The server's WAN IP address is: " << sf::IpAddress::getPublicAddress() << endl;
 
@@ -181,10 +181,97 @@ void Server::processInputPacket(PacketExtra& packet)
                     playerEnt->setVisualAngle(angle);
             }
                 break;
+            case Packet::InputType::UseItem:
+                useItem(packet.data, senderClient->pData->inventory, playerEnt);
+                break;
+            case Packet::InputType::PickupItem:
+                pickupItem(senderClient->pData->inventory, playerEnt);
+                break;
+            case Packet::InputType::DropItem:
+                dropItem(packet.data, senderClient->pData->inventory, playerEnt);
+                break;
+            case Packet::InputType::SwapItem:
+                swapItem(packet.data, senderClient->pData->inventory);
+                break;
+            case Packet::InputType::WieldItem:
+                wieldItem(packet.data, senderClient->pData->inventory, playerEnt);
+                break;
             default:
                 cout << inputCode << " is an unknown or not yet implemented input type.\n";
                 break;
         }
+    }
+}
+
+void Server::useItem(sf::Packet& packet, Inventory& inventory, Entity* playerEnt)
+{
+    int slotId;
+    if (packet >> slotId)
+    {
+        if (slotId == 0)
+            playerEnt->useItem(); // Use wielded item
+        //else
+            //useItem(inventory.getItem(slotId)); // Use item in inventory
+            // Can we use items directly in the inventory? If so, then we should have wieldable and non-wieldable items.
+    }
+}
+
+void Server::pickupItem(Inventory& inventory, Entity* playerEnt)
+{
+    Entity* itemToPickup = entList.findCollision(playerEnt); // Find an item you are stepping on
+    if (itemToPickup != nullptr)
+    {
+        // In the future we could always add an auto-wield option to the client which would get sent with this request.
+        // It would check if the item was wieldable, and if so, swap it with your currently wielded item.
+        if (inventory.addItem(itemToPickup)) // Add the item to your inventory
+            entList.erase(itemToPickup->getID()); // Remove the item from the entity list
+    }
+}
+
+void Server::dropItem(sf::Packet& packet, Inventory& inventory, Entity* playerEnt)
+{
+    int slotId;
+    if (packet >> slotId)
+    {
+        const ItemCode& itemToDrop = inventory.getItem(slotId); // Get the item code to drop
+        if (!itemToDrop.isEmpty()) // If the item slot isn't empty
+        {
+            if (slotId == 0) // If the item is in slot 0 (the currently wielded slot)
+                playerEnt->removeItem(); // Remove the currently wielded item
+            Entity* itemOnGround = entList.add(Entity::Item); // Add the item to the entity list
+            if (itemOnGround != nullptr)
+            {
+                itemOnGround->attachItem(itemToDrop); // Set the entity's item code
+                inventory.removeItem(slotId); // Remove the item from the inventory
+            }
+        }
+    }
+}
+
+void Server::swapItem(sf::Packet& packet, Inventory& inventory)
+{
+    int slotId1, slotId2;
+    if (packet >> slotId1 >> slotId2)
+    {
+        inventory.swapItems(slotId1, slotId2);
+        // May need to re-wield or will the selection boxes also be swapped?
+        // It might be better to have the selection boxes be swapped as well,
+        // so that you don't accidentally wield your items when organizing your inventory.
+    }
+}
+
+void Server::wieldItem(sf::Packet& packet, Inventory& inventory, Entity* playerEnt)
+{
+    int slotId;
+    bool primary; // left = true, right = false
+    //bool wieldOrUnwield; // Or do we want this function to toggle?
+    // Then we should figure out a way to prevent the client from getting out of sync..
+    if (packet >> slotId >> primary)
+    {
+        // Get the item from the inventory
+        const ItemCode& itemToWield = inventory.getItem(slotId);
+        if (!itemToWield.isEmpty())
+            playerEnt->attachItem(itemToWield); // Wield the item
     }
 }
 
@@ -377,3 +464,5 @@ void Server::processCreateAccount(PacketExtra& packet)
     else
         cout << "Error: Account was not created. Status code = " << createAccountStatus << endl;
 }
+
+

@@ -1,9 +1,9 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "entityliving.h"
+#include "mobileentity.h"
 
-EntityLiving::EntityLiving()
+MobileEntity::MobileEntity()
 {
     angle = 0;
     speed = defaultSpeed;
@@ -12,7 +12,7 @@ EntityLiving::EntityLiving()
     moving = false;
 }
 
-void EntityLiving::move(float deltaTime)
+void MobileEntity::move(float deltaTime)
 {
     if (moving)
     {
@@ -27,30 +27,30 @@ void EntityLiving::move(float deltaTime)
     }
 }
 
-void EntityLiving::setAngle(float deg)
+void MobileEntity::setAngle(float deg)
 {
     angle = deg;
     changed = true;
 }
 
-void EntityLiving::setSpeed(float theSpeed)
+void MobileEntity::setSpeed(float theSpeed)
 {
     speed = theSpeed;
     changed = true;
 }
 
-void EntityLiving::setMoving(bool isMoving)
+void MobileEntity::setMoving(bool isMoving)
 {
     moving = isMoving;
     changed = true;
 }
 
-void EntityLiving::updateSpriteRotation()
+void MobileEntity::updateSpriteRotation()
 {
     sprite.setRotation(angle + 90);
 }
 
-void EntityLiving::handleCollision()
+void MobileEntity::handleCollision()
 {
     // TODO: Improve this later
     if (pos.x < 0)
@@ -80,7 +80,7 @@ void EntityLiving::handleCollision()
     sprite.setPosition(pos);
 }
 
-void EntityLiving::flipAngle()
+void MobileEntity::flipAngle()
 {
     if (type == Zombie)
     {

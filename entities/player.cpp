@@ -3,9 +3,10 @@
 
 #include "player.h"
 
+const EType Player::type = Entity::Player;
+
 Player::Player()
 {
-    type = Entity::Player;
     speed = 400;
     visualAngle = 0;
 }
@@ -52,4 +53,9 @@ void Player::setVisualAngle(float ang)
 void Player::updateSpriteRotation()
 {
     sprite.setRotation(visualAngle + 90);
+}
+
+EType Player::getType() const
+{
+    return type;
 }

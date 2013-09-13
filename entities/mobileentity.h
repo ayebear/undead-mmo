@@ -1,17 +1,17 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#ifndef ENTITYLIVING_H
-#define ENTITYLIVING_H
+#ifndef MOBILEENTITY_H
+#define MOBILEENTITY_H
 
 #include "entity.h"
 
 const double PI = 3.14159265358979;
 
-class EntityLiving: public Entity
+class MobileEntity: public Entity
 {
     public:
-        EntityLiving();
+        MobileEntity();
         void move(float);
         void setAngle(float);
         void setSpeed(float);

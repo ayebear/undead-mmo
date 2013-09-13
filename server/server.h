@@ -33,9 +33,16 @@ class Server
         void processLogOut(PacketExtra&);
         void processCreateAccount(PacketExtra&);
 
+        // Inventory/item functions
+        void useItem(sf::Packet&, Inventory&, Entity*);
+        void pickupItem(Inventory&, Entity*);
+        void dropItem(sf::Packet&, Inventory&, Entity*);
+        void swapItem(sf::Packet&, Inventory&);
+        void wieldItem(sf::Packet&, Inventory&, Entity*);
+
         static const float desiredFrameTime;
         static const float frameTimeTolerance;
-        static const ConfigFile::ConfigMap defaultOptions;
+        static const ConfigFile::Section defaultOptions;
 
         float elapsedTime;
         sf::Clock clock, warningTimer;

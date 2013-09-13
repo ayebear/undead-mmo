@@ -2,17 +2,21 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "option.h"
-#include <iostream>
 
 Option::Option():
     str(""),
     number(0),
     decimal(0),
     logical(false),
-    isString(false)
-{}
+    quotes(false)
+{
+}
 
-Option::Option(const std::string& data) { setString(data); }
+Option::Option(const std::string& data)
+{
+    set<int>(0);
+    setString(data);
+}
 
 Option& Option::operator=(const std::string& data)
 {
@@ -20,67 +24,52 @@ Option& Option::operator=(const std::string& data)
     return *this;
 }
 
+void Option::reset()
+{
+    removeRange();
+    set<int>(0);
+}
+
 void Option::setString(const std::string& data)
 {
-    isString = false;
-    str = data;
-    std::istringstream tmp(data);
-    if (tmp >> decimal) // Try reading a double from it
+    if (!range || range->check<const std::string&>(data)) // Check if the string's length is in range
     {
-        // Successfully parsed number!
-        number = decimal; // Truncate to an int
-        logical = (decimal != 0); // Deduce the number as a boolean
+        std::istringstream tmpStream(data);
+        double tmpDec = 0;
+        bool parsedNumber = (tmpStream >> tmpDec); // Try reading a number from the string
+        if (!range || range->check<double>(tmpDec)) // Check if the number is in range, if there is a range at all
+        {
+            decimal = tmpDec; // Set the decimal from the temporary one
+            number = decimal; // Truncate to an int
+            quotes = !parsedNumber; // No quotes around a number
+            logical = (parsedNumber ? (decimal != 0) : StringUtils::strToBool(data)); // Convert to a boolean
+            str = data; // Set the string
+        }
     }
-    else
-    {
-        // Could not parse number, reverting to default values
-        number = 0;
-        decimal = 0;
-        logical = strToBool(data); // Try to convert to boolean ("True", "False", or something similar)
-    }
-}
-
-void Option::setInt(const int& data)
-{
-    number = data;
-    decimal = data;
-    logical = (data != 0);
-    str = toString<int>(data);
-}
-
-void Option::setDouble(const double& data)
-{
-    number = data;
-    decimal = data;
-    logical = (data != 0);
-    str = toString<double>(data);
-}
-
-void Option::setBool(const bool& data)
-{
-    number = data;
-    decimal = data;
-    logical = data;
-    str = logical ? "true" : "false";
 }
 
 const std::string& Option::asString() const { return str; }
 
-const int& Option::asInt() const { return number; }
-
-const double& Option::asDouble() const { return decimal; }
-
-const bool& Option::asBool() const { return logical; }
-
-void Option::setIsString(bool setting) { isString = setting; }
-
-bool Option::getIsString() { return isString; }
-
-bool strToBool(const std::string& data)
+std::string Option::asStringWithQuotes() const
 {
-    std::string tmp(data); // Copy the string to a temporary one
-    for (auto& c: tmp)
-        c = tolower(c); // Make all of the characters lowercase
-    std::size_t found = tmp.find("true"); // If "true" exists somewhere then the boolean is true
-    return (found != std::string::npos);
+    if (quotes)
+        return '"' + str + '"';
+    else
+        return str;
 }
+
+int Option::asInt() const { return number; }
+
+long Option::asLong() const { return number; }
+
+float Option::asFloat() const { return decimal; }
+
+double Option::asDouble() const { return decimal; }
+
+bool Option::asBool() const { return logical; }
+
+void Option::setQuotes(bool setting) { quotes = setting; }
+
+bool Option::hasQuotes() { return quotes; }
+
+void Option::removeRange() { range.reset(); }

@@ -3,9 +3,10 @@
 
 #include "zombie.h"
 
+const EType Zombie::type = Entity::Zombie;
+
 Zombie::Zombie()
 {
-    type = Entity::Zombie;
     speed = 50;
 }
 
@@ -38,4 +39,9 @@ void Zombie::setData(sf::Packet& packet)
 {
     packet >> pos.x >> pos.y >> angle >> speed >> moving >> currentHealth >> baseHealth;
     sprite.setPosition(pos);
+}
+
+EType Zombie::getType() const
+{
+    return type;
 }

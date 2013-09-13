@@ -9,7 +9,7 @@
 namespace Packet
 {
     // This is sent with the login packet
-    const int ProtocolVersion = 4;
+    const int ProtocolVersion = 5;
 
     // This type is sent with every packet so the code that receives it can determine how to process it
     // Please refer to the documentation for more information about these types
@@ -88,9 +88,10 @@ namespace Packet
             StartMoving = 1,
             StopMoving,
             ChangeVisualAngle,
-            UsePrimaryItem,
-            UseSecondaryItem,
+            UseItem,
             PickupItem,
+            DropItem,
+            SwapItem,
             WieldItem
         };
     }

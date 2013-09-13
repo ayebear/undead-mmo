@@ -25,8 +25,8 @@ Network::~Network()
 {
     cout << "Network class destructor called.\n";
     udpSock.setBlocking(false);
-    udpSock.unbind();
-    cout << "UDP Socket was unbound.\n";
+    //udpSock.unbind();
+    //cout << "UDP Socket was unbound.\n";
     stopThreads();
 }
 

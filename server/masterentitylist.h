@@ -40,6 +40,7 @@ class MasterEntityList
         void erase(EID);
         bool cleanUp();
         void update(float);
+        Entity* findCollision(Entity*);
 
         // These only return true if they modified the packet
         bool getAllEntities(sf::Packet&);

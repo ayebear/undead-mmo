@@ -97,5 +97,5 @@ bool AccountDb::saveAccount(const PlayerData& pData)
 
 string AccountDb::accountIdToFilename(int id)
 {
-    return accountDir + toString<int>(id) + ".txt";
+    return accountDir + to_string(id) + ".txt";
 }

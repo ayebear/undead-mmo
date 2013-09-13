@@ -4,12 +4,13 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "entityliving.h"
+#include "mobileentity.h"
 
-class Player: public EntityLiving
+class Player: public MobileEntity
 {
     public:
         Player();
+        EType getType() const;
         void update(float);
         bool collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -20,8 +21,8 @@ class Player: public EntityLiving
         void updateSpriteRotation();
 
     private:
+        static const EType type;
         float visualAngle;
-
 };
 
 #endif

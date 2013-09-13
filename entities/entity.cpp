@@ -5,6 +5,7 @@
 
 int Entity::mapWidth = 0;
 int Entity::mapHeight = 0;
+const EType Entity::type = Entity::Invalid;
 
 Entity::Entity()
 {
@@ -87,6 +88,11 @@ const sf::Vector2f& Entity::getPos() const
 void Entity::moveTo(const sf::Vector2f& posToMove)
 {
     setPos(posToMove);
+}
+
+const ItemCode& Entity::getItem()
+{
+    return ItemCode::noItem;
 }
 
 void Entity::setMapSize(int width, int height)

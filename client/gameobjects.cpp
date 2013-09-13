@@ -8,7 +8,7 @@
 using namespace std;
 
 const string GameObjects::configFilename = "game.cfg";
-const ConfigFile::ConfigMap GameObjects::defaultOptions = {
+const ConfigFile::Section GameObjects::defaultOptions = {
 {"server", Option("ayebear.com")},
 {"useVerticalSync", Option("true")}
 };

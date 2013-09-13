@@ -5,6 +5,7 @@
 #define STRINGUTILS_H
 
 #include <string>
+#include <sstream>
 
 namespace StringUtils
 {
@@ -14,6 +15,24 @@ namespace StringUtils
     void stripComments(std::string&); // Removes all comments from a string
     bool isWhitespace(char); // Returns true if the character is a form of whitespace
     bool areQuotes(char, char); // Returns true if both characters are either single or double quotes
+    bool strToBool(std::string); // Parses a string to determine its boolean value
+    template <class T> std::string toString(T data); // Converts most types to strings using a string stream
+    template <class T> std::string toString(bool data); // Converts a bool to a string
+}
+
+template <class T>
+std::string StringUtils::toString(T data)
+{
+    std::ostringstream tmp;
+    tmp.precision(16);
+    tmp << data;
+    return tmp.str();
+}
+
+template <class T>
+std::string StringUtils::toString(bool data)
+{
+    return (data ? "true" : "false");
 }
 
 #endif

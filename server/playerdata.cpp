@@ -28,16 +28,18 @@ void PlayerData::loadFromConfig(ConfigFile& cfg)
     banned = cfg.getOption("banned").asBool();
     positionX = cfg.getOption("positionX").asDouble();
     positionY = cfg.getOption("positionY").asDouble();
+    inventory.loadFromConfig(cfg);
 }
 
 void PlayerData::saveToConfig(ConfigFile& cfg) const
 {
     cfg.getOption("username").setString(username);
     cfg.getOption("password").setString(passwordHash);
-    cfg.getOption("salt").setInt(salt);
-    cfg.getOption("health").setInt(health);
-    cfg.getOption("level").setInt(level);
-    cfg.getOption("banned").setBool(banned);
-    cfg.getOption("positionX").setDouble(positionX);
-    cfg.getOption("positionY").setDouble(positionY);
+    cfg.getOption("salt").set<int>(salt);
+    cfg.getOption("health").set<int>(health);
+    cfg.getOption("level").set<int>(level);
+    cfg.getOption("banned").set<bool>(banned);
+    cfg.getOption("positionX").set<double>(positionX);
+    cfg.getOption("positionY").set<double>(positionY);
+    inventory.saveToConfig(cfg);
 }

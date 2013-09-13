@@ -6,6 +6,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
+#include "itemcode.h"
 
 typedef sf::Uint32 EID;
 typedef sf::Int32 EType;
@@ -17,7 +18,7 @@ class Entity: public sf::Drawable
         virtual ~Entity();
         const EID getID() const;
         void setID(EID);
-        EType getType() const;
+        virtual EType getType() const;
 
         // These are the functions that all entities will have (Which need to be defined by classes which inherit from Entity)
         virtual void update(float) = 0;
@@ -31,7 +32,7 @@ class Entity: public sf::Drawable
 
         // This will be great for optimizing stuff, and doubly acts as a way to separate dynamic/static entities!
         // It also can be false even with dynamic entities.
-        // Note that there is already a bool variable for this in the EntityLiving class. We just need this function in the Entity class to access it.
+        // Note that there is already a bool variable for this in the MobileEntity class. We just need this function in the Entity class to access it.
         virtual bool isMoving() const;
 
         // For setting/getting if the entity is ready or not
@@ -54,11 +55,18 @@ class Entity: public sf::Drawable
         const sf::Vector2f& getPos() const;
         virtual void moveTo(const sf::Vector2f&);
 
+        // Item stuff
+        virtual void attachItem(const ItemCode&) {};
+        virtual const ItemCode& getItem();
+        virtual void removeItem() {};
+        virtual void useItem() {};
+
         static void setMapSize(int, int);
 
         // All of the different entity types
         enum Type
         {
+            Invalid = -1,
             Player = 0,
             Zombie,
             Item
@@ -72,7 +80,7 @@ class Entity: public sf::Drawable
         // Contains the entity's unique ID
         EID id;
         // Represents what type the entity is
-        EType type;
+        static const EType type;
         sf::Vector2f pos;
         sf::Sprite sprite;
 

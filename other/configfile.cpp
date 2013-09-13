@@ -3,7 +3,6 @@
 
 #include "configfile.h"
 #include <fstream>
-#include <iostream>
 #include "stringutils.h"
 
 ConfigFile::ConfigFile()
@@ -20,9 +19,20 @@ ConfigFile::ConfigFile(const ConfigMap& defaultOptions)
     setDefaultOptions(defaultOptions);
 }
 
-ConfigFile::ConfigFile(const ConfigMap& defaultOptions, const string& filename)
+ConfigFile::ConfigFile(const Section& defaultOptions, const string& section)
+{
+    setDefaultOptions(defaultOptions, section);
+}
+
+ConfigFile::ConfigFile(const string& filename, const ConfigMap& defaultOptions)
 {
     setDefaultOptions(defaultOptions);
+    loadConfigFile(filename);
+}
+
+ConfigFile::ConfigFile(const string& filename, const Section& defaultOptions, const string& section)
+{
+    setDefaultOptions(defaultOptions, section);
     loadConfigFile(filename);
 }
 
@@ -59,14 +69,15 @@ bool ConfigFile::writeConfigFile(const string& outputFilename)
     return false;
 }
 
-Option& ConfigFile::getOption(const string& name)
+Option& ConfigFile::getOption(const string& name, const string& section)
 {
-    return options[name];
+    return options[section][name];
 }
 
-bool ConfigFile::optionExists(const string& name)
+bool ConfigFile::optionExists(const string& name, const string& section)
 {
-    return (options.find(name) != options.end());
+    auto sectionFound = options.find(section);
+    return (sectionFound != options.end() && sectionFound->second.find(name) != sectionFound->second.end());
 }
 
 void ConfigFile::setDefaultOptions(const ConfigMap& defaultOptions)
@@ -74,17 +85,43 @@ void ConfigFile::setDefaultOptions(const ConfigMap& defaultOptions)
     options.insert(defaultOptions.begin(), defaultOptions.end());
 }
 
+void ConfigFile::setDefaultOptions(const Section& defaultOptions, const string& section)
+{
+    options[section].insert(defaultOptions.begin(), defaultOptions.end());
+}
+
 string ConfigFile::buildString()
 {
     string configStr;
-    for (auto& o: options)
+    for (auto& section: options) // Go through all of the sections
     {
-        if (o.second.getIsString()) // If it originally had quotes, make sure to include them
-            configStr += o.first + " = \"" + o.second.asString() + "\"\n";
-        else
-            configStr += o.first + " = " + o.second.asString() + '\n';
+        if (!section.first.empty())
+            configStr += '[' + section.first + "]\n"; // Add the section line if it is not blank
+        for (auto& o: section.second) // Go through all of the options in this section
+            configStr += o.first + " = " + o.second.asStringWithQuotes() + '\n'; // Include the original quotes if any
+        configStr += '\n';
     }
+    if (!configStr.empty() && configStr.back() == '\n')
+        configStr.pop_back(); // Strip the extra new line at the end
     return configStr;
+}
+
+bool ConfigFile::eraseOption(const string& name, const string& section)
+{
+    auto sectionFound = options.find(section);
+    if (sectionFound != options.end()) // If the section exists
+        return (sectionFound->second.erase(name) > 0); // Erase the option
+    return false;
+}
+
+bool ConfigFile::eraseSection(const string& section)
+{
+    return (options.erase(section) > 0); // Erase the section
+}
+
+void ConfigFile::clear()
+{
+    options.clear(); // Clear all of the sections and options
 }
 
 bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines)
@@ -96,6 +133,7 @@ bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines
         while (getline(file, line)) // Read a line
         {
             StringUtils::stripNewLines(line); // Strip any CR or LF characters from the line
+            StringUtils::trimWhiteSpace(line); // Trim any whitespace characters (on the outsides)
             StringUtils::stripComments(line); // Strip any comments from the line
             if (!line.empty()) // If the line is not empty
                 lines.push_back(line); // Store the line
@@ -107,24 +145,44 @@ bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines
 
 void ConfigFile::parseLines(vector<string>& lines)
 {
+    string section = "";
     for (auto& line: lines) // Iterate through the vector of strings
     {
-        size_t equalPos = line.find("="); // Find the position of the "=" symbol
-        if (equalPos != string::npos && equalPos >= 1) // Ignore the line if there is no "=" symbol
-        {
-            string name, value;
-            // Extract the name and value
-            name = line.substr(0, equalPos);
-            value = line.substr(equalPos + 1);
-            // Trim any whitespace around the name and value
-            StringUtils::trimWhiteSpace(name);
-            StringUtils::trimWhiteSpace(value);
-            // Remove outer quotes if any
-            bool trimmedQuotes = StringUtils::trimQuotes(value);
-            // Add/update the option in memory
-            options[name] = value;
-            if (trimmedQuotes)
-                options[name].setIsString(true);
-        }
+        if (isSection(line))
+            parseSectionLine(line, section); // Example: "[Section]"
+        else
+            parseOptionLine(line, section); // Example: "Option = Value"
+    }
+}
+
+bool ConfigFile::isSection(const string& str)
+{
+    return (str.size() >= 2 && str.front() == '[' && str.back() == ']');
+}
+
+void ConfigFile::parseSectionLine(const string& line, string& section)
+{
+    section = line.substr(1, line.size() - 2); // Set the current section
+    options[section]; // Add that section to the map
+}
+
+void ConfigFile::parseOptionLine(const string& line, const string& section)
+{
+    size_t equalPos = line.find("="); // Find the position of the "=" symbol
+    if (equalPos != string::npos && equalPos >= 1) // Ignore the line if there is no "=" symbol
+    {
+        string name, value;
+        // Extract the name and value
+        name = line.substr(0, equalPos);
+        value = line.substr(equalPos + 1);
+        // Trim any whitespace around the name and value
+        StringUtils::trimWhiteSpace(name);
+        StringUtils::trimWhiteSpace(value);
+        // Remove outer quotes if any
+        bool trimmedQuotes = StringUtils::trimQuotes(value);
+        // Add/update the option in memory
+        options[section][name] = value;
+        if (trimmedQuotes) // If quotes were removed
+            options[section][name].setQuotes(true); // Add quotes to the option
     }
 }
