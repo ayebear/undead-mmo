@@ -67,8 +67,8 @@
 		<Unit filename="entities/entity.h" />
 		<Unit filename="entities/entityalloc.cpp" />
 		<Unit filename="entities/entityalloc.h" />
-		<Unit filename="entities/entityliving.cpp" />
-		<Unit filename="entities/entityliving.h" />
+		<Unit filename="entities/mobileentity.cpp" />
+		<Unit filename="entities/mobileentity.h" />
 		<Unit filename="entities/player.cpp" />
 		<Unit filename="entities/player.h" />
 		<Unit filename="entities/zombie.cpp" />
@@ -78,6 +78,8 @@
 		<Unit filename="other/linkedqueue.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
+		<Unit filename="other/range.cpp" />
+		<Unit filename="other/range.h" />
 		<Unit filename="other/stringutils.cpp" />
 		<Unit filename="other/stringutils.h" />
 		<Unit filename="server/accountdb.cpp" />
@@ -90,29 +92,42 @@
 		<Unit filename="server/clientmanager.h" />
 		<Unit filename="server/entitygrid.cpp" />
 		<Unit filename="server/entitygrid.h" />
+		<Unit filename="server/inventory.cpp" />
+		<Unit filename="server/inventory.h" />
 		<Unit filename="server/main.cpp" />
 		<Unit filename="server/masterentitylist.cpp" />
 		<Unit filename="server/masterentitylist.h" />
 		<Unit filename="server/miscnetwork.h" />
+		<Unit filename="server/playerdata.cpp" />
+		<Unit filename="server/playerdata.h" />
 		<Unit filename="server/server.cpp" />
 		<Unit filename="server/server.h" />
 		<Unit filename="server/servernetwork.cpp" />
 		<Unit filename="server/servernetwork.h" />
 		<Unit filename="shared/ipport.cpp" />
 		<Unit filename="shared/ipport.h" />
+		<Unit filename="shared/itemcode.cpp" />
+		<Unit filename="shared/itemcode.h" />
 		<Unit filename="shared/map.cpp" />
 		<Unit filename="shared/map.h" />
 		<Unit filename="shared/network.cpp" />
 		<Unit filename="shared/network.h" />
 		<Unit filename="shared/packet.h" />
-		<Unit filename="shared/playerdata.cpp" />
-		<Unit filename="shared/playerdata.h" />
 		<Unit filename="shared/tile.cpp" />
 		<Unit filename="shared/tile.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
 			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

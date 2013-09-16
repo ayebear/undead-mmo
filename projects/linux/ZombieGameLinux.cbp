@@ -51,6 +51,8 @@
 		<Unit filename="client/hud.h" />
 		<Unit filename="client/inputbox.cpp" />
 		<Unit filename="client/inputbox.h" />
+		<Unit filename="client/inventorygui.cpp" />
+		<Unit filename="client/inventorygui.h" />
 		<Unit filename="client/loginstate.cpp" />
 		<Unit filename="client/loginstate.h" />
 		<Unit filename="client/main.cpp" />
@@ -64,6 +66,8 @@
 		<Unit filename="client/playgamestate.h" />
 		<Unit filename="client/scrollbar.cpp" />
 		<Unit filename="client/scrollbar.h" />
+		<Unit filename="client/slot.cpp" />
+		<Unit filename="client/slot.h" />
 		<Unit filename="client/state.cpp" />
 		<Unit filename="client/state.h" />
 		<Unit filename="client/stateaction.cpp" />
@@ -80,8 +84,8 @@
 		<Unit filename="entities/entity.h" />
 		<Unit filename="entities/entityalloc.cpp" />
 		<Unit filename="entities/entityalloc.h" />
-		<Unit filename="entities/entityliving.cpp" />
-		<Unit filename="entities/entityliving.h" />
+		<Unit filename="entities/mobileentity.cpp" />
+		<Unit filename="entities/mobileentity.h" />
 		<Unit filename="entities/player.cpp" />
 		<Unit filename="entities/player.h" />
 		<Unit filename="entities/zombie.cpp" />
@@ -91,17 +95,19 @@
 		<Unit filename="other/linkedqueue.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
+		<Unit filename="other/range.cpp" />
+		<Unit filename="other/range.h" />
 		<Unit filename="other/stringutils.cpp" />
 		<Unit filename="other/stringutils.h" />
 		<Unit filename="shared/ipport.cpp" />
 		<Unit filename="shared/ipport.h" />
+		<Unit filename="shared/itemcode.cpp" />
+		<Unit filename="shared/itemcode.h" />
 		<Unit filename="shared/map.cpp" />
 		<Unit filename="shared/map.h" />
 		<Unit filename="shared/network.cpp" />
 		<Unit filename="shared/network.h" />
 		<Unit filename="shared/packet.h" />
-		<Unit filename="shared/playerdata.cpp" />
-		<Unit filename="shared/playerdata.h" />
 		<Unit filename="shared/tile.cpp" />
 		<Unit filename="shared/tile.h" />
 		<Extensions>
