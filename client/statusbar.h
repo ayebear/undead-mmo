@@ -15,7 +15,7 @@ class StatusBar: public sf::Drawable
         StatusBar();
         ~StatusBar();
 
-        void setUp(std::string&, sf::Vector2f&, sf::Vector2f&, int, int, int, int, sf::Color&, sf::Color&, sf::Font&, bool, bool);
+        void setUp(const std::string&, const sf::Vector2f&, const sf::Vector2f&, int, int, int, int, const sf::Color&, const sf::Color&, const sf::Font&, bool, bool);
 
         void setCurrentValue(int);
         void modifyCurrentValue(int);
@@ -25,17 +25,17 @@ class StatusBar: public sf::Drawable
 
         void setFillDirection(int);
 
-        void setPosition(sf::Vector2f&);
+        void setPosition(const sf::Vector2f&);
         void setPosition(float, float);
 
-        void setSize(sf::Vector2f&);
+        void setSize(const sf::Vector2f&);
         void setSize(float, float);
 
-        void setBackgroundColor(sf::Color&);
-        void setFillColor(sf::Color&);
+        void setBackgroundColor(const sf::Color&);
+        void setFillColor(const sf::Color&);
 
-        void setValuesFont(sf::Font&);
-        void setStatusBarName(std::string&);
+        void setValuesFont(const sf::Font&);
+        void setStatusBarName(const std::string&);
 
         void updateBar();
 

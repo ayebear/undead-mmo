@@ -9,14 +9,21 @@
 class InventoryGUI: public sf::Drawable
 {
     public:
+
+
+        enum Mode
+        {
+            standardMode = 0,
+            dropMode,
+            swapMode,
+            totalModes
+        };
+
         InventoryGUI();
         ~InventoryGUI();
 
         const int MINSLOTSIZE = 32;
         const int MAXSLOTSIZE = 128;
-
-       /* //Power of 2 that the max slot size is. Used to set up the slots so the textures resize more efficiently
-        const int MAXSIZEPOWER = 7;*/
 
         void setUp(int, const sf::FloatRect&, sf::Font&, sf::RenderWindow&);
         void setUp(int, const sf::Vector2f&, const sf::Vector2f&, sf::Font&, sf::RenderWindow&);
@@ -51,18 +58,13 @@ class InventoryGUI: public sf::Drawable
         sf::RectangleShape inventoryWindow;
         sf::FloatRect inventoryRect;
 
-        //Portion of inventory with the slots
-        sf::RectangleShape slotWindow;
-        sf::FloatRect slotRect;
-
         TextItemList descriptionBox;
         std::vector<Slot> slots;
 
-        int activeLeftSlot;
-        int activeRightSlot;
+        unsigned int activeLeftSlot;
+        unsigned int activeRightSlot;
 
-        //When we add items we will have a parallel array that holds the actual items.
-        //std::vector<Item> items;
+
 
 };
 

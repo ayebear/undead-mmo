@@ -19,7 +19,9 @@ StatusBar::~StatusBar()
 }
 
 
-void StatusBar::setUp(std::string& name, sf::Vector2f& pos, sf::Vector2f& size, int minValue, int currValue, int maxValue, int fillDirec, sf::Color& backColor, sf::Color& fillCol, sf::Font& valuesFont, bool textVisible, bool valsAsPercent)
+void StatusBar::setUp(const std::string& name, const sf::Vector2f& pos, const sf::Vector2f& size, int minValue, int currValue,
+                      int maxValue, int fillDirec, const sf::Color& backColor, const sf::Color& fillCol,
+                      const sf::Font& valuesFont, bool textVisible, bool valsAsPercent)
 {
 
     setPosition(pos);
@@ -89,7 +91,7 @@ void StatusBar::setFillDirection(int fillDirec)
         fillDirection = 1;
 }
 
-void StatusBar::setPosition(sf::Vector2f& pos)
+void StatusBar::setPosition(const sf::Vector2f& pos)
 {
     xPos = pos.x;
     yPos = pos.y;
@@ -110,7 +112,7 @@ void StatusBar::setPosition(float x, float y)
     backgroundBar.setPosition(xPos, yPos);
 }
 
-void StatusBar::setSize(sf::Vector2f& size)
+void StatusBar::setSize(const sf::Vector2f& size)
 {
     barWidth = size.x;
     barHeight = size.y;
@@ -132,13 +134,13 @@ void StatusBar::setSize(float x, float y)
      backgroundBar.setSize(sf::Vector2f(barWidth, barHeight));
 }
 
-void StatusBar::setBackgroundColor(sf::Color& backColor)
+void StatusBar::setBackgroundColor(const sf::Color& backColor)
 {
     backgroundColor = backColor;
     backgroundBar.setFillColor(backgroundColor);
 }
 
-void StatusBar::setFillColor(sf::Color& fillCol)
+void StatusBar::setFillColor(const sf::Color& fillCol)
 {
     fillColor = fillCol;
     currentValueBar.setFillColor(fillColor);
@@ -218,12 +220,12 @@ void StatusBar::updateBar()
         full = true;
 }
 
-void StatusBar::setValuesFont(sf::Font& valuesFont)
+void StatusBar::setValuesFont(const sf::Font& valuesFont)
 {
     values.setFont(valuesFont);
 }
 
-void StatusBar::setStatusBarName(std::string& name)
+void StatusBar::setStatusBarName(const std::string& name)
 {
     statusBarName = name;
 }

@@ -3,6 +3,7 @@
 
 #include "menu.h"
 #include <sstream>
+#include <string>
 
 Menu::Menu()
 {
@@ -160,7 +161,7 @@ int Menu::handleKeyPressed(sf::Event& event)
     {
         //Get the current system time.
         time_t currTime = time(0);
-        std::string fileName = "data/screenshots/";
+        std::string fileName = "data/screenshots/";// + to_string(5) + ".png";;
         std::stringstream ss;
         ss << currTime;
 

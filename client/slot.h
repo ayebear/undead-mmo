@@ -19,21 +19,25 @@ class Slot: public sf::Drawable
         Slot();
         ~Slot();
 
-        void setBackgroundColors(sf::Color&, sf::Color&);
-        void setEmptyBackgroundColor(sf::Color&);
-        void setNonEmptyBackgroundColor(sf::Color&);
+        void setBackgroundColors(const sf::Color&, const sf::Color&);
+        void setEmptyBackgroundColor(const sf::Color&);
+        void setNonEmptyBackgroundColor(const sf::Color&);
 
-        void setAllOutlineColors(sf::Color&, sf::Color&, sf::Color&, sf::Color&);
+        void setAllOutlineColors(const sf::Color&, const sf::Color&, const sf::Color&, const sf::Color&);
         void setOutlineColor(int, sf::Color&);
 
         void setActive(int);
         void toggleActive(int);
         void setInactive();
+        void setFont(const sf::Font&);
 
         void setPosition(sf::Vector2f);
         void setSize(sf::Vector2f);
         void addItem(sf::Texture&);
         void removeItem();
+
+        void setTextFromString(const std::string&);
+        void setTextFromInteger(int);
 
         sf::Vector2f getPosition() const;
         sf::Vector2f getSize() const;
@@ -55,6 +59,12 @@ class Slot: public sf::Drawable
         int active;
         bool isEmpty;
         sf::Color activeColors[totalActiveTypes];
+
+        //Number in the bottom left corner of the slot
+        bool fontSet;
+        bool textVisible;
+        short fontSize;
+        sf::Text text;
 
 };
 

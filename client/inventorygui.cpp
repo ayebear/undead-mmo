@@ -4,15 +4,12 @@
 
 InventoryGUI::InventoryGUI()
 {
-    numSlots = 0;
+    numSlots = 1;
     slotsPerRow = 1;
     inventoryWindow.setFillColor(sf::Color(50, 100, 100, 150));
 
     inventoryRect.width = 1;
     inventoryRect.height = 1;
-
-    slotRect.width = 1;
-    slotRect.height = 1;
 
     slotHorizontalPadding = 0;
     slotVerticalPadding = 0;
@@ -29,19 +26,35 @@ InventoryGUI::~InventoryGUI()
     //dtor
 }
 
+//Used to set up the inventory using fractional positions and sizes based on the window size
+//Example: inventory.setUp(10, sf::FloatRect(0, .5, .3, .5), font, window) would create an inventory with 10 slots located
+//on thhe left side of the screen, halfway down with a width of about 1/3 the window size and a height of half of the
+//window height
 void InventoryGUI::setUp(int totalSlots, const sf::FloatRect& posSize, sf::Font& descFont, sf::RenderWindow& window)
 {
+
+    if(totalSlots > 0)
+        numSlots = totalSlots;
+
+    slots.resize(numSlots);
+
+    inventoryRect.left = posSize.left * window.getSize().x;
+    inventoryRect.top = posSize.top * window.getSize().y;
+    inventoryRect.width = posSize.width * window.getSize().x;
+    inventoryRect.height = posSize.height * window.getSize().y;
+
+    inventoryWindow.setPosition(sf::Vector2f(inventoryRect.left, inventoryRect.top));
+    inventoryWindow.setSize(sf::Vector2f(inventoryRect.width, inventoryRect.height));
+
+    setUpSlots(totalSlots);
+
+   // descriptionBox.setupList(window, sf::FloatRect(descriptionBoxLeft, descriptionBoxTop, descriptionBoxWidth, descriptionBoxHeight), descFont, 12, false, true);
 
 }
 
 void InventoryGUI::setUp(int totalSlots, const sf::Vector2f& pos, const sf::Vector2f& size, sf::Font& descFont, sf::RenderWindow& window)
 {
-    //Set up the viewport numbers for the description box. The box will occupy the bottom third portion of the inventory window
-    float descriptionBoxWidth = size.x / window.getSize().x;
-    float descriptionBoxHeight = (size.y / 3) / window.getSize().y;
-    float descriptionBoxLeft = pos.x / window.getSize().x;
-    float descriptionBoxTop = (pos.y + size.y) / window.getSize().y;
-// - (size.y / 3)
+
     if(totalSlots > 0)
         numSlots = totalSlots;
 
@@ -54,18 +67,6 @@ void InventoryGUI::setUp(int totalSlots, const sf::Vector2f& pos, const sf::Vect
 
     inventoryWindow.setPosition(pos);
     inventoryWindow.setSize(size);
-
-    //Slots occupy the upper 2/3 portion of the inventory
-    slotWindow.setPosition(pos.x, pos.y);
-    slotWindow.setSize(sf::Vector2f(size.x, size.y));
-//- (size.y / 3)
-    slotRect.left = pos.x;
-    slotRect.top = pos.y;
-    slotRect.width = size.x;
-    slotRect.height = size.y;
-//- (size.y / 3)
-  //  std::cout << "SlotRect Height " << slotRect.height << std::endl;
-   // std::cout << "SlotRect Width " << slotRect.width << std::endl;
 
     setUpSlots(totalSlots);
 
@@ -81,34 +82,33 @@ void InventoryGUI::setUpSlots(int totalSlots)
     int numRows = 1;
 
     //Find the area of the inventory
-    float area = slotRect.width * slotRect.height;
+    float area = inventoryRect.width * inventoryRect.height;
 
     //Divide the area into 'totalSlots' smaller areas
-    float slotArea = area / totalSlots;
-
+    float slotArea = ceil((area / 1.13)) / (totalSlots);
     //Find the length of the sides of the slot by taking the square root of its area
     float slotSize = sqrt(slotArea);
-
     //First find how many slots can fit per row and rounding up
-    slotsPerRow = ceil(slotRect.width / slotSize);
+    slotsPerRow = ceil(inventoryRect.width / slotSize);
 
     //Adjust the slot size
-    slotSize = slotRect.width / slotsPerRow / 1.2;
+    slotSize = ceil((inventoryRect.width / 1.13) / slotsPerRow);
 
-    numRows = totalSlots / slotsPerRow;
+    numRows = floor(totalSlots / slotsPerRow);
 
     float slotHorizontalSpace = slotSize * slotsPerRow;
     float slotVerticalSpace = slotSize * numRows;
 
     //Divide the unused horizontal space evenly among the slots per row. +2 to account for the padding at the far left and right
-    slotHorizontalPadding = (slotRect.width - slotHorizontalSpace) / (slotsPerRow + 1);
+    slotHorizontalPadding = (inventoryRect.width - slotHorizontalSpace) / (slotsPerRow + 1);
 
     //Evenly divide the unused vertical space evenly amond the rows. +2 to account for the padding at the very top and bottom
-    slotVerticalPadding = (slotRect.height - slotVerticalSpace) / (numRows + 1);
+    slotVerticalPadding = (inventoryRect.height - slotVerticalSpace) / (numRows + 1);
 
-   // std::cout << "Horizontal Padding: " << slotHorizontalPadding << std::endl;
-   // std::cout << "vertical Padding: " << slotVerticalPadding << std::endl;
+    std::cout << "Horizontal Padding: " << slotHorizontalPadding << std::endl;
+    std::cout << "vertical Padding: " << slotVerticalPadding << std::endl;
 
+    //Make the padding the same on all sides, and make them the smaller of the two calculated sized
     if(slotVerticalPadding < slotHorizontalPadding)
         slotHorizontalPadding = slotVerticalPadding;
     else
@@ -119,10 +119,8 @@ void InventoryGUI::setUpSlots(int totalSlots)
     int slot = 0;
     for(int i = 0; i < totalSlots; i++)
     {
-       // std::cout << "Horizontal Padding: " << slotHorizontalPadding << std::endl;
-        //std::cout << "vertical Padding: " << slotVerticalPadding << std::endl;
         slots[i].setSize(sf::Vector2f(slotSize, slotSize));
-        slots[i].setPosition(sf::Vector2f(slotRect.left + (slot * slotSize) + (slot + 1) * slotHorizontalPadding, slotRect.top + (row * slotSize) + (row + 1) * slotVerticalPadding));
+        slots[i].setPosition(sf::Vector2f(inventoryRect.left + (slot * slotSize) + (slot + 1) * slotHorizontalPadding, inventoryRect.top + (row * slotSize) + (row + 1) * slotVerticalPadding));
 
         slot++;
         if(slot >= slotsPerRow)
@@ -131,6 +129,9 @@ void InventoryGUI::setUpSlots(int totalSlots)
             row++;
         }
     }
+
+    float bottomSlotPos = slots.back().getPosition().y + slots.back().getSize().y;
+
 
 }
 
@@ -216,7 +217,6 @@ void InventoryGUI::draw(sf::RenderTarget& window, sf::RenderStates states) const
     {
         window.draw(inventoryWindow);
         //window.draw(descriptionBox);
-
         for(unsigned int i = 0; i < slots.size(); i++)
             window.draw(slots[i]);
     }

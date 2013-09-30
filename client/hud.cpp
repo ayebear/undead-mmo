@@ -42,11 +42,11 @@ void Hud::setUp(GameObjects& objects)
     //sf::Vector2f healthBarPos(objects.window.getSize().x / 1.2, objects.window.getSize().y / 2);
     //sf::Vector2f healthBarSize(15, objects.window.getSize().y / 8);
 
-    chat.setUp(sf::FloatRect(0, .77, .3, .20), objects);
+    chat.setUp(sf::FloatRect(0, .76, .3, .20), objects);
     healthBar.setUp(healthBarName, healthBarPos, healthBarSize, 0, 1000, 1000, 1, statusBarBackgroundCol, healthBarFillColor, objects.fontBold, false, false);
     infectionBar.setUp(infectionBarName, infectionBarPos, infectionBarSize, 0, 50, 100, 2, statusBarBackgroundCol, infectionBarFillColor, objects.fontBold, false, true);
 
-    inventory.setUp(1, sf::Vector2f(0, 0), sf::Vector2f(150 , 150), objects.fontBold, objects.window);
+    inventory.setUp(1, sf::FloatRect(.7, .3, .3, .6), objects.fontBold, objects.window);
 }
 
 void Hud::handleMouseMoved(sf::Event& event, sf::RenderWindow& window)

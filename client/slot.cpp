@@ -1,4 +1,6 @@
 #include "slot.h"
+#include <sstream>
+#include <string>
 
 Slot::Slot()
 {
@@ -18,6 +20,8 @@ Slot::Slot()
     slotBackground.setOutlineThickness(1);
 
     isEmpty = true;
+    textVisible = true;
+    fontSet = false;
     active = inActive;
 }
 
@@ -27,23 +31,23 @@ Slot::~Slot()
 }
 
 
-void Slot::setBackgroundColors(sf::Color& emptyBackgr, sf::Color& nonEmptyBackgr)
+void Slot::setBackgroundColors(const sf::Color& emptyBackgr, const sf::Color& nonEmptyBackgr)
 {
     backgroundEmpty = emptyBackgr;
     backgroundNonEmpty = nonEmptyBackgr;
 }
 
-void Slot::setEmptyBackgroundColor(sf::Color& emptyBackgr)
+void Slot::setEmptyBackgroundColor(const sf::Color& emptyBackgr)
 {
     backgroundEmpty = emptyBackgr;
 }
 
-void Slot::setNonEmptyBackgroundColor(sf::Color& nonEmptyBackgr)
+void Slot::setNonEmptyBackgroundColor(const sf::Color& nonEmptyBackgr)
 {
     backgroundNonEmpty = nonEmptyBackgr;
 }
 
-void Slot::setAllOutlineColors(sf::Color& defaultColor, sf::Color& highlightColor, sf::Color& left, sf::Color& right)
+void Slot::setAllOutlineColors(const sf::Color& defaultColor, const sf::Color& highlightColor, const sf::Color& left, const sf::Color& right)
 {
     activeColors[inActive] = defaultColor;
     activeColors[highlighted] = highlightColor;
@@ -83,7 +87,7 @@ void Slot::setInactive()
 }
 
 
-void Slot::setPosition(sf::Vector2f pos)
+void Slot::setPosition(const sf::Vector2f pos)
 {
     slot.setPosition(pos);
     slotBackground.setPosition(pos);
@@ -91,7 +95,7 @@ void Slot::setPosition(sf::Vector2f pos)
     slotRect.top = pos.y;
 }
 
-void Slot::setSize(sf::Vector2f size)
+void Slot::setSize(const sf::Vector2f size)
 {
     slot.setSize(size);
     slotRect.width = size.x;
@@ -118,6 +122,12 @@ sf::Vector2f Slot::getPosition() const
     return slot.getPosition();
 }
 
+void Slot::setFont(const sf::Font& font)
+{
+    text.setFont(font);
+    fontSet = true;
+}
+
 sf::Vector2f Slot::getSize() const
 {
     return slot.getSize();
@@ -135,6 +145,25 @@ bool Slot::handleMouseMoved(sf::Event& event, sf::RenderWindow& window)
         slotBackground.setOutlineColor(activeColors[active]);
 
     return hoveredOver;
+
+}
+
+void Slot::setTextFromString(const std::string& str)
+{
+    if(fontSet)
+        text.setString(str);
+}
+
+void Slot::setTextFromInteger(int val)
+{
+    if(fontSet)
+    {
+        std::stringstream ss;
+        std::string temp("");
+        ss << val;
+        temp += ss.str();
+        text.setString(temp);
+    }
 
 }
 
@@ -157,4 +186,7 @@ void Slot::draw(sf::RenderTarget& window, sf::RenderStates states) const
 
     if(!isEmpty)
         window.draw(slot);
+
+    if(textVisible)
+        window.draw(text);
 }
