@@ -21,9 +21,9 @@ class Server
 
     private:
         void setup();
-        void processAllPackets();
+        void receiveUdp();
+        void receiveTcp();
         void update();
-
         void sendChangedEntities();
 
         void processInputPacket(PacketExtra&);
@@ -47,12 +47,16 @@ class Server
         float elapsedTime;
         sf::Clock clock, warningTimer;
         ServerNetwork netManager;
-        sf::Thread packetProcessing;
+        sf::Thread udpThread;
+        sf::Thread tcpThread;
         AccountDb accounts;
         ClientManager clients;
         MasterEntityList entList;
         Map tileMap;
         ConfigFile config;
+        mutex processPacketMutex;
+        PacketExtra udpPacket;
+        PacketExtra tcpPacket;
 };
 
 #endif

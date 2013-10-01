@@ -10,7 +10,7 @@
 // Used for storing an IP address and port; is also usable in associative containers
 struct IpPort
 {
-    IpPort(): port(Network::clientPort) {}
+    IpPort(): port(clientPort) {}
     bool operator<(const IpPort& addr) const;
     bool operator==(const IpPort& addr) const;
     sf::IpAddress ip;

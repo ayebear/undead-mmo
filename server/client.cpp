@@ -5,9 +5,9 @@
 
 Client::Client(ClientID newID, sf::TcpSocket* tcpSockPtr)
     : id(newID),
+    playerEid(0),
     tcpSock(tcpSockPtr),
-    loggedIn(false),
-    playerEid(0)
+    loggedIn(false)
 {
     address.ip = tcpSockPtr->getRemoteAddress();
     address.port = tcpSockPtr->getRemotePort();
@@ -37,4 +37,9 @@ void Client::logOut()
     loggedIn = false;
     username.clear();
     playerEid = 0;
+}
+
+bool Client::isLoggedIn() const
+{
+    return loggedIn;
 }

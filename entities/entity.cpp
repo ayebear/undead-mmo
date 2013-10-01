@@ -5,11 +5,11 @@
 
 int Entity::mapWidth = 0;
 int Entity::mapHeight = 0;
-const EType Entity::type = Entity::Invalid;
 
 Entity::Entity()
 {
-    id = 0;
+    type = Invalid;
+    id = -1;
     ready = false;
     changed = true;
 }

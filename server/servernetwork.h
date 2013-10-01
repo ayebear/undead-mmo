@@ -6,6 +6,7 @@
 
 #include <map>
 #include <string>
+#include <mutex>
 #include "network.h"
 #include "linkedqueue.h"
 #include "clientmanager.h"
@@ -13,19 +14,15 @@
 #include "accountdb.h"
 #include "masterentitylist.h"
 
-class ServerNetwork: public Network
+class ServerNetwork
 {
     public:
-        ServerNetwork(AccountDb&, ClientManager&, MasterEntityList&);
+        ServerNetwork(AccountDb&, ClientManager&, MasterEntityList&, PacketExtra&, PacketExtra&);
 
-        // Overidden functions
-        void receiveUdp();
-        void receiveTcp();
-
-        // Packet functions
-        bool arePackets();
-        PacketExtra& getPacket();
-        void popPacket();
+        // These are called from the Server class in separate threads, and return after a packet
+        // has been received and stored into the PacketExtra reference passed into the constructor
+        void receiveUdpPacket();
+        void receiveTcpPacket();
 
         // Send packets over the network
         // TCP
@@ -42,20 +39,21 @@ class ServerNetwork: public Network
         void sendServerChatMessage(const std::string&, ClientID exclude = -1);
 
     private:
-        void storePacket(sf::Packet&, ClientID);
-        void storePacket(sf::Packet&, const IpPort&);
-
         void addClient();
         void removeClient(ClientID);
+        void logOutClient(Client*);
         void testSockets();
-        bool isValidType(int);
+        bool validatePacket(PacketExtra&, ClientID);
 
-        LinkedQueue<PacketExtra> packets; // Stores all received packets
+        sf::UdpSocket udpSock;
         sf::TcpListener listener;
         sf::SocketSelector selector;
         AccountDb& accounts;
         ClientManager& clients;
         MasterEntityList& entList;
+        PacketExtra& udpPacket;
+        PacketExtra& tcpPacket;
+        bool receivedTcpPacket;
 };
 
 #endif

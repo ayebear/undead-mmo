@@ -10,7 +10,6 @@ class Player: public MobileEntity
 {
     public:
         Player();
-        EType getType() const;
         void update(float);
         bool collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
@@ -21,7 +20,6 @@ class Player: public MobileEntity
         void updateSpriteRotation();
 
     private:
-        static const EType type;
         float visualAngle;
 };
 

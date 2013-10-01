@@ -6,13 +6,17 @@
 
 #include "ipport.h"
 
-typedef unsigned int ClientID;
+// TODO: Either search and replace this for an int, or make some type of class for it so that it can be compared and stuff
+typedef int ClientID;
 
 // Used for storing packets along with necessary information such as the sender and type of packet
 struct PacketExtra
 {
-    PacketExtra(): sender(0), type(0) {}
-    PacketExtra(const sf::Packet& d, ClientID s, int t): data(d), sender(s), type(t) {}
+    PacketExtra();
+    PacketExtra(const sf::Packet& d, ClientID s, int t);
+    void extractType();
+    bool isValid() const;
+
     sf::Packet data;
     ClientID sender;
     int type;

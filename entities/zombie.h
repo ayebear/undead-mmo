@@ -15,14 +15,11 @@ class Zombie: public MobileEntity
 {
     public:
         Zombie();
-        EType getType() const;
         void update(float);
         bool collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;
         void getData(sf::Packet&);
         void setData(sf::Packet&);
-    private:
-        static const EType type;
 };
 
 #endif

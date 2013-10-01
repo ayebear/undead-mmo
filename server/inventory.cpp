@@ -14,14 +14,27 @@ void Inventory::setSize(unsigned int size)
     itemSlots.resize(size);
 }
 
+unsigned int Inventory::getSize() const
+{
+    return itemSlots.size();
+}
+
 void Inventory::loadFromConfig(ConfigFile& cfg)
 {
-    //cfg.getOption()
+    cfg.setSection("Inventory");
+    setSize(cfg.getOption("Size").asInt());
+    leftSlotId = cfg.getOption("LeftSlotId").asInt();
+    rightSlotId = cfg.getOption("RightSlotId").asInt();
+    cfg.setSection();
 }
 
 void Inventory::saveToConfig(ConfigFile& cfg) const
 {
-
+    cfg.setSection("Inventory");
+    cfg.getOption("Size").set(getSize());
+    cfg.getOption("LeftSlotId").set(leftSlotId);
+    cfg.getOption("RightSlotId").set(rightSlotId);
+    cfg.setSection();
 }
 
 bool Inventory::addItem(Entity* ent)

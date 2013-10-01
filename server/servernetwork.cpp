@@ -7,94 +7,49 @@
 
 using namespace std;
 
-ServerNetwork::ServerNetwork(AccountDb& a, ClientManager& c, MasterEntityList& e):
+ServerNetwork::ServerNetwork(AccountDb& a, ClientManager& c, MasterEntityList& e, PacketExtra& u, PacketExtra& t):
     accounts(a),
     clients(c),
-    entList(e)
+    entList(e),
+    udpPacket(u),
+    tcpPacket(t)
 {
-    // Bind the UDP port
-    udpSock.bind(serverPort);
-
-    // Have the listener listen on the port
-    listener.listen(serverPort);
-
-    // Add the listener to the selector
-    selector.add(listener);
+    udpSock.setBlocking(true); // Set the UDP socket to blocking mode
+    udpSock.bind(serverPort); // Bind the UDP port
+    listener.listen(serverPort); // Have the listener listen on the port
+    selector.add(listener); // Add the listener to the selector
 }
 
-void ServerNetwork::receiveUdp()
+void ServerNetwork::receiveUdpPacket()
 {
-    cout << "ReceiveUdp started.\n";
-    while (udpThreadRunning && udpSock.getLocalPort())
-    {
-        sf::Packet packet;
-        IpPort address;
-        // Will block on this line until a packet is received...
-        if (udpSock.receive(packet, address.ip, address.port) == sf::Socket::Done)
-            storePacket(packet, address);
-    }
-    cout << "ReceiveUdp finished.\n";
+    IpPort address;
+    // Will block on this line until a packet is received
+    // It will loop until it receives a valid packet
+    while ((udpSock.receive(udpPacket.data, address.ip, address.port) != sf::Socket::Done) ||
+            !validatePacket(udpPacket, clients.getIdFromAddress(address)));
 }
 
-void ServerNetwork::receiveTcp()
+void ServerNetwork::receiveTcpPacket()
 {
-    cout << "ReceiveTcp started.\n";
-    while (tcpThreadRunning)
+    receivedTcpPacket = false;
+    while (!receivedTcpPacket)
     {
         // Make the selector wait for data on any socket
+        //cout << "selector.wait()\n";
         if (selector.wait())
         {
-            // Test the listener
+            // Check if a new client is trying to connect
             if (selector.isReady(listener))
                 addClient();
             else
                 testSockets();
         }
     }
-    cout << "ReceiveTcp finished.\n";
-}
-
-bool ServerNetwork::arePackets()
-{
-    return !packets.empty();
-}
-
-PacketExtra& ServerNetwork::getPacket()
-{
-	return packets.front();
-}
-
-void ServerNetwork::popPacket()
-{
-	packets.pop_front();
-}
-
-void ServerNetwork::storePacket(sf::Packet& packet, ClientID sender)
-{
-    if (sender != ClientManager::invalidID)
-    {
-        int type = -1;
-        if (packet >> type)
-        {
-            //cout << "storePacket(): type = " << type << ", sender = " << sender << endl;
-            if (isValidType(type))
-                packets.push_back(PacketExtra(packet, sender, type)); // TODO: Write an emplace_back function or maybe use move semantics
-            else
-                cerr << "storePacket(): Error: Packet type " << type << " is invalid!\n";
-        }
-	}
-    else
-        cout << "storePacket(): Invalid sender ID.\n";
-}
-
-void ServerNetwork::storePacket(sf::Packet& packet, const IpPort& address)
-{
-    storePacket(packet, clients.getIdFromAddress(address));
 }
 
 void ServerNetwork::sendToAllTcp(sf::Packet& packet, ClientID exclude, bool mustBeLoggedIn)
 {
-    sf::Lock lock(clients.getClientsMutex());
+    sf::Lock clientLock(clients.getClientsMutex());
     for (auto& client: clients.getClientMap()) // Loop through the connected clients
     {
         // Only send the packet if they are not excluded (which is normally because that client sent the packet)
@@ -119,7 +74,7 @@ void ServerNetwork::sendToClientTcp(sf::Packet& packet, const IpPort& address, b
 
 void ServerNetwork::sendToAllUdp(sf::Packet& packet, ClientID exclude, bool mustBeLoggedIn)
 {
-    sf::Lock lock(clients.getClientsMutex());
+    sf::Lock clientLock(clients.getClientsMutex());
     for (auto& client: clients.getClientMap()) // Loop through the connected clients
     {
         // Only send the packet if they are not excluded (which is normally because that client sent the packet)
@@ -144,7 +99,7 @@ void ServerNetwork::sendToClientUdp(sf::Packet& packet, const IpPort& address, b
 
 void ServerNetwork::udpSend(Client* c, sf::Packet& packet, bool mustBeLoggedIn)
 {
-    if (c->loggedIn || !mustBeLoggedIn)
+    if (c->isLoggedIn() || !mustBeLoggedIn)
         udpSock.send(packet, c->address.ip, clientPort); // TODO: Figure out a solution for UDP to not have to be port forwarded, and maybe if necessary have the port OS defined to prevent conflicts
         //udpSock.send(packet, c->address.ip, c->address.port);
 }
@@ -159,6 +114,7 @@ void ServerNetwork::sendServerChatMessage(const string& msg, ClientID exclude)
 
 void ServerNetwork::addClient()
 {
+    //cout << "addClient()\n";
     // The listener is ready: there is a pending connection
     sf::TcpSocket* tcpSock = new sf::TcpSocket;
     //unique_ptr<sf::TcpSocket> tcpSock(new sf::TcpSocket);
@@ -176,52 +132,69 @@ void ServerNetwork::addClient()
 
 void ServerNetwork::removeClient(ClientID id)
 {
+    //cout << "removeClient(" << id << ")\n";
     if (clients.validClientID(id))
     {
-        auto clientToRemove = clients.getClientFromId(id);
+        Client* clientToRemove = clients.getClientFromId(id);
         if (clientToRemove != nullptr)
         {
-            // TODO: Move this stuff elsewhere (so that ServerNetwork does not need the account database and entity list!)
-            // Save the player's position
-            Entity* playerEnt = entList.find(clientToRemove->playerEid);
-            if (playerEnt != nullptr)
-            {
-                sf::Vector2f pos = playerEnt->getPos();
-                clientToRemove->pData->positionX = pos.x;
-                clientToRemove->pData->positionY = pos.y;
-            }
-            entList.erase(clientToRemove->playerEid);
-            sendServerChatMessage(clientToRemove->username + " has logged out.", id);
-            accounts.saveAccount(*(clientToRemove->pData));
-            clientToRemove->logOut();
+            if (clientToRemove->isLoggedIn()) // Only do the on-logout stuff if they were logged in
+                logOutClient(clientToRemove);
+            else
+                cout << "Removing client that is not logged in!\n";
             selector.remove(*(clientToRemove->tcpSock));
             clients.removeClient(id);
         }
-        else
-            cerr << "Error: Failed to remove client because it doesn't exist?\n";
     }
+}
+
+void ServerNetwork::logOutClient(Client* clientToRemove)
+{
+    // TODO: Move this stuff elsewhere (so that ServerNetwork does not need the account database and entity list!)
+    // Save the player's position
+    Entity* playerEnt = entList.find(clientToRemove->playerEid);
+    if (playerEnt != nullptr)
+    {
+        sf::Vector2f pos = playerEnt->getPos();
+        clientToRemove->pData->positionX = pos.x;
+        clientToRemove->pData->positionY = pos.y;
+    }
+    entList.erase(clientToRemove->playerEid); // Remove the player's entity
+    sendServerChatMessage(clientToRemove->username + " has logged out.", clientToRemove->id);
+    accounts.saveAccount(*(clientToRemove->pData)); // Save their account data in the account database
+    clientToRemove->logOut();
 }
 
 void ServerNetwork::testSockets()
 {
-    // The listener socket is not ready, test all other sockets (the clients)
+    //cout << "testSockets()\n";
+    // Check if any of the connected clients sent any data
     for (auto& c: clients.getClientMap())
     {
         auto& tcpSock = *(c.second->tcpSock);
         if (selector.isReady(tcpSock))
         {
             ClientID senderId = c.second->id;
-            // The client has sent some data, we can receive it
-            sf::Packet packet;
-            if (tcpSock.receive(packet) == sf::Socket::Done)
-                storePacket(packet, senderId);
-            else // the client has disconnected, so remove it
+            // Will block on this line until a packet is received
+            //cout << "tcpSock.receive()\n";
+            if (tcpSock.receive(tcpPacket.data) == sf::Socket::Done)
+            {
+                if (validatePacket(tcpPacket, senderId))
+                {
+                    receivedTcpPacket = true;
+                    return;
+                    // TODO: Figure out a better way to do this so that some clients are not prioritized over others
+                }
+            }
+            else // The client has disconnected, so remove it
                 removeClient(senderId);
         }
     }
 }
 
-bool ServerNetwork::isValidType(int type)
+bool ServerNetwork::validatePacket(PacketExtra& packet, ClientID senderId)
 {
-    return (type >= 0 && type < Packet::TotalPacketTypes);
+    packet.sender = senderId; // Store the client ID
+    packet.extractType(); // Extract and store the type of the packet
+    return packet.isValid();
 }

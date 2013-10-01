@@ -46,7 +46,7 @@ Entity* MasterEntityList::insert(Entity* newEnt)
 
 Entity* MasterEntityList::find(EID id)
 {
-    if (id < ents.size())
+    if (id < (int)ents.size())
         return ents[id];
     else
         return nullptr;
@@ -54,7 +54,7 @@ Entity* MasterEntityList::find(EID id)
 
 void MasterEntityList::erase(EID id)
 {
-    if (id < ents.size())
+    if (id < (int)ents.size())
     {
         entCount--;
         delete ents[id]; // Deallocate
@@ -85,7 +85,7 @@ bool MasterEntityList::cleanUp()
         // Go through and build a new temporary vector with existing entities
         // Also assign them with new IDs!!!
         vector <Entity*> entsTmp;
-        for (EID id = 0; id < ents.size(); id++)
+        for (EID id = 0; id < (int)ents.size(); id++)
         {
             if (ents[id] != nullptr)
             {
@@ -161,14 +161,14 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
     {
         for (auto& ent: ents)
         {
-            if (ent != nullptr && ent->hasChanged() && packet.getDataSize() < sf::UdpSocket::MaxDatagramSize - 256)
+            if (ent != nullptr && ent->hasChanged())
             {
                 ent->getData(packet);
                 ent->setChanged(false);
                 anyChanged = true;
             }
-            else if (packet.getDataSize() >= sf::UdpSocket::MaxDatagramSize - 256)
-                return anyChanged;
+            if (packet.getDataSize() >= sf::UdpSocket::MaxDatagramSize - 256)
+                break;
         }
         /*if (anyChanged)
             cout << "getChangedEntities()\n";*/

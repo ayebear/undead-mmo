@@ -99,6 +99,7 @@ class ConfigFile
         void setDefaultOptions(const ConfigMap&); // Sets initial values in the map from another map in memory
         void setDefaultOptions(const Section&, const string& = ""); // Sets initial values for a single section
         string buildString(); // This just builds up a string of all of the options in memory
+        void setSection(const string& = ""); // Sets the default current section to be used
 
         bool eraseOption(const string&, const string& = ""); // Erases an option, returns true if the option was successfully erased
         bool eraseSection(const string& = ""); // Erases a section, returns true if the section was successfully erased
@@ -110,9 +111,11 @@ class ConfigFile
         bool isSection(const string&); // Returns true if the line is a section header
         void parseSectionLine(const string&, string&); // Processes a section header line and adds a section to the map
         void parseOptionLine(const string&, const string&); // Processes an option line and adds an option to the map
+        const string& getCurrentSection(const string& = "");
 
         string configFilename; // The filename of the config file to read/write to
         ConfigMap options; // The data structure for storing all of the options in memory
+        string currentSection; // The default current section
 };
 
 #endif

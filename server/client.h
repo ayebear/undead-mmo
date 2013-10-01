@@ -22,14 +22,19 @@ class Client: sf::NonCopyable
         void tcpSend(sf::Packet&, bool mustBeLoggedIn = true);
         void logIn(const std::string&, EID);
         void logOut();
+        bool isLoggedIn() const;
 
         ClientID id; // This will also be used for the key in the clients map
-        std::unique_ptr<sf::TcpSocket> tcpSock; // TCP socket for the connection to the client
         IpPort address; // IP address and port
         std::string username; // Client's username
-        bool loggedIn; // They could be connected but not logged in
-        std::unique_ptr<PlayerData> pData; // Stores the player data for the client
         EID playerEid; // The entity ID of the client's player entity
+
+        std::unique_ptr<sf::TcpSocket> tcpSock; // TCP socket for the connection to the client
+        std::unique_ptr<PlayerData> pData; // Stores the player data for the client
+
+    private:
+        bool loggedIn; // They could be connected but not logged in
+        // TODO: We should enforce a timeout on the TCP connection if not logged in
 };
 
 #endif

@@ -9,14 +9,16 @@ const float Server::desiredFrameTime = 1.0 / 120.0;
 const float Server::frameTimeTolerance = -10.0 / 120.0;
 
 const ConfigFile::Section Server::defaultOptions = {
-    {"port", Option("1337")},
+    {"port", Option::create(1337, Range::GTE, 1, Range::LTE, 65536)},
     {"map", Option("serverdata/maps/2.map")},
-    {"maxZombies", Option("20")}
+    {"maxZombies", Option::create(20, Range::GTE, 0)},
+    {"showExternalIp", Option::create<bool>(false)},
 };
 
 Server::Server():
-    netManager(accounts, clients, entList),
-    packetProcessing(&Server::processAllPackets, this)
+    netManager(accounts, clients, entList, udpPacket, tcpPacket),
+    udpThread(&Server::receiveUdp, this),
+    tcpThread(&Server::receiveTcp, this)
 {
     setup();
 }
@@ -24,9 +26,9 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.11.0 Dev\n\n";
-    cout << "The server's LAN IP address is: " << sf::IpAddress::getLocalAddress() << "\n\n";
-    //cout << "The server's WAN IP address is: " << sf::IpAddress::getPublicAddress() << endl;
+    cout << "Undead MMO Server v0.0.13.0 Dev\n\n";
+    cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << "\n\n";
+    //cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
 
     // Load the config file
     config.setDefaultOptions(defaultOptions);
@@ -38,8 +40,9 @@ void Server::setup()
     Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
 
     // Launch the networking and packet processing threads
-    netManager.launchThreads();
-    packetProcessing.launch();
+    //netManager.launchThreads(); // TODO: Maybe have a tcp listening thread which handles new connections and stuff?
+    udpThread.launch();
+    tcpThread.launch();
 
     // Spawn some test zombies
     int maxZombies = config.getOption("maxZombies").asInt();
@@ -57,6 +60,7 @@ void Server::setup()
 
 void Server::start()
 {
+    cout << "Main thread started.\n";
     while (true)
     {
         // Update the current game state, also send some of this info to the clients
@@ -76,37 +80,30 @@ void Server::start()
             warningTimer.restart();
         }
     }
+    cout << "Main thread finished.\n";
 }
 
-void Server::processAllPackets()
+void Server::receiveUdp()
 {
+    cout << "ReceiveUdp thread started.\n";
     while (true)
     {
-        while (netManager.arePackets())
-        {
-            processPacket(netManager.getPacket());
-            netManager.popPacket();
-        }
-        // TODO: Figure out a better way to not waste CPU usage than sleeping
-        sf::sleep(sf::milliseconds(10));
+        netManager.receiveUdpPacket();
+        processPacket(udpPacket);
     }
+    cout << "ReceiveUdp thread finished.\n";
 }
 
-/*
-// We could use this in a separate thread later if there are really a lot of packets being processed that are separate from the game state
-void Server::ProcessOtherPackets()
+void Server::receiveTcp()
 {
+    cout << "ReceiveTcp thread started.\n";
     while (true)
     {
-        while (netManager.arePackets())
-        {
-            processPacket(netManager.getPacket());
-            netManager.popPacket();
-        }
-        //sf::sleep(10);
+        netManager.receiveTcpPacket();
+        processPacket(tcpPacket);
     }
+    cout << "ReceiveTcp thread finished.\n";
 }
-*/
 
 void Server::update()
 {
@@ -119,14 +116,14 @@ void Server::sendChangedEntities()
 {
     // Later this will be client-specific as soon as we have spatial partitioning
     sf::Packet changedEntitiesPacket;
-    while (entList.getChangedEntities(changedEntitiesPacket))
+    if (entList.getChangedEntities(changedEntitiesPacket))
         netManager.sendToAllUdp(changedEntitiesPacket);
 }
 
 void Server::processPacket(PacketExtra& packet)
 {
-    int type = packet.type;
-    switch (type)
+    lock_guard<mutex> lock(processPacketMutex);
+    switch (packet.type)
     {
         case Packet::Input:
             processInputPacket(packet);
@@ -144,7 +141,7 @@ void Server::processPacket(PacketExtra& packet)
             processCreateAccount(packet);
             break;
         default:
-            cout << "Error: Unknown received packet type. Type = " << type << endl;
+            cout << "Error: Unknown received packet type. Type = " << packet.type << endl;
             break;
     }
 }
@@ -153,7 +150,7 @@ void Server::processInputPacket(PacketExtra& packet)
 {
     //cout << "Received input packet from client #" << packet.sender << endl;
     Client* senderClient = clients.getClientFromId(packet.sender);
-    if (senderClient != nullptr && senderClient->loggedIn)
+    if (senderClient != nullptr && senderClient->isLoggedIn())
     {
         Entity* playerEnt = entList.find(senderClient->playerEid);
         int inputCode = -1;
@@ -355,12 +352,9 @@ void Server::processLogIn(PacketExtra& packet)
             int dbLogInStatus = accounts.logIn(username, password, *pData);
             if (dbLogInStatus == Packet::LogInCode::Successful)
             {
-                bool userLoggedIn = false;
                 Client* tmpClient = clients.getClientFromUsername(username);
-                if (tmpClient != nullptr)
-                    userLoggedIn = tmpClient->loggedIn;
                 // Make sure the user is NOT already logged in
-                if (!userLoggedIn)
+                if (tmpClient == nullptr || !tmpClient->isLoggedIn())
                 {
                     loginStatusCode = Packet::LogInCode::Successful; // The client has successfully logged in!
                     Client* c = clients.getClientFromId(packet.sender);

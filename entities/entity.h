@@ -8,7 +8,7 @@
 #include <SFML/Network.hpp>
 #include "itemcode.h"
 
-typedef sf::Uint32 EID;
+typedef sf::Int32 EID;
 typedef sf::Int32 EType;
 
 class Entity: public sf::Drawable
@@ -18,7 +18,7 @@ class Entity: public sf::Drawable
         virtual ~Entity();
         const EID getID() const;
         void setID(EID);
-        virtual EType getType() const;
+        EType getType() const;
 
         // These are the functions that all entities will have (Which need to be defined by classes which inherit from Entity)
         virtual void update(float) = 0;
@@ -80,7 +80,7 @@ class Entity: public sf::Drawable
         // Contains the entity's unique ID
         EID id;
         // Represents what type the entity is
-        static const EType type;
+        EType type;
         sf::Vector2f pos;
         sf::Sprite sprite;
 

@@ -6,10 +6,15 @@
 
 using namespace std;
 
-ClientNetwork::ClientNetwork()
+ClientNetwork::ClientNetwork():
+    udpThread(&ClientNetwork::receiveUdp, this),
+    tcpThread(&ClientNetwork::receiveTcp, this)
 {
-    // Bind the UDP port
-    udpSock.bind(clientPort);
+    tcpThreadRunning = false;
+    udpThreadRunning = false;
+
+    udpSock.setBlocking(true);
+    udpSock.bind(clientPort); // Bind the UDP port
 
     connected = false;
     serverAddress.ip = sf::IpAddress::LocalHost;
@@ -22,6 +27,8 @@ ClientNetwork::~ClientNetwork()
     cout << "ClientNetwork class destructor called.\n";
     tcpSock.disconnect();
     cout << "TCP Socket was disconnected.\n";
+    udpSock.setBlocking(false);
+    stopThreads();
 }
 
 void ClientNetwork::receiveUdp()
@@ -57,6 +64,31 @@ void ClientNetwork::receiveTcp()
     connected = false;
     tcpThreadRunning = false;
     cout << "ReceiveTcp finished.\n";
+}
+
+void ClientNetwork::launchThreads()
+{
+    if (!udpThreadRunning)
+    {
+        udpThreadRunning = true;
+        udpThread.launch();
+    }
+    if (!tcpThreadRunning)
+    {
+        tcpThreadRunning = true;
+        tcpThread.launch();
+    }
+}
+
+void ClientNetwork::stopThreads()
+{
+    cout << "stopThreads(): Terminating threads now...\n";
+    udpThread.terminate();
+    cout << "UDP thread terminated.\n";
+    tcpThread.terminate();
+    cout << "TCP thread terminated.\n";
+    udpThreadRunning = false;
+    tcpThreadRunning = false;
 }
 
 bool ClientNetwork::arePackets(int type)
@@ -245,7 +277,7 @@ void ClientNetwork::logOut()
     tcpSock.disconnect();
     tcpThreadRunning = false;
     connected = false;
-    //tcpThread.terminate();
+    tcpThread.terminate();
     clearAllPackets();
     cout << "Logged out of server.\n";
 }
@@ -290,6 +322,16 @@ bool ClientNetwork::validAddress(sf::IpAddress address)
 
 bool ClientNetwork::isConnected()
 {
+    if (connectedTimer.getElapsedTime().asMilliseconds() >= 1000)
+    {
+        // Only using a timer to limit the amount of calls to getLocalPort() which could be expensive
+        connected = (tcpSock.getRemotePort() != 0);
+        //cout << "connected = " << connected << endl;
+        connectedTimer.restart();
+        // TODO: This doesn't seem to work, so maybe we can have some sort of thing that checks if any packets
+        // were received from the server in the last 10 seconds or something
+        // And we should also have a ping packet
+    }
     return connected;
 }
 

@@ -12,9 +12,6 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
     Tile::loadTileTextures();
 
-
-    //theHud.chat.setNetManager(&objects.netManager);
-
     //myPlayer = entList.add(Entity::Player, 1);
     //myPlayer->setTexture(playerTex);
     //myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
@@ -32,21 +29,16 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     lastSentAngle = 0;
 
     playing = true;
-    hasFocus = false;
-    mouseMoved = false;
+    hasFocus = true;
 }
 
 PlayGameState::~PlayGameState()
 {
 }
 
-void PlayGameState::processArgs(const StateArgs& args)
-{
-    // Nothing for now, possibly will use this in the future for logging in or something
-}
-
 void PlayGameState::onPush()
 {
+    mouseMoved = true;
     theHud.chat.clear();
     theHud.chat.setUsername(objects.netManager.getUsername());
     inventoryKeyReleased = true;
@@ -62,6 +54,13 @@ void PlayGameState::onPop()
 
 void PlayGameState::handleEvents()
 {
+    // Exit the game if the server disconnects
+    if (!objects.netManager.isConnected())
+    {
+        action.popState();
+        return;
+    }
+
     sf::Event event;
     while (objects.window.pollEvent(event))
     {
@@ -148,11 +147,11 @@ void PlayGameState::handleEvents()
                 break;
 
             case sf::Event::LostFocus:
-                hasFocus = true;
+                hasFocus = false;
                 break;
 
             case sf::Event::GainedFocus:
-                hasFocus = false;
+                hasFocus = true;
                 break;
 
             case sf::Event::Resized:
@@ -246,7 +245,7 @@ void PlayGameState::updateGameView()
 
 void PlayGameState::handleInput()
 {
-    if (!hasFocus && !theHud.chat.getInput())
+    if (hasFocus && !theHud.chat.getInput())
     {
         // This is horrible code I wrote, we should make it better
         oldPlayerInput = playerInput;
@@ -295,7 +294,7 @@ void PlayGameState::handleInput()
 
 void PlayGameState::handleMouseInput()
 {
-    if (!hasFocus && myPlayer != nullptr)
+    if (hasFocus && myPlayer != nullptr)
     {
         // Handle aiming with mouse
         sf::Vector2i mousePos = sf::Mouse::getPosition(objects.window);
@@ -312,7 +311,7 @@ void PlayGameState::handleMouseInput()
 void PlayGameState::sendAngleInputPacket()
 {
     // Update the server with your player's visual angle up to 5 times per second
-    if (myPlayer != nullptr && angleTimer.getElapsedTime().asSeconds() >= 0.2 && lastSentAngle != currentAngle)
+    if (myPlayer != nullptr && angleTimer.getElapsedTime().asSeconds() >= 0.1 && lastSentAngle != currentAngle)
     {
         sf::Packet anglePacket;
         anglePacket << Packet::Input << Packet::InputType::ChangeVisualAngle << currentAngle;

@@ -5,6 +5,7 @@
 #define CLIENTNETWORK_H
 
 #include <string>
+#include <atomic>
 #include "linkedqueue.h"
 #include "network.h"
 #include "packet.h"
@@ -15,23 +16,25 @@ This class handles all of the client side networking.
 It organizes received packets by their type into different lists inside of an array.
 This way things can more easily read specific packets received instead of everything filtering through all of them.
 */
-class ClientNetwork: public Network
+class ClientNetwork
 {
     public:
         ClientNetwork();
         ~ClientNetwork();
 
-        // Overridden functions
+        // Threading functions
         void receiveUdp();
         void receiveTcp();
+        void launchThreads();
+        void stopThreads();
 
         // Packet storage functions
-        bool arePackets(int); // determines if there are any packets in the lists
-        sf::Packet& getPacket(int);
-        void popPacket(int);
-        void clearPackets(int);
-        void clearAllPackets();
-        void storePacket(sf::Packet&);
+        bool arePackets(int); // Returns true if there are any packets in a list
+        sf::Packet& getPacket(int); // Returns a reference to the oldest packet in a list
+        void popPacket(int); // Removes the oldest packet from a list
+        void clearPackets(int); // Removes all of the packets in a list
+        void clearAllPackets(); // Removes all of the packets in all of the lists
+        void storePacket(sf::Packet&); // Stores a packet if valid, the list to use is calculated by its type
 
         // Packet helpers
         void sendPacketTcp(sf::Packet&);
@@ -56,10 +59,16 @@ class ClientNetwork: public Network
         bool connectToServer();
         void disconnectFromServer();
 
-        // Client only needs a single TCP socket because it is only communicating with the server
+        sf::UdpSocket udpSock;
         sf::TcpSocket tcpSock;
+        sf::Thread udpThread;
+        sf::Thread tcpThread;
+        std::atomic_bool tcpThreadRunning;
+        std::atomic_bool udpThreadRunning;
+
         IpPort serverAddress;
         bool connected;
+        sf::Clock connectedTimer;
 
         std::string currentUsername;
 

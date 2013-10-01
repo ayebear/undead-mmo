@@ -83,14 +83,10 @@ sf::Mutex& ClientManager::getClientsMutex()
 void ClientManager::addClient(sf::TcpSocket* tcpSock)
 {
     sf::Lock lock(clientsMutex);
-
     ClientID newID = getNewID(); // Generate an ID for the new client
-
-    clients[newID] = ClientPtr(new Client(newID, tcpSock)); // Add the new client to the clients list
-    //clients.emplace(newID, new Client(newID, tcpSock)); // Not supported with GCC 4.7.3?
+    clients[newID].reset(new Client(newID, tcpSock)); // Add the new client to the clients list
     auto addr = clients[newID]->address; // Get the address of the new client
     clientIDs[addr] = newID; // Store the ID of the new client in the address map
-
     cout << "Client " << addr.ip << ":" << addr.port << " connected.\n";
     printClients();
 }

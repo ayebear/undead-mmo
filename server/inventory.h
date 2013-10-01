@@ -17,6 +17,7 @@ class Inventory
 
         // Inventory functions
         void setSize(unsigned int);
+        unsigned int getSize() const;
         void loadFromConfig(ConfigFile&);
         void saveToConfig(ConfigFile&) const;
 
@@ -31,8 +32,11 @@ class Inventory
 
     private:
         std::vector <ItemCode> itemSlots; // Holds all of the items in the inventory. Slot 0 and 1 are for your main items.
-        std::map <unsigned int, int> stackableLookup; // Used for efficient lookup of stackable items and the number of items in each stack
+        std::map <unsigned int, unsigned int> stackableLookup; // Used for efficient lookup of stackable items and the number of items in each stack
         std::set <unsigned int> changedSlots; // Slot IDs of slots that have been changed. This gets cleared when getChangedItems is called.
+
+        unsigned int leftSlotId;
+        unsigned int rightSlotId;
 };
 
 #endif
