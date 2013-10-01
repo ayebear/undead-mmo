@@ -2,11 +2,10 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "playgamestate.h"
-#include <ctime>
 #include <string>
-#include <sstream>
 #include "packet.h"
 #include "tile.h"
+#include "miscutils.h"
 
 PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
@@ -104,7 +103,7 @@ void PlayGameState::handleEvents()
                         break;
 
                     case sf::Keyboard::Key::F1:
-                        takeScreenshot();
+                        takeScreenshot(objects.window);
                         break;
 
                     default:
@@ -358,20 +357,6 @@ void PlayGameState::processMapDataPackets()
         objects.netManager.popPacket(Packet::MapData);
         cout << "Received map from server. Size: " << tileMap.getWidth() << " by " << tileMap.getHeight() << ".\n";
     }
-}
-
-void PlayGameState::takeScreenshot()
-{
-    //Get the current system time.
-    time_t currTime = time(0);
-    string fileName = "data/screenshots/";
-    stringstream ss;
-    ss << currTime;
-
-    //Add the time.png to the end of the file name and save it.
-    fileName += ss.str() + ".png";
-    sf::Image scrShot = objects.window.capture();
-    scrShot.saveToFile(fileName);
 }
 
 void PlayGameState::handleWindowResized(GameObjects& objects)

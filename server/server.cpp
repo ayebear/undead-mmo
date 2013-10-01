@@ -27,15 +27,18 @@ void Server::setup()
 {
     // First release will be v0.1.0 Dev
     cout << "Undead MMO Server v0.0.13.0 Dev\n\n";
-    cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << "\n\n";
-    //cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
+    cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
     // Load the config file
     config.setDefaultOptions(defaultOptions);
     config.loadConfigFile("server.cfg");
 
+    if (config["showExternalIp"].asBool())
+        cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
+    cout << endl;
+
     // Load the map file (in the future this can also be randomly generated)
-    tileMap.loadFromFile(config.getOption("map").asString());
+    tileMap.loadFromFile(config["map"].asString());
 
     Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
 
@@ -45,7 +48,7 @@ void Server::setup()
     tcpThread.launch();
 
     // Spawn some test zombies
-    int maxZombies = config.getOption("maxZombies").asInt();
+    int maxZombies = config["maxZombies"].asInt();
     for (int x = 0; x < maxZombies; x++)
     {
         auto* zombie = entList.add(Entity::Zombie);

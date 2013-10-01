@@ -4,6 +4,7 @@
 #include "menu.h"
 #include <sstream>
 #include <string>
+#include "miscutils.h"
 
 Menu::Menu()
 {
@@ -158,19 +159,8 @@ int Menu::handleKeyPressed(sf::Event& event)
         break;
 
     case sf::Keyboard::Key::F1:
-    {
-        //Get the current system time.
-        time_t currTime = time(0);
-        std::string fileName = "data/screenshots/";// + to_string(5) + ".png";;
-        std::stringstream ss;
-        ss << currTime;
-
-        //Add the time.png to the end of the file name and save it.
-        fileName += ss.str() + ".png";
-        sf::Image scrShot = objects->window.capture();
-        scrShot.saveToFile(fileName);
+        takeScreenshot(objects->window);
         break;
-    }
 
     default:
         break;

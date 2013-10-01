@@ -74,6 +74,11 @@ Option& ConfigFile::getOption(const string& name, const string& section)
     return options[getCurrentSection(section)][name];
 }
 
+Option& ConfigFile::operator[](const string& name)
+{
+    return options[currentSection][name];
+}
+
 bool ConfigFile::optionExists(const string& name, const string& section)
 {
     auto sectionFound = options.find(getCurrentSection(section));

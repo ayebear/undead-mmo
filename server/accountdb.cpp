@@ -39,9 +39,9 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
         ConfigFile accountCfg;
         if (accountCfg.loadConfigFile(accountFilename)) // Load the account config file
         {
-            if (accountCfg.getOption("password").asString() == password) // Check if the password is correct!
+            if (accountCfg["password"].asString() == password) // Check if the password is correct!
             {
-                if (!accountCfg.getOption("banned").asBool()) // Check if the account is banned
+                if (!accountCfg["banned"].asBool()) // Check if the account is banned
                 {
                     pData.loadFromConfig(accountCfg); // Load the data from the config file into the player data object
                     status = Packet::LogInCode::Successful;

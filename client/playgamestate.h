@@ -39,7 +39,6 @@ class PlayGameState: public State
         void processEntityPackets();
         void processPlayerIdPackets();
         void processMapDataPackets();
-        void takeScreenshot();
         void handleWindowResized(GameObjects&);
 
         // Important objects

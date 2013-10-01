@@ -95,6 +95,7 @@ class ConfigFile
         bool writeConfigFile(const string&); // Saves current options to a file
 
         Option& getOption(const string&, const string& = ""); // Returns a reference to an option with the specified name (and section). If it does not exist, it will be automatically created
+        Option& operator[](const string&); // Returns a reference to an option with the specified name. If it does not exist, it will be automatically created
         bool optionExists(const string&, const string& = ""); // Returns if an option already exists
         void setDefaultOptions(const ConfigMap&); // Sets initial values in the map from another map in memory
         void setDefaultOptions(const Section&, const string& = ""); // Sets initial values for a single section
