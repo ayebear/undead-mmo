@@ -68,6 +68,7 @@
 		<Unit filename="server/main.cpp" />
 		<Unit filename="server/masterentitylist.cpp" />
 		<Unit filename="server/masterentitylist.h" />
+		<Unit filename="server/miscnetwork.cpp" />
 		<Unit filename="server/miscnetwork.h" />
 		<Unit filename="server/playerdata.cpp" />
 		<Unit filename="server/playerdata.h" />

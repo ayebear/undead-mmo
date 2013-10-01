@@ -71,59 +71,11 @@ void PlayGameState::handleEvents()
                 break;
 
             case sf::Event::KeyPressed:
-                switch (event.key.code)
-                {
-                    case sf::Keyboard::Escape:
-                        if (theHud.chat.getInput())
-                            theHud.chat.setInput(false);
-                        else
-                            action.popState();
-                        break;
-
-                    case sf::Keyboard::Return:
-                        if (theHud.chat.getInput())
-                            theHud.chat.parseMessage();
-                        theHud.chat.toggleInput();
-                        break;
-
-                    case sf::Keyboard::Key::Space:
-                    case sf::Keyboard::Key::B:
-                        if(inventoryKeyReleased)
-                        {
-                            inventoryTimer.restart();
-                            theHud.inventory.toggleInventory();
-                        }
-                        inventoryKeyReleased = false;
-                        break;
-                    case sf::Keyboard::Key::K:
-                        theHud.inventory.addSlots(1);
-                        break;
-                    case sf::Keyboard::Key::L:
-                        theHud.inventory.addSlots(-1);
-                        break;
-
-                    case sf::Keyboard::Key::F1:
-                        takeScreenshot(objects.window);
-                        break;
-
-                    default:
-                        break;
-                }
-                theHud.chat.processInput(event.key.code);
+                handleKeyPressed(event.key.code);
                 break;
-            case sf::Event::KeyReleased:
-                 switch(event.key.code)
-                 {
-                    case sf::Keyboard::Key::Space:
-                    case sf::Keyboard::Key::B:
-                          if(inventoryTimer.getElapsedTime().asMilliseconds() >= 500 && theHud.inventory.getVisibility())
-                                theHud.inventory.toggleInventory();
-                            inventoryKeyReleased = true;
-                        break;
 
-                    default:
-                        break;
-                 }
+            case sf::Event::KeyReleased:
+                handleKeyReleased(event.key.code);
                 break;
 
             case sf::Event::MouseButtonPressed:
@@ -238,6 +190,85 @@ void PlayGameState::updateGameView()
         {
             gameView.setCenter(viewCenter.x, tileMap.getHeightPx() - viewSize.y  / 2);
             viewCenter = gameView.getCenter();
+        }
+    }
+}
+
+void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
+{
+    if (theHud.chat.getInput())
+    {
+        switch (keyCode)
+        {
+            case sf::Keyboard::Escape:
+                theHud.chat.setInput(false);
+                break;
+
+            case sf::Keyboard::Return:
+                theHud.chat.parseMessage();
+                theHud.chat.toggleInput();
+                break;
+
+            default:
+                break;
+        }
+    }
+    else
+    {
+        switch (keyCode)
+        {
+            case sf::Keyboard::Escape:
+                action.popState();
+                break;
+
+            case sf::Keyboard::Return:
+                theHud.chat.toggleInput();
+                break;
+
+            case sf::Keyboard::Key::Space:
+            case sf::Keyboard::Key::B:
+                if (inventoryKeyReleased)
+                {
+                    inventoryTimer.restart();
+                    theHud.inventory.toggleInventory();
+                }
+                inventoryKeyReleased = false;
+                break;
+
+            case sf::Keyboard::Key::K:
+                theHud.inventory.addSlots(1);
+                break;
+
+            case sf::Keyboard::Key::L:
+                theHud.inventory.addSlots(-1);
+                break;
+
+            case sf::Keyboard::Key::F1:
+                takeScreenshot(objects.window);
+                break;
+
+            default:
+                break;
+        }
+    }
+    theHud.chat.processInput(keyCode);
+}
+
+void PlayGameState::handleKeyReleased(sf::Keyboard::Key keyCode)
+{
+    if (!theHud.chat.getInput())
+    {
+        switch (keyCode)
+        {
+            case sf::Keyboard::Key::Space:
+            case sf::Keyboard::Key::B:
+                if (inventoryTimer.getElapsedTime().asMilliseconds() >= 500 && theHud.inventory.getVisibility())
+                    theHud.inventory.toggleInventory();
+                inventoryKeyReleased = true;
+                break;
+
+            default:
+                break;
         }
     }
 }

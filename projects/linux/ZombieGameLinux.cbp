@@ -62,6 +62,8 @@
 		<Unit filename="client/menu.h" />
 		<Unit filename="client/messagestate.cpp" />
 		<Unit filename="client/messagestate.h" />
+		<Unit filename="client/miscutils.cpp" />
+		<Unit filename="client/miscutils.h" />
 		<Unit filename="client/playgamestate.cpp" />
 		<Unit filename="client/playgamestate.h" />
 		<Unit filename="client/scrollbar.cpp" />

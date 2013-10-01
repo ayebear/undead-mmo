@@ -33,6 +33,8 @@ class PlayGameState: public State
     private:
         // Functions
         void updateGameView();
+        void handleKeyPressed(sf::Keyboard::Key);
+        void handleKeyReleased(sf::Keyboard::Key);
         void handleInput();
         void handleMouseInput();
         void sendAngleInputPacket();
