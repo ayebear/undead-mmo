@@ -12,10 +12,32 @@ Option::Option():
 {
 }
 
+Option::Option(const Option& copy):
+    str(copy.str),
+    number(copy.number),
+    decimal(copy.decimal),
+    logical(copy.logical),
+    quotes(copy.quotes)
+{
+    copyRange(copy);
+}
+
 Option::Option(const std::string& data)
 {
+    quotes = false;
     set<int>(0);
     setString(data);
+}
+
+Option& Option::operator=(const Option& copy)
+{
+    str = copy.str;
+    number = copy.number;
+    decimal = copy.decimal;
+    logical = copy.logical;
+    quotes = copy.quotes;
+    copyRange(copy);
+    return *this;
 }
 
 Option& Option::operator=(const std::string& data)
@@ -52,10 +74,8 @@ const std::string& Option::asString() const { return str; }
 
 std::string Option::asStringWithQuotes() const
 {
-    if (quotes)
-        return '"' + str + '"';
-    else
-        return str;
+    // Automatically append quotes to the string if it originally had them
+    return (quotes ? ('"' + str + '"') : str);
 }
 
 int Option::asInt() const { return number; }
@@ -73,3 +93,9 @@ void Option::setQuotes(bool setting) { quotes = setting; }
 bool Option::hasQuotes() { return quotes; }
 
 void Option::removeRange() { range.reset(); }
+
+void Option::copyRange(const Option& option)
+{
+    if (option.range) // If the range object to copy from has been allocated
+        range.reset(new Range(*(option.range))); // Deep copy the range object
+}

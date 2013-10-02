@@ -13,9 +13,11 @@
 class Option
 {
     public:
-        Option();
-        Option(const std::string&);
-        Option& operator=(const std::string&);
+        Option(); // Default constructor
+        Option(const Option&); // Copy constructor
+        Option(const std::string&); // Initialize with a string value
+        Option& operator=(const Option&); // Assignment operator
+        Option& operator=(const std::string&); // Assignment operator with a string
 
         // Sets all values to 0 and removes the range
         void reset();
@@ -47,6 +49,7 @@ class Option
         // For setting the valid range
         template <class T> void setRange(Rule, T, Rule = Range::NoRule, T = 0, bool = false);
         void removeRange();
+        void copyRange(const Option&);
 
     private:
         std::string str; // Original data is always kept in here
@@ -58,9 +61,7 @@ class Option
 
         bool quotes;
 
-        // TODO: Use a unique_ptr or something, and when objects of this class are copied,
-        // the range object will be created again and copied by value
-        std::shared_ptr<Range> range;
+        std::unique_ptr<Range> range;
 };
 
 template <class T>
@@ -92,6 +93,7 @@ Option Option::create(const std::string& data, Rule ruleA, long numA, Rule ruleB
 template <class T>
 void Option::set(T data)
 {
+    // Only set the value if there is no range or if the value is in range
     if (!range || range->check<T>(data))
     {
         number = data;
@@ -110,8 +112,8 @@ void Option::set(const std::string& data)
 template <class T>
 void Option::setRange(Rule ruleA, T numA, Rule ruleB, T numB, bool strLen)
 {
-    if (!range)
-        range.reset(new Range());
+    if (!range) // If a range object has not been allocated yet
+        range.reset(new Range()); // Allocate a new range object
     range->set<T>(ruleA, numA, ruleB, numB, strLen);
 }
 

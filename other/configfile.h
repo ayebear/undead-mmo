@@ -91,15 +91,15 @@ class ConfigFile
         ConfigFile(const string&, const Section&, const string& = ""); // Loads default options for a single section and then options from a file
 
         bool loadConfigFile(const string&); // Loads options from a file
-        bool writeConfigFile(); // Saves current options to the file last loaded
-        bool writeConfigFile(const string&); // Saves current options to a file
+        bool writeConfigFile() const; // Saves current options to the file last loaded
+        bool writeConfigFile(const string&) const; // Saves current options to a file
 
         Option& getOption(const string&, const string& = ""); // Returns a reference to an option with the specified name (and section). If it does not exist, it will be automatically created
         Option& operator[](const string&); // Returns a reference to an option with the specified name. If it does not exist, it will be automatically created
-        bool optionExists(const string&, const string& = ""); // Returns if an option already exists
+        bool optionExists(const string&, const string& = "") const; // Returns if an option already exists
         void setDefaultOptions(const ConfigMap&); // Sets initial values in the map from another map in memory
         void setDefaultOptions(const Section&, const string& = ""); // Sets initial values for a single section
-        string buildString(); // This just builds up a string of all of the options in memory
+        string buildString() const; // This just builds up a string of all of the options in memory
         void setSection(const string& = ""); // Sets the default current section to be used
 
         bool eraseOption(const string&, const string& = ""); // Erases an option, returns true if the option was successfully erased
@@ -107,12 +107,12 @@ class ConfigFile
         void clear(); // Clears all of the sections and options in memory, but keeps the filename
 
     private:
-        bool readLinesFromFile(const string&, vector<string>&); // Simply reads a file into memory in separate lines
+        bool readLinesFromFile(const string&, vector<string>&) const; // Simply reads a file into memory in separate lines
         void parseLines(vector<string>&); // Processes the lines in memory and adds them to the options map
-        bool isSection(const string&); // Returns true if the line is a section header
+        bool isSection(const string&) const; // Returns true if the line is a section header
         void parseSectionLine(const string&, string&); // Processes a section header line and adds a section to the map
         void parseOptionLine(const string&, const string&); // Processes an option line and adds an option to the map
-        const string& getCurrentSection(const string& = "");
+        const string& getCurrentSection(const string& = "") const; // Returns the current section if passed an empty string, otherwise returns back the string passed in
 
         string configFilename; // The filename of the config file to read/write to
         ConfigMap options; // The data structure for storing all of the options in memory

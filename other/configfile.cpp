@@ -48,12 +48,12 @@ bool ConfigFile::loadConfigFile(const string& filename)
     return false;
 }
 
-bool ConfigFile::writeConfigFile()
+bool ConfigFile::writeConfigFile() const
 {
     return writeConfigFile(configFilename);
 }
 
-bool ConfigFile::writeConfigFile(const string& outputFilename)
+bool ConfigFile::writeConfigFile(const string& outputFilename) const
 {
     if (!outputFilename.empty())
     {
@@ -79,7 +79,7 @@ Option& ConfigFile::operator[](const string& name)
     return options[currentSection][name];
 }
 
-bool ConfigFile::optionExists(const string& name, const string& section)
+bool ConfigFile::optionExists(const string& name, const string& section) const
 {
     auto sectionFound = options.find(getCurrentSection(section));
     return (sectionFound != options.end() && sectionFound->second.find(name) != sectionFound->second.end());
@@ -95,7 +95,7 @@ void ConfigFile::setDefaultOptions(const Section& defaultOptions, const string& 
     options[getCurrentSection(section)].insert(defaultOptions.begin(), defaultOptions.end());
 }
 
-string ConfigFile::buildString()
+string ConfigFile::buildString() const
 {
     string configStr;
     for (auto& section: options) // Go through all of the sections
@@ -134,7 +134,7 @@ void ConfigFile::clear()
     options.clear(); // Clear all of the sections and options
 }
 
-bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines)
+bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines) const
 {
     ifstream file(filename, ifstream::in); // Open the file
     if (file.is_open())
@@ -165,7 +165,7 @@ void ConfigFile::parseLines(vector<string>& lines)
     }
 }
 
-bool ConfigFile::isSection(const string& str)
+bool ConfigFile::isSection(const string& str) const
 {
     return (str.size() >= 2 && str.front() == '[' && str.back() == ']');
 }
@@ -197,7 +197,7 @@ void ConfigFile::parseOptionLine(const string& line, const string& section)
     }
 }
 
-const string& ConfigFile::getCurrentSection(const string& section)
+const string& ConfigFile::getCurrentSection(const string& section) const
 {
     return (section.empty() ? currentSection : section);
 }
