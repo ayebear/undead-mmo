@@ -25,9 +25,8 @@ void Client::tcpSend(sf::Packet& packet, bool mustBeLoggedIn)
         tcpSock->send(packet);
 }
 
-void Client::logIn(const std::string& usernameStr, EID entId)
+void Client::logIn(EID entId)
 {
-    username = usernameStr;
     playerEid = entId;
     loggedIn = true;
 }
@@ -35,7 +34,6 @@ void Client::logIn(const std::string& usernameStr, EID entId)
 void Client::logOut()
 {
     loggedIn = false;
-    username.clear();
     playerEid = 0;
 }
 

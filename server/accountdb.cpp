@@ -44,6 +44,7 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
                 if (!accountCfg["banned"].asBool()) // Check if the account is banned
                 {
                     pData.loadFromConfig(accountCfg); // Load the data from the config file into the player data object
+                    pData.username = username; // Make sure we set the username!
                     status = Packet::LogInCode::Successful;
                 }
                 else

@@ -64,7 +64,7 @@ Client* ClientManager::getClientFromUsername(const string& username)
     sf::Lock lock(clientsMutex);
     for (auto& c: clients)
     {
-        if (c.second->username == username)
+        if (c.second->pData.username == username)
             return c.second.get();
     }
     return nullptr;

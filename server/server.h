@@ -26,12 +26,15 @@ class Server
         void update();
         void sendChangedEntities();
 
+        // Packet handlers
         void processInputPacket(PacketExtra&);
         void processPacket(PacketExtra&);
         void processChatMessage(PacketExtra&);
         void processLogIn(PacketExtra&);
         void processLogOut(PacketExtra&);
         void processCreateAccount(PacketExtra&);
+
+        void handleSuccessfulLogIn(Client*);
 
         // Inventory/item functions
         void useItem(sf::Packet&, Inventory&, Entity*);
@@ -57,6 +60,7 @@ class Server
         mutex processPacketMutex;
         PacketExtra udpPacket;
         PacketExtra tcpPacket;
+        unsigned int inventorySize;
 };
 
 #endif

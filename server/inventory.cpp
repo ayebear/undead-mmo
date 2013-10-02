@@ -1,4 +1,5 @@
 #include "inventory.h"
+#include "packet.h"
 
 Inventory::Inventory()
 {
@@ -9,31 +10,48 @@ Inventory::Inventory(unsigned int newSize)
     setSize(newSize);
 }
 
-void Inventory::setSize(unsigned int size)
+void Inventory::setCurrentSize(unsigned int size)
 {
     itemSlots.resize(size);
 }
 
-unsigned int Inventory::getSize() const
+unsigned int Inventory::getCurrentSize() const
 {
     return itemSlots.size();
+}
+
+void Inventory::setSize(unsigned int size)
+{
+    maxSize = size;
+}
+
+unsigned int Inventory::getSize() const
+{
+    return maxSize;
 }
 
 void Inventory::loadFromConfig(ConfigFile& cfg)
 {
     cfg.setSection("Inventory");
-    setSize(cfg.getOption("Size").asInt());
-    leftSlotId = cfg.getOption("LeftSlotId").asInt();
-    rightSlotId = cfg.getOption("RightSlotId").asInt();
+    setSize(cfg["Size"].asInt());
+    leftSlotId = cfg["LeftSlotId"].asInt();
+    rightSlotId = cfg["RightSlotId"].asInt();
+    for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots in the config file
+    {
+        itemSlots[i].fromString(cfg[std::to_string(i)].asString()); // Read the option as a string and convert it to an item code
+        changedSlots.insert(i); // Add the slot id as a changed slot so that the first call to getChangedItems will return the whole inventory
+    }
     cfg.setSection();
 }
 
 void Inventory::saveToConfig(ConfigFile& cfg) const
 {
     cfg.setSection("Inventory");
-    cfg.getOption("Size").set(getSize());
-    cfg.getOption("LeftSlotId").set(leftSlotId);
-    cfg.getOption("RightSlotId").set(rightSlotId);
+    cfg["Size"].set(getSize());
+    cfg["LeftSlotId"].set(leftSlotId);
+    cfg["RightSlotId"].set(rightSlotId);
+    for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots
+        cfg[std::to_string(i)].setString(itemSlots[i].toString()); // Convert the slot ID and item codes to strings and save them to the config file
     cfg.setSection();
 }
 
@@ -77,8 +95,17 @@ bool Inventory::swapItems(unsigned int slotId1, unsigned int slotId2)
 bool Inventory::getChangedItems(sf::Packet& packet)
 {
     bool anyChanged = !changedSlots.empty();
-    for (unsigned int slotId: changedSlots)
-        packet << itemSlots[slotId];
-    changedSlots.clear();
+    if (anyChanged)
+    {
+        packet << Packet::InventoryUpdate;
+        for (unsigned int slotId: changedSlots)
+            packet << itemSlots[slotId];
+        changedSlots.clear();
+    }
     return anyChanged;
+}
+
+void Inventory::getSize(sf::Packet& packet) const
+{
+    packet << Packet::InventoryResize << getSize();
 }

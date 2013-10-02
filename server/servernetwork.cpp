@@ -155,13 +155,13 @@ void ServerNetwork::logOutClient(Client* clientToRemove)
     Entity* playerEnt = entList.find(clientToRemove->playerEid);
     if (playerEnt != nullptr)
     {
-        sf::Vector2f pos = playerEnt->getPos();
-        clientToRemove->pData->positionX = pos.x;
-        clientToRemove->pData->positionY = pos.y;
+        sf::Vector2f pos = playerEnt->getPos(); // Get the position of the player's entity
+        clientToRemove->pData.positionX = pos.x;
+        clientToRemove->pData.positionY = pos.y;
+        entList.erase(clientToRemove->playerEid); // Remove the player's entity
     }
-    entList.erase(clientToRemove->playerEid); // Remove the player's entity
-    sendServerChatMessage(clientToRemove->username + " has logged out.", clientToRemove->id);
-    accounts.saveAccount(*(clientToRemove->pData)); // Save their account data in the account database
+    sendServerChatMessage(clientToRemove->pData.username + " has logged out.", clientToRemove->id);
+    accounts.saveAccount(clientToRemove->pData); // Save their account data in the account database
     clientToRemove->logOut();
 }
 

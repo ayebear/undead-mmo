@@ -9,7 +9,7 @@
 namespace Packet
 {
     // This is sent with the login packet
-    const int ProtocolVersion = 5;
+    const int ProtocolVersion = 6;
 
     // This type is sent with every packet so the code that receives it can determine how to process it
     // Please refer to the documentation for more information about these types
@@ -19,9 +19,11 @@ namespace Packet
         LogInStatus = 1, // Sent from the server to tell the client if the log in was successful
         CreateAccountStatus, // Sent from the server to tell the client if their account was created successfully
         ChatMessage, // Includes private/public/server messages
-        EntityUpdate,
-        PlayerEntityId,
+        EntityUpdate, // New/deleted/updated entities
         MapData, // All of the logical tiles for the map; is automatically sent from the server on successful login
+        InventoryUpdate, // Updates slot(s) in the inventory
+        InventoryResize, // Contains the inventory size
+        OnSuccessfulLogIn, // Data sent after successfully logging in
         MultiPacket,
 
         PacketTypes, // For the client

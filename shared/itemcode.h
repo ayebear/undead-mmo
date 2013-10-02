@@ -2,6 +2,7 @@
 #define ITEMCODE_H
 
 #include <SFML/Network.hpp>
+#include <string>
 
 class ItemCode
 {
@@ -9,6 +10,8 @@ class ItemCode
         static const int empty = -1;
         ItemCode();
         bool isEmpty() const;
+        std::string toString() const;
+        void fromString(const std::string&);
         int type; // Represents the type of item
         int amount; // Used for things like ammo
         static const ItemCode noItem;

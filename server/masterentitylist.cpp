@@ -44,9 +44,9 @@ Entity* MasterEntityList::insert(Entity* newEnt)
     return newEnt;
 }
 
-Entity* MasterEntityList::find(EID id)
+Entity* MasterEntityList::find(EID id) const
 {
-    if (id < (int)ents.size())
+    if (idIsInRange(id))
         return ents[id];
     else
         return nullptr;
@@ -54,7 +54,7 @@ Entity* MasterEntityList::find(EID id)
 
 void MasterEntityList::erase(EID id)
 {
-    if (id < (int)ents.size())
+    if (idIsInRange(id) && ents[id] != nullptr)
     {
         entCount--;
         delete ents[id]; // Deallocate
@@ -176,4 +176,9 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
     }
     else
         return false;
+}
+
+bool MasterEntityList::idIsInRange(EID id) const
+{
+    return (id >= 0 && id < (int)ents.size());
 }

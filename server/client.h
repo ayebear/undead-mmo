@@ -20,17 +20,15 @@ class Client: sf::NonCopyable
         ~Client();
 
         void tcpSend(sf::Packet&, bool mustBeLoggedIn = true);
-        void logIn(const std::string&, EID);
+        void logIn(EID);
         void logOut();
         bool isLoggedIn() const;
 
         ClientID id; // This will also be used for the key in the clients map
         IpPort address; // IP address and port
-        std::string username; // Client's username
         EID playerEid; // The entity ID of the client's player entity
-
+        PlayerData pData; // Stores the player data for the client
         std::unique_ptr<sf::TcpSocket> tcpSock; // TCP socket for the connection to the client
-        std::unique_ptr<PlayerData> pData; // Stores the player data for the client
 
     private:
         bool loggedIn; // They could be connected but not logged in

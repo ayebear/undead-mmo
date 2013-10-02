@@ -39,7 +39,7 @@ class PlayGameState: public State
         void handleMouseInput();
         void sendAngleInputPacket();
         void processEntityPackets();
-        void processPlayerIdPackets();
+        void processOnLogInPackets();
         void processMapDataPackets();
         void handleWindowResized(GameObjects&);
 

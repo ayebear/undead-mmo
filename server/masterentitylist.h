@@ -36,7 +36,7 @@ class MasterEntityList
         MasterEntityList();
         Entity* add(int);
         Entity* insert(Entity*);
-        Entity* find(EID);
+        Entity* find(EID) const;
         void erase(EID);
         bool cleanUp();
         void update(float);
@@ -47,6 +47,8 @@ class MasterEntityList
         bool getChangedEntities(sf::Packet&);
 
     private:
+        bool idIsInRange(EID) const;
+
         static unsigned int entCount;
         static const int cleanUpRatio;
         std::vector <Entity*> ents; // all of the entity pointers are stored here, and accessed by ID directly

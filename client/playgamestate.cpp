@@ -124,7 +124,7 @@ void PlayGameState::update()
     processEntityPackets();
 
     if (myPlayer == nullptr)
-        processPlayerIdPackets();
+        processOnLogInPackets();
 
     entList.update(elapsedTime);
 
@@ -369,12 +369,12 @@ void PlayGameState::processEntityPackets()
     }
 }
 
-void PlayGameState::processPlayerIdPackets()
+void PlayGameState::processOnLogInPackets()
 {
-    while (objects.netManager.arePackets(Packet::PlayerEntityId))
+    while (objects.netManager.arePackets(Packet::OnSuccessfulLogIn))
     {
-        objects.netManager.getPacket(Packet::PlayerEntityId) >> myPlayerId;
-        objects.netManager.popPacket(Packet::PlayerEntityId);
+        objects.netManager.getPacket(Packet::OnSuccessfulLogIn) >> myPlayerId;
+        objects.netManager.popPacket(Packet::OnSuccessfulLogIn);
     }
     myPlayer = entList.find(myPlayerId);
 }

@@ -26,7 +26,7 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.13.0 Dev\n\n";
+    cout << "Undead MMO Server v0.0.14.0 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
     // Load the config file
@@ -41,6 +41,8 @@ void Server::setup()
     tileMap.loadFromFile(config["map"].asString());
 
     Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
+
+    inventorySize = config["inventorySize"].asInt();
 
     // Launch the networking and packet processing threads
     //netManager.launchThreads(); // TODO: Maybe have a tcp listening thread which handles new connections and stuff?
@@ -182,19 +184,19 @@ void Server::processInputPacket(PacketExtra& packet)
             }
                 break;
             case Packet::InputType::UseItem:
-                useItem(packet.data, senderClient->pData->inventory, playerEnt);
+                useItem(packet.data, senderClient->pData.inventory, playerEnt);
                 break;
             case Packet::InputType::PickupItem:
-                pickupItem(senderClient->pData->inventory, playerEnt);
+                pickupItem(senderClient->pData.inventory, playerEnt);
                 break;
             case Packet::InputType::DropItem:
-                dropItem(packet.data, senderClient->pData->inventory, playerEnt);
+                dropItem(packet.data, senderClient->pData.inventory, playerEnt);
                 break;
             case Packet::InputType::SwapItem:
-                swapItem(packet.data, senderClient->pData->inventory);
+                swapItem(packet.data, senderClient->pData.inventory);
                 break;
             case Packet::InputType::WieldItem:
-                wieldItem(packet.data, senderClient->pData->inventory, playerEnt);
+                wieldItem(packet.data, senderClient->pData.inventory, playerEnt);
                 break;
             default:
                 cout << inputCode << " is an unknown or not yet implemented input type.\n";
@@ -283,7 +285,7 @@ void Server::processChatMessage(PacketExtra& packet)
         Client* senderClient = clients.getClientFromId(packet.sender);
         if (senderClient != nullptr)
         {
-            string msgPrefix = senderClient->username + ": ";
+            string msgPrefix = senderClient->pData.username + ": ";
             if (subType == Packet::Chat::Public)
             {
                 // Process the message
@@ -346,54 +348,26 @@ void Server::processLogIn(PacketExtra& packet)
     {
         if (protocolVersion == Packet::ProtocolVersion)
         {
-            packet.data >> username >> password;
-
-            cout << "Login attempt from user: " << username << ", password: " << password << endl;
-
-            // Try logging into the account database with the received username and password
-            unique_ptr<PlayerData> pData(new PlayerData);
-            int dbLogInStatus = accounts.logIn(username, password, *pData);
-            if (dbLogInStatus == Packet::LogInCode::Successful)
+            packet.data >> username >> password; // Extract credentials from packet
+            Client* tmpClient = clients.getClientFromUsername(username); // Look for another client with the same username
+            if (tmpClient == nullptr || !tmpClient->isLoggedIn()) // Make sure the user is NOT already logged in
             {
-                Client* tmpClient = clients.getClientFromUsername(username);
-                // Make sure the user is NOT already logged in
-                if (tmpClient == nullptr || !tmpClient->isLoggedIn())
+                Client* client = clients.getClientFromId(packet.sender); // This gets a pointer to the client who sent the packet
+                if (client != nullptr) // If this is null, then the client who sent the packet already disconnected
                 {
-                    loginStatusCode = Packet::LogInCode::Successful; // The client has successfully logged in!
-                    Client* c = clients.getClientFromId(packet.sender);
-                    if (c != nullptr)
+                    // Try logging into the account database with the received username and password
+                    int dbLogInStatus = accounts.logIn(username, password, client->pData);
+                    if (dbLogInStatus == Packet::LogInCode::Successful)
                     {
-                        // Make a new player entity for this client
-                        Entity* newPlayer = entList.add(Entity::Type::Player);
-                        EID newPlayerId = 0;
-                        if (newPlayer != nullptr)
-                        {
-                            newPlayerId = newPlayer->getID();
-                            newPlayer->setPos(sf::Vector2f(pData->positionX, pData->positionY));
-                        }
-                        cout << "New player entity, ID = " << newPlayerId << endl;
-                        // Set the client's username and logged in status, also attach the new entity
-                        c->logIn(username, newPlayerId);
-                        c->pData.swap(pData);
-                        // Send the new player entity ID to the player
-                        sf::Packet playerIdPacket;
-                        playerIdPacket << Packet::PlayerEntityId << newPlayerId;
-                        c->tcpSend(playerIdPacket);
-                        // Send all of the entities to the player
-                        sf::Packet allEntsPacket;
-                        if (entList.getAllEntities(allEntsPacket))
-                            c->tcpSend(allEntsPacket);
-                        // Send the map to the player
-                        sf::Packet tileMapPacket;
-                        tileMap.saveToPacket(tileMapPacket);
-                        c->tcpSend(tileMapPacket);
+                        loginStatusCode = Packet::LogInCode::Successful; // The client has successfully logged in!
+                        handleSuccessfulLogIn(client); // Do everything that needs to be done for them to be logged in
                     }
+                    else
+                        loginStatusCode = dbLogInStatus;
                 }
-                else
-                    loginStatusCode = Packet::LogInCode::AlreadyLoggedIn;
             }
             else
-                loginStatusCode = dbLogInStatus;
+                loginStatusCode = Packet::LogInCode::AlreadyLoggedIn;
         }
         else
             loginStatusCode = Packet::LogInCode::ProtocolVersionMismatch;
@@ -462,4 +436,39 @@ void Server::processCreateAccount(PacketExtra& packet)
         cout << "Error: Account was not created. Status code = " << createAccountStatus << endl;
 }
 
-
+void Server::handleSuccessfulLogIn(Client* client)
+{
+    // Set the inventory size
+    client->pData.inventory.setSize(inventorySize);
+    // Make a new player entity for this client
+    Entity* newPlayer = entList.add(Entity::Player);
+    EID newPlayerId = 0;
+    if (newPlayer != nullptr)
+    {
+        newPlayerId = newPlayer->getID();
+        newPlayer->setPos(sf::Vector2f(client->pData.positionX, client->pData.positionY));
+    }
+    cout << "New player entity, ID = " << newPlayerId << endl;
+    // Set the client's username and logged in status, also attach the new entity
+    client->logIn(newPlayerId);
+    // Send the new player entity ID to the player
+    sf::Packet playerIdPacket;
+    playerIdPacket << Packet::OnSuccessfulLogIn << newPlayerId;
+    client->tcpSend(playerIdPacket);
+    // Send all of the entities to the player
+    sf::Packet allEntsPacket;
+    if (entList.getAllEntities(allEntsPacket))
+        client->tcpSend(allEntsPacket);
+    // Send the map to the player
+    sf::Packet tileMapPacket;
+    tileMap.saveToPacket(tileMapPacket);
+    client->tcpSend(tileMapPacket);
+    // Send the inventory size to the player
+    sf::Packet inventorySizePacket;
+    client->pData.inventory.getSize(inventorySizePacket);
+    client->tcpSend(inventorySizePacket);
+    // Send the inventory to the player
+    sf::Packet inventoryPacket;
+    client->pData.inventory.getChangedItems(inventoryPacket);
+    client->tcpSend(inventoryPacket);
+}
