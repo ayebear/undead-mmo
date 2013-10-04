@@ -17,8 +17,8 @@ InventoryGUI::InventoryGUI()
     slotHorizontalPadding = 0;
     slotVerticalPadding = 0;
 
-    activeLeftSlot = 0;
-    activeRightSlot = 0;
+    activeLeftSlot = -1;
+    activeRightSlot = -1;
 
     //Set to false after testing
     visible = true;
@@ -133,7 +133,7 @@ void InventoryGUI::setUpSlots(int totalSlots)
         }
     }
 
-    float bottomSlotPos = slots.back().getPosition().y + slots.back().getSize().y;
+    //float bottomSlotPos = slots.back().getPosition().y + slots.back().getSize().y;
 
 
 }
@@ -147,9 +147,9 @@ void InventoryGUI::addSlots(int additionalSlots)
         setUpSlots(numSlots);
 
         if(activeLeftSlot >= slots.size())
-            activeLeftSlot = slots.size() - 1;
+            activeLeftSlot = -1;
         if(activeRightSlot >= slots.size())
-            activeRightSlot = slots.size() - 1;
+            activeRightSlot = -1;
     }
 }
 
@@ -178,35 +178,40 @@ bool InventoryGUI::getVisibility() const
     return visible;
 }
 
-void InventoryGUI::handleMouseMoved(sf::Event event, sf::RenderWindow& window)
+void InventoryGUI::handleMouseMoved(sf::Event event)
 {
     if(visible)
     {
         for(unsigned int i = 0; i < slots.size(); i++)
-            slots[i].handleMouseMoved(event, window);
+            slots[i].handleMouseMoved(event);
     }
 }
 
-void InventoryGUI::handleMouseClicked(sf::Event event, sf::RenderWindow& window)
+void InventoryGUI::handleMouseClicked(sf::Event event)
 {
-    if(visible)
+    if (visible)
     {
-        for(unsigned int i = 0; i < slots.size(); i++)
+        for (unsigned int i = 0; i < slots.size(); i++)
         {
-            if(slots[i].handleMouseClicked(event, window))
+            if (slots[i].handleMouseClicked(event))
             {
-                if(event.mouseButton.button == sf::Mouse::Left)
+                if (event.mouseButton.button == sf::Mouse::Left)
                 {
-                    if(activeLeftSlot != i && activeLeftSlot != activeRightSlot)
+                    // Only set the previous slot location to inactive if it existed, or if it is not the same slot (so that it will toggle)
+                    if (activeLeftSlot != -1 && activeLeftSlot != i)
                         slots[activeLeftSlot].setInactive();
                     activeLeftSlot = i;
+                    if (activeLeftSlot == activeRightSlot) // If you click an already selected slot with the opposite click
+                        activeRightSlot = -1; // Reset the old active slot
                     slots[activeLeftSlot].toggleActive(Slot::activeLeft);
                 }
-                else if(event.mouseButton.button == sf::Mouse::Right)
+                else if (event.mouseButton.button == sf::Mouse::Right)
                 {
-                    if(activeRightSlot != i && activeLeftSlot != activeRightSlot)
+                    if (activeRightSlot != -1 && activeRightSlot != i)
                         slots[activeRightSlot].setInactive();
                     activeRightSlot = i;
+                    if (activeLeftSlot == activeRightSlot)
+                        activeLeftSlot = -1;
                     slots[activeRightSlot].toggleActive(Slot::activeRight);
                 }
             }

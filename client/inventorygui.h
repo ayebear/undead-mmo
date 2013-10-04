@@ -40,8 +40,8 @@ class InventoryGUI: public sf::Drawable
 
         void addSlots(int);
 
-        void handleMouseMoved(sf::Event event, sf::RenderWindow&);
-        void handleMouseClicked(sf::Event event, sf::RenderWindow&);
+        void handleMouseMoved(sf::Event);
+        void handleMouseClicked(sf::Event);
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 

@@ -80,7 +80,7 @@ void PlayGameState::handleEvents()
 
             case sf::Event::MouseButtonPressed:
                 theHud.chat.handleMouseClicked(event, objects.window);
-                theHud.inventory.handleMouseClicked(event, objects.window);
+                theHud.inventory.handleMouseClicked(event);
                 break;
 
             case sf::Event::MouseWheelMoved:
@@ -94,7 +94,7 @@ void PlayGameState::handleEvents()
             case sf::Event::MouseMoved:
                 mouseMoved = true;
                 theHud.handleMouseMoved(event, objects.window);
-                theHud.inventory.handleMouseMoved(event, objects.window);
+                theHud.inventory.handleMouseMoved(event);
                 break;
 
             case sf::Event::LostFocus:

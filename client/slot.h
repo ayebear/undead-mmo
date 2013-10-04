@@ -34,8 +34,8 @@ class Slot: public sf::Drawable
         void setInactive();
         void setFont(const sf::Font&);
 
-        void setPosition(sf::Vector2f);
-        void setSize(sf::Vector2f);
+        void setPosition(const sf::Vector2f&);
+        void setSize(const sf::Vector2f&);
         void addItem(sf::Texture&);
         void removeItem();
 
@@ -45,12 +45,14 @@ class Slot: public sf::Drawable
         sf::Vector2f getPosition() const;
         sf::Vector2f getSize() const;
 
-        bool handleMouseMoved(sf::Event&, sf::RenderWindow&);
-        bool handleMouseClicked(sf::Event&, sf::RenderWindow&);
+        bool handleMouseMoved(sf::Event);
+        bool handleMouseClicked(sf::Event);
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
+        bool updateHighlighted(int, int);
+        void updateOutlineColor();
 
         sf::Color backgroundEmpty;
         sf::Color backgroundNonEmpty;
@@ -61,6 +63,7 @@ class Slot: public sf::Drawable
 
         int active;
         bool isEmpty;
+        bool isHighlighted;
         sf::Color activeColors[totalActiveTypes];
 
         //Number in the bottom left corner of the slot

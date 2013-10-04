@@ -23,6 +23,7 @@ Slot::Slot()
     slotBackground.setOutlineThickness(1);
 
     isEmpty = true;
+    isHighlighted = false;
     textVisible = true;
     fontSet = false;
     active = inActive;
@@ -65,32 +66,26 @@ void Slot::setOutlineColor(int activeType, sf::Color& outlineColor)
 
 void Slot::setActive(int activeType)
 {
-    if(activeType < totalActiveTypes && activeType >= 0)
+    if (activeType < totalActiveTypes && activeType >= 0)
         active = activeType;
-
-    slot.setOutlineColor(activeColors[active]);
-
+    updateOutlineColor();
 }
+
 void Slot::toggleActive(int activeType)
 {
-    if(activeType == active)
-    {
+    if (activeType == active)
         setInactive();
-    }
     else
         setActive(activeType);
 }
 
-
 void Slot::setInactive()
 {
     active = inActive;
-
-    slot.setOutlineColor(activeColors[active]);
+    updateOutlineColor();
 }
 
-
-void Slot::setPosition(const sf::Vector2f pos)
+void Slot::setPosition(const sf::Vector2f& pos)
 {
     slot.setPosition(pos);
     slotBackground.setPosition(pos);
@@ -98,7 +93,7 @@ void Slot::setPosition(const sf::Vector2f pos)
     slotRect.top = pos.y;
 }
 
-void Slot::setSize(const sf::Vector2f size)
+void Slot::setSize(const sf::Vector2f& size)
 {
     slot.setSize(size);
     slotRect.width = size.x;
@@ -136,60 +131,48 @@ sf::Vector2f Slot::getSize() const
     return slot.getSize();
 }
 
-bool Slot::handleMouseMoved(sf::Event& event, sf::RenderWindow& window)
+bool Slot::handleMouseMoved(sf::Event event)
 {
-    bool hoveredOver = false;
-    if(slotRect.contains(event.mouseMove.x, event.mouseMove.y))
-    {
-        hoveredOver = true;
-        slotBackground.setOutlineColor(activeColors[highlighted]);
-    }
-    else
-        slotBackground.setOutlineColor(activeColors[active]);
-
-    return hoveredOver;
-
+    return updateHighlighted(event.mouseMove.x, event.mouseMove.y);
 }
 
 void Slot::setTextFromString(const std::string& str)
 {
-    if(fontSet)
+    if (fontSet)
         text.setString(str);
 }
 
 void Slot::setTextFromInteger(int val)
 {
-    if(fontSet)
-    {
-        std::stringstream ss;
-        std::string temp("");
-        ss << val;
-        temp += ss.str();
-        text.setString(temp);
-    }
-
+    if (fontSet)
+        text.setString(std::to_string(val));
 }
 
-bool Slot::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
+bool Slot::handleMouseClicked(sf::Event event)
 {
-    bool clicked = false;
-
-    sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
-
-    if(slotRect.contains(mousePos))
-        clicked = true;
-
-    return clicked;
-
+    return updateHighlighted(event.mouseButton.x, event.mouseButton.y);
 }
 
 void Slot::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.draw(slotBackground);
 
-    if(!isEmpty)
+    if (!isEmpty)
         window.draw(slot);
 
-    if(textVisible)
+    if (textVisible)
         window.draw(text);
+}
+
+bool Slot::updateHighlighted(int x, int y)
+{
+    isHighlighted = slotRect.contains(x, y);
+    updateOutlineColor();
+    return isHighlighted;
+}
+
+void Slot::updateOutlineColor()
+{
+    int activeState = (isHighlighted ? highlighted : active);
+    slotBackground.setOutlineColor(activeColors[activeState]);
 }
