@@ -1,3 +1,6 @@
+// See the file COPYRIGHT.txt for authors and copyright information.
+// See the file LICENSE.txt for copying conditions.
+
 #ifndef INVENTORYGUI_H
 #define INVENTORYGUI_H
 
