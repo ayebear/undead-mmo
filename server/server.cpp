@@ -9,11 +9,11 @@ const float Server::desiredFrameTime = 1.0 / 120.0;
 const float Server::frameTimeTolerance = -10.0 / 120.0;
 
 const ConfigFile::Section Server::defaultOptions = {
-    {"port", Option::create(1337, Range::GTE, 1, Range::LTE, 65536)},
+    {"port", makeOption(1337, 1, 65536)},
     {"map", Option("serverdata/maps/2.map")},
-    {"maxZombies", Option::create(20, Range::GTE, 0)},
-    {"showExternalIp", Option::create<bool>(false)},
-    {"inventorySize", Option::create(16, Range::GTE, 1, Range::LTE, 1000)}
+    {"maxZombies", makeOption(20, 0)},
+    {"showExternalIp", makeOption(false)},
+    {"inventorySize", makeOption(16, 1, 1000)}
 };
 
 Server::Server():
@@ -27,7 +27,7 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.14.1 Dev\n\n";
+    cout << "Undead MMO Server v0.0.14.2 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
     // Load the config file

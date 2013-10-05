@@ -7,31 +7,23 @@
 #include <string>
 #include <memory>
 #include "stringutils.h"
-#include "range.h"
 
 // This class can store a value of different types based on a string
 class Option
 {
     public:
         Option(); // Default constructor
-        Option(const Option&); // Copy constructor
         Option(const std::string&); // Initialize with a string value
-        Option& operator=(const Option&); // Assignment operator
         Option& operator=(const std::string&); // Assignment operator with a string
 
         // Sets all values to 0 and removes the range
         void reset();
 
-        // Factory functions
-        typedef Range::Rule Rule;
-        template <class T> static Option create(T);
-        template <class T> static Option create(T, Rule, T, Rule = Range::NoRule, T = 0);
-        template <class T> static Option create(const std::string&, Rule, long, Rule = Range::NoRule, long = 0); // Possibly make this a non-template?
-
         // Setting will compute all possible types
-        void setString(const std::string&);
-        template <class T> void set(T);
-        template <class T> void set(const std::string&);
+        bool setString(const std::string&);
+        template <class T> bool set(T);
+        bool set(const std::string&);
+        bool set(const char*);
 
         // Getting will simply return the precomputed values
         const std::string& asString() const;
@@ -47,25 +39,40 @@ class Option
         bool hasQuotes();
 
         // For setting the valid range
-        template <class T> void setRange(Rule, T, Rule = Range::NoRule, T = 0, bool = false);
+        void setRange(double);
+        void setRange(double, double);
         void removeRange();
-        void copyRange(const Option&);
 
     private:
-        std::string str; // Original data is always kept in here
+        bool isInRange(double);
 
-        // When the data is interpreted, it is cached in these
+        enum RangeType
+        {
+            NoRange = 0,
+            MinRange,
+            MinMaxRange
+        };
+
+        // The "set" function will set all of these, no matter what the type is
+        std::string str;
         long number;
         double decimal;
         bool logical;
 
         bool quotes;
 
-        std::unique_ptr<Range> range;
+        RangeType range;
+        double rangeMin;
+        double rangeMax;
 };
 
+// Factory functions
+template <class T> Option makeOption(T);
+template <class T> Option makeOption(T, double);
+template <class T> Option makeOption(T, double, double);
+
 template <class T>
-Option Option::create(T data)
+Option makeOption(T data)
 {
     Option tmp;
     tmp.set<T>(data);
@@ -73,48 +80,36 @@ Option Option::create(T data)
 }
 
 template <class T>
-Option Option::create(T data, Rule ruleA, T numA, Rule ruleB, T numB)
+Option makeOption(T data, double num1)
 {
     Option tmp;
-    tmp.setRange<T>(ruleA, numA, ruleB, numB, false);
     tmp.set<T>(data);
+    tmp.setRange(num1);
     return tmp;
 }
 
 template <class T>
-Option Option::create(const std::string& data, Rule ruleA, long numA, Rule ruleB, long numB)
+Option makeOption(T data, double num1, double num2)
 {
     Option tmp;
-    tmp.setRange<long>(ruleA, numA, ruleB, numB, true);
-    tmp.set<const std::string&>(data);
+    tmp.set<T>(data);
+    tmp.setRange(num1, num2);
     return tmp;
 }
 
 template <class T>
-void Option::set(T data)
+bool Option::set(T data)
 {
-    // Only set the value if there is no range or if the value is in range
-    if (!range || range->check<T>(data))
+    // Only set the value if it is in range
+    if (isInRange((double)data))
     {
         number = data;
         decimal = data;
         logical = (data != 0);
         str = StringUtils::toString<T>(data);
+        return true;
     }
-}
-
-template <class T>
-void Option::set(const std::string& data)
-{
-    setString(data);
-}
-
-template <class T>
-void Option::setRange(Rule ruleA, T numA, Rule ruleB, T numB, bool strLen)
-{
-    if (!range) // If a range object has not been allocated yet
-        range.reset(new Range()); // Allocate a new range object
-    range->set<T>(ruleA, numA, ruleB, numB, strLen);
+    return false;
 }
 
 #endif

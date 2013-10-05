@@ -8,36 +8,17 @@ Option::Option():
     number(0),
     decimal(0),
     logical(false),
-    quotes(false)
+    quotes(false),
+    range(NoRange)
 {
-}
-
-Option::Option(const Option& copy):
-    str(copy.str),
-    number(copy.number),
-    decimal(copy.decimal),
-    logical(copy.logical),
-    quotes(copy.quotes)
-{
-    copyRange(copy);
 }
 
 Option::Option(const std::string& data)
 {
     quotes = false;
+    range = NoRange;
     set<int>(0);
     setString(data);
-}
-
-Option& Option::operator=(const Option& copy)
-{
-    str = copy.str;
-    number = copy.number;
-    decimal = copy.decimal;
-    logical = copy.logical;
-    quotes = copy.quotes;
-    copyRange(copy);
-    return *this;
 }
 
 Option& Option::operator=(const std::string& data)
@@ -48,26 +29,35 @@ Option& Option::operator=(const std::string& data)
 
 void Option::reset()
 {
-    removeRange();
+    range = NoRange;
     set<int>(0);
 }
 
-void Option::setString(const std::string& data)
+bool Option::setString(const std::string& data)
 {
-    if (!range || range->check<const std::string&>(data)) // Check if the string's length is in range
+    std::istringstream tmpStream(data);
+    double tmpDec = 0;
+    bool parsedNumber = (tmpStream >> tmpDec); // Try reading a number from the string
+    if (isInRange(tmpDec)) // Check if the number is in range
     {
-        std::istringstream tmpStream(data);
-        double tmpDec = 0;
-        bool parsedNumber = (tmpStream >> tmpDec); // Try reading a number from the string
-        if (!range || range->check<double>(tmpDec)) // Check if the number is in range, if there is a range at all
-        {
-            decimal = tmpDec; // Set the decimal from the temporary one
-            number = decimal; // Truncate to an int
-            quotes = !parsedNumber; // No quotes around a number
-            logical = (parsedNumber ? (decimal != 0) : StringUtils::strToBool(data)); // Convert to a boolean
-            str = data; // Set the string
-        }
+        decimal = tmpDec; // Set the decimal from the temporary one
+        number = decimal; // Truncate to an int
+        quotes = !parsedNumber; // No quotes around a number
+        logical = (parsedNumber ? (decimal != 0) : StringUtils::strToBool(data)); // Convert to a boolean
+        str = data; // Set the string
+        return true;
     }
+    return false;
+}
+
+bool Option::set(const std::string& data)
+{
+    return setString(data);
+}
+
+bool Option::set(const char* data)
+{
+    return setString(data);
 }
 
 const std::string& Option::asString() const { return str; }
@@ -92,10 +82,24 @@ void Option::setQuotes(bool setting) { quotes = setting; }
 
 bool Option::hasQuotes() { return quotes; }
 
-void Option::removeRange() { range.reset(); }
-
-void Option::copyRange(const Option& option)
+void Option::setRange(double num1)
 {
-    if (option.range) // If the range object to copy from has been allocated
-        range.reset(new Range(*(option.range))); // Deep copy the range object
+    rangeMin = num1;
+    range = MinRange;
+}
+
+void Option::setRange(double num1, double num2)
+{
+    rangeMin = num1;
+    rangeMax = num2;
+    range = MinMaxRange;
+}
+
+void Option::removeRange() { range = NoRange; }
+
+bool Option::isInRange(double num)
+{
+    return ((range == NoRange) || // If there is no range, then it will always be in range
+            (range == MinRange && num >= rangeMin) || // If a minimum range is set, make sure the number is >= the minimum range
+            (range == MinMaxRange && num >= rangeMin && num <= rangeMax)); // If a full range is set, make sure the number is between the minimum and maximum numbers
 }
