@@ -27,7 +27,7 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.14.2 Dev\n\n";
+    cout << "Undead MMO Server v0.0.14.3 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
     // Load the config file
@@ -470,6 +470,6 @@ void Server::handleSuccessfulLogIn(Client* client)
     client->tcpSend(inventorySizePacket);
     // Send the inventory to the player
     sf::Packet inventoryPacket;
-    client->pData.inventory.getChangedItems(inventoryPacket);
-    client->tcpSend(inventoryPacket);
+    if (client->pData.inventory.getAllItems(inventoryPacket))
+        client->tcpSend(inventoryPacket);
 }

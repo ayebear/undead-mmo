@@ -18,9 +18,7 @@ bool ItemCode::isEmpty() const
 
 std::string ItemCode::toString() const
 {
-    std::string str;
-    str += std::to_string(type) + ' ' + std::to_string(amount);
-    return str;
+    return (std::to_string(type) + ' ' + std::to_string(amount));
 }
 
 void ItemCode::fromString(const std::string& str)

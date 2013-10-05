@@ -8,11 +8,11 @@
 #include <SFML/Graphics.hpp>
 #include "slot.h"
 #include "textitemlist.h"
+#include "clientnetwork.h"
 
 class InventoryGUI: public sf::Drawable
 {
     public:
-
 
         enum Mode
         {
@@ -43,11 +43,18 @@ class InventoryGUI: public sf::Drawable
         void handleMouseMoved(sf::Event);
         void handleMouseClicked(sf::Event);
 
+        void processPackets(ClientNetwork&);
+
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
 
         void setUpSlots(int);
+
+        void handleResizePacket(sf::Packet&);
+        void handleUpdatePacket(sf::Packet&);
+
+        void updateSlot(unsigned int, int, int);
 
         int numSlots;
         int slotsPerRow;
@@ -64,10 +71,8 @@ class InventoryGUI: public sf::Drawable
         TextItemList descriptionBox;
         std::vector<Slot> slots;
 
-        unsigned int activeLeftSlot;
-        unsigned int activeRightSlot;
-
-
+        int activeLeftSlot;
+        int activeRightSlot;
 
 };
 

@@ -1,8 +1,28 @@
 banned = false
 health = 100
 level = 1
-password = password
-positionX = 200
-positionY = 200
+password = "password"
+positionX = 363.2227478027344
+positionY = 176.196044921875
 salt = 0
-username = test
+
+[Inventory]
+0 = 5 1
+1 = 6 1
+10 = 1 1
+11 = 2 100
+12 = 3 50
+13 = -1 0
+14 = -1 0
+15 = -1 0
+2 = 3 60
+3 = 8 999
+4 = 12 99999
+5 = -1 0
+6 = -1 0
+7 = -1 0
+8 = -1 0
+9 = -1 0
+LeftSlotId = 0
+RightSlotId = 0
+Size = 16

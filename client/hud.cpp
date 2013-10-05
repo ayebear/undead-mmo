@@ -7,15 +7,10 @@ Hud::Hud()
 {
 }
 
-void Hud::updateView(sf::View& mainGameView, GameObjects& objects)
+void Hud::updateView(sf::View& mainGameView)
 {
     sf::Vector2u hudViewPos(mainGameView.getSize());
     hudView.reset(sf::Rect<float>(0, 0, hudViewPos.x, hudViewPos.y));
-}
-
-Chat& Hud::getChat()
-{
-    return chat;
 }
 
 void Hud::update()

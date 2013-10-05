@@ -22,6 +22,8 @@ InventoryGUI::InventoryGUI()
 
     //Set to false after testing
     visible = true;
+
+    font = nullptr;
 }
 
 InventoryGUI::~InventoryGUI()
@@ -35,12 +37,6 @@ InventoryGUI::~InventoryGUI()
 //window height
 void InventoryGUI::setUp(int totalSlots, const sf::FloatRect& posSize, sf::Font& descFont, sf::RenderWindow& window)
 {
-
-    if(totalSlots > 0)
-        numSlots = totalSlots;
-
-    slots.resize(numSlots);
-
     inventoryRect.left = posSize.left * window.getSize().x;
     inventoryRect.top = posSize.top * window.getSize().y;
     inventoryRect.width = posSize.width * window.getSize().x;
@@ -48,6 +44,8 @@ void InventoryGUI::setUp(int totalSlots, const sf::FloatRect& posSize, sf::Font&
 
     inventoryWindow.setPosition(sf::Vector2f(inventoryRect.left, inventoryRect.top));
     inventoryWindow.setSize(sf::Vector2f(inventoryRect.width, inventoryRect.height));
+
+    font = &descFont;
 
     setUpSlots(totalSlots);
 
@@ -57,12 +55,6 @@ void InventoryGUI::setUp(int totalSlots, const sf::FloatRect& posSize, sf::Font&
 
 void InventoryGUI::setUp(int totalSlots, const sf::Vector2f& pos, const sf::Vector2f& size, sf::Font& descFont, sf::RenderWindow& window)
 {
-
-    if(totalSlots > 0)
-        numSlots = totalSlots;
-
-    slots.resize(numSlots);
-
     inventoryRect.left = pos.x;
     inventoryRect.top = pos.y;
     inventoryRect.width = size.x;
@@ -71,15 +63,21 @@ void InventoryGUI::setUp(int totalSlots, const sf::Vector2f& pos, const sf::Vect
     inventoryWindow.setPosition(pos);
     inventoryWindow.setSize(size);
 
+    font = &descFont;
+
     setUpSlots(totalSlots);
 
    // descriptionBox.setupList(window, sf::FloatRect(descriptionBoxLeft, descriptionBoxTop, descriptionBoxWidth, descriptionBoxHeight), descFont, 12, false, true);
-
 
 }
 
 void InventoryGUI::setUpSlots(int totalSlots)
 {
+    if (totalSlots <= 0)
+        return;
+
+    numSlots = totalSlots;
+    slots.resize(totalSlots);
 
     int slotsPerRow = 1;
     int numRows = 1;
@@ -124,6 +122,8 @@ void InventoryGUI::setUpSlots(int totalSlots)
     {
         slots[i].setSize(sf::Vector2f(slotSize, slotSize));
         slots[i].setPosition(sf::Vector2f(inventoryRect.left + (slot * slotSize) + (slot + 1) * slotHorizontalPadding, inventoryRect.top + (row * slotSize) + (row + 1) * slotVerticalPadding));
+        if (font != nullptr)
+            slots[i].setFont(*font);
 
         slot++;
         if(slot >= slotsPerRow)
@@ -135,21 +135,18 @@ void InventoryGUI::setUpSlots(int totalSlots)
 
     //float bottomSlotPos = slots.back().getPosition().y + slots.back().getSize().y;
 
-
+    if (activeLeftSlot >= (int) slots.size())
+        activeLeftSlot = -1;
+    if (activeRightSlot >= (int) slots.size())
+        activeRightSlot = -1;
 }
 
 void InventoryGUI::addSlots(int additionalSlots)
 {
-    if(numSlots + additionalSlots > 0)
+    if (numSlots + additionalSlots > 0)
     {
         numSlots += additionalSlots;
-        slots.resize(numSlots);
         setUpSlots(numSlots);
-
-        if(activeLeftSlot >= slots.size())
-            activeLeftSlot = -1;
-        if(activeRightSlot >= slots.size())
-            activeRightSlot = -1;
     }
 }
 
@@ -198,7 +195,7 @@ void InventoryGUI::handleMouseClicked(sf::Event event)
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     // Only set the previous slot location to inactive if it existed, or if it is not the same slot (so that it will toggle)
-                    if (activeLeftSlot != -1 && activeLeftSlot != i)
+                    if (activeLeftSlot != -1 && activeLeftSlot != (int) i)
                         slots[activeLeftSlot].setInactive();
                     activeLeftSlot = i;
                     if (activeLeftSlot == activeRightSlot) // If you click an already selected slot with the opposite click
@@ -207,7 +204,7 @@ void InventoryGUI::handleMouseClicked(sf::Event event)
                 }
                 else if (event.mouseButton.button == sf::Mouse::Right)
                 {
-                    if (activeRightSlot != -1 && activeRightSlot != i)
+                    if (activeRightSlot != -1 && activeRightSlot != (int) i)
                         slots[activeRightSlot].setInactive();
                     activeRightSlot = i;
                     if (activeLeftSlot == activeRightSlot)
@@ -216,6 +213,48 @@ void InventoryGUI::handleMouseClicked(sf::Event event)
                 }
             }
         }
+    }
+}
+
+void InventoryGUI::processPackets(ClientNetwork& netManager)
+{
+    while (netManager.arePackets(Packet::InventoryResize))
+    {
+        handleResizePacket(netManager.getPacket(Packet::InventoryResize));
+        netManager.popPacket(Packet::InventoryResize);
+    }
+    while (netManager.arePackets(Packet::InventoryUpdate))
+    {
+        handleUpdatePacket(netManager.getPacket(Packet::InventoryUpdate));
+        netManager.popPacket(Packet::InventoryUpdate);
+    }
+}
+
+void InventoryGUI::handleResizePacket(sf::Packet& packet)
+{
+    sf::Int32 newSize;
+    if (packet >> newSize)
+        setUpSlots(newSize);
+}
+
+void InventoryGUI::handleUpdatePacket(sf::Packet& packet)
+{
+    sf::Int32 slotId;
+    sf::Int32 type;
+    sf::Int32 amount;
+    while (packet >> slotId >> type >> amount)
+        updateSlot(slotId, type, amount);
+}
+
+void InventoryGUI::updateSlot(unsigned int slotId, int type, int amount)
+{
+    if (slotId < slots.size())
+    {
+        //slots[slotId].addItem(itemTextures[type]); // Will need to do something like this
+        if (type > 1)
+            slots[slotId].setText(type); // For now just do this
+        if (amount > 1)
+            slots[slotId].setText(amount);
     }
 }
 

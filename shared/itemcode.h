@@ -10,13 +10,13 @@
 class ItemCode
 {
     public:
-        static const int empty = -1;
+        static const sf::Int32 empty = -1;
         ItemCode();
         bool isEmpty() const;
         std::string toString() const;
         void fromString(const std::string&);
-        int type; // Represents the type of item
-        int amount; // Used for things like ammo
+        sf::Int32 type; // Represents the type of item
+        sf::Int32 amount; // Used for things like ammo
         static const ItemCode noItem;
 };
 

@@ -15,16 +15,11 @@ class Hud: public sf::Drawable
 {
     public:
         Hud();
-        void updateView(sf::View&, GameObjects&);
-        Chat& getChat();
+        void updateView(sf::View&);
         void update();
         void setUp(GameObjects&);
-
-        void setWindow(sf::RenderWindow&);
-
         void handleMouseMoved(sf::Event&, sf::RenderWindow&);
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
-
 
         Chat chat;
         StatusBar healthBar;

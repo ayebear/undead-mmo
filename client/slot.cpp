@@ -91,6 +91,7 @@ void Slot::setPosition(const sf::Vector2f& pos)
     slotBackground.setPosition(pos);
     slotRect.left = pos.x;
     slotRect.top = pos.y;
+    text.setPosition(pos.x + 2, pos.y + slotRect.height - 20);
 }
 
 void Slot::setSize(const sf::Vector2f& size)
@@ -123,6 +124,7 @@ sf::Vector2f Slot::getPosition() const
 void Slot::setFont(const sf::Font& font)
 {
     text.setFont(font);
+    text.setCharacterSize(16);
     fontSet = true;
 }
 
@@ -136,13 +138,13 @@ bool Slot::handleMouseMoved(sf::Event event)
     return updateHighlighted(event.mouseMove.x, event.mouseMove.y);
 }
 
-void Slot::setTextFromString(const std::string& str)
+void Slot::setText(const std::string& str)
 {
     if (fontSet)
         text.setString(str);
 }
 
-void Slot::setTextFromInteger(int val)
+void Slot::setText(int val)
 {
     if (fontSet)
         text.setString(std::to_string(val));

@@ -34,6 +34,7 @@ class Inventory
         const ItemCode& getItem(unsigned int); // For changing items
         bool swapItems(unsigned int, unsigned int); // For swapping items, like for wielding or just rearranging your inventory
         bool getChangedItems(sf::Packet&); // For the server to send stuff to the client, returns true if anything changed
+        bool getAllItems(sf::Packet&); // For the server to send everything to the client, returns true if there are any items
         void getSize(sf::Packet&) const; // For the server to send the inventory to the client
 
     private:
@@ -41,7 +42,7 @@ class Inventory
         std::map <unsigned int, unsigned int> stackableLookup; // Used for efficient lookup of stackable items and the number of items in each stack
         std::set <unsigned int> changedSlots; // Slot IDs of slots that have been changed. This gets cleared when getChangedItems is called.
 
-        unsigned int maxSize;
+        //unsigned int maxSize;
         unsigned int leftSlotId;
         unsigned int rightSlotId;
 };

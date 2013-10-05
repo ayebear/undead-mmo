@@ -3,6 +3,7 @@
 
 #include "inventory.h"
 #include "packet.h"
+#include <iostream>
 
 Inventory::Inventory()
 {
@@ -13,17 +14,17 @@ Inventory::Inventory(unsigned int newSize)
     setSize(newSize);
 }
 
-void Inventory::setCurrentSize(unsigned int size)
+void Inventory::setSize(unsigned int size)
 {
     itemSlots.resize(size);
 }
 
-unsigned int Inventory::getCurrentSize() const
+unsigned int Inventory::getSize() const
 {
     return itemSlots.size();
 }
 
-void Inventory::setSize(unsigned int size)
+/*void Inventory::setSize(unsigned int size)
 {
     maxSize = size;
 }
@@ -31,7 +32,7 @@ void Inventory::setSize(unsigned int size)
 unsigned int Inventory::getSize() const
 {
     return maxSize;
-}
+}*/
 
 void Inventory::loadFromConfig(ConfigFile& cfg)
 {
@@ -40,10 +41,7 @@ void Inventory::loadFromConfig(ConfigFile& cfg)
     leftSlotId = cfg["LeftSlotId"].asInt();
     rightSlotId = cfg["RightSlotId"].asInt();
     for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots in the config file
-    {
         itemSlots[i].fromString(cfg[std::to_string(i)].asString()); // Read the option as a string and convert it to an item code
-        changedSlots.insert(i); // Add the slot id as a changed slot so that the first call to getChangedItems will return the whole inventory
-    }
     cfg.setSection();
 }
 
@@ -102,13 +100,25 @@ bool Inventory::getChangedItems(sf::Packet& packet)
     {
         packet << Packet::InventoryUpdate;
         for (unsigned int slotId: changedSlots)
-            packet << itemSlots[slotId];
+            packet << (sf::Int32) slotId << itemSlots[slotId];
         changedSlots.clear();
     }
     return anyChanged;
 }
 
+bool Inventory::getAllItems(sf::Packet& packet)
+{
+    bool anyItems = !itemSlots.empty();
+    if (anyItems)
+    {
+        packet << Packet::InventoryUpdate;
+        for (unsigned int slotId = 0; slotId < itemSlots.size(); slotId++)
+            packet << (sf::Int32) slotId << itemSlots[slotId];
+    }
+    return anyItems;
+}
+
 void Inventory::getSize(sf::Packet& packet) const
 {
-    packet << Packet::InventoryResize << getSize();
+    packet << Packet::InventoryResize << (sf::Int32) getSize();
 }

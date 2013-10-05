@@ -128,6 +128,8 @@ void PlayGameState::update()
 
     entList.update(elapsedTime);
 
+    theHud.inventory.processPackets(objects.netManager);
+
     updateGameView();
 
     // TODO: Figure out the best way to do this
@@ -400,5 +402,5 @@ void PlayGameState::handleWindowResized(GameObjects& objects)
     // objects.window.setView(gameView);
     viewDimensions = objects.window.getView().getSize();
 
-    theHud.updateView(gameView, objects);
+    theHud.updateView(gameView);
 }
