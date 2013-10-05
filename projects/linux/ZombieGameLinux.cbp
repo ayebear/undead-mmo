@@ -97,8 +97,6 @@
 		<Unit filename="other/linkedqueue.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
-		<Unit filename="other/range.cpp" />
-		<Unit filename="other/range.h" />
 		<Unit filename="other/stringutils.cpp" />
 		<Unit filename="other/stringutils.h" />
 		<Unit filename="shared/ipport.cpp" />
