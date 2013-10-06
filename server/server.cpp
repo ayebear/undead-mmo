@@ -439,8 +439,9 @@ void Server::processCreateAccount(PacketExtra& packet)
 
 void Server::handleSuccessfulLogIn(Client* client)
 {
-    // Set the inventory size
-    client->pData.inventory.setSize(inventorySize);
+    // Set the inventory size if it hasn't been set already (so that different players can have different inventory sizes)
+    if (client->pData.inventory.getSize() <= 0)
+        client->pData.inventory.setSize(inventorySize);
     // Make a new player entity for this client
     Entity* newPlayer = entList.add(Entity::Player);
     EID newPlayerId = 0;

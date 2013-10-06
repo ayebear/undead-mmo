@@ -16,18 +16,18 @@ class Map: public sf::Drawable
 {
     public:
         Map();
-        Map(TileIDVector2D& mapData, bool loadTextures = true);
-        Map(const std::string&, bool loadTextures = true);
+        Map(TileIDVector2D& mapData);
+        Map(const std::string&);
 
-        sf::Uint32 getWidth();
-        sf::Uint32 getHeight();
-        sf::Uint32 getWidthPx();
-        sf::Uint32 getHeightPx();
-        bool isReady();
+        sf::Uint32 getWidth() const;
+        sf::Uint32 getHeight() const;
+        sf::Uint32 getWidthPx() const;
+        sf::Uint32 getHeightPx() const;
+        bool isReady() const;
         void loadFromMemory(TileIDVector2D& mapData);
         bool loadFromFile(const std::string&);
         void loadFromPacket(sf::Packet&);
-        void saveToPacket(sf::Packet&);
+        void saveToPacket(sf::Packet&) const;
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:

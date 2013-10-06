@@ -17,9 +17,6 @@ namespace StateCommand
         Exit, // Exits the whole program
         Pop, // Goes back to the previous state
         Push // Adds a new state onto the stack
-
-        //Change // Changes to another state
-        // This would not work properly with a stack based design
     };
 }
 

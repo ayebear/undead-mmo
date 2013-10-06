@@ -17,41 +17,37 @@ Map::Map()
     mapHeightPx = 0;
 }
 
-Map::Map(TileIDVector2D& mapData, bool loadTextures)
+Map::Map(TileIDVector2D& mapData)
 {
-    if (loadTextures)
-        Tile::loadTileTextures();
     loadFromMemory(mapData);
 }
 
-Map::Map(const string& filename, bool loadTextures)
+Map::Map(const string& filename)
 {
-    if (loadTextures)
-        Tile::loadTileTextures();
     loadFromFile(filename);
 }
 
-sf::Uint32 Map::getWidth()
+sf::Uint32 Map::getWidth() const
 {
     return mapWidth;
 }
 
-sf::Uint32 Map::getHeight()
+sf::Uint32 Map::getHeight() const
 {
     return mapHeight;
 }
 
-sf::Uint32 Map::getWidthPx()
+sf::Uint32 Map::getWidthPx() const
 {
     return mapWidthPx;
 }
 
-sf::Uint32 Map::getHeightPx()
+sf::Uint32 Map::getHeightPx() const
 {
     return mapHeightPx;
 }
 
-bool Map::isReady()
+bool Map::isReady() const
 {
     return ready;
 }
@@ -124,12 +120,12 @@ void Map::loadFromPacket(sf::Packet& packet)
     loadFromMemory(tileIds);
 }
 
-void Map::saveToPacket(sf::Packet& packet)
+void Map::saveToPacket(sf::Packet& packet) const
 {
     packet << Packet::MapData << mapWidth << mapHeight;
-    for (auto& row: tiles)
+    for (const auto& row: tiles)
     {
-        for (auto& tile: row)
+        for (const auto& tile: row)
             packet << tile.getID();
     }
 }
@@ -141,8 +137,6 @@ void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
 
     // No need to pass the view in separately, it is already stored inside the window
     sf::View viewWindow = window.getView();
-    // TODO: Actually calculate the rectangle from the sf::View of the window
-    //sf::FloatRect viewRect(0, 0, 800, 600);
 
     sf::Vector2f viewSize(viewWindow.getSize());
     sf::Vector2f viewCenter(viewWindow.getCenter());
@@ -151,13 +145,9 @@ void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
     // Convert coordinates of view to logical tile coordinates
     int startX = viewRect.left / Tile::tileWidth;
     int startY = viewRect.top / Tile::tileHeight;
-    //int startX =  (viewRect.top - ((int)viewRect.top % (int)tileHeight)) / tileHeight;//viewRect.left / tileWidth;
-    //int startY =  (viewRect.left - ((int)viewRect.left % (int)tileWidth)) / tileWidth;
 
     int endX = (viewRect.left + viewRect.width) / Tile::tileWidth + 1;
     int endY = (viewRect.top + viewRect.height) / Tile::tileHeight + 1;
-    //int endX =  (viewRect.top + viewRect.height + (tileHeight - (int)(viewRect.top + viewRect.height) % tileHeight)) / tileHeight;// (viewRect.left + viewRect.width) / tileWidth + 1;
-    //int endY =  (viewRect.left + viewRect.width + (tileWidth - (int)(viewRect.left + viewRect.width) % tileWidth)) / tileWidth;//(viewRect.top + viewRect.height) / tileHeight + 1;
 
     // Check if these values are within bounds of the array
     if (startX < 0)
@@ -173,9 +163,7 @@ void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
     for (int y = startY; y < endY; y++)
     {
         for (int x = startX; x < endX; x++)
-        {
             window.draw(tiles[y][x]);
-        }
     }
 }
 

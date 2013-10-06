@@ -9,6 +9,7 @@
 #include "slot.h"
 #include "textitemlist.h"
 #include "clientnetwork.h"
+#include "tileset.h"
 
 class InventoryGUI: public sf::Drawable
 {
@@ -55,6 +56,8 @@ class InventoryGUI: public sf::Drawable
         void handleUpdatePacket(sf::Packet&);
 
         void updateSlot(unsigned int, int, int);
+
+        static TileSet itemTextures;
 
         int numSlots;
         int slotsPerRow;

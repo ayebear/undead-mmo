@@ -5,7 +5,8 @@
 #include <iostream>
 #include <memory>
 
-std::vector<sf::Texture> Tile::textures;
+//TileSet Tile::textures("data/images/tiles/tiles.png", 8, 8); // Can't do this because we don't want to load them on the server
+TileSet Tile::textures;
 
 Tile::Tile()
 {
@@ -21,31 +22,8 @@ Tile::Tile(TileID tileID, int x, int y)
 
 void Tile::loadTileTextures()
 {
-    if (!textures.empty())
-    {
-        std::cout << "Tile textures already loaded.\n";
-        return;
-    }
-
-    std::cout << "Loading tile textures...\n";
-    // Load the entire image into memory
-    std::unique_ptr<sf::Image> tilesImage(new sf::Image);
-    tilesImage->loadFromFile("data/images/tiles/tiles.png");
-    // Split up the image into separate textures on your GPU
-    int tileCount = 1024 / tileWidth; // 16 = 1024 / 128
-    textures.resize(tileCount * tileCount);
-    for (int y = 0; y < tileCount; y++)
-    {
-        for (int x = 0; x < tileCount; x++)
-        {
-            if (!textures[y * tileCount + x].loadFromImage(*tilesImage,
-                sf::IntRect(x * tileWidth, y * tileWidth,
-                (x + 1) * tileWidth, (y + 1) * tileWidth)))
-                    exit(103);
-            textures[y * tileCount + x].setSmooth(false);
-        }
-    }
-    std::cout << "Done loading tile textures!\n";
+    textures.setTileSize(tileWidth, tileHeight);
+    textures.loadImage("data/images/tiles/tiles.png");
 }
 
 void Tile::setID(TileID tileID)
@@ -70,7 +48,7 @@ void Tile::setPos(int x, int y)
     sprite.setPosition(x, y);
 }
 
-bool Tile::isWalkable()
+bool Tile::isWalkable() const
 {
     return walkable;
 }

@@ -4,15 +4,11 @@
 #ifndef STATEMANAGER_H
 #define STATEMANAGER_H
 
-#include <iostream>
 #include <vector>
 #include <string>
 #include <memory>
-#include <SFML/Graphics.hpp>
 #include "gameobjects.h"
 #include "state.h"
-
-using namespace std;
 
 /*
 This class handles the allocation/deallocation/starting/changing of all types of game states.
@@ -21,7 +17,7 @@ Also contains the instance of the GameObjects object, which is passed into the s
 class StateManager
 {
     public:
-        StateManager(string); // Takes window title
+        StateManager(std::string); // Takes window title
         ~StateManager();
 
         void startLoop(const StateAction&); // The main loop that runs until a state returns an exit action
@@ -31,11 +27,11 @@ class StateManager
         void deallocateStates();
 
         void handleAction(StateAction&);
-        void push(int);
+        void push(unsigned int);
         void pop();
 
-        vector<unsigned int> stateStack; // Represents a stack of the states
-        unique_ptr<State> statePtrs[StateType::TotalTypes]; // Pointers to instances of all of the state types
+        std::vector<unsigned int> stateStack; // Represents a stack of the states
+        std::unique_ptr<State> statePtrs[StateType::TotalTypes]; // Pointers to instances of all of the state types
 
         // The main game objects, which exist for the entire game, independent of the current game state
         // All states will need access to these, but do not and should not have access to this state manager class

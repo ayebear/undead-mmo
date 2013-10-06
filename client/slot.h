@@ -36,11 +36,12 @@ class Slot: public sf::Drawable
 
         void setPosition(const sf::Vector2f&);
         void setSize(const sf::Vector2f&);
-        void addItem(sf::Texture&);
+        void addItem(const sf::Texture&);
         void removeItem();
 
         void setText(const std::string&);
         void setText(int);
+        void showText(bool = true);
 
         sf::Vector2f getPosition() const;
         sf::Vector2f getSize() const;

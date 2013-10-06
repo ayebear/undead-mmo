@@ -40,7 +40,7 @@ void StateManager::deallocateStates()
     // Delete the allocated states
     for (auto& sPtr: statePtrs)
         sPtr.reset();
-    cout << "Successfully deallocated all states.\n";
+    //std::cout << "Successfully deallocated all states.\n";
 }
 
 void StateManager::startLoop(const StateAction& theAction)
@@ -48,7 +48,7 @@ void StateManager::startLoop(const StateAction& theAction)
     StateAction action = theAction;
     while (action.isNotExit())
         handleAction(action);
-    cout << "StateManager loop has ended.\n";
+    //std::cout << "StateManager loop has ended.\n";
 }
 
 void StateManager::handleAction(StateAction& action)
@@ -57,15 +57,15 @@ void StateManager::handleAction(StateAction& action)
     switch (action.getCommand())
     {
         case StateCommand::Push:
-            cout << "Received push command for state type " << action.getType() << endl;
+            //std::cout << "Received push command for state type " << action.getType() << endl;
             push(action.getType());
             break;
         case StateCommand::Pop:
-            cout << "Received pop command.\n";
+            //std::cout << "Received pop command.\n";
             pop();
             break;
         default:
-            cout << "Received unknown command.\n";
+            std::cerr << "Error: StateManager received an unknown command.\n";
             break;
     }
 
@@ -76,7 +76,7 @@ void StateManager::handleAction(StateAction& action)
         action.exitGame(); // Exit the game
 }
 
-void StateManager::push(int type)
+void StateManager::push(unsigned int type)
 {
     if (type >= 0 && type < StateType::TotalTypes)
     {

@@ -9,7 +9,7 @@ Slot::Slot()
 {
 
     backgroundEmpty = sf::Color(10, 10, 10, 75);
-    backgroundNonEmpty = sf::Color(200, 200, 200, 150);
+    backgroundNonEmpty = sf::Color(128, 128, 128, 150);
 
     activeColors[inActive] = sf::Color(10,10,10,150);
     activeColors[highlighted] = sf::Color(255, 255, 255, 200);
@@ -17,9 +17,7 @@ Slot::Slot()
     activeColors[activeRight] = sf::Color(0, 0, 200, 200);
 
     slotBackground.setFillColor(backgroundEmpty);
-
     slotBackground.setOutlineColor(activeColors[inActive]);
-
     slotBackground.setOutlineThickness(1);
 
     isEmpty = true;
@@ -102,7 +100,7 @@ void Slot::setSize(const sf::Vector2f& size)
     slotBackground.setSize(size);
 }
 
-void Slot::addItem(sf::Texture& tex)
+void Slot::addItem(const sf::Texture& tex)
 {
     slotBackground.setFillColor(backgroundNonEmpty);
     slot.setTexture(&tex);
@@ -112,13 +110,12 @@ void Slot::addItem(sf::Texture& tex)
 void Slot::removeItem()
 {
     slotBackground.setFillColor(backgroundEmpty);
-    slot.setFillColor(sf::Color::Transparent);
     isEmpty = true;
 }
 
 sf::Vector2f Slot::getPosition() const
 {
-    return slot.getPosition();
+    return slotBackground.getPosition();
 }
 
 void Slot::setFont(const sf::Font& font)
@@ -130,7 +127,7 @@ void Slot::setFont(const sf::Font& font)
 
 sf::Vector2f Slot::getSize() const
 {
-    return slot.getSize();
+    return slotBackground.getSize();
 }
 
 bool Slot::handleMouseMoved(sf::Event event)
@@ -148,6 +145,11 @@ void Slot::setText(int val)
 {
     if (fontSet)
         text.setString(std::to_string(val));
+}
+
+void Slot::showText(bool show)
+{
+    textVisible = show;
 }
 
 bool Slot::handleMouseClicked(sf::Event event)

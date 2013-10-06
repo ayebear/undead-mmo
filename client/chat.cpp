@@ -2,7 +2,6 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "chat.h"
-#include <iostream>
 #include <sstream>
 #include "packet.h"
 
@@ -58,10 +57,7 @@ void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
 void Chat::setUsername(const string& str)
 {
     if (!str.empty())
-    {
         username = str;
-        cout << "Chat username set to: " << username << endl;
-    }
 }
 
 void Chat::setInput(bool in)

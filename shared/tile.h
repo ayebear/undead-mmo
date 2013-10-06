@@ -4,8 +4,8 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <vector>
 #include <SFML/Graphics.hpp>
+#include "tileset.h"
 
 typedef sf::Uint16 TileID;
 
@@ -17,18 +17,19 @@ class Tile: public sf::Drawable
         void setID(TileID);
         const TileID getID() const;
         void setPos(int, int);
-        bool isWalkable();
+        bool isWalkable() const;
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
-        static const int tileWidth = 128;
-        static const int tileHeight = 128;
+        static const unsigned int tileWidth = 128;
+        static const unsigned int tileHeight = 128;
         static void loadTileTextures();
 
     private:
+        static TileSet textures;
+
         TileID ID;
         bool walkable;
         sf::Sprite sprite;
-        static std::vector<sf::Texture> textures;
 };
 
 #endif

@@ -5,6 +5,8 @@
 #include <cmath>
 #include <iostream>
 
+TileSet InventoryGUI::itemTextures("data/images/ui/itemicons.png", 8, 8);
+
 InventoryGUI::InventoryGUI()
 {
     numSlots = 1;
@@ -239,9 +241,7 @@ void InventoryGUI::handleResizePacket(sf::Packet& packet)
 
 void InventoryGUI::handleUpdatePacket(sf::Packet& packet)
 {
-    sf::Int32 slotId;
-    sf::Int32 type;
-    sf::Int32 amount;
+    sf::Int32 slotId, type, amount;
     while (packet >> slotId >> type >> amount)
         updateSlot(slotId, type, amount);
 }
@@ -250,11 +250,12 @@ void InventoryGUI::updateSlot(unsigned int slotId, int type, int amount)
 {
     if (slotId < slots.size())
     {
-        //slots[slotId].addItem(itemTextures[type]); // Will need to do something like this
-        if (type > 1)
-            slots[slotId].setText(type); // For now just do this
-        if (amount > 1)
-            slots[slotId].setText(amount);
+        if (type >= 0 && type < (int) itemTextures.size())
+            slots[slotId].addItem(itemTextures[type]); // Set the item image
+        else
+            slots[slotId].removeItem(); // Remove the item image
+        slots[slotId].setText(amount); // Set the item amount
+        slots[slotId].showText(amount > 1); // Only show the text if it is greater than 1
     }
 }
 
