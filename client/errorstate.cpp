@@ -4,16 +4,15 @@
 #include "errorstate.h"
 #include <iostream>
 #include <sstream>
+#include "paths.h"
 
 ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
 {
     sf::Vector2f windowSize;
-    windowSize.x = objects.window.getSize().x;
-    windowSize.y = objects.window.getSize().y;
+    windowSize.x = objects.windowSize.x;
+    windowSize.y = objects.windowSize.y;
 
-    std::string bgFile("data/images/ui/MenuBackground.png");
-    std::string fontFile("data/fonts/Ubuntu-B.ttf");
-    errorMenu.setUpMenu(bgFile,                                             //Background file
+    errorMenu.setUpMenu(Paths::menuBgImage,                              //Background file
                         sf::Color (25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
@@ -25,7 +24,7 @@ ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
     errorMenu.addMenuButton("Restart Game");
     errorMenu.addMenuButton("Exit Game");
 
-    errorFont.loadFromFile("data/fonts/Ubuntu-B.ttf");
+    errorFont.loadFromFile(Paths::boldFont);
 
     headingText.setFont(errorFont);
     headingText.setString("An error has occurred, the details are below:");

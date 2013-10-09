@@ -2,9 +2,12 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "entity.h"
+#include "paths.h"
 
 int Entity::mapWidth = 0;
 int Entity::mapHeight = 0;
+
+TileSet Entity::textures;
 
 Entity::Entity()
 {
@@ -36,11 +39,6 @@ EType Entity::getType() const
 bool Entity::collides(Entity*)
 {
     return false;
-}
-
-void Entity::setTexture(const sf::Texture& texture)
-{
-    sprite.setTexture(texture);
 }
 
 bool Entity::isMoving() const
@@ -90,13 +88,28 @@ void Entity::moveTo(const sf::Vector2f& posToMove)
     setPos(posToMove);
 }
 
-const ItemCode& Entity::getItem()
+int Entity::getItem() const
 {
-    return ItemCode::noItem;
+    return -1;
 }
 
 void Entity::setMapSize(int width, int height)
 {
     mapWidth = width;
     mapHeight = height;
+}
+
+void Entity::loadTextures()
+{
+    if (!textures.isLoaded())
+    {
+        textures.setTileSize(64, 64);
+        textures.loadImage(Paths::entitiesImage, true);
+    }
+}
+
+void Entity::setTexture(unsigned int textureId)
+{
+    if (textureId < textures.size())
+        sprite.setTexture(textures[textureId]);
 }

@@ -9,7 +9,9 @@
 
 PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
 {
-    Tile::loadTileTextures();
+    // Load textures
+    Tile::loadTextures();
+    Entity::loadTextures();
 
     //myPlayer = entList.add(Entity::Player, 1);
     //myPlayer->setTexture(playerTex);
@@ -18,9 +20,9 @@ PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
     myPlayerId = 0;
     playerIsMoving = false;
 
-    gameView.setSize(objects.window.getSize().x, objects.window.getSize().y);
+    gameView.setSize(objects.windowSize.x, objects.windowSize.y);
     //gameView.setCenter(myPlayer->getPos());
-    theHud.setUp(gameObjects);
+    theHud.setUp(objects);
 
     playerInput.x = 0;
     playerInput.y = 0;
@@ -106,7 +108,7 @@ void PlayGameState::handleEvents()
                 break;
 
             case sf::Event::Resized:
-                handleWindowResized(objects);
+                handleWindowResized();
                 break;
 
             default:
@@ -392,7 +394,7 @@ void PlayGameState::processMapDataPackets()
     }
 }
 
-void PlayGameState::handleWindowResized(GameObjects& objects)
+void PlayGameState::handleWindowResized()
 {
     sf::Vector2f windowSize;
     windowSize.x = objects.window.getSize().x;

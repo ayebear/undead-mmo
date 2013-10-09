@@ -4,8 +4,8 @@
 #include "tile.h"
 #include <iostream>
 #include <memory>
+#include "paths.h"
 
-//TileSet Tile::textures("data/images/tiles/tiles.png", 8, 8); // Can't do this because we don't want to load them on the server
 TileSet Tile::textures;
 
 Tile::Tile()
@@ -20,10 +20,13 @@ Tile::Tile(TileID tileID, int x, int y)
     setPos(x, y);
 }
 
-void Tile::loadTileTextures()
+void Tile::loadTextures()
 {
-    textures.setTileSize(tileWidth, tileHeight);
-    textures.loadImage("data/images/tiles/tiles.png");
+    if (!textures.isLoaded())
+    {
+        textures.setTileSize(tileWidth, tileHeight);
+        textures.loadImage(Paths::tilesImage);
+    }
 }
 
 void Tile::setID(TileID tileID)

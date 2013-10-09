@@ -6,8 +6,7 @@
 
 #include "entity.h"
 
-// Would be nice to make this a static function part of the Entity class
-// Too bad it would cause a circular dependency issue...
+// Factory function for allocating new entities
 Entity* allocateEntity(int);
 
 #endif

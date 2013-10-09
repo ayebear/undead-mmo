@@ -36,14 +36,14 @@ void TextItemList::setupList(sf::RenderWindow& window, sf::FloatRect sizeFactor,
 
 
     //Box that the user can see
-    viewableAreaBox.setPosition(sizeFactor.left * window.getSize().x, sizeFactor.top * window.getSize().y);
-    viewableAreaBox.setSize(sf::Vector2f(sizeFactor.width * window.getSize().x, sizeFactor.height * window.getSize().y));
+    viewableAreaBox.setPosition(sizeFactor.left * windowSize.x, sizeFactor.top * windowSize.y);
+    viewableAreaBox.setSize(sf::Vector2f(sizeFactor.width * windowSize.x, sizeFactor.height * windowSize.y));
     viewableAreaBox.setFillColor(sf::Color(0, 0, 0, 75));
 
-    viewableArea.left = sizeFactor.left * window.getSize().x;
-    viewableArea.top = sizeFactor.top * window.getSize().y;
-    viewableArea.width = sizeFactor.width * window.getSize().x;
-    viewableArea.height = sizeFactor.height * window.getSize().y;
+    viewableArea.left = sizeFactor.left * windowSize.x;
+    viewableArea.top = sizeFactor.top * windowSize.y;
+    viewableArea.width = sizeFactor.width * windowSize.x;
+    viewableArea.height = sizeFactor.height * windowSize.y;
 
     itemListView.reset(viewableArea);
     itemListView.setViewport(viewPort);

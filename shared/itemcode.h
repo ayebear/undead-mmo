@@ -12,6 +12,7 @@ class ItemCode
     public:
         static const sf::Int32 empty = -1;
         ItemCode();
+        ItemCode(int, int);
         bool isEmpty() const;
         std::string toString() const;
         void fromString(const std::string&);

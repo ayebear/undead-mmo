@@ -7,6 +7,7 @@ Zombie::Zombie()
 {
     type = Entity::Zombie;
     speed = 50;
+    setTexture(type);
 }
 
 /*

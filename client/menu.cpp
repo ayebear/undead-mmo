@@ -21,8 +21,8 @@ void Menu::setUpMenu(const std::string& backgroundFile, sf::Color buttonSelectCo
 {
     objects = &theObjects;
 
-    windowSize.x = objects->window.getSize().x;
-    windowSize.y = objects->window.getSize().y;
+    windowSize.x = objects->windowSize.x;
+    windowSize.y = objects->windowSize.y;
     menuView.reset(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 
     buttonWidthFactor = windowSize.x / topButtonPosition.x;
@@ -171,8 +171,8 @@ int Menu::handleKeyPressed(sf::Event& event)
 void Menu::handleResize(sf::Event& event)
 {
     sf::Vector2f windowSize;
-    windowSize.x = objects->window.getSize().x;
-    windowSize.y = objects->window.getSize().y;
+    windowSize.x = objects->windowSize.x;
+    windowSize.y = objects->windowSize.y;
     menuView.setSize(windowSize);
     //Resize the background image
     bgSprite.setScale(windowSize.x / bgImageSize.x, windowSize.y / bgImageSize.y);

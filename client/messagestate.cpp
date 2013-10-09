@@ -4,16 +4,15 @@
 #include "messagestate.h"
 #include <iostream>
 #include <sstream>
+#include "paths.h"
 
 MessageState::MessageState(GameObjects& gameObjects): State(gameObjects)
 {
     sf::Vector2f windowSize;
-    windowSize.x = objects.window.getSize().x;
-    windowSize.y = objects.window.getSize().y;
+    windowSize.x = objects.windowSize.x;
+    windowSize.y = objects.windowSize.y;
 
-    std::string bgFile("data/images/ui/MenuBackground.png");
-    std::string fontFile("data/fonts/Ubuntu-B.ttf");
-    messageMenu.setUpMenu(bgFile,                                             //Background file
+    messageMenu.setUpMenu(Paths::menuBgImage,                               //Background file
                         sf::Color (25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 2.3, windowSize.y / 1.5),    //Button position
@@ -22,7 +21,7 @@ MessageState::MessageState(GameObjects& gameObjects): State(gameObjects)
 
     messageMenu.addMenuButton("( OK )");
 
-    messageFont.loadFromFile("data/fonts/Ubuntu-B.ttf");
+    messageFont.loadFromFile(Paths::boldFont);
 
     messageText.setFont(messageFont);
     messageText.setCharacterSize(40);

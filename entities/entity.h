@@ -6,10 +6,12 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-#include "itemcode.h"
+#include "tileset.h"
 
 typedef sf::Int32 EID;
 typedef sf::Int32 EType;
+
+// TODO: Redesign this class as well as the whole inheritance tree
 
 class Entity: public sf::Drawable
 {
@@ -24,11 +26,6 @@ class Entity: public sf::Drawable
         virtual void update(float) = 0;
         virtual bool collides(Entity*);
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const = 0;
-
-        // Use a vector of sprites, and each inheriting entity class has an enum
-        // Also, all of this code should be able to be cut out on the server side
-        // We should be able to get rid of this and have it in the constructor, after we make a resource manager class.
-        void setTexture(const sf::Texture&);
 
         // This will be great for optimizing stuff, and doubly acts as a way to separate dynamic/static entities!
         // It also can be false even with dynamic entities.
@@ -56,12 +53,13 @@ class Entity: public sf::Drawable
         virtual void moveTo(const sf::Vector2f&);
 
         // Item stuff
-        virtual void attachItem(const ItemCode&) {};
-        virtual const ItemCode& getItem();
+        virtual void attachItem(int) {};
+        virtual int getItem() const;
         virtual void removeItem() {};
         virtual void useItem() {};
 
         static void setMapSize(int, int);
+        static void loadTextures();
 
         // All of the different entity types
         enum Type
@@ -73,6 +71,10 @@ class Entity: public sf::Drawable
         };
 
     protected:
+        void setTexture(unsigned int);
+
+        static TileSet textures;
+
         // We could also have a mutex for use with threads, but this is good for determining
         // whether the entity is fully initialized and its textures are all set and stuff
         bool ready;

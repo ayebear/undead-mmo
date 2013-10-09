@@ -69,10 +69,10 @@ void TileSet::setTileCount(unsigned int width, unsigned int height)
 
 bool TileSet::loadImage(const std::string& filename, bool smooth)
 {
-    // Load the entire image into memory
     std::cout << "TileSet loading \"" << filename << "\"... ";
+    clear(); // In case there is an error, we don't want the previous textures to still exist
     sf::Image tilesImage;
-    bool status = tilesImage.loadFromFile(filename);
+    bool status = tilesImage.loadFromFile(filename); // Load the entire image into memory
     if (status)
     {
         calculateDimensions(tilesImage.getSize()); // Calculates tileSize and tileCount based on the image size
@@ -81,6 +81,7 @@ bool TileSet::loadImage(const std::string& filename, bool smooth)
         {
             for (unsigned int x = 0; status && x < tileCount.x; x++, i++)
             {
+                // Calculate the sub-rectangle of the image and load it into a texture
                 sf::IntRect areaToLoad = sf::IntRect(x * tileSize.x, y * tileSize.y, tileSize.x, tileSize.y);
                 if (textures[i].loadFromImage(tilesImage, areaToLoad))
                     textures[i].setSmooth(smooth);
@@ -90,6 +91,7 @@ bool TileSet::loadImage(const std::string& filename, bool smooth)
         }
     }
     std::cout << (status ? "Done.\n" : "Error!\n");
+    loaded = status;
     return status;
 }
 
@@ -121,6 +123,11 @@ unsigned int TileSet::size() const
 bool TileSet::empty() const
 {
     return textures.empty();
+}
+
+bool TileSet::isLoaded() const
+{
+    return loaded;
 }
 
 void TileSet::calculateDimensions(const sf::Vector2u& imageSize)

@@ -58,7 +58,7 @@ void Inventory::saveToConfig(ConfigFile& cfg) const
 
 bool Inventory::addItem(Entity* ent)
 {
-    return addItem(ent->getItem());
+    return addItem(ItemCode(ent->getItem(), 1));
 }
 
 bool Inventory::addItem(const ItemCode& item)

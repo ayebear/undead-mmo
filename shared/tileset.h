@@ -27,6 +27,7 @@ class TileSet
         sf::Texture& operator[](unsigned int); // Returns a reference to a texture in the vector
         unsigned int size() const; // Returns number of textures
         bool empty() const; // Returns true if there are no textures
+        bool isLoaded() const; // Returns true if there was already a successful call to loadImage
 
     private:
         void calculateDimensions(const sf::Vector2u&);
@@ -36,6 +37,7 @@ class TileSet
         sf::Vector2u tileSize; // Tile size in pixels
         sf::Vector2u tileCount; // Number of tiles to load from the image
         bool useTileCount; // To determine whether to use the tile count or tile size
+        bool loaded; // To determine if any image was loaded already
         std::vector<sf::Texture> textures; // The loaded image is split into separate textures stored in here
 };
 

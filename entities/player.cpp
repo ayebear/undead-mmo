@@ -8,6 +8,7 @@ Player::Player()
     type = Entity::Player;
     speed = 400;
     visualAngle = 0;
+    setTexture(type);
 }
 
 void Player::update(float time)

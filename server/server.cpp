@@ -27,7 +27,7 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.14.3 Dev\n\n";
+    cout << "Undead MMO Server v0.0.14.4 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
     // Load the config file
@@ -244,7 +244,8 @@ void Server::dropItem(sf::Packet& packet, Inventory& inventory, Entity* playerEn
             Entity* itemOnGround = entList.add(Entity::Item); // Add the item to the entity list
             if (itemOnGround != nullptr)
             {
-                itemOnGround->attachItem(itemToDrop); // Set the entity's item code
+                // TODO: Make it so entities can be an item code, but only the item entities will have a function with actual code
+                //itemOnGround->attachItem(itemToDrop); // Set the entity's item code
                 inventory.removeItem(slotId); // Remove the item from the inventory
             }
         }
@@ -274,7 +275,7 @@ void Server::wieldItem(sf::Packet& packet, Inventory& inventory, Entity* playerE
         // Get the item from the inventory
         const ItemCode& itemToWield = inventory.getItem(slotId);
         if (!itemToWield.isEmpty())
-            playerEnt->attachItem(itemToWield); // Wield the item
+            playerEnt->attachItem(itemToWield.type); // Wield the item
     }
 }
 

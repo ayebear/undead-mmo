@@ -3,14 +3,15 @@
 
 #include "mainmenustate.h"
 #include <iostream>
+#include "paths.h"
 
 MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
 {
     sf::Vector2f windowSize;
-    windowSize.x = objects.window.getSize().x;
-    windowSize.y = objects.window.getSize().y;
+    windowSize.x = objects.windowSize.x;
+    windowSize.y = objects.windowSize.y;
 
-    mainMenu.setUpMenu("data/images/ui/MenuBackground.png",                 //Background file
+    mainMenu.setUpMenu(Paths::menuBgImage,                                  //Background file
                        sf::Color ( 25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),  //Menu size

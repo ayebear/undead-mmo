@@ -4,6 +4,7 @@
 #include "entityalloc.h"
 #include "player.h"
 #include "zombie.h"
+#include "itementity.h"
 
 // This function allocates a new specific entity object from a type and returns its pointer
 Entity* allocateEntity(int type)
@@ -14,6 +15,8 @@ Entity* allocateEntity(int type)
             return new Player;
         case Entity::Zombie:
             return new Zombie;
+        case Entity::Item:
+            return new ItemEntity;
         default:
             return nullptr;
     }

@@ -23,7 +23,6 @@ class EntityList: public sf::Drawable
     public:
         EntityList();
         void updateEntity(EID, sf::Packet&);
-        Entity* addWithTexture(EType, EID);
         Entity* add(EType, EID);
         Entity* insert(Entity*, EID);
         Entity* find(EID);
@@ -34,7 +33,6 @@ class EntityList: public sf::Drawable
 
     private:
         std::map<EID,Entity*> ents; // stores entity pointers, accessed by searching for ID
-        sf::Texture textures[2];
 };
 
 #endif

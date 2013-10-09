@@ -37,10 +37,10 @@ Chat::Chat()
 
 void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
 {
-    mainPos.x = sizeFactor.left * objects.window.getSize().x;
-    mainPos.y = sizeFactor.top * objects.window.getSize().y;
-    chatSize.x = sizeFactor.width * objects.window.getSize().x;
-    chatSize.y = sizeFactor.height * objects.window.getSize().y;
+    mainPos.x = sizeFactor.left * objects.windowSize.x;
+    mainPos.y = sizeFactor.top * objects.windowSize.y;
+    chatSize.x = sizeFactor.width * objects.windowSize.x;
+    chatSize.y = sizeFactor.height * objects.windowSize.y;
 
     //Input box tall enough to fit one line of text, and as wide as the messagebox
     //float inputBoxHeight = textSize;

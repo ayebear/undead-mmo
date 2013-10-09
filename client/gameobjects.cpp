@@ -4,13 +4,17 @@
 #include "gameobjects.h"
 #include <iostream>
 #include <string>
+#include "paths.h"
 
 using namespace std;
 
-const string GameObjects::configFilename = "game.cfg";
 const ConfigFile::Section GameObjects::defaultOptions = {
-{"server", Option("ayebear.com")},
-{"useVerticalSync", Option("true")}
+    {"server", Option("127.0.0.1")},
+    {"username", Option("test")},
+    {"password", Option("password")},
+    {"windowWidth", makeOption(1024, 640)},
+    {"windowHeight", makeOption(768, 480)},
+    {"useVerticalSync", makeOption(true)}
 };
 
 GameObjects::GameObjects()
@@ -24,36 +28,20 @@ GameObjects::~GameObjects()
     window.close();
 }
 
-void GameObjects::loadConfig()
-{
-    // TODO: Make sure to setup default values as well as ranges in memory
-    config.setDefaultOptions(defaultOptions);
-    config.loadConfigFile(configFilename);
-}
-
-void GameObjects::loadFonts()
-{
-    if (!font.loadFromFile("data/fonts/Ubuntu-R.ttf"))
-        exit(301);
-    if (!fontBold.loadFromFile("data/fonts/Ubuntu-B.ttf"))
-        exit(302);
-    if (!fontMono.loadFromFile("data/fonts/UbuntuMono-R.ttf"))
-        exit(303);
-    if (!fontMonoBold.loadFromFile("data/fonts/UbuntuMono-B.ttf"))
-        exit(304);
-}
-
 void GameObjects::setupWindow(string windowTitle)
 {
-    int windowWidth = config.getOption("windowWidth").asInt();
-    int windowHeight = config.getOption("windowHeight").asInt();
+    int windowWidth = config["windowWidth"].asInt();
+    int windowHeight = config["windowHeight"].asInt();
 
     if (windowWidth > 0 && windowHeight > 0)
         createWindow(windowTitle, windowWidth, windowHeight);
     else
         createWindow(windowTitle);
 
-    window.setVerticalSyncEnabled(config.getOption("useVerticalSync").asBool()); // Set vsync from setting
+    window.setVerticalSyncEnabled(config["useVerticalSync"].asBool()); // Set vsync from setting
+
+    windowSize.x = vidMode.width;
+    windowSize.y = vidMode.height;
 }
 
 void GameObjects::createWindow(string windowTitle)
@@ -87,4 +75,22 @@ void GameObjects::createWindow(string windowTitle, int windowWidth, int windowHe
     // Create a normal window
     vidMode = sf::VideoMode(windowWidth, windowHeight);
     window.create(vidMode, windowTitle, sf::Style::Close);
+}
+
+void GameObjects::loadConfig()
+{
+    config.setDefaultOptions(defaultOptions);
+    config.loadConfigFile(Paths::clientConfigFile);
+}
+
+void GameObjects::loadFonts()
+{
+    if (!font.loadFromFile(Paths::regularFont))
+        exit(301);
+    if (!fontBold.loadFromFile(Paths::boldFont))
+        exit(302);
+    if (!fontMono.loadFromFile(Paths::monoFont))
+        exit(303);
+    if (!fontMonoBold.loadFromFile(Paths::monoBoldFont))
+        exit(304);
 }

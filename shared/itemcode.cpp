@@ -11,6 +11,11 @@ ItemCode::ItemCode():
     amount(0)
 {}
 
+ItemCode::ItemCode(int t, int a):
+    type(t),
+    amount(a)
+{}
+
 bool ItemCode::isEmpty() const
 {
     return (type == empty);

@@ -9,16 +9,7 @@ using namespace std;
 
 EntityList::EntityList()
 {
-    // TODO: Move this elsewhere, maybe in some client-specific entity allocator
-    // Load character textures
-    if (!textures[0].loadFromFile("data/images/characters/character.png"))
-        exit(101);
-    textures[0].setSmooth(true);
-    if (!textures[1].loadFromFile("data/images/characters/zombie.png"))
-        exit(102);
-    textures[1].setSmooth(true);
 }
-
 
 void EntityList::updateEntity(EID id, sf::Packet& packet)
 {
@@ -26,7 +17,7 @@ void EntityList::updateEntity(EID id, sf::Packet& packet)
     EType type;
     packet >> type;
     if (ent == nullptr) // If the entity does not exist already
-        ent = addWithTexture(type, id); // Add a new default entity of that type to the list with that ID
+        ent = add(type, id); // Add a new default entity of that type to the list with that ID
 
     if (ent != nullptr) // If the entity exists
     {
@@ -50,26 +41,13 @@ void EntityList::updateEntity(EID id, sf::Packet& packet)
                 //cout << "ERROR: Non-matching entity type update received!\n";
                 // Recreate the entity with a new type
                 erase(id);
-                addWithTexture(type, id);
+                add(type, id);
                 cout << "Recreated entity " << id << " with type " << type << endl;
             }
         }
     }
     else
         cerr << "ERROR: Problem allocating new entity in updateEntity()!\n";
-}
-
-Entity* EntityList::addWithTexture(EType type, EID id)
-{
-    Entity* ent = add(type, id);
-    if (ent != nullptr)
-    {
-        if (type >= 0 && type <= 1)
-            ent->setTexture(textures[type]);
-        else
-            cerr << "ERROR: Missing texture for entity type " << type << endl;
-    }
-    return ent;
 }
 
 // This function allocates a new entity based on type AND inserts it into the entity list

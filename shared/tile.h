@@ -22,7 +22,7 @@ class Tile: public sf::Drawable
 
         static const unsigned int tileWidth = 128;
         static const unsigned int tileHeight = 128;
-        static void loadTileTextures();
+        static void loadTextures();
 
     private:
         static TileSet textures;

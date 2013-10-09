@@ -4,8 +4,9 @@
 #include "inventorygui.h"
 #include <cmath>
 #include <iostream>
+#include "paths.h"
 
-TileSet InventoryGUI::itemTextures("data/images/ui/itemicons.png", 8, 8);
+TileSet InventoryGUI::itemTextures(Paths::itemIcons, 8, 8, true);
 
 InventoryGUI::InventoryGUI()
 {
@@ -39,6 +40,7 @@ InventoryGUI::~InventoryGUI()
 //window height
 void InventoryGUI::setUp(int totalSlots, const sf::FloatRect& posSize, sf::Font& descFont, sf::RenderWindow& window)
 {
+    // TODO: If we won't really need the window passed in, then just pass in an sf::Vector2u of the window size
     inventoryRect.left = posSize.left * window.getSize().x;
     inventoryRect.top = posSize.top * window.getSize().y;
     inventoryRect.width = posSize.width * window.getSize().x;

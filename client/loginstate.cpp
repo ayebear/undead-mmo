@@ -4,16 +4,15 @@
 #include "loginstate.h"
 #include <iostream>
 #include <sstream>
+#include "paths.h"
 
 LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 {
     sf::Vector2f windowSize;
-    windowSize.x = objects.window.getSize().x;
-    windowSize.y = objects.window.getSize().y;
+    windowSize.x = objects.windowSize.x;
+    windowSize.y = objects.windowSize.y;
 
-    std::string bgFile("data/images/ui/MenuBackground.png");
-
-    loginMenu.setUpMenu(bgFile,                                             //Background file
+    loginMenu.setUpMenu(Paths::menuBgImage,                                  //Background file
                         sf::Color( 25, 25, 25, 200),
                        16,                                                  //Font size
                        sf::Vector2f(windowSize.x / 4, windowSize.y / 1.2),    //Button position
@@ -21,7 +20,7 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
                        );
 
 
-    textItemList.setupList(objects.window, sf::FloatRect(0, 0, 1, .5), gameObjects.fontBold, 16, true, true);
+    textItemList.setupList(objects.window, sf::FloatRect(0, 0, 1, .5), objects.fontBold, 16, true, true);
 
    /* for (int x = 1; x <= 150; x++)
     {
@@ -30,12 +29,11 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
         textItemList.addItemWithHiddenText(tmp.str(), "ayebear.com", sf::Color(190, 190, 190, 255));
     }
     */
+
+    // TODO: Use a master server list
     textItemList.addItemWithHiddenText("Eric's Server", "ayebear.com", sf::Color(190, 190, 190, 255));
     textItemList.addItemWithHiddenText("My Local Server", "192.168.1.4", sf::Color(190, 190, 190, 255));
     textItemList.addItemWithHiddenText("HCC", "10.10.198.22", sf::Color(190, 190, 190, 255));
-
-
-
 
     textItemList.scrollToBottom();
 
@@ -64,9 +62,9 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     passwordBox.setUp(fontSize, objects.fontBold, windowSize.x / 4, windowSize.y / 1.4, windowSize.x / 8, true);
     directConnectBox.setUp(fontSize, objects.fontBold, windowSize.x / 1.5, windowSize.y / 1.4, windowSize.x / 8, false);
 
-    string username = objects.config.getOption("username").asString();
-    string password = objects.config.getOption("password").asString();
-    string ip = objects.config.getOption("server").asString();
+    string username = objects.config["username"].asString();
+    string password = objects.config["password"].asString();
+    string ip = objects.config["server"].asString();
     usernameBox.setString(username);
     passwordBox.setString(password);
     directConnectBox.setString(ip);
@@ -170,8 +168,6 @@ void LoginState::processChoice(int choice)
 {
     if (choice == 1)
     {
-        // TODO: Change this later so the options (if any) are loaded into the GUI elements or something like that
-        //string server = objects.config.getOption("server").asString();
         string server = directConnectBox.getString();
         sf::IpAddress serverAddr(server);
         string username = usernameBox.getString();
@@ -189,7 +185,6 @@ void LoginState::processChoice(int choice)
     }
     else if (choice == 2)
     {
-        //string server = objects.config.getOption("server").asString();
         string server = directConnectBox.getString();
         sf::IpAddress serverAddr(server);
         string username = usernameBox.getString();

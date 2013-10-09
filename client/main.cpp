@@ -5,7 +5,7 @@
 
 int main()
 {
-    const string title = "Undead MMO v0.0.8.0 Dev";
+    const string title = "Undead MMO v0.0.8.1 Dev";
 
     StateManager game(title); // Create the game
 

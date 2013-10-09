@@ -17,20 +17,21 @@ class GameObjects: sf::NonCopyable
     public:
         GameObjects();
         ~GameObjects();
-        void loadConfig(); // Loads the config file
-        void loadFonts(); // Loads font files
         void setupWindow(string); // Calls createWindow based on configuration
         void createWindow(string); // Fullscreen
         void createWindow(string, int, int); // Windowed
 
-        sf::VideoMode vidMode;
-        sf::RenderWindow window;
-        ClientNetwork netManager;
-        sf::Font font, fontBold, fontMono, fontMonoBold;
-        ConfigFile config;
+        sf::VideoMode vidMode; // Window size, color settings, etc.
+        sf::Vector2u windowSize; // The current window size (if we decide to make the game resizable, this will need to be a function)
+        sf::RenderWindow window; // The main window
+        ClientNetwork netManager; // Handles communications with the server
+        sf::Font font, fontBold, fontMono, fontMonoBold; // Some fonts
+        ConfigFile config; // The main configuration file
 
     private:
-        static const string configFilename;
+        void loadConfig(); // Loads the config file
+        void loadFonts(); // Loads font files
+
         static const ConfigFile::Section defaultOptions;
 };
 

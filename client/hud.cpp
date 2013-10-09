@@ -23,19 +23,19 @@ void Hud::setUp(GameObjects& objects)
     sf::Color statusBarBackgroundCol(190, 190, 190, 75);
 
     //StatusBar placement and sizing is temporary
-    sf::Vector2f healthBarPos(objects.window.getSize().x / 1.2, objects.window.getSize().y / 1.053);
-    sf::Vector2f healthBarSize(objects.window.getSize().x / 8, 15);
+    sf::Vector2f healthBarPos(objects.windowSize.x / 1.2, objects.windowSize.y / 1.053);
+    sf::Vector2f healthBarSize(objects.windowSize.x / 8, 15);
     sf::Color healthBarFillColor(250, 20, 20, 200);
     std::string healthBarName("Health");
 
-    sf::Vector2f infectionBarPos(objects.window.getSize().x / 1.2, objects.window.getSize().y / 1.023);
-    sf::Vector2f infectionBarSize(objects.window.getSize().x / 8, 15);
+    sf::Vector2f infectionBarPos(objects.windowSize.x / 1.2, objects.windowSize.y / 1.023);
+    sf::Vector2f infectionBarSize(objects.windowSize.x / 8, 15);
     sf::Color infectionBarFillColor(150, 0, 200, 200);
     std::string infectionBarName("Infection");
 
     //Testing vertical growth
-    //sf::Vector2f healthBarPos(objects.window.getSize().x / 1.2, objects.window.getSize().y / 2);
-    //sf::Vector2f healthBarSize(15, objects.window.getSize().y / 8);
+    //sf::Vector2f healthBarPos(objects.windowSize.x / 1.2, objects.windowSize.y / 2);
+    //sf::Vector2f healthBarSize(15, objects.windowSize.y / 8);
 
     chat.setUp(sf::FloatRect(0, .76, .3, .20), objects);
     healthBar.setUp(healthBarName, healthBarPos, healthBarSize, 0, 1000, 1000, 1, statusBarBackgroundCol, healthBarFillColor, objects.fontBold, false, false);

@@ -41,7 +41,7 @@ class PlayGameState: public State
         void processEntityPackets();
         void processOnLogInPackets();
         void processMapDataPackets();
-        void handleWindowResized(GameObjects&);
+        void handleWindowResized();
 
         // Important objects
         Map tileMap;
