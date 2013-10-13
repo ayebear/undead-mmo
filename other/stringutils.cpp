@@ -43,26 +43,50 @@ void StringUtils::stripNewLines(std::string& str)
     }
 }
 
-void StringUtils::stripComments(std::string& str)
+bool StringUtils::isMultiEndComment(const std::string& str)
 {
-    size_t minPos = std::string::npos;
-    size_t rightQuote = str.rfind('"'); // Try to find the rightmost quote
-    size_t startPos = (rightQuote == std::string::npos) ? 0 : rightQuote; // Start at the right quote position if it was found, otherwise start at the beginning
-    for (const std::string& commentSymbol: {"//", "#", "::", ";"}) // Loop through the possible comment symbols
+    return (str.find("*/") != std::string::npos);
+}
+
+int StringUtils::isComment(const std::string& str, bool checkMultiEnd)
+{
+    // Comment symbols and types
+    const std::vector<std::string> commentSymbols = {"/*", "//", "#", "::", ";"};
+    const std::vector<int> commentTypes = {MultiStart, Single, Single, Single, Single};
+
+    int commentType = NoComment;
+
+    // This is optional so the function returns the correct result
+    if (checkMultiEnd && isMultiEndComment(str))
+        commentType = MultiEnd;
+
+    // Find out which comment type the string is, if any
+    for (unsigned int i = 0; (commentType == NoComment && i < commentSymbols.size()); i++)
     {
-        if (str.compare(0, commentSymbol.size(), commentSymbol) == 0) // Check the very beginning of the string for the comment symbol
-        {
-            minPos = 0; // Beginning of the string
-            break; // No need to look for any more symbols
-        }
-        size_t found = str.find(commentSymbol, startPos); // Look for that comment symbol (or after the rightmost quote if it was found)
-        // If the symbol was found, and the found position is less than the current minimum position (or there is no current position),
-        // and if the rightmost quote exists, the comment symbol must be more to the right than it (comment symbols should be allowed in strings)
-        if (found != std::string::npos && (minPos == std::string::npos || found < minPos) && (rightQuote == std::string::npos || found > rightQuote))
-            minPos = found; // Set the new current minimum position to the one that was just found
+        if (str.compare(0, commentSymbols[i].size(), commentSymbols[i]) == 0)
+            commentType = commentTypes[i];
     }
-    if (minPos != std::string::npos) // If a comment symbol was found
-        str.erase(minPos); // Remove everything after that
+
+    // This check is required for comments using the multi-line symbols on a single line
+    if (!checkMultiEnd && commentType == MultiStart && isMultiEndComment(str))
+        commentType = Single;
+
+    return commentType;
+}
+
+int StringUtils::stripComments(std::string& str, bool checkMultiEnd)
+{
+    int commentType = isComment(str, checkMultiEnd);
+    if (commentType == Single)
+        str.clear();
+    return commentType;
+}
+
+int StringUtils::cleanUp(std::string& str, bool checkMultiEnd)
+{
+    stripNewLines(str); // Strip any CR or LF characters
+    trimWhiteSpace(str); // Trim any whitespace characters (on the outsides)
+    return stripComments(str, checkMultiEnd); // Strip any comments
 }
 
 bool StringUtils::isWhitespace(char c)
@@ -85,13 +109,6 @@ bool StringUtils::strToBool(std::string data)
         c = tolower(c); // Make all of the characters lowercase
     std::size_t found = data.find("true"); // If "true" exists somewhere then the boolean is true
     return (found != std::string::npos);
-}
-
-void StringUtils::cleanUp(std::string& str)
-{
-    stripNewLines(str); // Strip any CR or LF characters
-    trimWhiteSpace(str); // Trim any whitespace characters (on the outsides)
-    stripComments(str); // Strip any comments
 }
 
 int StringUtils::replaceAll(std::string& str, const std::string& findStr, const std::string& replaceStr)
@@ -125,16 +142,16 @@ void StringUtils::split(const std::string& inStr, const std::string& delim, std:
         outVec.push_back(inStr.substr(start, inStr.size()));
 }
 
-void StringUtils::getLinesFromString(std::string inStr, std::vector<std::string>& lines)
+void StringUtils::getLinesFromString(std::string inStr, std::vector<std::string>& lines, bool allowEmpty)
 {
     // First, search and replace all CRLF with LF, and then CR with LF
     while (replaceAll(inStr, "\r\n", "\n")); // This needs to be a while loop in case there is something like "\r\r\n"
     replaceAll(inStr, "\r", "\n");
     // Then, split the string on the LF characters into the vector
-    split(inStr, "\n", lines, false);
+    split(inStr, "\n", lines, allowEmpty);
 }
 
-bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std::string>& lines)
+bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std::string>& lines, bool allowEmpty)
 {
     bool status = false;
     std::ifstream file(filename, std::ifstream::in); // Open the file
@@ -143,8 +160,7 @@ bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std
         std::string line;
         while (getline(file, line)) // Read a line
         {
-            cleanUp(line); // Strip away unwanted characters
-            if (!line.empty()) // If the line is not empty
+            if (allowEmpty || !line.empty()) // If the line is not empty
                 lines.push_back(line); // Store the line
         }
         status = true;

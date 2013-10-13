@@ -27,6 +27,12 @@ Option& Option::operator=(const std::string& data)
     return *this;
 }
 
+Option& Option::operator=(const char* data)
+{
+    setString(data);
+    return *this;
+}
+
 void Option::reset()
 {
     range = NoRange;

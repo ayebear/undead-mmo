@@ -40,7 +40,7 @@ bool ConfigFile::loadFromFile(const string& filename)
 {
     configFilename = filename;
     vector<string> lines;
-    if (StringUtils::readLinesFromFile(configFilename, lines))
+    if (StringUtils::readLinesFromFile(configFilename, lines, false))
     {
         parseLines(lines);
         return true;
@@ -51,7 +51,7 @@ bool ConfigFile::loadFromFile(const string& filename)
 void ConfigFile::loadFromString(const string& str)
 {
     vector<string> lines;
-    StringUtils::getLinesFromString(str, lines);
+    StringUtils::getLinesFromString(str, lines, false);
     parseLines(lines);
 }
 
@@ -145,12 +145,28 @@ void ConfigFile::clear()
 void ConfigFile::parseLines(vector<string>& lines)
 {
     string section = "";
+    bool multiLineComment = false;
+    int lineNumber = 0;
+    int commentType = StringUtils::NoComment;
     for (auto& line: lines) // Iterate through the vector of strings
     {
-        if (isSection(line))
-            parseSectionLine(line, section); // Example: "[Section]"
-        else
-            parseOptionLine(line, section); // Example: "Option = Value"
+        commentType = StringUtils::cleanUp(line, multiLineComment); // Strip comments and more
+
+        if (commentType == StringUtils::MultiStart)
+            multiLineComment = true;
+
+        if (!multiLineComment && !line.empty()) // Don't process a comment or an empty line
+        {
+            if (isSection(line))
+                parseSectionLine(line, section); // Example: "[Section]"
+            else
+                parseOptionLine(line, section); // Example: "Option = Value"
+        }
+
+        if (commentType == StringUtils::MultiEnd)
+            multiLineComment = false;
+
+        ++lineNumber;
     }
 }
 

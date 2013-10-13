@@ -13,7 +13,6 @@ using namespace std;
 
 /*
 TODO:
-    Support multi-line comments.
     Config file writing should preserve formatting and comments.
         Maybe it could "merge" the contents into the file, new values in existing options would be updated,
             new options would be appended to the end of the file.
@@ -50,12 +49,6 @@ Strings:
         str = "!@#$%^&*()"""""""_+-="
     The first and last quote are used for determining what is contained in the string.
 
-Other Notes:
-    Whitespace is ignored around setting names.
-    Semicolons CANNOT be used to separate lines, only new lines can.
-    Comments can be made with most symbols (//, #, ::, and ;)
-    Comments can be on lines with settings, not just on their own lines.
-
 Sections:
     You can also have "sections", which are optional to use with code that uses this class.
     If you use sections in your code, then they must be specified correctly in order for options
@@ -75,6 +68,18 @@ Sections Example:
     option = 5000
 
     // So "option" will be read as "value" in SomeSection, but 5000 in AnotherSection.
+
+Comments:
+    Comments can be made with most symbols (//, #, ::, and ;)
+    Comments MUST be on their own lines
+        The symbols are checked only in the beginning of each line
+        The whole line is ignored if it is a comment
+    Multi-line comments are also supported with /star and star/
+        Note that "star" is really a "*"
+
+Other Notes:
+    Whitespace is ignored around setting names.
+    Semicolons CANNOT be used to separate lines, only new lines can.
 */
 
 class ConfigFile

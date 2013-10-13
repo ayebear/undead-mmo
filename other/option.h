@@ -15,6 +15,8 @@ class Option
         Option(); // Default constructor
         Option(const std::string&); // Initialize with a string value
         Option& operator=(const std::string&); // Assignment operator with a string
+        Option& operator=(const char*);
+        template <class T> Option& operator=(T); // Assignment operator
 
         // Sets all values to 0 and removes the range
         void reset();
@@ -66,10 +68,30 @@ class Option
         double rangeMax;
 };
 
+template <class T>
+Option& Option::operator=(T data)
+{
+    set<T>(data);
+    return *this;
+}
+
+template <class T>
+bool Option::set(T data)
+{
+    // Only set the value if it is in range
+    if (isInRange((double)data))
+    {
+        number = data;
+        decimal = data;
+        logical = (data != 0);
+        str = StringUtils::toString<T>(data);
+        return true;
+    }
+    return false;
+}
+
+
 // Factory functions
-template <class T> Option makeOption(T);
-template <class T> Option makeOption(T, double);
-template <class T> Option makeOption(T, double, double);
 
 template <class T>
 Option makeOption(T data)
@@ -95,21 +117,6 @@ Option makeOption(T data, double num1, double num2)
     tmp.set<T>(data);
     tmp.setRange(num1, num2);
     return tmp;
-}
-
-template <class T>
-bool Option::set(T data)
-{
-    // Only set the value if it is in range
-    if (isInRange((double)data))
-    {
-        number = data;
-        decimal = data;
-        logical = (data != 0);
-        str = StringUtils::toString<T>(data);
-        return true;
-    }
-    return false;
 }
 
 #endif
