@@ -2,6 +2,7 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "stringutils.h"
+#include <fstream>
 
 void StringUtils::trimWhiteSpace(std::string& str)
 {
@@ -30,7 +31,7 @@ void StringUtils::stripNewLines(std::string& str)
 {
     if (!str.empty())
     {
-        for (auto& newLineChar: {'\r', '\n'}) // Remove CR and LF characters
+        for (auto& newLineChar: {cr, lf})
         {
             auto pos = str.find(newLineChar); // Find the character
             while (pos != std::string::npos) // Continue removing the characters until there are none left
@@ -84,4 +85,69 @@ bool StringUtils::strToBool(std::string data)
         c = tolower(c); // Make all of the characters lowercase
     std::size_t found = data.find("true"); // If "true" exists somewhere then the boolean is true
     return (found != std::string::npos);
+}
+
+void StringUtils::cleanUp(std::string& str)
+{
+    stripNewLines(str); // Strip any CR or LF characters
+    trimWhiteSpace(str); // Trim any whitespace characters (on the outsides)
+    stripComments(str); // Strip any comments
+}
+
+int StringUtils::replaceAll(std::string& str, const std::string& findStr, const std::string& replaceStr)
+{
+    int count = 0;
+    size_t pos = 0;
+    // Keep searching for the string to find
+    while ((pos = str.find(findStr, pos)) != std::string::npos)
+    {
+        // Replace the found string with the replace string
+        str.replace(pos, findStr.length(), replaceStr);
+        pos += replaceStr.size();
+        ++count;
+    }
+    return count; // Return the number of occurrences that were replaced
+}
+
+void StringUtils::split(const std::string& inStr, const std::string& delim, std::vector<std::string>& outVec, bool allowEmpty)
+{
+    size_t start = 0;
+    size_t end = 0;
+    // Keep searching for the delimiters to split
+    while ((end = inStr.find(delim, start)) != std::string::npos)
+    {
+        if (allowEmpty || start != end) // Always add the string if empty strings are allowed, otherwise make sure the string being added is not empty
+            outVec.push_back(inStr.substr(start, end - start)); // Add the sub string between the delimiters to the vector
+        start = end + delim.size();
+    }
+    // Get the last part of the string
+    if (start < inStr.size())
+        outVec.push_back(inStr.substr(start, inStr.size()));
+}
+
+void StringUtils::getLinesFromString(std::string inStr, std::vector<std::string>& lines)
+{
+    // First, search and replace all CRLF with LF, and then CR with LF
+    while (replaceAll(inStr, "\r\n", "\n")); // This needs to be a while loop in case there is something like "\r\r\n"
+    replaceAll(inStr, "\r", "\n");
+    // Then, split the string on the LF characters into the vector
+    split(inStr, "\n", lines, false);
+}
+
+bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std::string>& lines)
+{
+    bool status = false;
+    std::ifstream file(filename, std::ifstream::in); // Open the file
+    if (file.is_open())
+    {
+        std::string line;
+        while (getline(file, line)) // Read a line
+        {
+            cleanUp(line); // Strip away unwanted characters
+            if (!line.empty()) // If the line is not empty
+                lines.push_back(line); // Store the line
+        }
+        status = true;
+    }
+    return status;
 }

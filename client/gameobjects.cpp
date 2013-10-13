@@ -80,7 +80,7 @@ void GameObjects::createWindow(string windowTitle, int windowWidth, int windowHe
 void GameObjects::loadConfig()
 {
     config.setDefaultOptions(defaultOptions);
-    config.loadConfigFile(Paths::clientConfigFile);
+    config.loadFromFile(Paths::clientConfigFile);
 }
 
 void GameObjects::loadFonts()

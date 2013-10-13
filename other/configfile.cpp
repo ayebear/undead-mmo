@@ -11,7 +11,7 @@ ConfigFile::ConfigFile()
 
 ConfigFile::ConfigFile(const string& filename)
 {
-    loadConfigFile(filename);
+    loadFromFile(filename);
 }
 
 ConfigFile::ConfigFile(const ConfigMap& defaultOptions)
@@ -27,20 +27,20 @@ ConfigFile::ConfigFile(const Section& defaultOptions, const string& section)
 ConfigFile::ConfigFile(const string& filename, const ConfigMap& defaultOptions)
 {
     setDefaultOptions(defaultOptions);
-    loadConfigFile(filename);
+    loadFromFile(filename);
 }
 
 ConfigFile::ConfigFile(const string& filename, const Section& defaultOptions, const string& section)
 {
     setDefaultOptions(defaultOptions, section);
-    loadConfigFile(filename);
+    loadFromFile(filename);
 }
 
-bool ConfigFile::loadConfigFile(const string& filename)
+bool ConfigFile::loadFromFile(const string& filename)
 {
     configFilename = filename;
-    vector<string> lines; // This is where the exact lines of the file will be stored into
-    if (readLinesFromFile(configFilename, lines))
+    vector<string> lines;
+    if (StringUtils::readLinesFromFile(configFilename, lines))
     {
         parseLines(lines);
         return true;
@@ -48,25 +48,49 @@ bool ConfigFile::loadConfigFile(const string& filename)
     return false;
 }
 
-bool ConfigFile::writeConfigFile() const
+void ConfigFile::loadFromString(const string& str)
 {
-    return writeConfigFile(configFilename);
+    vector<string> lines;
+    StringUtils::getLinesFromString(str, lines);
+    parseLines(lines);
 }
 
-bool ConfigFile::writeConfigFile(const string& outputFilename) const
+bool ConfigFile::writeToFile(string outputFilename) const
 {
+    if (outputFilename.empty())
+        outputFilename = configFilename;
     if (!outputFilename.empty())
     {
-        string fileData = buildString();
         ofstream outFile(outputFilename, ofstream::out | ofstream::trunc);
         if (outFile.is_open())
         {
-            outFile << fileData; // Write the string to the output file
+            outFile << buildString(); // Write the string to the output file
             outFile.close();
             return true;
         }
     }
     return false;
+}
+
+void ConfigFile::writeToString(string& str) const
+{
+    for (auto& section: options) // Go through all of the sections
+    {
+        if (!section.first.empty())
+            str += '[' + section.first + "]\n"; // Add the section line if it is not blank
+        for (auto& o: section.second) // Go through all of the options in this section
+            str += o.first + " = " + o.second.asStringWithQuotes() + '\n'; // Include the original quotes if any
+        str += '\n';
+    }
+    if (!str.empty() && str.back() == '\n')
+        str.pop_back(); // Strip the extra new line at the end
+}
+
+string ConfigFile::buildString() const
+{
+    string configStr;
+    writeToString(configStr);
+    return configStr;
 }
 
 Option& ConfigFile::getOption(const string& name, const string& section)
@@ -95,22 +119,6 @@ void ConfigFile::setDefaultOptions(const Section& defaultOptions, const string& 
     options[getCurrentSection(section)].insert(defaultOptions.begin(), defaultOptions.end());
 }
 
-string ConfigFile::buildString() const
-{
-    string configStr;
-    for (auto& section: options) // Go through all of the sections
-    {
-        if (!section.first.empty())
-            configStr += '[' + section.first + "]\n"; // Add the section line if it is not blank
-        for (auto& o: section.second) // Go through all of the options in this section
-            configStr += o.first + " = " + o.second.asStringWithQuotes() + '\n'; // Include the original quotes if any
-        configStr += '\n';
-    }
-    if (!configStr.empty() && configStr.back() == '\n')
-        configStr.pop_back(); // Strip the extra new line at the end
-    return configStr;
-}
-
 void ConfigFile::setSection(const string& section)
 {
     currentSection = section;
@@ -132,25 +140,6 @@ bool ConfigFile::eraseSection(const string& section)
 void ConfigFile::clear()
 {
     options.clear(); // Clear all of the sections and options
-}
-
-bool ConfigFile::readLinesFromFile(const string& filename, vector<string>& lines) const
-{
-    ifstream file(filename, ifstream::in); // Open the file
-    if (file.is_open())
-    {
-        string line;
-        while (getline(file, line)) // Read a line
-        {
-            StringUtils::stripNewLines(line); // Strip any CR or LF characters from the line
-            StringUtils::trimWhiteSpace(line); // Trim any whitespace characters (on the outsides)
-            StringUtils::stripComments(line); // Strip any comments from the line
-            if (!line.empty()) // If the line is not empty
-                lines.push_back(line); // Store the line
-        }
-        return true;
-    }
-    return false;
 }
 
 void ConfigFile::parseLines(vector<string>& lines)

@@ -37,7 +37,7 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
     {
         string accountFilename = accountIdToFilename(accountId);
         ConfigFile accountCfg;
-        if (accountCfg.loadConfigFile(accountFilename)) // Load the account config file
+        if (accountCfg.loadFromFile(accountFilename)) // Load the account config file
         {
             if (accountCfg["password"].asString() == password) // Check if the password is correct!
             {
@@ -73,7 +73,7 @@ int AccountDb::createAccount(const PlayerData& pData)
             ConfigFile accountCfg;
             pData.saveToConfig(accountCfg); // Set the values in the config file in memory from the player data object
 
-            if (accountCfg.writeConfigFile(accountFilename)) // Write the account to a file
+            if (accountCfg.writeToFile(accountFilename)) // Write the account to a file
                 status = Packet::CreateAccountCode::Successful;
         }
     }
@@ -91,7 +91,7 @@ bool AccountDb::saveAccount(const PlayerData& pData)
         string accountFilename = accountIdToFilename(accountId);
         ConfigFile accountCfg;
         pData.saveToConfig(accountCfg); // Save the player data to a config file in memory
-        status = accountCfg.writeConfigFile(accountFilename); // Write the config file in memory to the file
+        status = accountCfg.writeToFile(accountFilename); // Write the config file in memory to the file
     }
     return status;
 }

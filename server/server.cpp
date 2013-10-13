@@ -32,7 +32,7 @@ void Server::setup()
 
     // Load the config file
     config.setDefaultOptions(defaultOptions);
-    config.loadConfigFile("server.cfg");
+    config.loadFromFile("server.cfg");
 
     if (config["showExternalIp"].asBool())
         cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
