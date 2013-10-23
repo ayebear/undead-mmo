@@ -19,11 +19,12 @@ namespace StringUtils
     int cleanUp(std::string&, bool = false); // Cleans up new lines, whitespace, and comments
     bool isWhitespace(char); // Returns true if the character is a form of whitespace
     bool areQuotes(char, char); // Returns true if both characters are either single or double quotes
-    bool strToBool(std::string); // Parses a string to determine its boolean value
+    bool strToBool(const std::string&); // Parses a string to determine its boolean value
     int replaceAll(std::string&, const std::string&, const std::string&); // Replaces all instances of a sub-string with another string, and returns the number of replaces
     void split(const std::string&, const std::string&, std::vector<std::string>&, bool = true); // Splits a string into a vector of strings with a delimeter
     void getLinesFromString(std::string, std::vector<std::string>&, bool = true); // Splits a string into separate lines with CR and/or LF characters
     bool readLinesFromFile(const std::string&, std::vector<std::string>&, bool = true); // Simply reads a file into memory in separate lines
+    std::string toLower(std::string); // Creates an all-lowercase version of the passed in string
     template <class T> std::string toString(T data); // Converts most types to strings using a string stream
     template <class T> std::string toString(bool data); // Converts a bool to a string
 

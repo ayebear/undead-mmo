@@ -34,8 +34,6 @@ class Server
         void processLogOut(PacketExtra&);
         void processCreateAccount(PacketExtra&);
 
-        void handleSuccessfulLogIn(Client*);
-
         // Inventory/item functions
         void useItem(sf::Packet&, Inventory&, Entity*);
         void pickupItem(Inventory&, Entity*);
@@ -43,12 +41,17 @@ class Server
         void swapItem(sf::Packet&, Inventory&);
         void wieldItem(sf::Packet&, Inventory&, Entity*);
 
+        // Other functions
+        void handleSuccessfulLogIn(Client*);
+        void logOutClient(Client*);
+
         static const float desiredFrameTime;
         static const float frameTimeTolerance;
         static const ConfigFile::Section defaultOptions;
 
         float elapsedTime;
         sf::Clock clock, warningTimer;
+        ConfigFile config;
         ServerNetwork netManager;
         sf::Thread udpThread;
         sf::Thread tcpThread;
@@ -56,7 +59,6 @@ class Server
         ClientManager clients;
         MasterEntityList entList;
         Map tileMap;
-        ConfigFile config;
         mutex processPacketMutex;
         PacketExtra udpPacket;
         PacketExtra tcpPacket;

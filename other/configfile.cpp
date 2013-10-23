@@ -146,7 +146,6 @@ void ConfigFile::parseLines(vector<string>& lines)
 {
     string section = "";
     bool multiLineComment = false;
-    int lineNumber = 0;
     int commentType = StringUtils::NoComment;
     for (auto& line: lines) // Iterate through the vector of strings
     {
@@ -165,8 +164,6 @@ void ConfigFile::parseLines(vector<string>& lines)
 
         if (commentType == StringUtils::MultiEnd)
             multiLineComment = false;
-
-        ++lineNumber;
     }
 }
 

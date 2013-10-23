@@ -7,17 +7,17 @@
 #include <map>
 #include <string>
 #include <mutex>
+#include <functional>
 #include "network.h"
-#include "linkedqueue.h"
 #include "clientmanager.h"
 #include "miscnetwork.h"
-#include "accountdb.h"
-#include "masterentitylist.h"
 
 class ServerNetwork
 {
+    typedef std::function<void(Client*)> logOutCallbackType;
+
     public:
-        ServerNetwork(AccountDb&, ClientManager&, MasterEntityList&, PacketExtra&, PacketExtra&);
+        ServerNetwork(ClientManager&, PacketExtra&, PacketExtra&, unsigned short, logOutCallbackType);
 
         // These are called from the Server class in separate threads, and return after a packet
         // has been received and stored into the PacketExtra reference passed into the constructor
@@ -48,12 +48,11 @@ class ServerNetwork
         sf::UdpSocket udpSock;
         sf::TcpListener listener;
         sf::SocketSelector selector;
-        AccountDb& accounts;
         ClientManager& clients;
-        MasterEntityList& entList;
         PacketExtra& udpPacket;
         PacketExtra& tcpPacket;
         bool receivedTcpPacket;
+        logOutCallbackType logOutCallback;
 };
 
 #endif

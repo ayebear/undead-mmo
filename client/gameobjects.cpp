@@ -6,81 +6,123 @@
 #include <string>
 #include "paths.h"
 
-using namespace std;
-
-const ConfigFile::Section GameObjects::defaultOptions = {
-    {"server", Option("127.0.0.1")},
-    {"username", Option("test")},
-    {"password", Option("password")},
-    {"windowWidth", makeOption(1024, 640)},
-    {"windowHeight", makeOption(768, 480)},
-    {"useVerticalSync", makeOption(true)}
+const ConfigFile::ConfigMap GameObjects::defaultOptions = {
+    {"Window",{
+        {"useVerticalSync", makeOption(true)},
+        {"fullscreen", makeOption(true)},
+        {"windowWidth", makeOption(0)},
+        {"windowHeight", makeOption(0)}
+        }
+    },
+    {"Credentials",{
+        {"server", Option("127.0.0.1")},
+        {"username", Option("test")},
+        {"password", Option("password")}
+        }
+    },
+    {"Hotkeys",{
+        {"moveUp", Option("Up")},
+        {"moveDown", Option("Down")},
+        {"moveLeft", Option("Left")},
+        {"moveRight", Option("Right")},
+        {"moveUpAlt", Option("W")},
+        {"moveDownAlt", Option("S")},
+        {"moveLeftAlt", Option("A")},
+        {"moveRightAlt", Option("D")},
+        {"toggleInventory", Option("Space")},
+        {"toggleInventoryAlt", Option("B")},
+        {"showChat", Option("Return")},
+        {"hideChat", Option("Escape")},
+        {"takeScreenshot", Option("F1")},
+        {"addSlot", Option("K")},
+        {"removeSlot", Option("L")}
+        }
+    },
+    {"Developer",{
+        {"showFps", makeOption(false)},
+        {"rewriteConfigFile", makeOption(false)}
+        }
+    }
 };
 
-GameObjects::GameObjects()
+GameObjects::GameObjects():
+    config(Paths::clientConfigFile, defaultOptions) // Config file gets loaded here
 {
-    loadConfig();
     loadFonts();
 }
 
 GameObjects::~GameObjects()
 {
     window.close();
+    if (config.getOption("rewriteConfigFile", "Developer").asBool())
+        config.writeToFile();
 }
 
-void GameObjects::setupWindow(string windowTitle)
+void GameObjects::setupWindow(const std::string& windowTitle)
 {
+    config.setSection("Window");
     int windowWidth = config["windowWidth"].asInt();
     int windowHeight = config["windowHeight"].asInt();
+    bool fullscreen = config["fullscreen"].asBool();
+    bool vsync = config["useVerticalSync"].asBool();
+    config.setSection();
 
-    if (windowWidth > 0 && windowHeight > 0)
-        createWindow(windowTitle, windowWidth, windowHeight);
+    createWindow(windowTitle, windowWidth, windowHeight, fullscreen, vsync);
+}
+
+void GameObjects::createWindow(const std::string& windowTitle, int windowWidth, int windowHeight, bool fullscreen, bool vsync)
+{
+    bool windowSizeValid = (windowWidth >= 640 && windowHeight >= 480);
+
+    // If windowed mode was specified and the sizes were invalid, use the default size
+    if (!fullscreen && !windowSizeValid)
+    {
+        windowWidth = 1024;
+        windowHeight = 768;
+        windowSizeValid = true;
+    }
+
+    // Use the specified window width and height if they are valid
+    if (windowSizeValid)
+        vidMode = sf::VideoMode(windowWidth, windowHeight);
     else
-        createWindow(windowTitle);
+        vidMode = getMaxVidMode();
 
-    window.setVerticalSyncEnabled(config["useVerticalSync"].asBool()); // Set vsync from setting
+    // Either create the window in fullscreen or windowed mode
+    window.create(vidMode, windowTitle, (fullscreen ? sf::Style::Fullscreen : sf::Style::Close));
 
+    // Set the window's vertical sync setting
+    window.setVerticalSyncEnabled(vsync);
+
+    // Cache the window size so there is no need for expensive calls to window.getSize()
     windowSize.x = vidMode.width;
     windowSize.y = vidMode.height;
 }
 
-void GameObjects::createWindow(string windowTitle)
+sf::VideoMode GameObjects::getMaxVidMode() const
 {
-    // Create a window in fullscreen at the current resolution
-    vidMode = sf::VideoMode::getDesktopMode();
+    // Get the current screen resolution
+    sf::VideoMode videoMode = sf::VideoMode::getDesktopMode();
 
     // Only use a resolution 1080p or less - this is temporary until we can figure out how to handle multiple monitors
-    if (vidMode.width > 1920 || vidMode.height > 1080)
+    if (videoMode.width > 1920 || videoMode.height > 1080)
     {
         auto videoModes = sf::VideoMode::getFullscreenModes();
         for (auto& vM: videoModes)
         {
-            cout << vM.width << " x " << vM.height << "? ";
+            std::cout << vM.width << " x " << vM.height << "? ";
             if (vM.width <= 1920 && vM.height <= 1080)
             {
-                vidMode = vM;
-                cout << "Using this!\n";
+                videoMode = vM;
+                std::cout << "Using this!\n";
                 break;
             }
             else
-                cout << "Too big!\n";
+                std::cout << "Too big!\n";
         }
     }
 
-    window.create(vidMode, windowTitle, sf::Style::Fullscreen);
-}
-
-void GameObjects::createWindow(string windowTitle, int windowWidth, int windowHeight)
-{
-    // Create a normal window
-    vidMode = sf::VideoMode(windowWidth, windowHeight);
-    window.create(vidMode, windowTitle, sf::Style::Close);
-}
-
-void GameObjects::loadConfig()
-{
-    config.setDefaultOptions(defaultOptions);
-    config.loadFromFile(Paths::clientConfigFile);
+    return videoMode;
 }
 
 void GameObjects::loadFonts()

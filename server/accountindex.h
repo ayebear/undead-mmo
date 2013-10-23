@@ -9,6 +9,7 @@
 
 using namespace std;
 
+// A lightweight "Option"-like class
 class IntString
 {
     public:
@@ -19,6 +20,7 @@ class IntString
         string str;
 };
 
+// This class manages a list of account usernames, and was made only for performance improvements because of ConfigFile's slow file writing
 class AccountIndex
 {
     public:

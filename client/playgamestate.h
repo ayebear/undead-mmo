@@ -11,6 +11,7 @@
 #include "hud.h"
 #include "mainmenustate.h"
 #include "map.h"
+#include "gamehotkeys.h"
 
 /*
 This class manages the window and input for the game
@@ -42,12 +43,14 @@ class PlayGameState: public State
         void processOnLogInPackets();
         void processMapDataPackets();
         void handleWindowResized();
+        void loadHotkeys();
 
         // Important objects
         Map tileMap;
         EntityList entList;
         Entity* myPlayer;
         Hud theHud; // TODO: Choose a better name?
+        GameHotkeys hotkeys;
 
         // Variables
         sf::Clock clock;
@@ -57,6 +60,8 @@ class PlayGameState: public State
         bool hasFocus;
         float elapsedTime;
         sf::Clock FPSTimer;
+
+        // This is a lot of crap just for the player movement, maybe it can all be moved into the entity?
         sf::Vector2i playerInput, oldPlayerInput;
         bool playerIsMoving;
         EID myPlayerId;
@@ -65,8 +70,30 @@ class PlayGameState: public State
         sf::Clock angleTimer;
         bool mouseMoved;
 
+        // The inventory should be able to handle this
         sf::Clock inventoryTimer;
         bool inventoryKeyReleased;
+
+        // Currently just keyboard events, until we have a fully generic event handler
+        enum Event
+        {
+            MoveUp = 0,
+            MoveDown,
+            MoveLeft,
+            MoveRight,
+            MoveUpAlt,
+            MoveDownAlt,
+            MoveLeftAlt,
+            MoveRightAlt,
+            ToggleInventory,
+            ToggleInventoryAlt,
+            ShowChat,
+            HideChat,
+            TakeScreenshot,
+            AddSlot,
+            RemoveSlot,
+            Total
+        };
 };
 
 #endif
