@@ -162,6 +162,7 @@ void LoginState::handleEvents()
     }
     usernameBox.updateCursor();
     passwordBox.updateCursor();
+    directConnectBox.updateCursor();
 }
 
 void LoginState::processChoice(int choice)
