@@ -103,11 +103,10 @@ bool StringUtils::areQuotes(char c1, char c2)
     return ((c1 == c2) && (c1 == '"' || c1 == '\''));
 }
 
-bool StringUtils::strToBool(std::string data)
+bool StringUtils::strToBool(const std::string& str)
 {
-    for (char& c: data)
-        c = tolower(c); // Make all of the characters lowercase
-    std::size_t found = data.find("true"); // If "true" exists somewhere then the boolean is true
+    std::string strLower = toLower(str);
+    std::size_t found = strLower.find("true"); // If "true" exists somewhere then the boolean is true
     return (found != std::string::npos);
 }
 
@@ -166,4 +165,12 @@ bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std
         status = true;
     }
     return status;
+}
+
+std::string StringUtils::toLower(std::string str)
+{
+    // Make all of the characters lowercase
+    for (char& c: str)
+        c = tolower(c);
+    return str;
 }

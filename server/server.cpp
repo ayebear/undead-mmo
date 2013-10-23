@@ -2,6 +2,8 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "server.h"
+#include "paths.h"
+#include <functional>
 
 using namespace std;
 
@@ -9,7 +11,7 @@ const float Server::desiredFrameTime = 1.0 / 120.0;
 const float Server::frameTimeTolerance = -10.0 / 120.0;
 
 const ConfigFile::Section Server::defaultOptions = {
-    {"port", makeOption(1337, 1, 65536)},
+    {"port", makeOption(serverPort, 1, 65536)},
     {"map", Option("serverdata/maps/2.map")},
     {"maxZombies", makeOption(20, 0)},
     {"showExternalIp", makeOption(false)},
@@ -17,7 +19,8 @@ const ConfigFile::Section Server::defaultOptions = {
 };
 
 Server::Server():
-    netManager(accounts, clients, entList, udpPacket, tcpPacket),
+    config(Paths::serverConfigFile, defaultOptions), // Config file gets loaded here
+    netManager(clients, udpPacket, tcpPacket, config["port"].asInt(), bind(&Server::logOutClient, this, placeholders::_1)),
     udpThread(&Server::receiveUdp, this),
     tcpThread(&Server::receiveTcp, this)
 {
@@ -27,12 +30,8 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.14.4 Dev\n\n";
+    cout << "Undead MMO Server v0.0.14.5 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
-
-    // Load the config file
-    config.setDefaultOptions(defaultOptions);
-    config.loadFromFile("server.cfg");
 
     if (config["showExternalIp"].asBool())
         cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
@@ -474,4 +473,20 @@ void Server::handleSuccessfulLogIn(Client* client)
     sf::Packet inventoryPacket;
     if (client->pData.inventory.getAllItems(inventoryPacket))
         client->tcpSend(inventoryPacket);
+}
+
+void Server::logOutClient(Client* clientToRemove)
+{
+    // Save the player's position
+    Entity* playerEnt = entList.find(clientToRemove->playerEid);
+    if (playerEnt != nullptr)
+    {
+        sf::Vector2f pos = playerEnt->getPos(); // Get the position of the player's entity
+        clientToRemove->pData.positionX = pos.x;
+        clientToRemove->pData.positionY = pos.y;
+        entList.erase(clientToRemove->playerEid); // Remove the player's entity
+    }
+    netManager.sendServerChatMessage(clientToRemove->pData.username + " has logged out.", clientToRemove->id);
+    accounts.saveAccount(clientToRemove->pData); // Save their account data in the account database
+    clientToRemove->logOut();
 }

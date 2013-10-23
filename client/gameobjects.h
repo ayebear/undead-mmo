@@ -17,9 +17,7 @@ class GameObjects: sf::NonCopyable
     public:
         GameObjects();
         ~GameObjects();
-        void setupWindow(string); // Calls createWindow based on configuration
-        void createWindow(string); // Fullscreen
-        void createWindow(string, int, int); // Windowed
+        void setupWindow(const std::string&); // Reads window configuration and called createWindow
 
         sf::VideoMode vidMode; // Window size, color settings, etc.
         sf::Vector2u windowSize; // The current window size (if we decide to make the game resizable, this will need to be a function)
@@ -29,10 +27,12 @@ class GameObjects: sf::NonCopyable
         ConfigFile config; // The main configuration file
 
     private:
-        void loadConfig(); // Loads the config file
+        void createWindow(const std::string&, int, int, bool, bool); // Create a new window
+        sf::VideoMode getMaxVidMode() const;
+
         void loadFonts(); // Loads font files
 
-        static const ConfigFile::Section defaultOptions;
+        static const ConfigFile::ConfigMap defaultOptions;
 };
 
 #endif

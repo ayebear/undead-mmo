@@ -7,21 +7,19 @@
 #include "tile.h"
 #include "miscutils.h"
 
-PlayGameState::PlayGameState(GameObjects& gameObjects): State(gameObjects)
+PlayGameState::PlayGameState(GameObjects& gameObjects):
+    State(gameObjects)
 {
+    loadHotkeys();
+
     // Load textures
     Tile::loadTextures();
     Entity::loadTextures();
 
-    //myPlayer = entList.add(Entity::Player, 1);
-    //myPlayer->setTexture(playerTex);
-    //myPlayer->setPos(sf::Vector2f(objects.vidMode.width / 2, objects.vidMode.height / 2));
     myPlayer = nullptr;
     myPlayerId = 0;
     playerIsMoving = false;
-
     gameView.setSize(objects.windowSize.x, objects.windowSize.y);
-    //gameView.setCenter(myPlayer->getPos());
     theHud.setUp(objects);
 
     playerInput.x = 0;
@@ -200,60 +198,38 @@ void PlayGameState::updateGameView()
 
 void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
 {
+    // TODO: Shrink this mess into 1 line of code with a proper generic event handler...
     if (theHud.chat.getInput())
     {
-        switch (keyCode)
+        if (keyCode == hotkeys[HideChat])
+            theHud.chat.setInput(false);
+        else if (keyCode == sf::Keyboard::Return)
         {
-            case sf::Keyboard::Escape:
-                theHud.chat.setInput(false);
-                break;
-
-            case sf::Keyboard::Return:
-                theHud.chat.parseMessage();
-                theHud.chat.toggleInput();
-                break;
-
-            default:
-                break;
+            theHud.chat.parseMessage();
+            theHud.chat.toggleInput();
         }
     }
     else
     {
-        switch (keyCode)
+        if (keyCode == sf::Keyboard::Escape)
+            action.popState();
+        else if (keyCode == hotkeys[ShowChat])
+            theHud.chat.toggleInput();
+        else if (keyCode == hotkeys[ToggleInventory] || keyCode == hotkeys[ToggleInventoryAlt])
         {
-            case sf::Keyboard::Escape:
-                action.popState();
-                break;
-
-            case sf::Keyboard::Return:
-                theHud.chat.toggleInput();
-                break;
-
-            case sf::Keyboard::Key::Space:
-            case sf::Keyboard::Key::B:
-                if (inventoryKeyReleased)
-                {
-                    inventoryTimer.restart();
-                    theHud.inventory.toggleInventory();
-                }
-                inventoryKeyReleased = false;
-                break;
-
-            case sf::Keyboard::Key::K:
-                theHud.inventory.addSlots(1);
-                break;
-
-            case sf::Keyboard::Key::L:
-                theHud.inventory.addSlots(-1);
-                break;
-
-            case sf::Keyboard::Key::F1:
-                takeScreenshot(objects.window);
-                break;
-
-            default:
-                break;
+            if (inventoryKeyReleased)
+            {
+                inventoryTimer.restart();
+                theHud.inventory.toggleInventory();
+            }
+            inventoryKeyReleased = false;
         }
+        else if (keyCode == hotkeys[AddSlot])
+            theHud.inventory.addSlots(1);
+        else if (keyCode == hotkeys[RemoveSlot])
+            theHud.inventory.addSlots(-1);
+        else if (keyCode == hotkeys[TakeScreenshot])
+            takeScreenshot(objects.window);
     }
     theHud.chat.processInput(keyCode);
 }
@@ -262,17 +238,11 @@ void PlayGameState::handleKeyReleased(sf::Keyboard::Key keyCode)
 {
     if (!theHud.chat.getInput())
     {
-        switch (keyCode)
+        if (keyCode == hotkeys[ToggleInventory] || keyCode == hotkeys[ToggleInventoryAlt])
         {
-            case sf::Keyboard::Key::Space:
-            case sf::Keyboard::Key::B:
-                if (inventoryTimer.getElapsedTime().asMilliseconds() >= 500 && theHud.inventory.getVisibility())
-                    theHud.inventory.toggleInventory();
-                inventoryKeyReleased = true;
-                break;
-
-            default:
-                break;
+            if (inventoryTimer.getElapsedTime().asMilliseconds() >= 500 && theHud.inventory.getVisibility())
+                theHud.inventory.toggleInventory();
+            inventoryKeyReleased = true;
         }
     }
 }
@@ -285,13 +255,13 @@ void PlayGameState::handleInput()
         oldPlayerInput = playerInput;
         playerInput.x = 0;
         playerInput.y = 0;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) || sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+        if (sf::Keyboard::isKeyPressed(hotkeys[MoveUp]) || sf::Keyboard::isKeyPressed(hotkeys[MoveUpAlt]))
             playerInput.y--; // 90
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+        if (sf::Keyboard::isKeyPressed(hotkeys[MoveDown]) || sf::Keyboard::isKeyPressed(hotkeys[MoveDownAlt]))
             playerInput.y++; // 270 (or -90)
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) || sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        if (sf::Keyboard::isKeyPressed(hotkeys[MoveLeft]) || sf::Keyboard::isKeyPressed(hotkeys[MoveLeftAlt]))
             playerInput.x--; // 180
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) || sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        if (sf::Keyboard::isKeyPressed(hotkeys[MoveRight]) || sf::Keyboard::isKeyPressed(hotkeys[MoveRightAlt]))
             playerInput.x++; // 0 (or 360)
 
         // Calculate the degrees based on which keys were pressed
@@ -405,4 +375,39 @@ void PlayGameState::handleWindowResized()
     viewDimensions = objects.window.getView().getSize();
 
     theHud.updateView(gameView);
+}
+
+void PlayGameState::loadHotkeys()
+{
+    objects.config.setSection("Hotkeys");
+    const string keyNames[] = {
+        "moveUp",
+        "moveDown",
+        "moveLeft",
+        "moveRight",
+        "moveUpAlt",
+        "moveDownAlt",
+        "moveLeftAlt",
+        "moveRightAlt",
+        "toggleInventory",
+        "toggleInventoryAlt",
+        "showChat",
+        "hideChat",
+        "takeScreenshot",
+        "addSlot",
+        "removeSlot"
+        };
+    for (const string& key: keyNames)
+        hotkeys.addKey(objects.config[key].asString());
+    objects.config.setSection();
+
+    /*
+    auto hotkeysSection = GameObjects::defaultOptions.find("Hotkeys");
+    if (hotkeysSection != GameObjects::defaultOptions.end())
+    {
+        // The map is ordered so they are not loaded properly...
+        for (auto& key: hotkeysSection->second)
+            hotkeys.addKey(objects.config[key.first].asString());
+    }
+    */
 }

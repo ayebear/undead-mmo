@@ -5,18 +5,15 @@
 #include "packet.h"
 #include "servernetwork.h"
 
-using namespace std;
-
-ServerNetwork::ServerNetwork(AccountDb& a, ClientManager& c, MasterEntityList& e, PacketExtra& u, PacketExtra& t):
-    accounts(a),
+ServerNetwork::ServerNetwork(ClientManager& c, PacketExtra& u, PacketExtra& t, unsigned short port, logOutCallbackType callback):
     clients(c),
-    entList(e),
     udpPacket(u),
-    tcpPacket(t)
+    tcpPacket(t),
+    logOutCallback(callback)
 {
     udpSock.setBlocking(true); // Set the UDP socket to blocking mode
-    udpSock.bind(serverPort); // Bind the UDP port
-    listener.listen(serverPort); // Have the listener listen on the port
+    udpSock.bind(port); // Bind the UDP port
+    listener.listen(port); // Have the listener listen on the port
     selector.add(listener); // Add the listener to the selector
 }
 
@@ -35,7 +32,7 @@ void ServerNetwork::receiveTcpPacket()
     while (!receivedTcpPacket)
     {
         // Make the selector wait for data on any socket
-        //cout << "selector.wait()\n";
+        //std::cout << "selector.wait()\n";
         if (selector.wait())
         {
             // Check if a new client is trying to connect
@@ -106,7 +103,7 @@ void ServerNetwork::udpSend(Client* c, sf::Packet& packet, bool mustBeLoggedIn)
 
 void ServerNetwork::sendServerChatMessage(const string& msg, ClientID exclude)
 {
-    cout << msg << endl;
+    std::cout << msg << std::endl;
     sf::Packet packetToSend;
     packetToSend << Packet::ChatMessage << Packet::Chat::Server << msg;
     sendToAllTcp(packetToSend, exclude);
@@ -114,7 +111,7 @@ void ServerNetwork::sendServerChatMessage(const string& msg, ClientID exclude)
 
 void ServerNetwork::addClient()
 {
-    //cout << "addClient()\n";
+    //std::cout << "addClient()\n";
     // The listener is ready: there is a pending connection
     sf::TcpSocket* tcpSock = new sf::TcpSocket;
     //unique_ptr<sf::TcpSocket> tcpSock(new sf::TcpSocket);
@@ -132,42 +129,25 @@ void ServerNetwork::addClient()
 
 void ServerNetwork::removeClient(ClientID id)
 {
-    //cout << "removeClient(" << id << ")\n";
+    //std::cout << "removeClient(" << id << ")\n";
     if (clients.validClientID(id))
     {
         Client* clientToRemove = clients.getClientFromId(id);
         if (clientToRemove != nullptr)
         {
             if (clientToRemove->isLoggedIn()) // Only do the on-logout stuff if they were logged in
-                logOutClient(clientToRemove);
+                logOutCallback(clientToRemove);
             else
-                cout << "Removing client that is not logged in!\n";
+                std::cout << "Removing client that is not logged in!\n";
             selector.remove(*(clientToRemove->tcpSock));
             clients.removeClient(id);
         }
     }
 }
 
-void ServerNetwork::logOutClient(Client* clientToRemove)
-{
-    // TODO: Move this stuff elsewhere (so that ServerNetwork does not need the account database and entity list!)
-    // Save the player's position
-    Entity* playerEnt = entList.find(clientToRemove->playerEid);
-    if (playerEnt != nullptr)
-    {
-        sf::Vector2f pos = playerEnt->getPos(); // Get the position of the player's entity
-        clientToRemove->pData.positionX = pos.x;
-        clientToRemove->pData.positionY = pos.y;
-        entList.erase(clientToRemove->playerEid); // Remove the player's entity
-    }
-    sendServerChatMessage(clientToRemove->pData.username + " has logged out.", clientToRemove->id);
-    accounts.saveAccount(clientToRemove->pData); // Save their account data in the account database
-    clientToRemove->logOut();
-}
-
 void ServerNetwork::testSockets()
 {
-    //cout << "testSockets()\n";
+    //std::cout << "testSockets()\n";
     // Check if any of the connected clients sent any data
     for (auto& c: clients.getClientMap())
     {
@@ -176,7 +156,7 @@ void ServerNetwork::testSockets()
         {
             ClientID senderId = c.second->id;
             // Will block on this line until a packet is received
-            //cout << "tcpSock.receive()\n";
+            //std::cout << "tcpSock.receive()\n";
             if (tcpSock.receive(tcpPacket.data) == sf::Socket::Done)
             {
                 if (validatePacket(tcpPacket, senderId))
