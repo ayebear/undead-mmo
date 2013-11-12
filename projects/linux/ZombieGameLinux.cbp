@@ -33,6 +33,9 @@
 			<Add library="sfml-system" />
 			<Add library="sfml-network" />
 			<Add library="sfml-audio" />
+			<Add library="GLEW" />
+			<Add library="jpeg" />
+			<Add library="openal" />
 			<Add directory="lib/linux/sfml2/lib" />
 		</Linker>
 		<Unit filename="client/chat.cpp" />
@@ -120,6 +123,16 @@
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
