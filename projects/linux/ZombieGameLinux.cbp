@@ -36,6 +36,7 @@
 			<Add library="GLEW" />
 			<Add library="jpeg" />
 			<Add library="openal" />
+			<Add library="libc" />
 			<Add directory="lib/linux/sfml2/lib" />
 		</Linker>
 		<Unit filename="client/chat.cpp" />
