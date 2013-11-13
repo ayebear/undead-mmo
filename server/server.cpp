@@ -10,19 +10,22 @@ using namespace std;
 const float Server::desiredFrameTime = 1.0 / 120.0;
 const float Server::frameTimeTolerance = -10.0 / 120.0;
 
+// TODO: Add new server options from GDoc
 const ConfigFile::Section Server::defaultOptions = {
     {"port", makeOption(serverPort, 1, 65536)},
     {"map", Option("serverdata/maps/2.map")},
     {"maxZombies", makeOption(20, 0)},
     {"showExternalIp", makeOption(false)},
-    {"inventorySize", makeOption(16, 1, 1000)}
+    {"inventorySize", makeOption(16, 1, 1000)},
+    {"accountsDirectory", Option("serverdata/accounts/")}
 };
 
 Server::Server():
-    config(Paths::serverConfigFile, defaultOptions), // Config file gets loaded here
-    netManager(clients, udpPacket, tcpPacket, config["port"].asInt(), bind(&Server::logOutClient, this, placeholders::_1)),
-    udpThread(&Server::receiveUdp, this),
-    tcpThread(&Server::receiveTcp, this)
+    config(Paths::serverConfigFile, defaultOptions, "", true), // Config file gets loaded here
+    netManager(clients, config["port"].asInt(),
+        bind(&Server::logOutClient, this, placeholders::_1),
+        bind(&Server::processPacket, this, placeholders::_1)),
+    accounts(config["accountsDirectory"].asString())
 {
     setup();
 }
@@ -30,7 +33,7 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.14.5 Dev\n\n";
+    cout << "Undead MMO Server v0.0.15.0 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
     if (config["showExternalIp"].asBool())
@@ -43,11 +46,6 @@ void Server::setup()
     Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
 
     inventorySize = config["inventorySize"].asInt();
-
-    // Launch the networking and packet processing threads
-    //netManager.launchThreads(); // TODO: Maybe have a tcp listening thread which handles new connections and stuff?
-    udpThread.launch();
-    tcpThread.launch();
 
     // Spawn some test zombies
     int maxZombies = config["maxZombies"].asInt();
@@ -86,28 +84,6 @@ void Server::start()
         }
     }
     cout << "Main thread finished.\n";
-}
-
-void Server::receiveUdp()
-{
-    cout << "ReceiveUdp thread started.\n";
-    while (true)
-    {
-        netManager.receiveUdpPacket();
-        processPacket(udpPacket);
-    }
-    cout << "ReceiveUdp thread finished.\n";
-}
-
-void Server::receiveTcp()
-{
-    cout << "ReceiveTcp thread started.\n";
-    while (true)
-    {
-        netManager.receiveTcpPacket();
-        processPacket(tcpPacket);
-    }
-    cout << "ReceiveTcp thread finished.\n";
 }
 
 void Server::update()

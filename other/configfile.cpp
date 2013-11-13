@@ -3,35 +3,42 @@
 
 #include "configfile.h"
 #include <fstream>
+#include <iostream>
 #include "stringutils.h"
 
-ConfigFile::ConfigFile()
+ConfigFile::ConfigFile(bool warnings)
 {
+    showWarnings = warnings;
 }
 
-ConfigFile::ConfigFile(const string& filename)
+ConfigFile::ConfigFile(const string& filename, bool warnings)
 {
+    showWarnings = warnings;
     loadFromFile(filename);
 }
 
-ConfigFile::ConfigFile(const ConfigMap& defaultOptions)
+ConfigFile::ConfigFile(const ConfigMap& defaultOptions, bool warnings)
 {
+    showWarnings = warnings;
     setDefaultOptions(defaultOptions);
 }
 
-ConfigFile::ConfigFile(const Section& defaultOptions, const string& section)
+ConfigFile::ConfigFile(const Section& defaultOptions, const string& section, bool warnings)
 {
+    showWarnings = warnings;
     setDefaultOptions(defaultOptions, section);
 }
 
-ConfigFile::ConfigFile(const string& filename, const ConfigMap& defaultOptions)
+ConfigFile::ConfigFile(const string& filename, const ConfigMap& defaultOptions, bool warnings)
 {
+    showWarnings = warnings;
     setDefaultOptions(defaultOptions);
     loadFromFile(filename);
 }
 
-ConfigFile::ConfigFile(const string& filename, const Section& defaultOptions, const string& section)
+ConfigFile::ConfigFile(const string& filename, const Section& defaultOptions, const string& section, bool warnings)
 {
+    showWarnings = warnings;
     setDefaultOptions(defaultOptions, section);
     loadFromFile(filename);
 }
@@ -74,11 +81,11 @@ bool ConfigFile::writeToFile(string outputFilename) const
 
 void ConfigFile::writeToString(string& str) const
 {
-    for (auto& section: options) // Go through all of the sections
+    for (const auto& section: options) // Go through all of the sections
     {
         if (!section.first.empty())
             str += '[' + section.first + "]\n"; // Add the section line if it is not blank
-        for (auto& o: section.second) // Go through all of the options in this section
+        for (const auto& o: section.second) // Go through all of the options in this section
             str += o.first + " = " + o.second.asStringWithQuotes() + '\n'; // Include the original quotes if any
         str += '\n';
     }
@@ -124,6 +131,16 @@ void ConfigFile::setSection(const string& section)
     currentSection = section;
 }
 
+ConfigFile::ConfigMap::iterator ConfigFile::begin()
+{
+    return options.begin();
+}
+
+ConfigFile::ConfigMap::iterator ConfigFile::end()
+{
+    return options.end();
+}
+
 bool ConfigFile::eraseOption(const string& name, const string& section)
 {
     auto sectionFound = options.find(getCurrentSection(section));
@@ -147,7 +164,7 @@ void ConfigFile::parseLines(vector<string>& lines)
     string section = "";
     bool multiLineComment = false;
     int commentType = StringUtils::NoComment;
-    for (auto& line: lines) // Iterate through the vector of strings
+    for (string& line: lines) // Iterate through the vector of strings
     {
         commentType = StringUtils::cleanUp(line, multiLineComment); // Strip comments and more
 
@@ -193,9 +210,11 @@ void ConfigFile::parseOptionLine(const string& line, const string& section)
         // Remove outer quotes if any
         bool trimmedQuotes = StringUtils::trimQuotes(value);
         // Add/update the option in memory
-        options[section][name] = value;
+        bool optionSet = (options[section][name] = value);
         if (trimmedQuotes) // If quotes were removed
             options[section][name].setQuotes(true); // Add quotes to the option
+        if (showWarnings && !optionSet)
+            cout << "Warning: Option \"" << name << "\" was out of range. Using default value: " << options[section][name].asStringWithQuotes() << endl;
     }
 }
 

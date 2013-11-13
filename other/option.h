@@ -14,9 +14,8 @@ class Option
     public:
         Option(); // Default constructor
         Option(const std::string&); // Initialize with a string value
-        Option& operator=(const std::string&); // Assignment operator with a string
-        Option& operator=(const char*);
-        template <class T> Option& operator=(T); // Assignment operator
+        template <class T> bool operator=(T); // Assignment operator
+        template <class T> bool operator=(const std::string&); // Assignment operator with a string
 
         // Sets all values to 0 and removes the range
         void reset();
@@ -24,8 +23,7 @@ class Option
         // Setting will compute all possible types
         bool setString(const std::string&);
         template <class T> bool set(T);
-        bool set(const std::string&);
-        bool set(const char*);
+        template <class T> bool set(const std::string&);
 
         // Getting will simply return the precomputed values
         const std::string& asString() const;
@@ -69,10 +67,15 @@ class Option
 };
 
 template <class T>
-Option& Option::operator=(T data)
+bool Option::operator=(T data)
 {
-    set<T>(data);
-    return *this;
+    return set<T>(data);
+}
+
+template <class T>
+bool Option::operator=(const std::string& data)
+{
+    return setString(data);
 }
 
 template <class T>
@@ -90,6 +93,11 @@ bool Option::set(T data)
     return false;
 }
 
+template <class T>
+bool Option::set(const std::string& data)
+{
+    return setString(data);
+}
 
 // Factory functions
 

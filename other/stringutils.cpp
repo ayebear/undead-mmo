@@ -105,9 +105,21 @@ bool StringUtils::areQuotes(char c1, char c2)
 
 bool StringUtils::strToBool(const std::string& str)
 {
-    std::string strLower = toLower(str);
-    std::size_t found = strLower.find("true"); // If "true" exists somewhere then the boolean is true
-    return (found != std::string::npos);
+    // The string should only be true if it is "true"
+    return (toLower(str) == "true");
+}
+
+bool StringUtils::mustEndWith(std::string& str, const std::string& endStr)
+{
+    bool endsWith = true;
+    // If the original string is smaller than what it should end with
+    // Or if the original string does not end with the ending string
+    if (str.size() < endStr.size() || !str.compare(str.size() - endStr.size(), endStr.size(), endStr))
+    {
+        str += endStr; // Then we know it doesn't already end with it!
+        endsWith = false;
+    }
+    return endsWith;
 }
 
 int StringUtils::replaceAll(std::string& str, const std::string& findStr, const std::string& replaceStr)
@@ -172,5 +184,36 @@ std::string StringUtils::toLower(std::string str)
     // Make all of the characters lowercase
     for (char& c: str)
         c = tolower(c);
+    return str;
+}
+
+// TODO: Finish these functions so that arrays can be used in config files
+
+std::vector<std::string> StringUtils::splitArrayString(std::string str)
+{
+    // There must be quotes in the array to determine what the elements are
+    // Example format: {"1", "2", "test"}
+    std::vector<std::string> vec;
+    if (str.size() >= 2 && str.front() == '{' && str.back() == '}')
+    {
+        str.pop_back();
+        str.erase(str.begin());
+    }
+    split(str, ",", vec);
+    for (auto& elem: vec)
+    {
+        trimWhiteSpace(elem);
+        trimQuotes(elem);
+    }
+    return vec;
+}
+
+std::string joinArrayString(const std::vector<std::string>& vec)
+{
+    // Join a vector back together into a properly formatted string
+    std::string str = "{";
+    for (auto& elem: vec)
+        str += elem;
+    str += "}";
     return str;
 }

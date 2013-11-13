@@ -21,18 +21,6 @@ Option::Option(const std::string& data)
     setString(data);
 }
 
-Option& Option::operator=(const std::string& data)
-{
-    setString(data);
-    return *this;
-}
-
-Option& Option::operator=(const char* data)
-{
-    setString(data);
-    return *this;
-}
-
 void Option::reset()
 {
     range = NoRange;
@@ -54,16 +42,6 @@ bool Option::setString(const std::string& data)
         return true;
     }
     return false;
-}
-
-bool Option::set(const std::string& data)
-{
-    return setString(data);
-}
-
-bool Option::set(const char* data)
-{
-    return setString(data);
 }
 
 const std::string& Option::asString() const { return str; }

@@ -90,12 +90,12 @@ class ConfigFile
         typedef map<string,Section> ConfigMap;
 
         // Constructors
-        ConfigFile(); // Would create an empty config file object
-        ConfigFile(const string&); // Loads options from a file
-        ConfigFile(const ConfigMap&); // Loads default options from memory
-        ConfigFile(const Section&, const string& = ""); // Loads default options for a single section from memory
-        ConfigFile(const string&, const ConfigMap&); // Loads default options and then options from a file
-        ConfigFile(const string&, const Section&, const string& = ""); // Loads default options for a single section and then options from a file
+        ConfigFile(bool = false); // Would create an empty config file object
+        ConfigFile(const string&, bool = false); // Loads options from a file
+        ConfigFile(const ConfigMap&, bool = false); // Loads default options from memory
+        ConfigFile(const Section&, const string& = "", bool = false); // Loads default options for a single section from memory
+        ConfigFile(const string&, const ConfigMap&, bool = false); // Loads default options and then options from a file
+        ConfigFile(const string&, const Section&, const string& = "", bool = false); // Loads default options for a single section and then options from a file
 
         // Loading/saving
         bool loadFromFile(const string&); // Loads options from a file
@@ -103,6 +103,7 @@ class ConfigFile
         bool writeToFile(string = "") const; // Saves current options to a file (default is last loaded)
         void writeToString(string&) const; // Saves current options to a string (same format as writeToFile)
         string buildString() const; // Returns a string of the current options (same format as writeToFile)
+        void setShowWarnings(bool); // Enable/disable showing warnings
 
         // Accessing/modifying options
         Option& getOption(const string&, const string& = ""); // Returns a reference to an option with the specified name (and section). If it does not exist, it will be automatically created
@@ -111,6 +112,8 @@ class ConfigFile
         void setDefaultOptions(const ConfigMap&); // Sets initial values in the map from another map in memory
         void setDefaultOptions(const Section&, const string& = ""); // Sets initial values for a single section
         void setSection(const string& = ""); // Sets the default current section to be used
+        ConfigMap::iterator begin(); // Returns an iterator to the beginning of the map
+        ConfigMap::iterator end(); // Returns an iterator to the end of the map
 
         // Erasing options
         bool eraseOption(const string&, const string& = ""); // Erases an option, returns true if the option was successfully erased
@@ -127,6 +130,7 @@ class ConfigFile
         ConfigMap options; // The data structure for storing all of the options in memory
         string configFilename; // The filename of the config file to read/write to
         string currentSection; // The default current section
+        bool showWarnings; // Show warnings when loading options that are out of range
 };
 
 #endif

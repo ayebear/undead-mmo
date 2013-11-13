@@ -15,9 +15,10 @@
 class ServerNetwork
 {
     typedef std::function<void(Client*)> logOutCallbackType;
+    typedef std::function<void(PacketExtra&)> processPacketCallbackType;
 
     public:
-        ServerNetwork(ClientManager&, PacketExtra&, PacketExtra&, unsigned short, logOutCallbackType);
+        ServerNetwork(ClientManager&, unsigned short, logOutCallbackType, processPacketCallbackType);
 
         // These are called from the Server class in separate threads, and return after a packet
         // has been received and stored into the PacketExtra reference passed into the constructor
@@ -44,15 +45,20 @@ class ServerNetwork
         void logOutClient(Client*);
         void testSockets();
         bool validatePacket(PacketExtra&, ClientID);
+        void receiveUdp();
+        void receiveTcp();
 
         sf::UdpSocket udpSock;
         sf::TcpListener listener;
         sf::SocketSelector selector;
         ClientManager& clients;
-        PacketExtra& udpPacket;
-        PacketExtra& tcpPacket;
+        PacketExtra udpPacket;
+        PacketExtra tcpPacket;
         bool receivedTcpPacket;
         logOutCallbackType logOutCallback;
+        sf::Thread udpThread;
+        sf::Thread tcpThread;
+        processPacketCallbackType processPacketCallback;
 };
 
 #endif

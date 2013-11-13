@@ -21,8 +21,6 @@ class Server
 
     private:
         void setup();
-        void receiveUdp();
-        void receiveTcp();
         void update();
         void sendChangedEntities();
 
@@ -53,15 +51,11 @@ class Server
         sf::Clock clock, warningTimer;
         ConfigFile config;
         ServerNetwork netManager;
-        sf::Thread udpThread;
-        sf::Thread tcpThread;
         AccountDb accounts;
         ClientManager clients;
         MasterEntityList entList;
         Map tileMap;
         mutex processPacketMutex;
-        PacketExtra udpPacket;
-        PacketExtra tcpPacket;
         unsigned int inventorySize;
 };
 

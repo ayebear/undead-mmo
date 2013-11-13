@@ -5,28 +5,23 @@
 #include "packet.h"
 #include "configfile.h"
 
-// These could actually be in the main server config file
-const string AccountDb::accountDir = "accounts/";
 const string AccountDb::accountListFilename = "accounts.txt";
 
 AccountDb::AccountDb()
 {
-    loadAccountList();
+    loadAccountList("accounts/");
 }
 
-AccountDb::AccountDb(const string& filename)
+AccountDb::AccountDb(const string& dir)
 {
-    loadAccountList(filename);
+    loadAccountList(dir);
 }
 
-bool AccountDb::loadAccountList()
+bool AccountDb::loadAccountList(const string& dir)
 {
-    return loadAccountList(accountListFilename);
-}
-
-bool AccountDb::loadAccountList(const string& filename)
-{
-    return accountList.loadAccountIndex(accountDir + filename);
+    accountDir = dir;
+    StringUtils::mustEndWith(accountDir, "/");
+    return accountList.loadAccountIndex(accountDir + accountListFilename);
 }
 
 int AccountDb::logIn(const string& username, const string& password, PlayerData& pData)

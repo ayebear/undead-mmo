@@ -46,7 +46,7 @@ const ConfigFile::ConfigMap GameObjects::defaultOptions = {
 };
 
 GameObjects::GameObjects():
-    config(Paths::clientConfigFile, defaultOptions) // Config file gets loaded here
+    config(Paths::clientConfigFile, defaultOptions, true) // Config file gets loaded here
 {
     loadFonts();
 }

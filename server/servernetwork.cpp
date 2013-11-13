@@ -5,16 +5,20 @@
 #include "packet.h"
 #include "servernetwork.h"
 
-ServerNetwork::ServerNetwork(ClientManager& c, PacketExtra& u, PacketExtra& t, unsigned short port, logOutCallbackType callback):
+ServerNetwork::ServerNetwork(ClientManager& c, unsigned short port, logOutCallbackType callbackL, processPacketCallbackType callbackP):
     clients(c),
-    udpPacket(u),
-    tcpPacket(t),
-    logOutCallback(callback)
+    logOutCallback(callbackL),
+    udpThread(&ServerNetwork::receiveUdp, this),
+    tcpThread(&ServerNetwork::receiveTcp, this),
+    processPacketCallback(callbackP)
 {
     udpSock.setBlocking(true); // Set the UDP socket to blocking mode
     udpSock.bind(port); // Bind the UDP port
     listener.listen(port); // Have the listener listen on the port
     selector.add(listener); // Add the listener to the selector
+    // Launch the networking threads - maybe need to move these to a launch threads function or something
+    udpThread.launch();
+    tcpThread.launch();
 }
 
 void ServerNetwork::receiveUdpPacket()
@@ -177,4 +181,26 @@ bool ServerNetwork::validatePacket(PacketExtra& packet, ClientID senderId)
     packet.sender = senderId; // Store the client ID
     packet.extractType(); // Extract and store the type of the packet
     return packet.isValid();
+}
+
+void ServerNetwork::receiveUdp()
+{
+    cout << "ReceiveUdp thread started.\n";
+    while (true)
+    {
+        receiveUdpPacket();
+        processPacketCallback(udpPacket);
+    }
+    cout << "ReceiveUdp thread finished.\n";
+}
+
+void ServerNetwork::receiveTcp()
+{
+    cout << "ReceiveTcp thread started.\n";
+    while (true)
+    {
+        receiveTcpPacket();
+        processPacketCallback(tcpPacket);
+    }
+    cout << "ReceiveTcp thread finished.\n";
 }

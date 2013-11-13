@@ -44,9 +44,8 @@ Accounts.txt:
 class AccountDb
 {
     public:
-        AccountDb(); // Uses default account list filename
-        AccountDb(const string&); // Takes filename of account list
-        bool loadAccountList(); // Same as constructor
+        AccountDb(); // Uses default account directory
+        AccountDb(const string&); // Takes directory of accounts
         bool loadAccountList(const string&); // Same as constructor
 
         int logIn(const string&, const string&, PlayerData&); // Username, password, player data object to load into
@@ -56,7 +55,7 @@ class AccountDb
     private:
         string accountIdToFilename(int);
 
-        static const string accountDir;
+        string accountDir;
         static const string accountListFilename;
 
         AccountIndex accountList; // Stores a list of usernames and account IDs
