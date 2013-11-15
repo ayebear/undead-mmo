@@ -4,9 +4,6 @@
 #include "mainmenustate.h"
 #include <iostream>
 #include "paths.h"
-#include "music.h"
-
-music menuMusic(menuSongs);
 
 MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
 {

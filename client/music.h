@@ -3,21 +3,27 @@
 
 #include <string>
 #include <SFML/Audio.hpp>
+#include "configfile.h"
 
-const std::vector<std::string> menuSongs = {"data/audio/music/titleScreen.ogg"};
+//std::vector<std::string> menuSongs = {"data/audio/music/titleScreen.ogg"};
 
-class music
+class Music
 {
     public:
-        music(std::vector<std::string> songList);
-
-        void startMusic();
+        Music(const std::string&);
+        void startMusic(const std::string&);
+        void playNext();
+        void play();
+        void update();
         void stopMusic();
         void setVolume(float);
-    protected:
     private:
+        std::vector<std::string> songList;
+        unsigned int currentSongId;
+        ConfigFile musicConfig;
         float volume = 70;
         sf::Music currentSong;
+        std::string currentSongSet;
 };
 
 #endif // MUSIC_H

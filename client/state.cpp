@@ -10,6 +10,7 @@ const StateAction& State::start(const StateArgs& args)
     handleEvents();
     while (action.shouldContinue())
     {
+        objects.music.update(); //TODO use a callback later
         update();
         draw();
         handleEvents(); // This is last so it doesn't have to update and draw an extra frame if the state is supposed to change
