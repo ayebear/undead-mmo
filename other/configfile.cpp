@@ -141,6 +141,11 @@ ConfigFile::ConfigMap::iterator ConfigFile::end()
     return options.end();
 }
 
+ConfigFile::Section& ConfigFile::getSection(const string& section)
+{
+    return options[getCurrentSection(section)];
+}
+
 bool ConfigFile::eraseOption(const string& name, const string& section)
 {
     auto sectionFound = options.find(getCurrentSection(section));

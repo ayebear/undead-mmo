@@ -114,6 +114,7 @@ class ConfigFile
         void setSection(const string& = ""); // Sets the default current section to be used
         ConfigMap::iterator begin(); // Returns an iterator to the beginning of the map
         ConfigMap::iterator end(); // Returns an iterator to the end of the map
+        Section& getSection(const string& = ""); // Returns a reference to a section
 
         // Erasing options
         bool eraseOption(const string&, const string& = ""); // Erases an option, returns true if the option was successfully erased
