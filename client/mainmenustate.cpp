@@ -28,6 +28,11 @@ MainMenuState::~MainMenuState()
     mainMenu.clearButtons();
 }
 
+void MainMenuState::onStart()
+{
+    objects.music.startMusic("menuMusic");
+}
+
 void MainMenuState::handleEvents()
 {
     sf::Event event;

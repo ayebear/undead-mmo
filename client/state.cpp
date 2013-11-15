@@ -7,6 +7,7 @@ const StateAction& State::start(const StateArgs& args)
 {
     action.reset(); // Must reset the action in case the state still existed in memory after this returned
     processArgs(args);
+    onStart();
     handleEvents();
     while (action.shouldContinue())
     {

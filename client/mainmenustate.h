@@ -17,8 +17,8 @@ class MainMenuState: public State
         MainMenuState(GameObjects& gameObjects);
         ~MainMenuState();
 
+        void onStart();
         const StateAction& start(const StateArgs&);
-
         void handleEvents();
         void update();
         void draw();

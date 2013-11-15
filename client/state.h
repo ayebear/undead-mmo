@@ -20,6 +20,7 @@ class State
         virtual void processArgs(const StateArgs& args) {} // Arguments passed in from the state that asked for the push
         virtual void onPush() {} // Gets called only when the state has been pushed onto the stack
         virtual void onPop() {} // Gets called only when the state has been popped off of the stack
+        virtual void onStart() {} // Gets called when the state is started
 
         const StateAction& start(const StateArgs&); // Calls processArgs, runs the main loop, then returns the action object
 
