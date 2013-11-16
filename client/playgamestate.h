@@ -22,6 +22,7 @@ class PlayGameState: public State
         PlayGameState(GameObjects& gameObjects);
         ~PlayGameState();
 
+        void onStart();
         const StateAction& start(const StateArgs&);
 
         void onPush();

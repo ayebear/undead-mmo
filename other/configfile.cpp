@@ -45,14 +45,17 @@ ConfigFile::ConfigFile(const string& filename, const Section& defaultOptions, co
 
 bool ConfigFile::loadFromFile(const string& filename)
 {
+    bool status = false;
     configFilename = filename;
     vector<string> lines;
     if (StringUtils::readLinesFromFile(configFilename, lines, false))
     {
         parseLines(lines);
-        return true;
+        status = true;
     }
-    return false;
+    else
+        cout << "Error loading \"" << configFilename << "\"\n";
+    return status;
 }
 
 void ConfigFile::loadFromString(const string& str)

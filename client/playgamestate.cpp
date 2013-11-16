@@ -51,6 +51,11 @@ void PlayGameState::onPop()
     entList.clear();
 }
 
+void PlayGameState::onStart()
+{
+    objects.music.start("Game");
+}
+
 void PlayGameState::handleEvents()
 {
     // Exit the game if the server disconnects

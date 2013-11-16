@@ -19,6 +19,7 @@ class LoginState: public State
         LoginState(GameObjects& gameObjects);
         ~LoginState();
 
+        void onStart();
         const StateAction& start(const StateArgs&);
         void takeScreenshot();
 

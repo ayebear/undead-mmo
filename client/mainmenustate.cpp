@@ -30,7 +30,7 @@ MainMenuState::~MainMenuState()
 
 void MainMenuState::onStart()
 {
-    objects.music.startMusic("menuMusic");
+    objects.music.start("Menu");
 }
 
 void MainMenuState::handleEvents()

@@ -19,6 +19,7 @@ class MainMenuState: public State
 
         void onStart();
         const StateAction& start(const StateArgs&);
+
         void handleEvents();
         void update();
         void draw();

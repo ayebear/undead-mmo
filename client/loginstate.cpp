@@ -77,6 +77,11 @@ LoginState::~LoginState()
     loginMenu.clearButtons();
 }
 
+void LoginState::onStart()
+{
+    objects.music.start("Menu");
+}
+
 void LoginState::handleEvents()
 {
     sf::Event event;

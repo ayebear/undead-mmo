@@ -2,28 +2,35 @@
 #define MUSIC_H
 
 #include <string>
+#include <vector>
+#include <map>
 #include <SFML/Audio.hpp>
 #include "configfile.h"
-
-//std::vector<std::string> menuSongs = {"data/audio/music/titleScreen.ogg"};
 
 class Music
 {
     public:
         Music(const std::string&);
-        void startMusic(const std::string&);
-        void playNext();
-        void play();
+        void loadListFromConfig(const std::string&);
+        void start(const std::string&);
+        bool play();
+        bool playNext();
         void update();
-        void stopMusic();
+        void stop();
         void setVolume(float);
+        void setShuffle(bool);
+
     private:
-        std::vector<std::string> songList;
+        void updateSongId();
+        void shuffleSongs();
+
+        typedef std::vector<std::string> SongList;
+        std::map<std::string, SongList> songs;
         unsigned int currentSongId;
-        ConfigFile musicConfig;
-        float volume = 70;
-        sf::Music currentSong;
         std::string currentSongSet;
+        sf::Music music;
+        bool shuffle;
+        static const ConfigFile::Section defaultOptions;
 };
 
-#endif // MUSIC_H
+#endif

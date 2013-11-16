@@ -73,6 +73,8 @@
 		<Unit filename="client/entitylist.h" />
 		<Unit filename="client/errorstate.cpp" />
 		<Unit filename="client/errorstate.h" />
+		<Unit filename="client/gamehotkeys.cpp" />
+		<Unit filename="client/gamehotkeys.h" />
 		<Unit filename="client/gameobjects.cpp" />
 		<Unit filename="client/gameobjects.h" />
 		<Unit filename="client/hud.cpp" />
@@ -92,6 +94,8 @@
 		<Unit filename="client/messagestate.h" />
 		<Unit filename="client/miscutils.cpp" />
 		<Unit filename="client/miscutils.h" />
+		<Unit filename="client/music.cpp" />
+		<Unit filename="client/music.h" />
 		<Unit filename="client/playgamestate.cpp" />
 		<Unit filename="client/playgamestate.h" />
 		<Unit filename="client/scrollbar.cpp" />
@@ -114,6 +118,8 @@
 		<Unit filename="entities/entity.h" />
 		<Unit filename="entities/entityalloc.cpp" />
 		<Unit filename="entities/entityalloc.h" />
+		<Unit filename="entities/itementity.cpp" />
+		<Unit filename="entities/itementity.h" />
 		<Unit filename="entities/mobileentity.cpp" />
 		<Unit filename="entities/mobileentity.h" />
 		<Unit filename="entities/player.cpp" />
@@ -136,8 +142,11 @@
 		<Unit filename="shared/network.cpp" />
 		<Unit filename="shared/network.h" />
 		<Unit filename="shared/packet.h" />
+		<Unit filename="shared/paths.h" />
 		<Unit filename="shared/tile.cpp" />
 		<Unit filename="shared/tile.h" />
+		<Unit filename="shared/tileset.cpp" />
+		<Unit filename="shared/tileset.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

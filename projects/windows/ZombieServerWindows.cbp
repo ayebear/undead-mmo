@@ -67,6 +67,8 @@
 		<Unit filename="entities/entity.h" />
 		<Unit filename="entities/entityalloc.cpp" />
 		<Unit filename="entities/entityalloc.h" />
+		<Unit filename="entities/itementity.cpp" />
+		<Unit filename="entities/itementity.h" />
 		<Unit filename="entities/mobileentity.cpp" />
 		<Unit filename="entities/mobileentity.h" />
 		<Unit filename="entities/player.cpp" />
@@ -112,8 +114,11 @@
 		<Unit filename="shared/network.cpp" />
 		<Unit filename="shared/network.h" />
 		<Unit filename="shared/packet.h" />
+		<Unit filename="shared/paths.h" />
 		<Unit filename="shared/tile.cpp" />
 		<Unit filename="shared/tile.h" />
+		<Unit filename="shared/tileset.cpp" />
+		<Unit filename="shared/tileset.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
