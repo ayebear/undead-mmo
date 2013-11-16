@@ -22,6 +22,9 @@ StateManager::~StateManager()
 
 void StateManager::allocateStates()
 {
+    // TODO: In the future consider making this class fully generic and have an addState function,
+    // which would add a state pointer. This could be identified by a string or custom enum.
+    // It could use a map of keys and state pointers, with the key passed in as the template type.
     statePtrs[0].reset(new MainMenuState(objects));
     statePtrs[1].reset(new LoginState(objects));
     statePtrs[2].reset(new PlayGameState(objects));
@@ -43,9 +46,10 @@ void StateManager::deallocateStates()
     //std::cout << "Successfully deallocated all states.\n";
 }
 
-void StateManager::startLoop(const StateAction& theAction)
+void StateManager::startLoop(unsigned int firstState)
 {
-    StateAction action = theAction;
+    StateAction action;
+    action.pushState(firstState);
     while (action.isNotExit())
         handleAction(action);
     //std::cout << "StateManager loop has ended.\n";
@@ -78,7 +82,7 @@ void StateManager::handleAction(StateAction& action)
 
 void StateManager::push(unsigned int type)
 {
-    if (type >= 0 && type < StateType::TotalTypes)
+    if (type < StateType::TotalTypes)
     {
         stateStack.push_back(type);
         statePtrs[type]->onPush();

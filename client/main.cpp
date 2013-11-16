@@ -5,14 +5,8 @@
 
 int main()
 {
-    const string title = "Undead MMO v0.0.8.1 Dev";
-
-    StateManager game(title); // Create the game
-
-    StateAction action;
-    action.pushState(StateType::Menu); // This will make it go to the menu first
-
-    game.startLoop(action); // Start the game (at the menu)
+    StateManager game("Undead MMO v0.0.8.2 Dev"); // Create the game
+    game.startLoop(StateType::Menu); // Start the game (at the menu)
 }
 
 /*

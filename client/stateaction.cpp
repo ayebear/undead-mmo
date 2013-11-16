@@ -3,23 +3,23 @@
 
 #include "stateaction.h"
 
-bool StateAction::shouldContinue()
+bool StateAction::shouldContinue() const
 {
     return (command == StateCommand::Continue);
 }
 
-bool StateAction::isNotExit()
+bool StateAction::isNotExit() const
 {
     return (command != StateCommand::Exit);
 }
 
-void StateAction::pushState(int stateType)
+void StateAction::pushState(unsigned int stateType)
 {
     command = StateCommand::Push;
     type = stateType;
 }
 
-void StateAction::pushState(int stateType, const StateArgs& theArgs)
+void StateAction::pushState(unsigned int stateType, const StateArgs& theArgs)
 {
     command = StateCommand::Push;
     type = stateType;
@@ -48,7 +48,7 @@ int StateAction::getCommand() const
     return command;
 }
 
-int StateAction::getType() const
+unsigned int StateAction::getType() const
 {
     return type;
 }

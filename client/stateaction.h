@@ -20,6 +20,7 @@ namespace StateCommand
     };
 }
 
+// Check the TODO in the StateManager class about this
 namespace StateType
 {
     // These are just numeric IDs for different game state types
@@ -42,25 +43,25 @@ class StateAction
 {
     public:
         StateAction(): command(0), type(0) {}
-        StateAction(int c, int t): command(c), type(t) {}
-        StateAction(int c, int t, const StateArgs& a): command(c), type(t), args(a) {}
+        StateAction(int c, unsigned int t): command(c), type(t) {}
+        StateAction(int c, unsigned int t, const StateArgs& a): command(c), type(t), args(a) {}
 
-        bool shouldContinue();
-        bool isNotExit();
-        void pushState(int);
-        void pushState(int, const StateArgs&);
+        bool shouldContinue() const;
+        bool isNotExit() const;
+        void pushState(unsigned int);
+        void pushState(unsigned int, const StateArgs&);
         void popState();
         void exitGame();
         void reset();
 
         int getCommand() const;
-        int getType() const;
+        unsigned int getType() const;
         const StateArgs& getArgs() const;
         // May also need setters, but the other functions should do the job in a more encapsulated way
 
     private:
         int command; // The ID of a command, see the Command enum in State class
-        int type; // State type, see the Type enum in State class (only applies to a push command)
+        unsigned int type; // State type, see the Type enum in State class (only applies to a push command)
         StateArgs args; // State arguments, which are passed to the next state
 };
 

@@ -20,7 +20,7 @@ class StateManager
         StateManager(std::string); // Takes window title
         ~StateManager();
 
-        void startLoop(const StateAction&); // The main loop that runs until a state returns an exit action
+        void startLoop(unsigned int); // The main loop that runs until a state returns an exit action
 
     private:
         void allocateStates();
