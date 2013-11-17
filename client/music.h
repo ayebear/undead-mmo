@@ -13,23 +13,28 @@ class Music
         Music(const std::string&);
         void loadListFromConfig(const std::string&);
         void start(const std::string&);
-        bool play();
-        bool playNext();
+        void playNext();
+        void playCurrent();
         void update();
         void stop();
         void setVolume(float);
         void setShuffle(bool);
 
     private:
-        void updateSongId();
+        bool play(unsigned int);
+        bool checkNoMusic();
+        void nextSongId();
+        void checkSongId();
         void shuffleSongs();
 
         typedef std::vector<std::string> SongList;
         std::map<std::string, SongList> songs;
         unsigned int currentSongId;
         std::string currentSongSet;
+        std::string lastSong;
         sf::Music music;
         bool shuffle;
+        bool noMusic;
         static const ConfigFile::Section defaultOptions;
 };
 
