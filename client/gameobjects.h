@@ -26,12 +26,10 @@ class GameObjects: sf::NonCopyable
         ClientNetwork netManager; // Handles communications with the server
         sf::Font font, fontBold, fontMono, fontMonoBold; // Some fonts
         ConfigFile config; // The main configuration file
-        Music music;
+        Music music; // The music manager
 
     private:
         void createWindow(const std::string&, int, int, bool, bool); // Create a new window
-        sf::VideoMode getMaxVidMode() const;
-
         void loadFonts(); // Loads font files
 
         static const ConfigFile::ConfigMap defaultOptions;

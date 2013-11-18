@@ -1,12 +1,12 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "statemanager.h"
+#include "undeadmmo.h"
 
 int main()
 {
-    StateManager game("Undead MMO v0.0.8.2 Dev"); // Create the game
-    game.startLoop(StateType::Menu); // Start the game (at the menu)
+    UndeadMMO game("Undead MMO v0.0.8.3 Dev"); // Create the game
+    game.start(); // Start the game
 }
 
 /*

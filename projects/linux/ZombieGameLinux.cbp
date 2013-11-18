@@ -89,6 +89,8 @@
 		<Unit filename="client/textitem.h" />
 		<Unit filename="client/textitemlist.cpp" />
 		<Unit filename="client/textitemlist.h" />
+		<Unit filename="client/undeadmmo.cpp" />
+		<Unit filename="client/undeadmmo.h" />
 		<Unit filename="entities/entity.cpp" />
 		<Unit filename="entities/entity.h" />
 		<Unit filename="entities/entityalloc.cpp" />

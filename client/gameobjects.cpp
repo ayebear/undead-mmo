@@ -87,7 +87,7 @@ void GameObjects::createWindow(const std::string& windowTitle, int windowWidth, 
     if (windowSizeValid)
         vidMode = sf::VideoMode(windowWidth, windowHeight);
     else
-        vidMode = getMaxVidMode();
+        vidMode = sf::VideoMode::getDesktopMode();
 
     // Either create the window in fullscreen or windowed mode
     window.create(vidMode, windowTitle, (fullscreen ? sf::Style::Fullscreen : sf::Style::Close));
@@ -98,32 +98,6 @@ void GameObjects::createWindow(const std::string& windowTitle, int windowWidth, 
     // Cache the window size so there is no need for expensive calls to window.getSize()
     windowSize.x = vidMode.width;
     windowSize.y = vidMode.height;
-}
-
-sf::VideoMode GameObjects::getMaxVidMode() const
-{
-    // Get the current screen resolution
-    sf::VideoMode videoMode = sf::VideoMode::getDesktopMode();
-
-    // Only use a resolution 1080p or less - this is temporary until we can figure out how to handle multiple monitors
-    if (videoMode.width > 1920 || videoMode.height > 1080)
-    {
-        auto videoModes = sf::VideoMode::getFullscreenModes();
-        for (auto& vM: videoModes)
-        {
-            std::cout << vM.width << " x " << vM.height << "? ";
-            if (vM.width <= 1920 && vM.height <= 1080)
-            {
-                videoMode = vM;
-                std::cout << "Using this!\n";
-                break;
-            }
-            else
-                std::cout << "Too big!\n";
-        }
-    }
-
-    return videoMode;
 }
 
 void GameObjects::loadFonts()

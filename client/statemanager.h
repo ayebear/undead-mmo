@@ -5,38 +5,36 @@
 #define STATEMANAGER_H
 
 #include <vector>
+#include <stack>
 #include <string>
 #include <memory>
-#include "gameobjects.h"
-#include "state.h"
+
+class State;
+class StateAction;
 
 /*
-This class handles the allocation/deallocation/starting/changing of all types of game states.
-Also contains the instance of the GameObjects object, which is passed into the states when they are allocated.
+This class handles the deallocation/starting/changing of all types of game states.
+This class is also generic, but depends on having the state base class.
 */
 class StateManager
 {
     public:
-        StateManager(std::string); // Takes window title
+        StateManager();
         ~StateManager();
 
+        void addState(State*); // Adds a state pointer to the vector
         void startLoop(unsigned int); // The main loop that runs until a state returns an exit action
 
     private:
-        void allocateStates();
         void deallocateStates();
 
         void handleAction(StateAction&);
         void push(unsigned int);
         void pop();
 
-        std::vector<unsigned int> stateStack; // Represents a stack of the states
-        std::unique_ptr<State> statePtrs[StateType::TotalTypes]; // Pointers to instances of all of the state types
-
-        // The main game objects, which exist for the entire game, independent of the current game state
-        // All states will need access to these, but do not and should not have access to this state manager class
-        // This is convienent to have in an object so we can pass a single reference to the states.
-        GameObjects objects;
+        std::stack<unsigned int> stateStack; // Represents a stack of the states
+        typedef std::unique_ptr<State> StatePtr; // Unique pointer to a state
+        std::vector<StatePtr> statePtrs; // Pointers to instances of all of the state types
 };
 
 #endif
