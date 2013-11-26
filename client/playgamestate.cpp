@@ -61,7 +61,7 @@ void PlayGameState::handleEvents()
     // Exit the game if the server disconnects
     if (!objects.netManager.isConnected())
     {
-        action.popState();
+        stateEvent.popState();
         return;
     }
 
@@ -72,7 +72,7 @@ void PlayGameState::handleEvents()
         {
             case sf::Event::Closed:
 
-                action.exitGame();
+                stateEvent.exitGame();
                 break;
 
             case sf::Event::KeyPressed:
@@ -217,7 +217,7 @@ void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
     else
     {
         if (keyCode == sf::Keyboard::Escape)
-            action.popState();
+            stateEvent.popState();
         else if (keyCode == hotkeys[ShowChat])
             theHud.chat.toggleInput();
         else if (keyCode == hotkeys[ToggleInventory] || keyCode == hotkeys[ToggleInventoryAlt])

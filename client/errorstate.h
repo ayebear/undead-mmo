@@ -13,7 +13,7 @@ class ErrorState: public State
         ErrorState(GameObjects& gameObjects);
         ~ErrorState();
 
-        const StateAction& start(const StateArgs&);
+        const StateEvent& start(const StateArgs&);
 
         void processArgs(const StateArgs&);
 

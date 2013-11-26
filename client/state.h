@@ -4,7 +4,7 @@
 #ifndef STATE_H
 #define STATE_H
 
-#include "stateaction.h"
+#include "stateevent.h"
 #include "gameobjects.h"
 
 /*
@@ -22,7 +22,7 @@ class State
         virtual void onPop() {} // Gets called only when the state has been popped off of the stack
         virtual void onStart() {} // Gets called when the state is started
 
-        const StateAction& start(const StateArgs&); // Calls processArgs, runs the main loop, then returns the action object
+        const StateEvent& start(const StateArgs&); // Calls processArgs, runs the main loop, then returns the action object
 
         // These are the main functions of the state, which are called every loop
         virtual void handleEvents() = 0;
@@ -30,7 +30,7 @@ class State
         virtual void draw() = 0;
 
     protected:
-        StateAction action;
+        StateEvent stateEvent;
         GameObjects& objects;
 };
 

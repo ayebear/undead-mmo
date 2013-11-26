@@ -4,6 +4,7 @@
 #include "mainmenustate.h"
 #include <iostream>
 #include "paths.h"
+#include "states.h"
 
 MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
 {
@@ -41,7 +42,7 @@ void MainMenuState::handleEvents()
         switch (event.type)
         {
             case sf::Event::Closed:
-                action.exitGame();
+                stateEvent.exitGame();
                 break;
 
             case sf::Event::MouseMoved:
@@ -59,7 +60,7 @@ void MainMenuState::handleEvents()
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
                 if (event.key.code == sf::Keyboard::Escape)
-                    action.exitGame();
+                    stateEvent.exitGame();
                 else
                     processChoice(mainMenu.handleKeyPressed(event));
                 break;
@@ -77,9 +78,9 @@ void MainMenuState::handleEvents()
 void MainMenuState::processChoice(int choice)
 {
     if (choice == 1)
-        action.pushState(StateType::Login);
+        stateEvent.pushState(States::Login);
     else if (choice == 2)
-        action.exitGame();
+        stateEvent.exitGame();
 }
 
 void MainMenuState::update()

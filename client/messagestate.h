@@ -13,7 +13,7 @@ class MessageState: public State
         MessageState(GameObjects& gameObjects);
         ~MessageState();
 
-        const StateAction& start(const StateArgs&);
+        const StateEvent& start(const StateArgs&);
 
         void processArgs(const StateArgs&);
 

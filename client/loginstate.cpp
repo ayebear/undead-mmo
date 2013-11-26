@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include "paths.h"
+#include "states.h"
 
 LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 {
@@ -90,7 +91,7 @@ void LoginState::handleEvents()
         switch(event.type)
         {
             case sf::Event::Closed:
-                action.exitGame();
+                stateEvent.exitGame();
                 break;
 
             case sf::Event::MouseMoved:
@@ -121,7 +122,7 @@ void LoginState::handleEvents()
                 switch (event.key.code)
                 {
                     case sf::Keyboard::Escape:
-                        action.popState();
+                        stateEvent.popState();
                         break;
 
                     case sf::Keyboard::Return:
@@ -183,12 +184,12 @@ void LoginState::processChoice(int choice)
         cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.logIn(serverAddr, username, password);
         if (status == Packet::LogInCode::Successful)
-            action.pushState(StateType::Game);
+            stateEvent.pushState(States::Game);
         else
         {
             StateArgs args;
             args.push_back(Packet::LogInMessages[status - 1]);
-            action.pushState(StateType::Message, args);
+            stateEvent.pushState(States::Message, args);
         }
     }
     else if (choice == 2)
@@ -201,10 +202,10 @@ void LoginState::processChoice(int choice)
         int status = objects.netManager.createAccount(serverAddr, username, password);
         StateArgs args;
         args.push_back(Packet::CreateAccountMessages[status - 1]);
-        action.pushState(StateType::Message, args);
+        stateEvent.pushState(States::Message, args);
     }
     else if (choice == 3)
-        action.popState();
+        stateEvent.popState();
 }
 
 void LoginState::update()

@@ -4,17 +4,16 @@
 #ifndef STATEMANAGER_H
 #define STATEMANAGER_H
 
-#include <vector>
-#include <stack>
 #include <string>
+#include <stack>
+#include <map>
 #include <memory>
-
-class State;
-class StateAction;
+#include "state.h"
+#include "stateevent.h"
 
 /*
-This class handles the deallocation/starting/changing of all types of game states.
-This class is also generic, but depends on having the state base class.
+This class handles the deallocation/starting/changing of State sub-classes.
+This class is also generic, but depends on having the State base class and StateEvent class.
 */
 class StateManager
 {
@@ -22,19 +21,20 @@ class StateManager
         StateManager();
         ~StateManager();
 
-        void addState(State*); // Adds a state pointer to the vector
-        void startLoop(unsigned int); // The main loop that runs until a state returns an exit action
+        void addState(const StateId&, State*); // Adds a state pointer to the map (Note that this takes ownership of the state object)
+        void removeState(const StateId&); // Removes and deallocates a state from the map
+        void startLoop(const StateId&); // The main loop that runs until a state returns an exit event
 
     private:
         void deallocateStates();
 
-        void handleAction(StateAction&);
-        void push(unsigned int);
-        void pop();
+        void handleEvent(StateEvent&); // Handles a StateEvent object
+        void push(const StateId&); // Adds a state onto the stack
+        void pop(); // Removes the last pushed state from the stack
 
-        std::stack<unsigned int> stateStack; // Represents a stack of the states
+        std::stack<StateId> stateStack; // Represents a stack of the states
         typedef std::unique_ptr<State> StatePtr; // Unique pointer to a state
-        std::vector<StatePtr> statePtrs; // Pointers to instances of all of the state types
+        std::map<StateId, StatePtr> statePtrs; // Pointers to instances of the state types, accessed by the StateId
 };
 
 #endif

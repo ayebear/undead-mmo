@@ -50,7 +50,7 @@ void MessageState::handleEvents()
         switch(event.type)
         {
             case sf::Event::Closed:
-                action.exitGame();
+                stateEvent.exitGame();
                 break;
 
             case sf::Event::MouseMoved:
@@ -64,7 +64,7 @@ void MessageState::handleEvents()
             //Allow user to make selections with the keyboard. Enter makes a selection
             case sf::Event::KeyPressed:
                 if (event.key.code == sf::Keyboard::Escape)
-                    action.popState();
+                    stateEvent.popState();
                 else
                     processChoice(messageMenu.handleKeyPressed(event));
                 break;
@@ -82,7 +82,7 @@ void MessageState::handleEvents()
 void MessageState::processChoice(int choice)
 {
     if (choice == 1)
-        action.popState();
+        stateEvent.popState();
 }
 
 void MessageState::update()

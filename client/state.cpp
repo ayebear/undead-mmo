@@ -3,18 +3,18 @@
 
 #include "state.h"
 
-const StateAction& State::start(const StateArgs& args)
+const StateEvent& State::start(const StateArgs& args)
 {
-    action.reset(); // Must reset the action in case the state still existed in memory after this returned
+    stateEvent.reset(); // Must reset the event in case the state still existed in memory after this returned
     processArgs(args);
     onStart();
     handleEvents();
-    while (action.shouldContinue())
+    while (stateEvent.shouldContinue())
     {
-        objects.music.update(); //TODO use a callback later
+        objects.music.update();
         update();
         draw();
         handleEvents(); // This is last so it doesn't have to update and draw an extra frame if the state is supposed to change
     }
-    return action;
+    return stateEvent;
 }

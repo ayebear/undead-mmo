@@ -2,8 +2,6 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "statemanager.h"
-#include "state.h"
-#include "stateaction.h"
 
 StateManager::StateManager()
 {
@@ -14,17 +12,23 @@ StateManager::~StateManager()
     deallocateStates();
 }
 
-void StateManager::addState(State* newState)
+void StateManager::addState(const StateId& newId, State* newState)
 {
-    statePtrs.emplace_back(newState);
+    // Using reset() prevents memory leaks
+    statePtrs[newId].reset(newState);
 }
 
-void StateManager::startLoop(unsigned int firstState)
+void StateManager::removeState(const StateId& id)
 {
-    StateAction action;
-    action.pushState(firstState);
-    while (action.isNotExit())
-        handleAction(action);
+    statePtrs.erase(id);
+}
+
+void StateManager::startLoop(const StateId& firstState)
+{
+    StateEvent event;
+    event.pushState(firstState);
+    while (event.isNotExit())
+        handleEvent(event);
 }
 
 void StateManager::deallocateStates()
@@ -35,20 +39,19 @@ void StateManager::deallocateStates()
         statePtrs[stateStack.top()]->onPop();
         stateStack.pop();
     }
-    // Delete the allocated states
-    for (auto& sPtr: statePtrs)
-        sPtr.reset();
+    // Remove and delete the allocated states
+    statePtrs.clear();
 }
 
-void StateManager::handleAction(StateAction& action)
+void StateManager::handleEvent(StateEvent& event)
 {
     // Do something depending on the command
-    switch (action.getCommand())
+    switch (event.getCommand())
     {
-        case StateCommand::Push:
-            push(action.getType());
+        case StateEvent::Command::Push:
+            push(event.getId());
             break;
-        case StateCommand::Pop:
+        case StateEvent::Command::Pop:
             pop();
             break;
         default:
@@ -57,17 +60,18 @@ void StateManager::handleAction(StateAction& action)
 
     // Run the current state (on the top of the stack)
     if (!stateStack.empty())
-        action = statePtrs[stateStack.top()]->start(action.getArgs());
+        event = statePtrs[stateStack.top()]->start(event.getArgs());
     else // If the stack is empty
-        action.exitGame(); // Exit the game
+        event.exitGame(); // Exit the game
 }
 
-void StateManager::push(unsigned int type)
+void StateManager::push(const StateId& id)
 {
-    if (type < statePtrs.size())
+    auto found = statePtrs.find(id);
+    if (found != statePtrs.end())
     {
-        stateStack.push(type);
-        statePtrs[type]->onPush();
+        stateStack.push(id);
+        found->second->onPush();
     }
     // If this fails due to a bad type, the current state will just start again.
 }
