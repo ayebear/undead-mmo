@@ -235,6 +235,10 @@ void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
             theHud.inventory.addSlots(-1);
         else if (keyCode == hotkeys[TakeScreenshot])
             takeScreenshot(objects.window);
+        else if (keyCode == hotkeys[Reload])
+            objects.sound.play("reload");
+        else if (keyCode == hotkeys[Shoot])
+            objects.sound.play("pistol");
     }
     theHud.chat.processInput(keyCode);
 }
@@ -400,7 +404,9 @@ void PlayGameState::loadHotkeys()
         "hideChat",
         "takeScreenshot",
         "addSlot",
-        "removeSlot"
+        "removeSlot",
+        "reload",
+        "shoot"
         };
     for (const string& key: keyNames)
         hotkeys.addKey(objects.config[key].asString());

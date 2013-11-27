@@ -1,5 +1,5 @@
-#ifndef MUSIC_H
-#define MUSIC_H
+#ifndef MUSICPLAYER_H
+#define MUSICPLAYER_H
 
 #include <string>
 #include <vector>
@@ -7,10 +7,16 @@
 #include <SFML/Audio.hpp>
 #include "configfile.h"
 
-class Music
+/*
+This class handles loading and playing sets of music.
+The filenames of the music files are stored in a config file.
+You can also optionally shuffle the order of the music.
+*/
+class MusicPlayer
 {
     public:
-        Music(const std::string&);
+        MusicPlayer();
+        MusicPlayer(const std::string&);
         void loadListFromConfig(const std::string&);
         void start(const std::string&);
         void playNext();

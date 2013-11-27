@@ -47,7 +47,8 @@ const ConfigFile::ConfigMap GameObjects::defaultOptions = {
 
 GameObjects::GameObjects():
     config(Paths::clientConfigFile, defaultOptions, true), // Config file gets loaded here
-    music("data/audio/music/music.cfg")
+    music("data/audio/music/music.cfg"),
+    sound("data/audio/sounds/sounds.cfg")
 {
     loadFonts();
 }

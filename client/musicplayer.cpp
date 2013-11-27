@@ -1,20 +1,25 @@
-#include "music.h"
+#include "musicplayer.h"
 #include <iostream>
 #include <algorithm>
 
-const ConfigFile::Section Music::defaultOptions = {
+const ConfigFile::Section MusicPlayer::defaultOptions = {
     {"volume", makeOption(70)},
     {"shuffle", makeOption(true)}
 };
 
-Music::Music(const std::string& configPath)
+MusicPlayer::MusicPlayer()
 {
     noMusic = true;
     music.setLoop(false);
+}
+
+MusicPlayer::MusicPlayer(const std::string& configPath):
+    MusicPlayer()
+{
     loadListFromConfig(configPath);
 }
 
-void Music::loadListFromConfig(const std::string& configPath)
+void MusicPlayer::loadListFromConfig(const std::string& configPath)
 {
     songs.clear();
     ConfigFile musicConfig(configPath, defaultOptions, "", true);
@@ -26,7 +31,7 @@ void Music::loadListFromConfig(const std::string& configPath)
                 songs[section.first].push_back(option.second.asString());
 }
 
-void Music::start(const std::string& songSetName)
+void MusicPlayer::start(const std::string& songSetName)
 {
     // Start playing the specified music set
     if (songSetName != currentSongSet)
@@ -38,7 +43,7 @@ void Music::start(const std::string& songSetName)
     }
 }
 
-void Music::playNext()
+void MusicPlayer::playNext()
 {
     // Plays the next song in the list
     if (!checkNoMusic())
@@ -48,7 +53,7 @@ void Music::playNext()
     }
 }
 
-void Music::playCurrent()
+void MusicPlayer::playCurrent()
 {
     // Plays the song with the current song ID
     if (!checkNoMusic())
@@ -58,28 +63,28 @@ void Music::playCurrent()
     }
 }
 
-void Music::update()
+void MusicPlayer::update()
 {
     if (!noMusic && music.getStatus() != sf::Music::Playing)
         playNext();
 }
 
-void Music::stop()
+void MusicPlayer::stop()
 {
     music.stop();
 }
 
-void Music::setVolume(float volume)
+void MusicPlayer::setVolume(float volume)
 {
     music.setVolume(volume);
 }
 
-void Music::setShuffle(bool setting)
+void MusicPlayer::setShuffle(bool setting)
 {
     shuffle = setting;
 }
 
-bool Music::play(unsigned int songId)
+bool MusicPlayer::play(unsigned int songId)
 {
     // Play the song with the specified ID
     bool status = false;
@@ -101,7 +106,7 @@ bool Music::play(unsigned int songId)
     return status;
 }
 
-bool Music::checkNoMusic()
+bool MusicPlayer::checkNoMusic()
 {
     noMusic = songs[currentSongSet].empty();
     if (noMusic)
@@ -112,13 +117,13 @@ bool Music::checkNoMusic()
     return noMusic;
 }
 
-void Music::nextSongId()
+void MusicPlayer::nextSongId()
 {
     ++currentSongId;
     checkSongId();
 }
 
-void Music::checkSongId()
+void MusicPlayer::checkSongId()
 {
     if (currentSongId >= songs[currentSongSet].size())
     {
@@ -127,7 +132,7 @@ void Music::checkSongId()
     }
 }
 
-void Music::shuffleSongs()
+void MusicPlayer::shuffleSongs()
 {
     if (shuffle)
     {

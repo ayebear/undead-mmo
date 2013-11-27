@@ -7,7 +7,8 @@
 #include <SFML/Graphics.hpp>
 #include "clientnetwork.h"
 #include "configfile.h"
-#include "music.h"
+#include "musicplayer.h"
+#include "soundplayer.h"
 
 /*
 This class contains the main game objects, such as the window, networking, config file, and fonts.
@@ -26,7 +27,8 @@ class GameObjects: sf::NonCopyable
         ClientNetwork netManager; // Handles communications with the server
         sf::Font font, fontBold, fontMono, fontMonoBold; // Some fonts
         ConfigFile config; // The main configuration file
-        Music music; // The music manager
+        MusicPlayer music; // The music player
+        SoundPlayer sound; // The sound effects player
 
     private:
         void createWindow(const std::string&, int, int, bool, bool); // Create a new window

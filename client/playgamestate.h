@@ -93,6 +93,8 @@ class PlayGameState: public State
             TakeScreenshot,
             AddSlot,
             RemoveSlot,
+            Reload,
+            Shoot,
             Total
         };
 };
