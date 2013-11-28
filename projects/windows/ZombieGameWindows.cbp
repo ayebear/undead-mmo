@@ -134,6 +134,7 @@
 		<Unit filename="other/configfile.cpp" />
 		<Unit filename="other/configfile.h" />
 		<Unit filename="other/linkedqueue.h" />
+		<Unit filename="other/objectallocator.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
 		<Unit filename="other/stringutils.cpp" />
