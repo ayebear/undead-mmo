@@ -75,6 +75,8 @@
 		<Unit filename="client/playgamestate.h" />
 		<Unit filename="client/scrollbar.cpp" />
 		<Unit filename="client/scrollbar.h" />
+		<Unit filename="client/serverlistfetcher.cpp" />
+		<Unit filename="client/serverlistfetcher.h" />
 		<Unit filename="client/slot.cpp" />
 		<Unit filename="client/slot.h" />
 		<Unit filename="client/soundplayer.cpp" />
@@ -108,6 +110,8 @@
 		<Unit filename="entities/zombie.h" />
 		<Unit filename="other/configfile.cpp" />
 		<Unit filename="other/configfile.h" />
+		<Unit filename="other/csvfile.cpp" />
+		<Unit filename="other/csvfile.h" />
 		<Unit filename="other/linkedqueue.h" />
 		<Unit filename="other/option.cpp" />
 		<Unit filename="other/option.h" />
