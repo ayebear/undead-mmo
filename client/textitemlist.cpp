@@ -163,28 +163,30 @@ sf::Vector2f TextItemList::getNewItemPos()
 
 void TextItemList::scrollToTop()
 {
+    if (!textItemList.empty())
+    {
+        float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
+        scrollBar.scrollToTop(itemListView, actualHeight, textItemList.front().getTopPosition());
 
-    float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
-    scrollBar.scrollToTop(itemListView, actualHeight, textItemList.front().getTopPosition());
+        currViewTop = itemListView.getCenter().y - itemListView.getSize().y / 2;
+        currViewBot = itemListView.getCenter().y - itemListView.getSize().y / 2;
 
-    currViewTop = itemListView.getCenter().y - itemListView.getSize().y / 2;
-    currViewBot = itemListView.getCenter().y - itemListView.getSize().y / 2;
-
-    viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
-
+        viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
+    }
 }
 
 void TextItemList::scrollToBottom()
 {
+    if (!textItemList.empty())
+    {
+        float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
+        scrollBar.scrollToBottom(itemListView, actualHeight, textItemList.back().getBottomPosition());
 
-    float actualHeight = textItemList.back().getBottomPosition().y - textItemList.front().getTopPosition().y;
-    scrollBar.scrollToBottom(itemListView, actualHeight, textItemList.back().getBottomPosition());
+        currViewTop = itemListView.getCenter().y - itemListView.getSize().y / 2;
+        currViewBot = itemListView.getCenter().y - itemListView.getSize().y / 2;
 
-    currViewTop = itemListView.getCenter().y - itemListView.getSize().y / 2;
-    currViewBot = itemListView.getCenter().y - itemListView.getSize().y / 2;
-
-    viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
-
+        viewableAreaBox.setPosition(viewableAreaBox.getPosition().x, currViewTop);
+    }
 }
 
 void TextItemList::scrollDown(unsigned int distance)

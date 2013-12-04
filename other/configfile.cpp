@@ -69,17 +69,8 @@ bool ConfigFile::writeToFile(string outputFilename) const
 {
     if (outputFilename.empty())
         outputFilename = configFilename;
-    if (!outputFilename.empty())
-    {
-        ofstream outFile(outputFilename, ofstream::out | ofstream::trunc);
-        if (outFile.is_open())
-        {
-            outFile << buildString(); // Write the string to the output file
-            outFile.close();
-            return true;
-        }
-    }
-    return false;
+    // Write the string to the output file
+    return StringUtils::writeStringToFile(outputFilename, buildString());
 }
 
 void ConfigFile::writeToString(string& str) const

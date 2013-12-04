@@ -7,7 +7,9 @@
 #include "paths.h"
 #include "states.h"
 
-LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
+LoginState::LoginState(GameObjects& gameObjects):
+    State(gameObjects),
+    servers(Paths::masterServersConfig)
 {
     sf::Vector2f windowSize;
     windowSize.x = objects.windowSize.x;
@@ -16,26 +18,13 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
     loginMenu.setUpMenu(Paths::menuBgImage,                                  //Background file
                         sf::Color( 25, 25, 25, 200),
                        16,                                                  //Font size
-                       sf::Vector2f(windowSize.x / 4, windowSize.y / 1.2),    //Button position
+                       sf::Vector2f(windowSize.x / 4, windowSize.y / 1.3),    //Button position
                        objects                                              //Rendering window
                        );
 
 
     textItemList.setupList(objects.window, sf::FloatRect(0, 0, 1, .5), objects.fontBold, 16, true, true);
-
-   /* for (int x = 1; x <= 150; x++)
-    {
-        std::stringstream tmp;
-        tmp << "Test server " << x << "\t\t\tDescription: This is a game server where we play zombies!!!!!\t\t\tPlayers: 30/32";
-        textItemList.addItemWithHiddenText(tmp.str(), "ayebear.com", sf::Color(190, 190, 190, 255));
-    }
-    */
-
-    // TODO: Use a master server list
-    textItemList.addItemWithHiddenText("Eric's Server", "ayebear.com", sf::Color(190, 190, 190, 255));
-    textItemList.addItemWithHiddenText("My Local Server", "192.168.1.4", sf::Color(190, 190, 190, 255));
-    textItemList.addItemWithHiddenText("HCC", "10.10.198.22", sf::Color(190, 190, 190, 255));
-
+    textItemList.addTextItem("Server list not loaded.", sf::Color::Blue);
     textItemList.scrollToBottom();
 
 
@@ -51,6 +40,7 @@ LoginState::LoginState(GameObjects& gameObjects): State(gameObjects)
 
 
     //Set up menuOption structs
+    loginMenu.addMenuButton("Refresh Servers");
     loginMenu.addMenuButton("Login");
     loginMenu.addMenuButton("Create Account");
     loginMenu.addMenuButton("Return to Main Menu");
@@ -81,6 +71,7 @@ LoginState::~LoginState()
 void LoginState::onStart()
 {
     objects.music.start("Menu");
+    refreshServers();
 }
 
 void LoginState::handleEvents()
@@ -176,6 +167,8 @@ void LoginState::handleEvents()
 void LoginState::processChoice(int choice)
 {
     if (choice == 1)
+        refreshServers();
+    else if (choice == 2)
     {
         string server = directConnectBox.getString();
         sf::IpAddress serverAddr(server);
@@ -192,7 +185,7 @@ void LoginState::processChoice(int choice)
             stateEvent.pushState(States::Message, args);
         }
     }
-    else if (choice == 2)
+    else if (choice == 3)
     {
         string server = directConnectBox.getString();
         sf::IpAddress serverAddr(server);
@@ -204,7 +197,7 @@ void LoginState::processChoice(int choice)
         args.push_back(Packet::CreateAccountMessages[status - 1]);
         stateEvent.pushState(States::Message, args);
     }
-    else if (choice == 3)
+    else if (choice == 4)
         stateEvent.popState();
 }
 
@@ -224,4 +217,33 @@ void LoginState::draw()
     objects.window.draw(directConnectBox);
 
     objects.window.display();
+}
+
+void LoginState::refreshServers()
+{
+    const sf::Color textColor(190, 190, 190, 255);
+
+    textItemList.clearList();
+    textItemList.addTextItem("Refreshing servers...", sf::Color::Green);
+    textItemList.scrollToBottom();
+    draw();
+
+    textItemList.clearList();
+
+    if (servers.refresh())
+    {
+        for (auto& server: servers.getServerList())
+        {
+            // We can have an enum for all of the columns
+            if (server.size() >= 2)
+            {
+                string displayName = server[0] + " (" + server[1] + ")";
+                textItemList.addItemWithHiddenText(displayName, server[1], textColor);
+            }
+        }
+    }
+    else
+        textItemList.addTextItem("Error refreshing servers.", sf::Color::Red);
+
+    textItemList.scrollToBottom();
 }

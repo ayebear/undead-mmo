@@ -8,6 +8,7 @@
 #include "textitemlist.h"
 #include "state.h"
 #include "inputbox.h"
+#include "serverlistfetcher.h"
 
 /*
 This is for the login screen, which shows a list of servers that you can pick from.
@@ -31,7 +32,9 @@ class LoginState: public State
 
     private:
         void processChoice(int);
+        void refreshServers();
 
+        ServerListFetcher servers;
         Menu loginMenu;
         TextItemList textItemList;
         InputBox usernameBox;

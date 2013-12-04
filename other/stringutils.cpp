@@ -122,9 +122,9 @@ bool StringUtils::mustEndWith(std::string& str, const std::string& endStr)
     return endsWith;
 }
 
-int StringUtils::replaceAll(std::string& str, const std::string& findStr, const std::string& replaceStr)
+unsigned StringUtils::replaceAll(std::string& str, const std::string& findStr, const std::string& replaceStr)
 {
-    int count = 0;
+    unsigned count = 0;
     size_t pos = 0;
     // Keep searching for the string to find
     while ((pos = str.find(findStr, pos)) != std::string::npos)
@@ -175,6 +175,22 @@ bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std
                 lines.push_back(line); // Store the line
         }
         status = true;
+    }
+    return status;
+}
+
+bool StringUtils::writeStringToFile(const std::string& filename, const std::string& data)
+{
+    bool status = false;
+    if (!filename.empty())
+    {
+        std::ofstream outFile(filename, std::ofstream::out | std::ofstream::trunc);
+        if (outFile.is_open())
+        {
+            outFile << data; // Write the string to the file
+            outFile.close();
+            status = true;
+        }
     }
     return status;
 }

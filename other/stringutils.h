@@ -21,10 +21,11 @@ namespace StringUtils
     bool areQuotes(char, char); // Returns true if both characters are either single or double quotes
     bool strToBool(const std::string&); // Parses a string to determine its boolean value
     bool mustEndWith(std::string&, const std::string&); // Appends the second string if the first doesn't end with it
-    int replaceAll(std::string&, const std::string&, const std::string&); // Replaces all instances of a sub-string with another string, and returns the number of replaces
+    unsigned replaceAll(std::string&, const std::string&, const std::string&); // Replaces all instances of a sub-string with another string, and returns the number of replaces
     void split(const std::string&, const std::string&, std::vector<std::string>&, bool = true); // Splits a string into a vector of strings with a delimeter
     void getLinesFromString(std::string, std::vector<std::string>&, bool = true); // Splits a string into separate lines with CR and/or LF characters
     bool readLinesFromFile(const std::string&, std::vector<std::string>&, bool = true); // Simply reads a file into memory in separate lines
+    bool writeStringToFile(const std::string&, const std::string&); // Writes a string to a file, will overwrite an existing file
     std::string toLower(std::string); // Creates an all-lowercase version of the passed in string
     std::vector<std::string> splitArrayString(std::string); // Converts an array string to a vector
     std::string joinArrayString(const std::vector<std::string>&); // Converts a vector to an array string

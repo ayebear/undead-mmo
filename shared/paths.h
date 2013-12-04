@@ -28,6 +28,7 @@ namespace Paths
     // Other
     const std::string clientConfigFile = "game.cfg";
     const std::string serverConfigFile = "server.cfg";
+    const std::string masterServersConfig = "masterservers.txt";
 }
 
 #endif
