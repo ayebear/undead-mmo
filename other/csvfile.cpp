@@ -1,6 +1,5 @@
 #include "csvfile.h"
 #include "stringutils.h"
-#include <iostream>
 
 CsvFile::CsvFile()
 {
@@ -139,7 +138,7 @@ void CsvFile::parseLine(const std::string& line)
     // Do this for now so it at least partially works
     //StringUtils::split(line, ",", rows.back());
 
-    std::cout << line << std::endl;
+    //std::cout << line << std::endl;
 }
 
 std::string CsvFile::escapeQuotes(std::string str) const

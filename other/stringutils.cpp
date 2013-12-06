@@ -82,13 +82,6 @@ int StringUtils::stripComments(std::string& str, bool checkMultiEnd)
     return commentType;
 }
 
-int StringUtils::cleanUp(std::string& str, bool checkMultiEnd)
-{
-    stripNewLines(str); // Strip any CR or LF characters
-    trimWhiteSpace(str); // Trim any whitespace characters (on the outsides)
-    return stripComments(str, checkMultiEnd); // Strip any comments
-}
-
 bool StringUtils::isWhitespace(char c)
 {
     // Just test if the char is a space or a tab
@@ -171,6 +164,7 @@ bool StringUtils::readLinesFromFile(const std::string& filename, std::vector<std
         std::string line;
         while (getline(file, line)) // Read a line
         {
+            stripNewLines(line); // Make sure to strip any leftover new line characters
             if (allowEmpty || !line.empty()) // If the line is not empty
                 lines.push_back(line); // Store the line
         }

@@ -165,7 +165,8 @@ void ConfigFile::parseLines(vector<string>& lines)
     int commentType = StringUtils::NoComment;
     for (string& line: lines) // Iterate through the vector of strings
     {
-        commentType = StringUtils::cleanUp(line, multiLineComment); // Strip comments and more
+        StringUtils::trimWhiteSpace(line);
+        commentType = StringUtils::stripComments(line, multiLineComment);
 
         if (commentType == StringUtils::MultiStart)
             multiLineComment = true;

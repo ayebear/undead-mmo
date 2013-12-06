@@ -16,7 +16,6 @@ namespace StringUtils
     bool isMultiEndComment(const std::string&); // Returns true if it contains a multiple-line end comment symbol
     int isComment(const std::string&, bool = false); // Returns an enum value of the comment type
     int stripComments(std::string&, bool = false); // Removes all comments from a string
-    int cleanUp(std::string&, bool = false); // Cleans up new lines, whitespace, and comments
     bool isWhitespace(char); // Returns true if the character is a form of whitespace
     bool areQuotes(char, char); // Returns true if both characters are either single or double quotes
     bool strToBool(const std::string&); // Parses a string to determine its boolean value

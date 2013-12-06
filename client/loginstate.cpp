@@ -71,7 +71,7 @@ LoginState::~LoginState()
 void LoginState::onStart()
 {
     objects.music.start("Menu");
-    refreshServers();
+    displayServers();
 }
 
 void LoginState::handleEvents()
@@ -221,29 +221,32 @@ void LoginState::draw()
 
 void LoginState::refreshServers()
 {
-    const sf::Color textColor(190, 190, 190, 255);
-
     textItemList.clearList();
     textItemList.addTextItem("Refreshing servers...", sf::Color::Green);
     textItemList.scrollToBottom();
     draw();
 
-    textItemList.clearList();
-
     if (servers.refresh())
+        displayServers();
+    else
     {
-        for (auto& server: servers.getServerList())
+        textItemList.clearList();
+        textItemList.addTextItem("Error refreshing servers.", sf::Color::Red);
+        textItemList.scrollToBottom();
+    }
+}
+
+void LoginState::displayServers()
+{
+    const sf::Color textColor(190, 190, 190, 255);
+    textItemList.clearList();
+    for (auto& server: servers.getServerList())
+    {
+        // We can have an enum for all of the columns
+        if (server.size() >= 2)
         {
-            // We can have an enum for all of the columns
-            if (server.size() >= 2)
-            {
-                string displayName = server[0] + " (" + server[1] + ")";
-                textItemList.addItemWithHiddenText(displayName, server[1], textColor);
-            }
+            string displayName = server[0] + " (" + server[1] + ")";
+            textItemList.addItemWithHiddenText(displayName, server[1], textColor);
         }
     }
-    else
-        textItemList.addTextItem("Error refreshing servers.", sf::Color::Red);
-
-    textItemList.scrollToBottom();
 }

@@ -33,6 +33,7 @@ class LoginState: public State
     private:
         void processChoice(int);
         void refreshServers();
+        void displayServers();
 
         ServerListFetcher servers;
         Menu loginMenu;

@@ -1,13 +1,14 @@
 #include "serverlistfetcher.h"
 #include "stringutils.h"
 #include "network.h"
-#include <iostream>
 
 ServerListFetcher::ServerListFetcher()
 {
+    serverList.loadFromFile("servers.csv");
 }
 
-ServerListFetcher::ServerListFetcher(const std::string& filename)
+ServerListFetcher::ServerListFetcher(const std::string& filename):
+    ServerListFetcher()
 {
     loadMasterServers(filename);
 }
@@ -26,9 +27,8 @@ bool ServerListFetcher::refresh()
     {
         if (Network::downloadFile(mServer, serverListContents))
         {
-            std::cout << "1\n";
             serverList.loadFromString(serverListContents);
-            std::cout << "2\n";
+            serverList.writeToFile();
             return true;
         }
     }
