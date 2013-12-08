@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ZombieServerWindows" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="ZombieServerDebug" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Windows/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add library="sfml-graphics-d" />
+					<Add library="sfml-audio-d" />
+					<Add library="sfml-window-d" />
+					<Add library="sfml-network-d" />
+					<Add library="sfml-system-d" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="ZombieServer" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Windows/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-std=c++11" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="sfml-graphics" />
+					<Add library="sfml-audio" />
+					<Add library="sfml-window" />
+					<Add library="sfml-network" />
+					<Add library="sfml-system" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add directory="lib/windows/sfml2/include" />
+			<Add directory="src/entities" />
+			<Add directory="src/shared" />
+			<Add directory="src/other" />
+		</Compiler>
+		<Linker>
+			<Add library="sfml-system" />
+			<Add library="sfml-window" />
+			<Add library="sfml-graphics" />
+			<Add library="sfml-network" />
+			<Add library="sfml-audio" />
+			<Add directory="lib/windows/sfml2/lib" />
+			<Add directory="lib/windows/sfml2/extlibs/libs-mingw/x64" />
+		</Linker>
+		<Unit filename="src/entities/entity.cpp" />
+		<Unit filename="src/entities/entity.h" />
+		<Unit filename="src/entities/entityalloc.cpp" />
+		<Unit filename="src/entities/entityalloc.h" />
+		<Unit filename="src/entities/itementity.cpp" />
+		<Unit filename="src/entities/itementity.h" />
+		<Unit filename="src/entities/mobileentity.cpp" />
+		<Unit filename="src/entities/mobileentity.h" />
+		<Unit filename="src/entities/player.cpp" />
+		<Unit filename="src/entities/player.h" />
+		<Unit filename="src/entities/zombie.cpp" />
+		<Unit filename="src/entities/zombie.h" />
+		<Unit filename="src/other/configfile.cpp" />
+		<Unit filename="src/other/configfile.h" />
+		<Unit filename="src/other/csvfile.cpp" />
+		<Unit filename="src/other/csvfile.h" />
+		<Unit filename="src/other/linkedqueue.h" />
+		<Unit filename="src/other/option.cpp" />
+		<Unit filename="src/other/option.h" />
+		<Unit filename="src/other/stringutils.cpp" />
+		<Unit filename="src/other/stringutils.h" />
+		<Unit filename="src/server/accountdb.cpp" />
+		<Unit filename="src/server/accountdb.h" />
+		<Unit filename="src/server/accountindex.cpp" />
+		<Unit filename="src/server/accountindex.h" />
+		<Unit filename="src/server/client.cpp" />
+		<Unit filename="src/server/client.h" />
+		<Unit filename="src/server/clientmanager.cpp" />
+		<Unit filename="src/server/clientmanager.h" />
+		<Unit filename="src/server/entitygrid.cpp" />
+		<Unit filename="src/server/entitygrid.h" />
+		<Unit filename="src/server/inventory.cpp" />
+		<Unit filename="src/server/inventory.h" />
+		<Unit filename="src/server/main.cpp" />
+		<Unit filename="src/server/masterentitylist.cpp" />
+		<Unit filename="src/server/masterentitylist.h" />
+		<Unit filename="src/server/miscnetwork.cpp" />
+		<Unit filename="src/server/miscnetwork.h" />
+		<Unit filename="src/server/playerdata.cpp" />
+		<Unit filename="src/server/playerdata.h" />
+		<Unit filename="src/server/server.cpp" />
+		<Unit filename="src/server/server.h" />
+		<Unit filename="src/server/servernetwork.cpp" />
+		<Unit filename="src/server/servernetwork.h" />
+		<Unit filename="src/shared/ipport.cpp" />
+		<Unit filename="src/shared/ipport.h" />
+		<Unit filename="src/shared/itemcode.cpp" />
+		<Unit filename="src/shared/itemcode.h" />
+		<Unit filename="src/shared/map.cpp" />
+		<Unit filename="src/shared/map.h" />
+		<Unit filename="src/shared/network.cpp" />
+		<Unit filename="src/shared/network.h" />
+		<Unit filename="src/shared/packet.h" />
+		<Unit filename="src/shared/paths.h" />
+		<Unit filename="src/shared/tile.cpp" />
+		<Unit filename="src/shared/tile.h" />
+		<Unit filename="src/shared/tileset.cpp" />
+		<Unit filename="src/shared/tileset.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

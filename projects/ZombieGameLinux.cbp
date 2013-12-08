@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ZombieGameLinux" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Release">
+				<Option output="ZombieGame" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Linux/Release" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add directory="lib/linux/sfml2/include" />
+			<Add directory="src/shared" />
+			<Add directory="src/other" />
+			<Add directory="src/entities" />
+		</Compiler>
+		<Linker>
+			<Add library="sfml-graphics" />
+			<Add library="sfml-window" />
+			<Add library="sfml-system" />
+			<Add library="sfml-network" />
+			<Add library="sfml-audio" />
+			<Add library="GLEW" />
+			<Add library="jpeg" />
+			<Add library="openal" />
+			<Add directory="lib/linux/sfml2/lib" />
+		</Linker>
+		<Unit filename="src/client/chat.cpp" />
+		<Unit filename="src/client/chat.h" />
+		<Unit filename="src/client/clientnetwork.cpp" />
+		<Unit filename="src/client/clientnetwork.h" />
+		<Unit filename="src/client/cursor.cpp" />
+		<Unit filename="src/client/cursor.h" />
+		<Unit filename="src/client/entitylist.cpp" />
+		<Unit filename="src/client/entitylist.h" />
+		<Unit filename="src/client/errorstate.cpp" />
+		<Unit filename="src/client/errorstate.h" />
+		<Unit filename="src/client/gamehotkeys.cpp" />
+		<Unit filename="src/client/gamehotkeys.h" />
+		<Unit filename="src/client/gameobjects.cpp" />
+		<Unit filename="src/client/gameobjects.h" />
+		<Unit filename="src/client/hud.cpp" />
+		<Unit filename="src/client/hud.h" />
+		<Unit filename="src/client/inputbox.cpp" />
+		<Unit filename="src/client/inputbox.h" />
+		<Unit filename="src/client/inventorygui.cpp" />
+		<Unit filename="src/client/inventorygui.h" />
+		<Unit filename="src/client/loginstate.cpp" />
+		<Unit filename="src/client/loginstate.h" />
+		<Unit filename="src/client/main.cpp" />
+		<Unit filename="src/client/mainmenustate.cpp" />
+		<Unit filename="src/client/mainmenustate.h" />
+		<Unit filename="src/client/menu.cpp" />
+		<Unit filename="src/client/menu.h" />
+		<Unit filename="src/client/messagestate.cpp" />
+		<Unit filename="src/client/messagestate.h" />
+		<Unit filename="src/client/miscutils.cpp" />
+		<Unit filename="src/client/miscutils.h" />
+		<Unit filename="src/client/musicplayer.cpp" />
+		<Unit filename="src/client/musicplayer.h" />
+		<Unit filename="src/client/playgamestate.cpp" />
+		<Unit filename="src/client/playgamestate.h" />
+		<Unit filename="src/client/scrollbar.cpp" />
+		<Unit filename="src/client/scrollbar.h" />
+		<Unit filename="src/client/serverlistfetcher.cpp" />
+		<Unit filename="src/client/serverlistfetcher.h" />
+		<Unit filename="src/client/slot.cpp" />
+		<Unit filename="src/client/slot.h" />
+		<Unit filename="src/client/soundplayer.cpp" />
+		<Unit filename="src/client/soundplayer.h" />
+		<Unit filename="src/client/state.cpp" />
+		<Unit filename="src/client/state.h" />
+		<Unit filename="src/client/stateevent.cpp" />
+		<Unit filename="src/client/stateevent.h" />
+		<Unit filename="src/client/statemanager.cpp" />
+		<Unit filename="src/client/statemanager.h" />
+		<Unit filename="src/client/states.h" />
+		<Unit filename="src/client/statusbar.cpp" />
+		<Unit filename="src/client/statusbar.h" />
+		<Unit filename="src/client/textitem.cpp" />
+		<Unit filename="src/client/textitem.h" />
+		<Unit filename="src/client/textitemlist.cpp" />
+		<Unit filename="src/client/textitemlist.h" />
+		<Unit filename="src/client/undeadmmo.cpp" />
+		<Unit filename="src/client/undeadmmo.h" />
+		<Unit filename="src/entities/entity.cpp" />
+		<Unit filename="src/entities/entity.h" />
+		<Unit filename="src/entities/entityalloc.cpp" />
+		<Unit filename="src/entities/entityalloc.h" />
+		<Unit filename="src/entities/itementity.cpp" />
+		<Unit filename="src/entities/itementity.h" />
+		<Unit filename="src/entities/mobileentity.cpp" />
+		<Unit filename="src/entities/mobileentity.h" />
+		<Unit filename="src/entities/player.cpp" />
+		<Unit filename="src/entities/player.h" />
+		<Unit filename="src/entities/zombie.cpp" />
+		<Unit filename="src/entities/zombie.h" />
+		<Unit filename="src/other/configfile.cpp" />
+		<Unit filename="src/other/configfile.h" />
+		<Unit filename="src/other/csvfile.cpp" />
+		<Unit filename="src/other/csvfile.h" />
+		<Unit filename="src/other/linkedqueue.h" />
+		<Unit filename="src/other/objectallocator.h" />
+		<Unit filename="src/other/option.cpp" />
+		<Unit filename="src/other/option.h" />
+		<Unit filename="src/other/packedarray.h" />
+		<Unit filename="src/other/stringutils.cpp" />
+		<Unit filename="src/other/stringutils.h" />
+		<Unit filename="src/shared/ipport.cpp" />
+		<Unit filename="src/shared/ipport.h" />
+		<Unit filename="src/shared/itemcode.cpp" />
+		<Unit filename="src/shared/itemcode.h" />
+		<Unit filename="src/shared/map.cpp" />
+		<Unit filename="src/shared/map.h" />
+		<Unit filename="src/shared/network.cpp" />
+		<Unit filename="src/shared/network.h" />
+		<Unit filename="src/shared/packet.h" />
+		<Unit filename="src/shared/paths.h" />
+		<Unit filename="src/shared/tile.cpp" />
+		<Unit filename="src/shared/tile.h" />
+		<Unit filename="src/shared/tileset.cpp" />
+		<Unit filename="src/shared/tileset.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
