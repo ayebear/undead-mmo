@@ -2,7 +2,7 @@
 #define INDEX_H
 
 #include <vector>
-#include <queue>
+#include <deque>
 
 /*
 This class contains an index for mapping external IDs to internal IDs.
@@ -53,7 +53,7 @@ class Index
             else
             {
                 newId = freeList.front();
-                freeList.pop();
+                freeList.pop_front();
                 idList[newId] = internalId;
             }
             return newId;
@@ -62,7 +62,7 @@ class Index
         // Removes an external ID from the index
         void erase(Type externalId)
         {
-            freeList.push(idList[externalId]);
+            freeList.push_back(idList[externalId]);
             idList[externalId] = -1;
         }
 
@@ -76,10 +76,11 @@ class Index
     private:
 
         std::vector<Type> idList;
-        std::queue<Type> freeList;
+        std::deque<Type> freeList;
 
         // TODO: Use a fake linked list type thing inside of the idList with IDs stored for the
         // next free node, so that there won't need to be a separate queue for the free list.
+        // Also benchmark this to see if it is worth using instead of the separate deque.
 };
 
 #endif
