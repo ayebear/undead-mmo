@@ -12,7 +12,7 @@ StateManager::~StateManager()
     deallocateStates();
 }
 
-void StateManager::addState(const StateId& newId, State* newState)
+void StateManager::addState(const StateId& newId, BaseState* newState)
 {
     // Using reset() prevents memory leaks
     statePtrs[newId].reset(newState);

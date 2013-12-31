@@ -6,7 +6,7 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Network.hpp>
-#include "tileset.h"
+#include "../graphics/tileset.h"
 
 typedef sf::Int32 EID;
 typedef sf::Int32 EType;

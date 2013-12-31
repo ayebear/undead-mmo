@@ -10,7 +10,7 @@
 #include "servernetwork.h"
 #include "masterentitylist.h"
 #include "accountdb.h"
-#include "map.h"
+#include "../graphics/tilemap.h"
 #include "configfile.h"
 
 class Server
@@ -54,7 +54,7 @@ class Server
         AccountDb accounts;
         ClientManager clients;
         MasterEntityList entList;
-        Map tileMap;
+        TileMap tileMap;
         mutex processPacketMutex;
         unsigned int inventorySize;
 };

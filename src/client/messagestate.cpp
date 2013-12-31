@@ -16,7 +16,8 @@ MessageState::MessageState(GameObjects& gameObjects): State(gameObjects)
                         sf::Color (25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 2.3, windowSize.y / 1.5),    //Button position
-                       objects                                     //Rendering window
+                       &objects.window,                                     //Rendering window
+                       &objects.fontBold
                        );
 
     messageMenu.addMenuButton("( OK )");

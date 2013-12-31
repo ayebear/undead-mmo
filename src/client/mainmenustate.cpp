@@ -4,7 +4,6 @@
 #include "mainmenustate.h"
 #include <iostream>
 #include "paths.h"
-#include "states.h"
 
 MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
 {
@@ -16,7 +15,8 @@ MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
                        sf::Color ( 25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 1.5, windowSize.y / 2),  //Menu size
-                       objects                                              //Rendering window
+                       &objects.window,                                     //Rendering window
+                       &objects.fontBold
                        );
 
     //Set up menuOption structs
@@ -78,7 +78,7 @@ void MainMenuState::handleEvents()
 void MainMenuState::processChoice(int choice)
 {
     if (choice == 1)
-        stateEvent.pushState(States::Login);
+        stateEvent.pushState("Login");
     else if (choice == 2)
         stateEvent.exitGame();
 }

@@ -1,14 +1,14 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "map.h"
+#include "tilemap.h"
 #include <iostream>
 #include <fstream>
 #include "packet.h"
 
 using namespace std;
 
-Map::Map()
+TileMap::TileMap()
 {
     ready = false;
     mapWidth = 0;
@@ -17,42 +17,42 @@ Map::Map()
     mapHeightPx = 0;
 }
 
-Map::Map(TileIDVector2D& mapData)
+TileMap::TileMap(const TileIDVector2D& mapData)
 {
     loadFromMemory(mapData);
 }
 
-Map::Map(const string& filename)
+TileMap::TileMap(const string& filename)
 {
     loadFromFile(filename);
 }
 
-sf::Uint32 Map::getWidth() const
+sf::Uint32 TileMap::getWidth() const
 {
     return mapWidth;
 }
 
-sf::Uint32 Map::getHeight() const
+sf::Uint32 TileMap::getHeight() const
 {
     return mapHeight;
 }
 
-sf::Uint32 Map::getWidthPx() const
+sf::Uint32 TileMap::getWidthPx() const
 {
     return mapWidthPx;
 }
 
-sf::Uint32 Map::getHeightPx() const
+sf::Uint32 TileMap::getHeightPx() const
 {
     return mapHeightPx;
 }
 
-bool Map::isReady() const
+bool TileMap::isReady() const
 {
     return ready;
 }
 
-void Map::loadFromMemory(TileIDVector2D& mapData)
+void TileMap::loadFromMemory(const TileIDVector2D& mapData)
 {
     tiles.resize(mapData.size());
     for (unsigned int y = 0; y < mapData.size(); y++)
@@ -66,7 +66,7 @@ void Map::loadFromMemory(TileIDVector2D& mapData)
     ready = true;
 }
 
-bool Map::loadFromFile(const string& filename)
+bool TileMap::loadFromFile(const string& filename)
 {
     ifstream inFile(filename);
     if (!inFile.is_open())
@@ -99,7 +99,7 @@ bool Map::loadFromFile(const string& filename)
     return true;
 }
 
-void Map::loadFromPacket(sf::Packet& packet)
+void TileMap::loadFromPacket(sf::Packet& packet)
 {
     // Extract data from packet into a TileIDVector2D
     TileIDVector2D tileIds;
@@ -120,7 +120,7 @@ void Map::loadFromPacket(sf::Packet& packet)
     loadFromMemory(tileIds);
 }
 
-void Map::saveToPacket(sf::Packet& packet) const
+void TileMap::saveToPacket(sf::Packet& packet) const
 {
     packet << Packet::MapData << mapWidth << mapHeight;
     for (const auto& row: tiles)
@@ -130,7 +130,7 @@ void Map::saveToPacket(sf::Packet& packet) const
     }
 }
 
-void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
+void TileMap::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     if (!ready)
         return;
@@ -167,7 +167,7 @@ void Map::draw(sf::RenderTarget& window, sf::RenderStates states) const
     }
 }
 
-void Map::updateMapSize()
+void TileMap::updateMapSize()
 {
     mapWidth = tiles.front().size();
     mapHeight = tiles.size();

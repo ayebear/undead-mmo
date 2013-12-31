@@ -17,6 +17,7 @@ void StateEvent::pushState(const StateId& stateId)
 {
     command = Command::Push;
     id = stateId;
+    args.clear();
 }
 
 void StateEvent::pushState(const StateId& stateId, const StateArgs& stateArgs)
@@ -39,7 +40,7 @@ void StateEvent::exitGame()
 void StateEvent::reset()
 {
     command = 0;
-    id = 0; // This will need to be changed if StateId becomes a string
+    id.clear();
     args.clear();
 }
 

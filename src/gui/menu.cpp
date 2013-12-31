@@ -4,7 +4,8 @@
 #include "menu.h"
 #include <sstream>
 #include <string>
-#include "miscutils.h"
+#include <iostream>
+#include "takescreenshot.h"
 
 Menu::Menu()
 {
@@ -17,12 +18,12 @@ Menu::~Menu()
     clearButtons();
 }
 
-void Menu::setUpMenu(const std::string& backgroundFile, sf::Color buttonSelectColor, short fontSize, sf::Vector2f topButtonPosition, GameObjects& theObjects)
+void Menu::setUpMenu(const std::string& backgroundFile, sf::Color buttonSelectColor, short fontSize, sf::Vector2f topButtonPosition, sf::RenderWindow* windowPtr, sf::Font* fontPtr)
 {
-    objects = &theObjects;
+    window = windowPtr;
+    buttonFont = fontPtr;
 
-    windowSize.x = objects->windowSize.x;
-    windowSize.y = objects->windowSize.y;
+    windowSize = window->getSize();
     menuView.reset(sf::FloatRect(0, 0, windowSize.x, windowSize.y));
 
     buttonWidthFactor = windowSize.x / topButtonPosition.x;
@@ -31,8 +32,6 @@ void Menu::setUpMenu(const std::string& backgroundFile, sf::Color buttonSelectCo
     //Load background and font
     if (!bgTexture.loadFromFile(backgroundFile))
         exit(104);
-
-    buttonFont = &objects->fontBold;
 
     bgImageSize = bgTexture.getSize();
 
@@ -47,7 +46,7 @@ void Menu::setUpMenu(const std::string& backgroundFile, sf::Color buttonSelectCo
 
     //scale take a factor amount so  newSize/oldSize.
     //Resize image to fit the window.  Move the origin because scaling the image moves it.
-    bgSprite.setScale(windowSize.x / bgImageSize.x, windowSize.y / bgImageSize.y);
+    bgSprite.setScale((float)windowSize.x / bgImageSize.x, (float)windowSize.y / bgImageSize.y);
     bgSprite.setOrigin(0, 0);
 
     setButtonColors(buttonSelectColor);
@@ -67,6 +66,7 @@ void Menu::setBackground(const std::string& backgroundFile)
     bgSprite.setTexture(bgTexture);
 }
 
+// TODO: Fix this function so it won't seg fault if the font hasn't already been setup
 void Menu::setFont(const std::string& fontFile)
 {
      if (!buttonFont->loadFromFile(fontFile))
@@ -110,7 +110,7 @@ void Menu::handleMousePressed(sf::Event& event)
     unsigned int i = 0;
     while(i < menuOptions.size())
     {
-        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
+        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(*window)) && event.mouseButton.button == sf::Mouse::Left)
         {
             menuOptions[i]->buttonBackground.setFillColor(buttonPressedColor);
             menuOptions[i]->buttonBackground.setOutlineColor(sf::Color::Black);
@@ -125,7 +125,7 @@ int Menu::handleMouseReleased(sf::Event& event)
     while(i < menuOptions.size())
     {
         menuOptions[i]->buttonBackground.setOutlineColor(sf::Color::White);
-        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(objects->window)) && event.mouseButton.button == sf::Mouse::Left)
+        if(menuOptions[i]->rect.contains(sf::Mouse::getPosition(*window)) && event.mouseButton.button == sf::Mouse::Left)
         {
             selection = i + 1;
             return selection;
@@ -159,7 +159,7 @@ int Menu::handleKeyPressed(sf::Event& event)
         break;
 
     case sf::Keyboard::Key::F1:
-        takeScreenshot(objects->window);
+        takeScreenshot(*window);
         break;
 
     default:
@@ -170,17 +170,15 @@ int Menu::handleKeyPressed(sf::Event& event)
 
 void Menu::handleResize(sf::Event& event)
 {
-    sf::Vector2f windowSize;
-    windowSize.x = objects->windowSize.x;
-    windowSize.y = objects->windowSize.y;
-    menuView.setSize(windowSize);
+    windowSize = window->getSize();
+    sf::Vector2f windowSizeFloat(windowSize.x, windowSize.y);
+    menuView.setSize(windowSizeFloat);
     //Resize the background image
-    bgSprite.setScale(windowSize.x / bgImageSize.x, windowSize.y / bgImageSize.y);
+    bgSprite.setScale(windowSizeFloat.x / bgImageSize.x, windowSizeFloat.y / bgImageSize.y);
     bgSprite.setOrigin(0, 0);
 
-
     //Adjust selection rectangles
-    fixRectangles(float(event.size.width), event.size.height);
+    fixRectangles(event.size.width, event.size.height);
 }
 
 void Menu::updateMenu()

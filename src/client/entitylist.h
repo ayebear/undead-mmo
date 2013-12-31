@@ -1,6 +1,8 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
+// NOTE: This class is going to be removed after we make an entity component system
+
 /*
 EntityList class:
     Will have a std::map<EID,Entity*> for its main data structure.

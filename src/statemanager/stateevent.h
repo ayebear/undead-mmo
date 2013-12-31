@@ -8,8 +8,8 @@
 #include <string>
 #include "option.h"
 
-// This can be safely changed to a string later if needed
-typedef int StateId;
+// This is used to identify the state
+typedef std::string StateId;
 
 // Arguments to be passed into the next state
 typedef std::vector<std::string> StateArgs;
@@ -25,15 +25,15 @@ class StateEvent
         // The state manager takes action based on this
         enum Command
         {
-            Continue = 0,
+            Continue = 0, // Continues running the current state
             Exit, // Exits the whole program
             Pop, // Goes back to the previous state
             Push // Adds a new state onto the stack
         };
 
-        StateEvent(): command(0), id(0) {}
-        StateEvent(int c, const StateId& t): command(c), id(t) {}
-        StateEvent(int c, const StateId& t, const StateArgs& a): command(c), id(t), args(a) {}
+        StateEvent(): command(0) {}
+        StateEvent(int c, const StateId& s): command(c), id(s) {}
+        StateEvent(int c, const StateId& s, const StateArgs& a): command(c), id(s), args(a) {}
 
         bool shouldContinue() const;
         bool isNotExit() const;
@@ -48,7 +48,7 @@ class StateEvent
         const StateArgs& getArgs() const;
 
     private:
-        int command; // The ID of a command, see the Command enum in State class
+        int command; // The ID of a command, see the Command enum above
         StateId id; // The state ID of the new state to push
         StateArgs args; // State arguments, which are passed to the next state
 };

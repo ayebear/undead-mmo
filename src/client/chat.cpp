@@ -7,8 +7,6 @@
 
 const unsigned short Chat::maxMessages = 10;
 const short Chat::textSize = 16;
-const float Chat::oldMsgAge = 50;
-const float Chat::maxMsgAge = 60;
 const unsigned short Chat::maxMsgHistory = 100;
 
 const sf::Color Chat::Colors::normal = sf::Color::White;

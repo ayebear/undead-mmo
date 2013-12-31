@@ -2,8 +2,8 @@ banned = false
 health = 100
 level = 1
 password = "password"
-positionX = 2899.115234375
-positionY = 755.0752563476562
+positionX = 581.2786865234375
+positionY = 461.9537353515625
 salt = 0
 
 [Inventory]

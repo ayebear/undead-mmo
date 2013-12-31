@@ -8,12 +8,12 @@
 #include <stack>
 #include <map>
 #include <memory>
-#include "state.h"
+#include "basestate.h"
 #include "stateevent.h"
 
 /*
-This class handles the deallocation/starting/changing of State sub-classes.
-This class is also generic, but depends on having the State base class and StateEvent class.
+This class handles the deallocation/starting/changing of BaseState sub-classes.
+This class is also generic, but depends on having the BaseState class and StateEvent class.
 */
 class StateManager
 {
@@ -21,7 +21,7 @@ class StateManager
         StateManager();
         ~StateManager();
 
-        void addState(const StateId&, State*); // Adds a state pointer to the map (Note that this takes ownership of the state object)
+        void addState(const StateId&, BaseState*); // Adds a state pointer to the map (Note that this takes ownership of the state object)
         void removeState(const StateId&); // Removes and deallocates a state from the map
         void startLoop(const StateId&); // The main loop that runs until a state returns an exit event
 
@@ -33,7 +33,7 @@ class StateManager
         void pop(); // Removes the last pushed state from the stack
 
         std::stack<StateId> stateStack; // Represents a stack of the states
-        typedef std::unique_ptr<State> StatePtr; // Unique pointer to a state
+        typedef std::unique_ptr<BaseState> StatePtr; // Unique pointer to a state
         std::map<StateId, StatePtr> statePtrs; // Pointers to instances of the state types, accessed by the StateId
 };
 

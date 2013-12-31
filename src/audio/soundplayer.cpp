@@ -2,7 +2,7 @@
 #include <iostream>
 
 const ConfigFile::Section SoundPlayer::defaultOptions = {
-    {"volume", makeOption(100)},
+    {"volume", makeOption(100, 0, 100)},
     {"maxSounds", makeOption(50, 1, 200)}
 };
 

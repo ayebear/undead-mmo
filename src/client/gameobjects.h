@@ -13,6 +13,7 @@
 /*
 This class contains the main game objects, such as the window, networking, config file, and fonts.
 This also handles creating the window and setting up the objects it contains so other classes don't have to.
+All of the states are given access to this.
 */
 class GameObjects: sf::NonCopyable
 {

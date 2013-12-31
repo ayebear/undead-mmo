@@ -16,7 +16,8 @@ ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
                         sf::Color (25, 25, 25, 200),
                        32,                                                  //Font size
                        sf::Vector2f(windowSize.x / 5, windowSize.y / 2),    //Button position
-                       objects                                     //Rendering window
+                       &objects.window,                                     //Rendering window
+                       &objects.fontBold
                        );
 
     errorMenu.addMenuButton("Go Back (this may fail)");
@@ -98,6 +99,7 @@ void ErrorState::processChoice(int choice)
 
 void ErrorState::update()
 {
+    objects.music.update();
     errorMenu.updateMenu();
 }
 

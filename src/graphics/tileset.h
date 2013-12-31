@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 
 // This class allows you to load a tile set into memory from a single image file
+// TODO: Benchmark the performance differences between using multiple separate
+// textures vs a single texture with sprite sub rectangles
 class TileSet
 {
     public:

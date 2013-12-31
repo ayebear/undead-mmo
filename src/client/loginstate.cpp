@@ -5,7 +5,6 @@
 #include <iostream>
 #include <sstream>
 #include "paths.h"
-#include "states.h"
 
 LoginState::LoginState(GameObjects& gameObjects):
     State(gameObjects),
@@ -19,7 +18,8 @@ LoginState::LoginState(GameObjects& gameObjects):
                         sf::Color( 25, 25, 25, 200),
                        16,                                                  //Font size
                        sf::Vector2f(windowSize.x / 4, windowSize.y / 1.3),    //Button position
-                       objects                                              //Rendering window
+                       &objects.window,                                     //Rendering window
+                       &objects.fontBold
                        );
 
 
@@ -177,12 +177,12 @@ void LoginState::processChoice(int choice)
         cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
         int status = objects.netManager.logIn(serverAddr, username, password);
         if (status == Packet::LogInCode::Successful)
-            stateEvent.pushState(States::Game);
+            stateEvent.pushState("Game");
         else
         {
             StateArgs args;
             args.push_back(Packet::LogInMessages[status - 1]);
-            stateEvent.pushState(States::Message, args);
+            stateEvent.pushState("Message", args);
         }
     }
     else if (choice == 3)
@@ -195,7 +195,7 @@ void LoginState::processChoice(int choice)
         int status = objects.netManager.createAccount(serverAddr, username, password);
         StateArgs args;
         args.push_back(Packet::CreateAccountMessages[status - 1]);
-        stateEvent.pushState(States::Message, args);
+        stateEvent.pushState("Message", args);
     }
     else if (choice == 4)
         stateEvent.popState();
@@ -203,6 +203,7 @@ void LoginState::processChoice(int choice)
 
 void LoginState::update()
 {
+    objects.music.update();
     loginMenu.updateMenu();
 }
 

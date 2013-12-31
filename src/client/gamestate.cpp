@@ -1,13 +1,14 @@
 // See the file COPYRIGHT.txt for authors and copyright information.
 // See the file LICENSE.txt for copying conditions.
 
-#include "playgamestate.h"
+#include "gamestate.h"
 #include <string>
 #include "packet.h"
 #include "tile.h"
-#include "miscutils.h"
+#include "takescreenshot.h"
+#include "paths.h"
 
-PlayGameState::PlayGameState(GameObjects& gameObjects):
+GameState::GameState(GameObjects& gameObjects):
     State(gameObjects)
 {
     loadHotkeys();
@@ -31,11 +32,11 @@ PlayGameState::PlayGameState(GameObjects& gameObjects):
     hasFocus = true;
 }
 
-PlayGameState::~PlayGameState()
+GameState::~GameState()
 {
 }
 
-void PlayGameState::onPush()
+void GameState::onPush()
 {
     mouseMoved = true;
     theHud.chat.clear();
@@ -43,7 +44,7 @@ void PlayGameState::onPush()
     inventoryKeyReleased = true;
 }
 
-void PlayGameState::onPop()
+void GameState::onPop()
 {
     objects.netManager.logOut();
     myPlayer = nullptr;
@@ -51,12 +52,12 @@ void PlayGameState::onPop()
     entList.clear();
 }
 
-void PlayGameState::onStart()
+void GameState::onStart()
 {
     objects.music.start("Game");
 }
 
-void PlayGameState::handleEvents()
+void GameState::handleEvents()
 {
     // Exit the game if the server disconnects
     if (!objects.netManager.isConnected())
@@ -121,8 +122,10 @@ void PlayGameState::handleEvents()
     handleInput();
 }
 
-void PlayGameState::update()
+void GameState::update()
 {
+    objects.music.update();
+
     if (!tileMap.isReady())
         processMapDataPackets();
 
@@ -148,7 +151,7 @@ void PlayGameState::update()
     theHud.update();
 }
 
-void PlayGameState::draw()
+void GameState::draw()
 {
     objects.window.clear();
 
@@ -167,7 +170,7 @@ void PlayGameState::draw()
     objects.window.display();
 }
 
-void PlayGameState::updateGameView()
+void GameState::updateGameView()
 {
     // Update the game view center position with the player's current position
     if (myPlayer != nullptr)
@@ -201,7 +204,7 @@ void PlayGameState::updateGameView()
     }
 }
 
-void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
+void GameState::handleKeyPressed(sf::Keyboard::Key keyCode)
 {
     // TODO: Shrink this mess into 1 line of code with a proper generic event handler...
     if (theHud.chat.getInput())
@@ -234,7 +237,7 @@ void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
         else if (keyCode == hotkeys[RemoveSlot])
             theHud.inventory.addSlots(-1);
         else if (keyCode == hotkeys[TakeScreenshot])
-            takeScreenshot(objects.window);
+            takeScreenshot(objects.window, Paths::screenshotsDir);
         else if (keyCode == hotkeys[Reload])
             objects.sound.play("reload");
         else if (keyCode == hotkeys[Shoot])
@@ -243,7 +246,7 @@ void PlayGameState::handleKeyPressed(sf::Keyboard::Key keyCode)
     theHud.chat.processInput(keyCode);
 }
 
-void PlayGameState::handleKeyReleased(sf::Keyboard::Key keyCode)
+void GameState::handleKeyReleased(sf::Keyboard::Key keyCode)
 {
     if (!theHud.chat.getInput())
     {
@@ -256,7 +259,7 @@ void PlayGameState::handleKeyReleased(sf::Keyboard::Key keyCode)
     }
 }
 
-void PlayGameState::handleInput()
+void GameState::handleInput()
 {
     if (hasFocus && !theHud.chat.getInput())
     {
@@ -305,7 +308,7 @@ void PlayGameState::handleInput()
     elapsedTime = clock.restart().asSeconds();
 }
 
-void PlayGameState::handleMouseInput()
+void GameState::handleMouseInput()
 {
     if (hasFocus && myPlayer != nullptr)
     {
@@ -321,7 +324,7 @@ void PlayGameState::handleMouseInput()
     }
 }
 
-void PlayGameState::sendAngleInputPacket()
+void GameState::sendAngleInputPacket()
 {
     // Update the server with your player's visual angle up to 5 times per second
     if (myPlayer != nullptr && angleTimer.getElapsedTime().asSeconds() >= 0.1 && lastSentAngle != currentAngle)
@@ -334,7 +337,7 @@ void PlayGameState::sendAngleInputPacket()
     }
 }
 
-void PlayGameState::processEntityPackets()
+void GameState::processEntityPackets()
 {
     while (objects.netManager.arePackets(Packet::EntityUpdate))
     {
@@ -352,7 +355,7 @@ void PlayGameState::processEntityPackets()
     }
 }
 
-void PlayGameState::processOnLogInPackets()
+void GameState::processOnLogInPackets()
 {
     while (objects.netManager.arePackets(Packet::OnSuccessfulLogIn))
     {
@@ -362,7 +365,7 @@ void PlayGameState::processOnLogInPackets()
     myPlayer = entList.find(myPlayerId);
 }
 
-void PlayGameState::processMapDataPackets()
+void GameState::processMapDataPackets()
 {
     while (objects.netManager.arePackets(Packet::MapData))
     {
@@ -373,7 +376,7 @@ void PlayGameState::processMapDataPackets()
     }
 }
 
-void PlayGameState::handleWindowResized()
+void GameState::handleWindowResized()
 {
     sf::Vector2f windowSize;
     windowSize.x = objects.window.getSize().x;
@@ -386,7 +389,7 @@ void PlayGameState::handleWindowResized()
     theHud.updateView(gameView);
 }
 
-void PlayGameState::loadHotkeys()
+void GameState::loadHotkeys()
 {
     objects.config.setSection("Hotkeys");
     const string keyNames[] = {

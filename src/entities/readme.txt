@@ -1,0 +1,1 @@
+All of the current code in here is going to be replaced with new stuff after we make an entity-component system.

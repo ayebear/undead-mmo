@@ -10,17 +10,17 @@
 #include "entitylist.h"
 #include "hud.h"
 #include "mainmenustate.h"
-#include "map.h"
+#include "tilemap.h"
 #include "gamehotkeys.h"
 
 /*
 This class manages the window and input for the game
 */
-class PlayGameState: public State
+class GameState: public State
 {
     public:
-        PlayGameState(GameObjects& gameObjects);
-        ~PlayGameState();
+        GameState(GameObjects& gameObjects);
+        ~GameState();
 
         void onStart();
         const StateEvent& start(const StateArgs&);
@@ -47,7 +47,7 @@ class PlayGameState: public State
         void loadHotkeys();
 
         // Important objects
-        Map tileMap;
+        TileMap tileMap;
         EntityList entList;
         Entity* myPlayer;
         Hud theHud; // TODO: Choose a better name?

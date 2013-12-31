@@ -4,10 +4,9 @@
 #include "undeadmmo.h"
 #include "mainmenustate.h"
 #include "loginstate.h"
-#include "playgamestate.h"
+#include "gamestate.h"
 #include "errorstate.h"
 #include "messagestate.h"
-#include "states.h"
 
 UndeadMMO::UndeadMMO(const std::string& windowTitle)
 {
@@ -17,14 +16,14 @@ UndeadMMO::UndeadMMO(const std::string& windowTitle)
 
 void UndeadMMO::start()
 {
-    states.startLoop(States::Menu);
+    states.startLoop("Menu");
 }
 
 void UndeadMMO::allocateStates()
 {
-    states.addState(States::Menu, new MainMenuState(objects));
-    states.addState(States::Login, new LoginState(objects));
-    states.addState(States::Game, new PlayGameState(objects));
-    states.addState(States::Error, new ErrorState(objects));
-    states.addState(States::Message, new MessageState(objects));
+    states.addState("Menu", new MainMenuState(objects));
+    states.addState("Login", new LoginState(objects));
+    states.addState("Game", new GameState(objects));
+    states.addState("Error", new ErrorState(objects));
+    states.addState("Message", new MessageState(objects));
 }
