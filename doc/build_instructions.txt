@@ -1,0 +1,26 @@
+General Information:
+	The code is written in C++11, so your compiler will need to support most C++11 features. GCC 4.8.1+ supports all of the C++11 features we currently use. MSVC 2012 will NOT work properly as it does not support everything we use. The code also depends on SFML 2.1. So you must link those libraries with your compiler/IDE, and have the proper include paths setup (unless you follow the easy way to build).
+
+The client and server are different programs that must be built separately.
+
+How to build:
+	1. Download git, and clone the git repository to your computer. Read the git_instructions.txt file for more information.
+	2. Download Codeblocks and GCC, and get them setup properly.
+	3. Copy the project files from the projects folder in the git repository to the root folder of the repository. Open the project files and click rebuild. Now everything should build and you are ready to go!
+
+In the future we could (and should) use a build system like cmake to build everything. We will still continue providing IDE projects for easier debugging.
+
+Platform specific build notes:
+	Linux:
+		You should be able to get git, codeblocks, and gcc from your distribution's repositories.
+	Windows:
+		You can download a compiler from here:
+			https://sourceforge.net/projects/mingwbuilds/files/host-windows/releases/4.8.1/64-bit/threads-posix/sjlj/
+			You can use something newer than 4.8.1, but you must use the 64-bit sjlj posix threads version with the SFML libraries included in the git repository.
+			Otherwise if you are using your own SFML libraries, then you can use a different compiler.
+		You will probably need to manually setup your IDE to point to the path where the compiler was installed.
+			In Codeblocks you can just change your compiler and debugger settings.
+	Mac OS X:
+		Apple uses an outdated version of gcc. You will have to figure this out yourself.
+	ARM (Android/iOS):
+		SFML 2.x has plans to be ported to ARM. So we will need to wait till then, or use an unofficial port.
