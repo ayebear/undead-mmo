@@ -49,13 +49,21 @@
 		<Unit filename="src/entities/player.h" />
 		<Unit filename="src/entities/zombie.cpp" />
 		<Unit filename="src/entities/zombie.h" />
+		<Unit filename="src/graphics/tile.cpp" />
+		<Unit filename="src/graphics/tile.h" />
+		<Unit filename="src/graphics/tilemap.cpp" />
+		<Unit filename="src/graphics/tilemap.h" />
+		<Unit filename="src/graphics/tileset.cpp" />
+		<Unit filename="src/graphics/tileset.h" />
 		<Unit filename="src/other/configfile.cpp" />
 		<Unit filename="src/other/configfile.h" />
 		<Unit filename="src/other/csvfile.cpp" />
 		<Unit filename="src/other/csvfile.h" />
+		<Unit filename="src/other/index.h" />
 		<Unit filename="src/other/linkedqueue.h" />
 		<Unit filename="src/other/option.cpp" />
 		<Unit filename="src/other/option.h" />
+		<Unit filename="src/other/packedarray.h" />
 		<Unit filename="src/other/stringutils.cpp" />
 		<Unit filename="src/other/stringutils.h" />
 		<Unit filename="src/server/accountdb.cpp" />
@@ -85,16 +93,10 @@
 		<Unit filename="src/shared/ipport.h" />
 		<Unit filename="src/shared/itemcode.cpp" />
 		<Unit filename="src/shared/itemcode.h" />
-		<Unit filename="src/shared/map.cpp" />
-		<Unit filename="src/shared/map.h" />
 		<Unit filename="src/shared/network.cpp" />
 		<Unit filename="src/shared/network.h" />
 		<Unit filename="src/shared/packet.h" />
 		<Unit filename="src/shared/paths.h" />
-		<Unit filename="src/shared/tile.cpp" />
-		<Unit filename="src/shared/tile.h" />
-		<Unit filename="src/shared/tileset.cpp" />
-		<Unit filename="src/shared/tileset.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />

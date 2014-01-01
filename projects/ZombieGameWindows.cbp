@@ -14,16 +14,13 @@
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
-					<Add directory="other" />
-					<Add directory="shared" />
-					<Add directory="client" />
 				</Compiler>
 				<Linker>
 					<Add library="sfml-graphics-d" />
-					<Add library="sfml-audio-d" />
 					<Add library="sfml-window-d" />
-					<Add library="sfml-network-d" />
 					<Add library="sfml-system-d" />
+					<Add library="sfml-network-d" />
+					<Add library="sfml-audio-d" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -39,10 +36,10 @@
 				<Linker>
 					<Add option="-s" />
 					<Add library="sfml-graphics" />
-					<Add library="sfml-audio" />
 					<Add library="sfml-window" />
-					<Add library="sfml-network" />
 					<Add library="sfml-system" />
+					<Add library="sfml-network" />
+					<Add library="sfml-audio" />
 				</Linker>
 			</Target>
 		</Build>
@@ -50,37 +47,37 @@
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add directory="lib/windows/sfml2/include" />
-			<Add directory="src/entities" />
 			<Add directory="src/shared" />
 			<Add directory="src/other" />
+			<Add directory="src/entities" />
+			<Add directory="src/audio" />
+			<Add directory="src/es" />
+			<Add directory="src/graphics" />
+			<Add directory="src/gui" />
+			<Add directory="src/statemanager" />
 		</Compiler>
 		<Linker>
-			<Add library="sfml-system" />
-			<Add library="sfml-window" />
-			<Add library="sfml-graphics" />
-			<Add library="sfml-network" />
-			<Add library="sfml-audio" />
 			<Add directory="lib/windows/sfml2/lib" />
 			<Add directory="lib/windows/sfml2/extlibs/libs-mingw/x64" />
 		</Linker>
+		<Unit filename="src/audio/musicplayer.cpp" />
+		<Unit filename="src/audio/musicplayer.h" />
+		<Unit filename="src/audio/soundplayer.cpp" />
+		<Unit filename="src/audio/soundplayer.h" />
 		<Unit filename="src/client/chat.cpp" />
 		<Unit filename="src/client/chat.h" />
 		<Unit filename="src/client/clientnetwork.cpp" />
 		<Unit filename="src/client/clientnetwork.h" />
-		<Unit filename="src/client/cursor.cpp" />
-		<Unit filename="src/client/cursor.h" />
 		<Unit filename="src/client/entitylist.cpp" />
 		<Unit filename="src/client/entitylist.h" />
 		<Unit filename="src/client/errorstate.cpp" />
 		<Unit filename="src/client/errorstate.h" />
-		<Unit filename="src/client/gamehotkeys.cpp" />
-		<Unit filename="src/client/gamehotkeys.h" />
 		<Unit filename="src/client/gameobjects.cpp" />
 		<Unit filename="src/client/gameobjects.h" />
+		<Unit filename="src/client/gamestate.cpp" />
+		<Unit filename="src/client/gamestate.h" />
 		<Unit filename="src/client/hud.cpp" />
 		<Unit filename="src/client/hud.h" />
-		<Unit filename="src/client/inputbox.cpp" />
-		<Unit filename="src/client/inputbox.h" />
 		<Unit filename="src/client/inventorygui.cpp" />
 		<Unit filename="src/client/inventorygui.h" />
 		<Unit filename="src/client/loginstate.cpp" />
@@ -88,37 +85,12 @@
 		<Unit filename="src/client/main.cpp" />
 		<Unit filename="src/client/mainmenustate.cpp" />
 		<Unit filename="src/client/mainmenustate.h" />
-		<Unit filename="src/client/menu.cpp" />
-		<Unit filename="src/client/menu.h" />
 		<Unit filename="src/client/messagestate.cpp" />
 		<Unit filename="src/client/messagestate.h" />
-		<Unit filename="src/client/miscutils.cpp" />
-		<Unit filename="src/client/miscutils.h" />
-		<Unit filename="src/client/musicplayer.cpp" />
-		<Unit filename="src/client/musicplayer.h" />
-		<Unit filename="src/client/playgamestate.cpp" />
-		<Unit filename="src/client/playgamestate.h" />
-		<Unit filename="src/client/scrollbar.cpp" />
-		<Unit filename="src/client/scrollbar.h" />
 		<Unit filename="src/client/serverlistfetcher.cpp" />
 		<Unit filename="src/client/serverlistfetcher.h" />
-		<Unit filename="src/client/slot.cpp" />
-		<Unit filename="src/client/slot.h" />
-		<Unit filename="src/client/soundplayer.cpp" />
-		<Unit filename="src/client/soundplayer.h" />
 		<Unit filename="src/client/state.cpp" />
 		<Unit filename="src/client/state.h" />
-		<Unit filename="src/client/stateevent.cpp" />
-		<Unit filename="src/client/stateevent.h" />
-		<Unit filename="src/client/statemanager.cpp" />
-		<Unit filename="src/client/statemanager.h" />
-		<Unit filename="src/client/states.h" />
-		<Unit filename="src/client/statusbar.cpp" />
-		<Unit filename="src/client/statusbar.h" />
-		<Unit filename="src/client/textitem.cpp" />
-		<Unit filename="src/client/textitem.h" />
-		<Unit filename="src/client/textitemlist.cpp" />
-		<Unit filename="src/client/textitemlist.h" />
 		<Unit filename="src/client/undeadmmo.cpp" />
 		<Unit filename="src/client/undeadmmo.h" />
 		<Unit filename="src/entities/entity.cpp" />
@@ -133,12 +105,38 @@
 		<Unit filename="src/entities/player.h" />
 		<Unit filename="src/entities/zombie.cpp" />
 		<Unit filename="src/entities/zombie.h" />
+		<Unit filename="src/graphics/takescreenshot.cpp" />
+		<Unit filename="src/graphics/takescreenshot.h" />
+		<Unit filename="src/graphics/tile.cpp" />
+		<Unit filename="src/graphics/tile.h" />
+		<Unit filename="src/graphics/tilemap.cpp" />
+		<Unit filename="src/graphics/tilemap.h" />
+		<Unit filename="src/graphics/tileset.cpp" />
+		<Unit filename="src/graphics/tileset.h" />
+		<Unit filename="src/gui/cursor.cpp" />
+		<Unit filename="src/gui/cursor.h" />
+		<Unit filename="src/gui/inputbox.cpp" />
+		<Unit filename="src/gui/inputbox.h" />
+		<Unit filename="src/gui/menu.cpp" />
+		<Unit filename="src/gui/menu.h" />
+		<Unit filename="src/gui/scrollbar.cpp" />
+		<Unit filename="src/gui/scrollbar.h" />
+		<Unit filename="src/gui/slot.cpp" />
+		<Unit filename="src/gui/slot.h" />
+		<Unit filename="src/gui/statusbar.cpp" />
+		<Unit filename="src/gui/statusbar.h" />
+		<Unit filename="src/gui/textitem.cpp" />
+		<Unit filename="src/gui/textitem.h" />
+		<Unit filename="src/gui/textitemlist.cpp" />
+		<Unit filename="src/gui/textitemlist.h" />
 		<Unit filename="src/other/configfile.cpp" />
 		<Unit filename="src/other/configfile.h" />
 		<Unit filename="src/other/csvfile.cpp" />
 		<Unit filename="src/other/csvfile.h" />
+		<Unit filename="src/other/gamehotkeys.cpp" />
+		<Unit filename="src/other/gamehotkeys.h" />
+		<Unit filename="src/other/index.h" />
 		<Unit filename="src/other/linkedqueue.h" />
-		<Unit filename="src/other/objectallocator.h" />
 		<Unit filename="src/other/option.cpp" />
 		<Unit filename="src/other/option.h" />
 		<Unit filename="src/other/packedarray.h" />
@@ -148,19 +146,18 @@
 		<Unit filename="src/shared/ipport.h" />
 		<Unit filename="src/shared/itemcode.cpp" />
 		<Unit filename="src/shared/itemcode.h" />
-		<Unit filename="src/shared/map.cpp" />
-		<Unit filename="src/shared/map.h" />
 		<Unit filename="src/shared/network.cpp" />
 		<Unit filename="src/shared/network.h" />
 		<Unit filename="src/shared/packet.h" />
 		<Unit filename="src/shared/paths.h" />
-		<Unit filename="src/shared/tile.cpp" />
-		<Unit filename="src/shared/tile.h" />
-		<Unit filename="src/shared/tileset.cpp" />
-		<Unit filename="src/shared/tileset.h" />
+		<Unit filename="src/statemanager/basestate.cpp" />
+		<Unit filename="src/statemanager/basestate.h" />
+		<Unit filename="src/statemanager/stateevent.cpp" />
+		<Unit filename="src/statemanager/stateevent.h" />
+		<Unit filename="src/statemanager/statemanager.cpp" />
+		<Unit filename="src/statemanager/statemanager.h" />
 		<Extensions>
 			<code_completion />
-			<envvars />
 			<debugger />
 			<DoxyBlocks>
 				<comment_style block="0" line="0" />
@@ -171,6 +168,7 @@
 				<doxyfile_dot />
 				<general />
 			</DoxyBlocks>
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
