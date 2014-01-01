@@ -6,7 +6,7 @@
 #include <sstream>
 #include "paths.h"
 
-ErrorState::ErrorState(GameObjects& gameObjects): State(gameObjects)
+ErrorState::ErrorState(GameObjects& gameObjects): CommonState(gameObjects)
 {
     sf::Vector2f windowSize;
     windowSize.x = objects.windowSize.x;

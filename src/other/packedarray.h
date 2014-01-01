@@ -10,8 +10,8 @@
 /*
 This class manages an array of objects in an efficient way, with good cache efficiency and minimal memory allocations.
 Adding, removing, and accessing objects are all O(1) operations.
-The internal order of the objects can rearrange when removing objects to keep things packed together.
-The external IDs which are returned by the allocate function are guaranteed not to change unless
+The internal order of the objects can rearrange when removing objects to keep everything contiguous.
+The external IDs which are returned by the push function are guaranteed not to change unless
     erase is called with that ID, or if clear is called.
 
 Here are some visual examples of how the packed array works.
@@ -33,20 +33,44 @@ Free list: {0, 2, 3}            // 3 gets added to the free list
 Reverse  : [1] [4]              // 0th element gets replaced with 2nd element
 Inner    : [z] [y]              // 0th element gets replaced with 2nd element
 
-After allocate(a):
+After push(a):
 Outer    : [2] [0] [ ] [ ] [1]  // 0th element gets internal ID set to 2
 Free list: {2, 3}               // 0 gets removed from free list
 Reverse  : [1] [4] [0]          // 0 gets added to reverse lookup table
 Inner    : [z] [y] [a]          // a gets added to inner array
 
+Client-server synchronization:
+Server:
+{0, 1, 2, 3, 4, 5, 6, 7, 8, 9} // Index
+{a, b, c, d, e, f, g, h, i, j} // Internal objects
+Client: (only is near a few)
+{_, _, 0, 1, 2, _, 3, _, _, _} // Index
+{c, d, e, g}                   // Internal objects
+Note how the external IDs stay the same, without having to use yet another layer of indirection.
+Also, the internal array is still packed, allowing for good cache efficiency.
+
 Example usage:
-PackedArray<int> pArr;
-int id = pArr.allocate(5);
-cout << pArr[id] << endl; // 5
-int id2 = pArr.allocate(20);
-cout << pArr[id2] << endl; // 20
-pArr.erase(id); // Removes 5 from the array
-cout << pArr[id2] << endl; // Still 20, even though 20 has moved in memory
+PackedArray<string> names;
+int bobId = names.push("Bob");
+cout << names[bobId] << endl; // Bob
+int joeId = names.push("Joe");
+cout << names[joeId] << endl; // Joe
+names.erase(bobId); // Removes Bob from the array
+cout << names[joeId] << endl; // Still Joe, even though Joe has taken Bob's space in memory
+
+// You can iterate through the array like a normal STL container:
+names.push("Kevin");
+names.push("Miles");
+names.push("Eric");
+// C++11:
+for (auto& n: names)
+    cout << n << endl;
+// Or with iterators:
+for (auto i = names.begin(); i != names.end(); ++i)
+    cout << *i << endl;
+// This is recommended when you need to access all of the elements in the array, as this will
+// be good with your cache since it is accessing the internal contiguous array instead of
+// looking up the IDs in the external index.
 */
 
 template <typename Type>
@@ -70,8 +94,8 @@ class PackedArray
 
         // The following functions access everything using the external index IDs
 
-        // Constructs a new object and returns its ID
-        int allocate(const Type& obj)
+        // Adds a new object and returns its ID
+        int push(const Type& obj)
         {
             int internalId = elements.size();
             elements.push_back(obj);
@@ -81,7 +105,7 @@ class PackedArray
         }
 
         // Same as above but calls default constructor of object
-        int allocate()
+        int push()
         {
             int internalId = elements.size();
             elements.emplace_back();
@@ -91,7 +115,7 @@ class PackedArray
         }
 
         // Returns a reference to the object with the specfied ID.
-        // Warning: You must only pass valid IDs that were returned by the allocate function,
+        // Warning: You must only pass valid IDs that were returned by the push function,
         // or this will cause undefined behavior. You can easily check if an ID is valid with
         // the validId function.
         Type& operator[] (int id)

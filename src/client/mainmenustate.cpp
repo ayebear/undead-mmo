@@ -5,7 +5,7 @@
 #include <iostream>
 #include "paths.h"
 
-MainMenuState::MainMenuState(GameObjects& gameObjects): State(gameObjects)
+MainMenuState::MainMenuState(GameObjects& gameObjects): CommonState(gameObjects)
 {
     sf::Vector2f windowSize;
     windowSize.x = objects.windowSize.x;

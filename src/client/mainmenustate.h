@@ -4,14 +4,14 @@
 #ifndef MAINMENUSTATE_H
 #define MAINMENUSTATE_H
 
-#include "state.h"
+#include "commonstate.h"
 #include "menu.h"
 
 /*
 This class creates a menu and processes user input
 Based on that input, a different action is returned from this state to the state manager
 */
-class MainMenuState: public State
+class MainMenuState: public CommonState
 {
     public:
         MainMenuState(GameObjects& gameObjects);

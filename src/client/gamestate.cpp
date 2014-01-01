@@ -8,8 +8,7 @@
 #include "takescreenshot.h"
 #include "paths.h"
 
-GameState::GameState(GameObjects& gameObjects):
-    State(gameObjects)
+GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
 {
     loadHotkeys();
 
@@ -72,7 +71,6 @@ void GameState::handleEvents()
         switch (event.type)
         {
             case sf::Event::Closed:
-
                 stateEvent.exitGame();
                 break;
 

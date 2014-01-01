@@ -5,9 +5,9 @@
 #define MESSAGESTATE_H
 
 #include "menu.h"
-#include "state.h"
+#include "commonstate.h"
 
-class MessageState: public State
+class MessageState: public CommonState
 {
     public:
         MessageState(GameObjects& gameObjects);

@@ -6,7 +6,7 @@
 
 #include "menu.h"
 #include "textitemlist.h"
-#include "state.h"
+#include "commonstate.h"
 #include "inputbox.h"
 #include "serverlistfetcher.h"
 
@@ -14,7 +14,7 @@
 This is for the login screen, which shows a list of servers that you can pick from.
 After logging into a server, this will push a PlayGameState.
 */
-class LoginState: public State
+class LoginState: public CommonState
 {
     public:
         LoginState(GameObjects& gameObjects);

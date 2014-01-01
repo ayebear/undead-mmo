@@ -11,11 +11,10 @@
 This class contains a few specific things that are common across the game states.
 This is needed to avoid redundant code and messing up the base class.
 */
-class State: public BaseState
+class CommonState: public BaseState
 {
     public:
-        State(GameObjects& gameObjects): objects(gameObjects) {}
-        //virtual ~State() {}
+        CommonState(GameObjects& gameObjects): objects(gameObjects) {}
 
     protected:
         GameObjects& objects;

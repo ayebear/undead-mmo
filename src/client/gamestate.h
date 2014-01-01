@@ -5,7 +5,7 @@
 #define GAME_H
 
 #include <string>
-#include "state.h"
+#include "commonstate.h"
 #include "entity.h"
 #include "entitylist.h"
 #include "hud.h"
@@ -16,7 +16,7 @@
 /*
 This class manages the window and input for the game
 */
-class GameState: public State
+class GameState: public CommonState
 {
     public:
         GameState(GameObjects& gameObjects);

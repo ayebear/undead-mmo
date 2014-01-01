@@ -7,7 +7,7 @@
 #include "paths.h"
 
 LoginState::LoginState(GameObjects& gameObjects):
-    State(gameObjects),
+    CommonState(gameObjects),
     servers(Paths::masterServersConfig)
 {
     sf::Vector2f windowSize;

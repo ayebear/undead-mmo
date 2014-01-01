@@ -5,9 +5,9 @@
 #define ERRORSTATE_H
 
 #include "menu.h"
-#include "state.h"
+#include "commonstate.h"
 
-class ErrorState: public State
+class ErrorState: public CommonState
 {
     public:
         ErrorState(GameObjects& gameObjects);
