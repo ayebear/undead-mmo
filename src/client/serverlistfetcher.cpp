@@ -1,10 +1,11 @@
 #include "serverlistfetcher.h"
 #include "stringutils.h"
 #include "network.h"
+#include "paths.h"
 
 ServerListFetcher::ServerListFetcher()
 {
-    serverList.loadFromFile("servers.csv");
+    serverList.loadFromFile(Paths::serverListFile);
 }
 
 ServerListFetcher::ServerListFetcher(const std::string& filename):
