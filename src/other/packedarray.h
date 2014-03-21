@@ -5,7 +5,7 @@
 #define PACKEDARRAY_H
 
 #include <vector>
-#include "index.h"
+#include <utility>
 
 /*
 This class manages an array of objects in an efficient way, with good cache efficiency and minimal memory allocations.
@@ -99,17 +99,17 @@ class PackedArray
         {
             int internalId = elements.size();
             elements.push_back(obj);
-            int externalId = index.insert(internalId);
+            int externalId = addToIndex(internalId);
             reverseLookup.push_back(externalId);
             return externalId;
         }
 
-        // Same as above but calls default constructor of object
+        // Adds a new object and returns its ID
         int push()
         {
             int internalId = elements.size();
             elements.emplace_back();
-            int externalId = index.insert(internalId);
+            int externalId = addToIndex(internalId);
             reverseLookup.push_back(externalId);
             return externalId;
         }
@@ -135,10 +135,10 @@ class PackedArray
             if (validId(id)) // Make sure the ID is valid
             {
                 int internalId = index[id]; // Lookup the internal ID of the object
-                index.erase(id); // Remove the ID from the index
+                removeFromIndex(id); // Remove the ID from the index
                 int swappedId = swapErase(elements, internalId); // Remove the object
                 if (swappedId >= 0) // If another object was swapped
-                    index.update(reverseLookup[swappedId], internalId); // Update the swapped object's internal ID
+                    index[reverseLookup[swappedId]] = internalId; // Update the swapped object's internal ID
                 swapErase(reverseLookup, internalId); // Remove the ID from the reverse lookup
                 // (Needs to keep the array parallel with the elements array)
             }
@@ -150,6 +150,7 @@ class PackedArray
             elements.clear();
             reverseLookup.clear();
             index.clear();
+            freeList.clear();
         }
 
         // Returns the current index size
@@ -187,9 +188,36 @@ class PackedArray
         }
 
     private:
-        std::vector<Type> elements; // Inner array
+
+        // Adds an internal ID to the index, returning the new external ID
+        int addToIndex(int internalId)
+        {
+            int newId;
+            if (freeList.empty())
+            {
+                newId = index.size();
+                index.push_back(internalId);
+            }
+            else
+            {
+                newId = freeList.back();
+                freeList.pop_back();
+                index[newId] = internalId;
+            }
+            return newId;
+        }
+
+        // Removes an external ID from the index
+        void removeFromIndex(int externalId)
+        {
+            freeList.push_back(index[externalId]);
+            index[externalId] = -1;
+        }
+
+        std::vector<Type> elements; // Inner array containing the actual objects
         std::vector<int> reverseLookup; // This is used for deleting elements and updating the proper IDs in the normal lookup
-        Index<int> index; // This is used for accessing elements by their external ID
+        std::vector<int> index; // The index, which contains all of the internal IDs, and is accessed by external ID
+        std::vector<int> freeList; // The free "holes" in the index, used like a stack (used vector for clear function)
 
 };
 
