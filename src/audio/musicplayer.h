@@ -65,7 +65,7 @@ class MusicPlayer
         sf::Music music; // The currently playing music object
         bool shuffle; // Whether to shuffle or play the songs in order
         bool noMusic; // For more efficient updating
-        static const ConfigFile::Section defaultOptions;
+        static const cfg::File::ConfigMap defaultOptions;
 };
 
 #endif

@@ -51,7 +51,7 @@ class SoundPlayer
         std::map<std::string, sf::SoundBuffer> soundBuffers; // Contains the audio samples in memory
         std::vector<sf::Sound> playingSounds; // Contains the currently playing sound instances
         float volume;
-        static const ConfigFile::Section defaultOptions;
+        static const cfg::File::ConfigMap defaultOptions;
 };
 
 #endif

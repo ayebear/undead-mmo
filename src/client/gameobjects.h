@@ -27,7 +27,7 @@ class GameObjects: sf::NonCopyable
         sf::RenderWindow window; // The main window
         ClientNetwork netManager; // Handles communications with the server
         sf::Font font, fontBold, fontMono, fontMonoBold; // Some fonts
-        ConfigFile config; // The main configuration file
+        cfg::File config; // The main configuration file
         MusicPlayer music; // The music player
         SoundPlayer sound; // The sound effects player
 
@@ -35,7 +35,7 @@ class GameObjects: sf::NonCopyable
         void createWindow(const std::string&, int, int, bool, bool); // Create a new window
         void loadFonts(); // Loads font files
 
-        static const ConfigFile::ConfigMap defaultOptions;
+        static const cfg::File::ConfigMap defaultOptions;
 };
 
 #endif

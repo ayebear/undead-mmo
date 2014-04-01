@@ -6,41 +6,41 @@
 #include <string>
 #include "paths.h"
 
-const ConfigFile::ConfigMap GameObjects::defaultOptions = {
+const cfg::File::ConfigMap GameObjects::defaultOptions = {
     {"Window",{
-        {"useVerticalSync", makeOption(true)},
-        {"fullscreen", makeOption(true)},
-        {"windowWidth", makeOption(0)},
-        {"windowHeight", makeOption(0)}
+        {"useVerticalSync", cfg::makeOption(true)},
+        {"fullscreen", cfg::makeOption(true)},
+        {"windowWidth", cfg::makeOption(0)},
+        {"windowHeight", cfg::makeOption(0)}
         }
     },
     {"Credentials",{
-        {"server", Option("127.0.0.1")},
-        {"username", Option("test")},
-        {"password", Option("password")}
+        {"server", cfg::Option("127.0.0.1")},
+        {"username", cfg::Option("test")},
+        {"password", cfg::Option("password")}
         }
     },
     {"Hotkeys",{
-        {"moveUp", Option("Up")},
-        {"moveDown", Option("Down")},
-        {"moveLeft", Option("Left")},
-        {"moveRight", Option("Right")},
-        {"moveUpAlt", Option("W")},
-        {"moveDownAlt", Option("S")},
-        {"moveLeftAlt", Option("A")},
-        {"moveRightAlt", Option("D")},
-        {"toggleInventory", Option("Space")},
-        {"toggleInventoryAlt", Option("B")},
-        {"showChat", Option("Return")},
-        {"hideChat", Option("Escape")},
-        {"takeScreenshot", Option("F1")},
-        {"addSlot", Option("K")},
-        {"removeSlot", Option("L")}
+        {"moveUp", cfg::Option("Up")},
+        {"moveDown", cfg::Option("Down")},
+        {"moveLeft", cfg::Option("Left")},
+        {"moveRight", cfg::Option("Right")},
+        {"moveUpAlt", cfg::Option("W")},
+        {"moveDownAlt", cfg::Option("S")},
+        {"moveLeftAlt", cfg::Option("A")},
+        {"moveRightAlt", cfg::Option("D")},
+        {"toggleInventory", cfg::Option("Space")},
+        {"toggleInventoryAlt", cfg::Option("B")},
+        {"showChat", cfg::Option("Return")},
+        {"hideChat", cfg::Option("Escape")},
+        {"takeScreenshot", cfg::Option("F1")},
+        {"addSlot", cfg::Option("K")},
+        {"removeSlot", cfg::Option("L")}
         }
     },
     {"Developer",{
-        {"showFps", makeOption(false)},
-        {"rewriteConfigFile", makeOption(false)}
+        {"showFps", cfg::makeOption(false)},
+        {"rewriteConfigFile", cfg::makeOption(false)}
         }
     }
 };
@@ -56,18 +56,18 @@ GameObjects::GameObjects():
 GameObjects::~GameObjects()
 {
     window.close();
-    if (config.getOption("rewriteConfigFile", "Developer").asBool())
+    if (config("rewriteConfigFile", "Developer").toBool())
         config.writeToFile();
 }
 
 void GameObjects::setupWindow(const std::string& windowTitle)
 {
-    config.setSection("Window");
-    int windowWidth = config["windowWidth"].asInt();
-    int windowHeight = config["windowHeight"].asInt();
-    bool fullscreen = config["fullscreen"].asBool();
-    bool vsync = config["useVerticalSync"].asBool();
-    config.setSection();
+    config.useSection("Window");
+    int windowWidth = config("windowWidth").toInt();
+    int windowHeight = config("windowHeight").toInt();
+    bool fullscreen = config("fullscreen").toBool();
+    bool vsync = config("useVerticalSync").toBool();
+    config.useSection();
 
     createWindow(windowTitle, windowWidth, windowHeight, fullscreen, vsync);
 }

@@ -1,10 +1,11 @@
 #include "soundplayer.h"
 #include <iostream>
 
-const ConfigFile::Section SoundPlayer::defaultOptions = {
-    {"volume", makeOption(100, 0, 100)},
-    {"maxSounds", makeOption(50, 1, 200)}
-};
+const cfg::File::ConfigMap SoundPlayer::defaultOptions = {
+{"", {
+    {"volume", cfg::makeOption(100, 0, 100)},
+    {"maxSounds", cfg::makeOption(50, 1, 200)}
+}}};
 
 SoundPlayer::SoundPlayer()
 {
@@ -26,12 +27,12 @@ void SoundPlayer::loadFromConfig(const std::string& configPath)
 {
     // Load the sound files listed in the config file
     soundBuffers.clear();
-    ConfigFile soundConfig(configPath, defaultOptions, "", true);
-    setVolume(soundConfig["volume"].asFloat());
-    setMaxSounds(soundConfig["maxSounds"].asInt());
+    cfg::File soundConfig(configPath, defaultOptions, true);
+    setVolume(soundConfig("volume").toFloat());
+    setMaxSounds(soundConfig("maxSounds").toInt());
     for (auto& option: soundConfig.getSection("Sounds"))
     {
-        if (!soundBuffers[option.first].loadFromFile(option.second.asString()))
+        if (!soundBuffers[option.first].loadFromFile(option.second.toString()))
             soundBuffers.erase(option.first);
     }
 }

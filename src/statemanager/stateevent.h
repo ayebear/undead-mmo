@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <string>
-#include "option.h"
+#include "configoption.h"
 
 // This is used to identify the state
 typedef std::string StateId;

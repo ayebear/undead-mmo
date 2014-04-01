@@ -1,5 +1,5 @@
 #include "csvfile.h"
-#include "stringutils.h"
+#include "strlib.h"
 
 CsvFile::CsvFile()
 {
@@ -15,7 +15,7 @@ bool CsvFile::loadFromFile(const std::string& filename)
     bool status = false;
     lastFileRead = filename;
     std::vector<std::string> lines;
-    if (StringUtils::readLinesFromFile(filename, lines))
+    if (strlib::readLinesFromFile(filename, lines))
     {
         for (const std::string& l: lines)
             parseLine(l);
@@ -27,7 +27,7 @@ bool CsvFile::loadFromFile(const std::string& filename)
 void CsvFile::loadFromString(const std::string& str)
 {
     std::vector<std::string> lines;
-    StringUtils::getLinesFromString(str, lines);
+    strlib::getLinesFromString(str, lines);
     for (const std::string& l: lines)
             parseLine(l);
 }
@@ -39,7 +39,7 @@ bool CsvFile::writeToFile(const std::string& newFilename) const
         filename = lastFileRead;
     std::string str;
     writeToString(str);
-    return StringUtils::writeStringToFile(filename, str);
+    return strlib::writeStringToFile(filename, str);
 }
 
 void CsvFile::writeToString(std::string& str) const
@@ -136,7 +136,7 @@ void CsvFile::parseLine(const std::string& line)
         addCell("");
 
     // Do this for now so it at least partially works
-    //StringUtils::split(line, ",", rows.back());
+    //strlib::split(line, ",", rows.back());
 
     //std::cout << line << std::endl;
 }
@@ -144,7 +144,7 @@ void CsvFile::parseLine(const std::string& line)
 std::string CsvFile::escapeQuotes(std::string str) const
 {
     // Escape any quotes, and if any were escaped, or if there are any commas, then add quotes
-    if (StringUtils::replaceAll(str, "\"", "\"\"") || str.find(',') != std::string::npos)
+    if (strlib::replaceAll(str, "\"", "\"\"") || str.find(',') != std::string::npos)
         str = '"' + str + '"';
     return str;
 }

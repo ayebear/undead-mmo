@@ -1,5 +1,5 @@
 #include "serverlistfetcher.h"
-#include "stringutils.h"
+#include "strlib.h"
 #include "network.h"
 #include "paths.h"
 
@@ -16,7 +16,7 @@ ServerListFetcher::ServerListFetcher(const std::string& filename):
 
 bool ServerListFetcher::loadMasterServers(const std::string& filename)
 {
-    return StringUtils::readLinesFromFile(filename, masterServers, false);
+    return strlib::readLinesFromFile(filename, masterServers, false);
 }
 
 bool ServerListFetcher::refresh()

@@ -389,7 +389,7 @@ void GameState::handleWindowResized()
 
 void GameState::loadHotkeys()
 {
-    objects.config.setSection("Hotkeys");
+    objects.config.useSection("Hotkeys");
     const string keyNames[] = {
         "moveUp",
         "moveDown",
@@ -410,8 +410,8 @@ void GameState::loadHotkeys()
         "shoot"
         };
     for (const string& key: keyNames)
-        hotkeys.addKey(objects.config[key].asString());
-    objects.config.setSection();
+        hotkeys.addKey(objects.config(key).toString());
+    objects.config.useSection();
 
     /*
     auto hotkeysSection = GameObjects::defaultOptions.find("Hotkeys");
@@ -419,7 +419,7 @@ void GameState::loadHotkeys()
     {
         // The map is ordered so they are not loaded properly...
         for (auto& key: hotkeysSection->second)
-            hotkeys.addKey(objects.config[key.first].asString());
+            hotkeys.addKey(objects.config(key.first].asString());
     }
     */
 }

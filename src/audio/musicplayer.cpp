@@ -2,10 +2,11 @@
 #include <iostream>
 #include <algorithm>
 
-const ConfigFile::Section MusicPlayer::defaultOptions = {
-    {"volume", makeOption(70, 0, 100)},
-    {"shuffle", makeOption(true)}
-};
+const cfg::File::ConfigMap MusicPlayer::defaultOptions = {
+{"", {
+    {"volume", cfg::makeOption(70, 0, 100)},
+    {"shuffle", cfg::makeOption(true)}
+}}};
 
 MusicPlayer::MusicPlayer(const std::string& configPath)
 {
@@ -19,13 +20,13 @@ void MusicPlayer::loadListFromConfig(const std::string& configPath)
 {
     // Load the music sets from the config file into the map
     songs.clear();
-    ConfigFile musicConfig(configPath, defaultOptions, "", true);
-    setVolume(musicConfig["volume"].asFloat());
-    setShuffle(musicConfig["shuffle"].asBool());
+    cfg::File musicConfig(configPath, defaultOptions, true);
+    setVolume(musicConfig("volume").toFloat());
+    setShuffle(musicConfig("shuffle").toBool());
     for (auto& section: musicConfig)
         for (auto& option: section.second)
             if (!section.first.empty())
-                songs[section.first].push_back(option.second.asString());
+                songs[section.first].push_back(option.second.toString());
 }
 
 void MusicPlayer::start(const std::string& songSetName)

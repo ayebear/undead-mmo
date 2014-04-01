@@ -53,11 +53,11 @@ LoginState::LoginState(GameObjects& gameObjects):
     passwordBox.setUp(fontSize, objects.fontBold, windowSize.x / 4, windowSize.y / 1.4, windowSize.x / 8, true);
     directConnectBox.setUp(fontSize, objects.fontBold, windowSize.x / 1.5, windowSize.y / 1.4, windowSize.x / 8, false);
 
-    objects.config.setSection("Credentials");
-    string username = objects.config["username"].asString();
-    string password = objects.config["password"].asString();
-    string ip = objects.config["server"].asString();
-    objects.config.setSection();
+    objects.config.useSection("Credentials");
+    string username = objects.config("username").toString();
+    string password = objects.config("password").toString();
+    string ip = objects.config("server").toString();
+    objects.config.useSection();
     usernameBox.setString(username);
     passwordBox.setString(password);
     directConnectBox.setString(ip);
