@@ -4,7 +4,7 @@
 #include "accountindex.h"
 #include <sstream>
 #include <fstream>
-#include "option.h"
+#include "configoption.h"
 
 using namespace std;
 

@@ -20,7 +20,7 @@ AccountDb::AccountDb(const string& dir)
 bool AccountDb::loadAccountList(const string& dir)
 {
     accountDir = dir;
-    StringUtils::mustEndWith(accountDir, "/");
+    strlib::mustEndWith(accountDir, "/");
     return accountList.loadAccountIndex(accountDir + accountListFilename);
 }
 
@@ -31,12 +31,12 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
     if (accountId > 0) // Make sure the account ID is valid
     {
         string accountFilename = accountIdToFilename(accountId);
-        ConfigFile accountCfg;
+        cfg::File accountCfg;
         if (accountCfg.loadFromFile(accountFilename)) // Load the account config file
         {
-            if (accountCfg["password"].asString() == password) // Check if the password is correct!
+            if (accountCfg("password").toString() == password) // Check if the password is correct!
             {
-                if (!accountCfg["banned"].asBool()) // Check if the account is banned
+                if (!accountCfg("banned").toBool()) // Check if the account is banned
                 {
                     pData.loadFromConfig(accountCfg); // Load the data from the config file into the player data object
                     pData.username = username; // Make sure we set the username!
@@ -65,7 +65,7 @@ int AccountDb::createAccount(const PlayerData& pData)
         if (newAccountId > 0) // If the account was added to the list successfully
         {
             string accountFilename = accountIdToFilename(newAccountId);
-            ConfigFile accountCfg;
+            cfg::File accountCfg;
             pData.saveToConfig(accountCfg); // Set the values in the config file in memory from the player data object
 
             if (accountCfg.writeToFile(accountFilename)) // Write the account to a file
@@ -84,7 +84,7 @@ bool AccountDb::saveAccount(const PlayerData& pData)
     if (accountId > 0)
     {
         string accountFilename = accountIdToFilename(accountId);
-        ConfigFile accountCfg;
+        cfg::File accountCfg;
         pData.saveToConfig(accountCfg); // Save the player data to a config file in memory
         status = accountCfg.writeToFile(accountFilename); // Write the config file in memory to the file
     }

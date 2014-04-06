@@ -23,9 +23,9 @@ class PlayerData
 {
     public:
         PlayerData();
-        PlayerData(ConfigFile&);
-        void loadFromConfig(ConfigFile&);
-        void saveToConfig(ConfigFile&) const;
+        PlayerData(cfg::File&);
+        void loadFromConfig(cfg::File&);
+        void saveToConfig(cfg::File&) const;
 
         string username;
         string passwordHash;

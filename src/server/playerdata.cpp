@@ -13,31 +13,31 @@ PlayerData::PlayerData()
 {
 }
 
-PlayerData::PlayerData(ConfigFile& cfg)
+PlayerData::PlayerData(cfg::File& cfg)
 {
     loadFromConfig(cfg);
 }
 
-void PlayerData::loadFromConfig(ConfigFile& cfg)
+void PlayerData::loadFromConfig(cfg::File& cfg)
 {
-    passwordHash = cfg["password"].asString();
-    salt = cfg["salt"].asInt();
-    health = cfg["health"].asInt();
-    level = cfg["level"].asInt();
-    banned = cfg["banned"].asBool();
-    positionX = cfg["positionX"].asDouble();
-    positionY = cfg["positionY"].asDouble();
+    passwordHash = cfg("password").toString();
+    salt = cfg("salt").toInt();
+    health = cfg("health").toInt();
+    level = cfg("level").toInt();
+    banned = cfg("banned").toBool();
+    positionX = cfg("positionX").toDouble();
+    positionY = cfg("positionY").toDouble();
     inventory.loadFromConfig(cfg);
 }
 
-void PlayerData::saveToConfig(ConfigFile& cfg) const
+void PlayerData::saveToConfig(cfg::File& cfg) const
 {
-    cfg["password"].setString(passwordHash);
-    cfg["salt"].set(salt);
-    cfg["health"].set(health);
-    cfg["level"].set(level);
-    cfg["banned"].set(banned);
-    cfg["positionX"].set(positionX);
-    cfg["positionY"].set(positionY);
+    cfg("password") = passwordHash;
+    cfg("salt") = salt;
+    cfg("health") = health;
+    cfg("level") = level;
+    cfg("banned") = banned;
+    cfg("positionX") = positionX;
+    cfg("positionY") = positionY;
     inventory.saveToConfig(cfg);
 }

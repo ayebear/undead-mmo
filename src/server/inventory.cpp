@@ -34,26 +34,26 @@ unsigned int Inventory::getSize() const
     return maxSize;
 }*/
 
-void Inventory::loadFromConfig(ConfigFile& cfg)
+void Inventory::loadFromConfig(cfg::File& cfg)
 {
-    cfg.setSection("Inventory");
-    setSize(cfg["Size"].asInt());
-    leftSlotId = cfg["LeftSlotId"].asInt();
-    rightSlotId = cfg["RightSlotId"].asInt();
+    cfg.useSection("Inventory");
+    setSize(cfg("Size").toInt());
+    leftSlotId = cfg("LeftSlotId").toInt();
+    rightSlotId = cfg("RightSlotId").toInt();
     for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots in the config file
-        itemSlots[i].fromString(cfg[std::to_string(i)].asString()); // Read the option as a string and convert it to an item code
-    cfg.setSection();
+        itemSlots[i].fromString(cfg(std::to_string(i)).toString()); // Read the option as a string and convert it to an item code
+    cfg.useSection();
 }
 
-void Inventory::saveToConfig(ConfigFile& cfg) const
+void Inventory::saveToConfig(cfg::File& cfg) const
 {
-    cfg.setSection("Inventory");
-    cfg["Size"].set(getSize());
-    cfg["LeftSlotId"].set(leftSlotId);
-    cfg["RightSlotId"].set(rightSlotId);
+    cfg.useSection("Inventory");
+    cfg("Size") = getSize();
+    cfg("LeftSlotId") = leftSlotId;
+    cfg("RightSlotId") = rightSlotId;
     for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots
-        cfg[std::to_string(i)].setString(itemSlots[i].toString()); // Convert the slot ID and item codes to strings and save them to the config file
-    cfg.setSection();
+        cfg(std::to_string(i)) = itemSlots[i].toString(); // Convert the slot ID and item codes to strings and save them to the config file
+    cfg.useSection();
 }
 
 bool Inventory::addItem(Entity* ent)

@@ -45,11 +45,11 @@ class Server
 
         static const float desiredFrameTime;
         static const float frameTimeTolerance;
-        static const ConfigFile::Section defaultOptions;
+        static const cfg::File::ConfigMap defaultOptions;
 
         float elapsedTime;
         sf::Clock clock, warningTimer;
-        ConfigFile config;
+        cfg::File config;
         ServerNetwork netManager;
         AccountDb accounts;
         ClientManager clients;

@@ -23,8 +23,8 @@ class Inventory
         unsigned int getCurrentSize() const;
         void setSize(unsigned int);
         unsigned int getSize() const;
-        void loadFromConfig(ConfigFile&);
-        void saveToConfig(ConfigFile&) const;
+        void loadFromConfig(cfg::File&);
+        void saveToConfig(cfg::File&) const;
 
         // Item functions
         bool addItem(Entity*); // For picking up an item from the map and adding it to the inventory

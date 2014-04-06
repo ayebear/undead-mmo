@@ -11,21 +11,22 @@ const float Server::desiredFrameTime = 1.0 / 120.0;
 const float Server::frameTimeTolerance = -10.0 / 120.0;
 
 // TODO: Add new server options from GDoc
-const ConfigFile::Section Server::defaultOptions = {
-    {"port", makeOption(serverPort, 1, 65536)},
-    {"map", Option("serverdata/maps/2.map")},
-    {"maxZombies", makeOption(20, 0)},
-    {"showExternalIp", makeOption(false)},
-    {"inventorySize", makeOption(16, 1, 1000)},
-    {"accountsDirectory", Option("serverdata/accounts/")}
-};
+const cfg::File::ConfigMap Server::defaultOptions = {
+{"", {
+    {"port", cfg::makeOption(serverPort, 1, 65536)},
+    {"map", cfg::makeOption("serverdata/maps/2.map")},
+    {"maxZombies", cfg::makeOption(20, 0)},
+    {"showExternalIp", cfg::makeOption(false)},
+    {"inventorySize", cfg::makeOption(16, 1, 1000)},
+    {"accountsDirectory", cfg::makeOption("serverdata/accounts/")}
+}}};
 
 Server::Server():
-    config(Paths::serverConfigFile, defaultOptions, "", true), // Config file gets loaded here
-    netManager(clients, config["port"].asInt(),
+    config(Paths::serverConfigFile, defaultOptions, true), // Config file gets loaded here
+    netManager(clients, config("port").toInt(),
         bind(&Server::logOutClient, this, placeholders::_1),
         bind(&Server::processPacket, this, placeholders::_1)),
-    accounts(config["accountsDirectory"].asString())
+    accounts(config("accountsDirectory").toString())
 {
     setup();
 }
@@ -36,19 +37,19 @@ void Server::setup()
     cout << "Undead MMO Server v0.0.15.0 Dev\n\n";
     cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
 
-    if (config["showExternalIp"].asBool())
+    if (config("showExternalIp").toBool())
         cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
     cout << endl;
 
     // Load the map file (in the future this can also be randomly generated)
-    tileMap.loadFromFile(config["map"].asString());
+    tileMap.loadFromFile(config("map").toString());
 
     Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
 
-    inventorySize = config["inventorySize"].asInt();
+    inventorySize = config("inventorySize").toInt();
 
     // Spawn some test zombies
-    int maxZombies = config["maxZombies"].asInt();
+    int maxZombies = config("maxZombies").toInt();
     for (int x = 0; x < maxZombies; x++)
     {
         auto* zombie = entList.add(Entity::Zombie);
