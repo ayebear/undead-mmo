@@ -26,6 +26,7 @@
 			<Add directory="src/shared" />
 			<Add directory="src/other" />
 			<Add directory="src/entities" />
+			<Add directory="src/configfile" />
 		</Compiler>
 		<Linker>
 			<Add library="sfml-graphics" />
@@ -37,6 +38,12 @@
 			<Add library="openal" />
 			<Add directory="lib/linux/sfml2/lib" />
 		</Linker>
+		<Unit filename="src/configfile/configfile.cpp" />
+		<Unit filename="src/configfile/configfile.h" />
+		<Unit filename="src/configfile/configoption.cpp" />
+		<Unit filename="src/configfile/configoption.h" />
+		<Unit filename="src/configfile/strlib.cpp" />
+		<Unit filename="src/configfile/strlib.h" />
 		<Unit filename="src/entities/entity.cpp" />
 		<Unit filename="src/entities/entity.h" />
 		<Unit filename="src/entities/entityalloc.cpp" />
@@ -55,17 +62,10 @@
 		<Unit filename="src/graphics/tilemap.h" />
 		<Unit filename="src/graphics/tileset.cpp" />
 		<Unit filename="src/graphics/tileset.h" />
-		<Unit filename="src/other/configfile.cpp" />
-		<Unit filename="src/other/configfile.h" />
 		<Unit filename="src/other/csvfile.cpp" />
 		<Unit filename="src/other/csvfile.h" />
-		<Unit filename="src/other/index.h" />
 		<Unit filename="src/other/linkedqueue.h" />
-		<Unit filename="src/other/option.cpp" />
-		<Unit filename="src/other/option.h" />
 		<Unit filename="src/other/packedarray.h" />
-		<Unit filename="src/other/stringutils.cpp" />
-		<Unit filename="src/other/stringutils.h" />
 		<Unit filename="src/server/accountdb.cpp" />
 		<Unit filename="src/server/accountdb.h" />
 		<Unit filename="src/server/accountindex.cpp" />

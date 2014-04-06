@@ -31,6 +31,7 @@
 			<Add directory="src/graphics" />
 			<Add directory="src/gui" />
 			<Add directory="src/statemanager" />
+			<Add directory="src/configfile" />
 		</Compiler>
 		<Linker>
 			<Add library="sfml-graphics" />
@@ -51,7 +52,6 @@
 		<Unit filename="src/client/chat.h" />
 		<Unit filename="src/client/clientnetwork.cpp" />
 		<Unit filename="src/client/clientnetwork.h" />
-		<Unit filename="src/client/commonstate.h" />
 		<Unit filename="src/client/entitylist.cpp" />
 		<Unit filename="src/client/entitylist.h" />
 		<Unit filename="src/client/errorstate.cpp" />
@@ -75,6 +75,12 @@
 		<Unit filename="src/client/serverlistfetcher.h" />
 		<Unit filename="src/client/undeadmmo.cpp" />
 		<Unit filename="src/client/undeadmmo.h" />
+		<Unit filename="src/configfile/configfile.cpp" />
+		<Unit filename="src/configfile/configfile.h" />
+		<Unit filename="src/configfile/configoption.cpp" />
+		<Unit filename="src/configfile/configoption.h" />
+		<Unit filename="src/configfile/strlib.cpp" />
+		<Unit filename="src/configfile/strlib.h" />
 		<Unit filename="src/entities/entity.cpp" />
 		<Unit filename="src/entities/entity.h" />
 		<Unit filename="src/entities/entityalloc.cpp" />
@@ -111,19 +117,12 @@
 		<Unit filename="src/gui/textitem.h" />
 		<Unit filename="src/gui/textitemlist.cpp" />
 		<Unit filename="src/gui/textitemlist.h" />
-		<Unit filename="src/other/configfile.cpp" />
-		<Unit filename="src/other/configfile.h" />
 		<Unit filename="src/other/csvfile.cpp" />
 		<Unit filename="src/other/csvfile.h" />
 		<Unit filename="src/other/gamehotkeys.cpp" />
 		<Unit filename="src/other/gamehotkeys.h" />
-		<Unit filename="src/other/index.h" />
 		<Unit filename="src/other/linkedqueue.h" />
-		<Unit filename="src/other/option.cpp" />
-		<Unit filename="src/other/option.h" />
 		<Unit filename="src/other/packedarray.h" />
-		<Unit filename="src/other/stringutils.cpp" />
-		<Unit filename="src/other/stringutils.h" />
 		<Unit filename="src/shared/ipport.cpp" />
 		<Unit filename="src/shared/ipport.h" />
 		<Unit filename="src/shared/itemcode.cpp" />
