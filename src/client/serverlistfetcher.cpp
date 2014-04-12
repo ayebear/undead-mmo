@@ -36,7 +36,7 @@ bool ServerListFetcher::refresh()
     return false;
 }
 
-CsvFile& ServerListFetcher::getServerList()
-{
-    return serverList;
-}
+//CsvFile& ServerListFetcher::getServerList()
+//{
+//    return serverList;
+//}

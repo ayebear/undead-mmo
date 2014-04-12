@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-#include "csvfile.h"
+//#include "csvfile.h"
+#include "configfile.h"
 
 class ServerListFetcher
 {
@@ -12,11 +13,12 @@ class ServerListFetcher
         ServerListFetcher(const std::string&);
         bool loadMasterServers(const std::string&);
         bool refresh();
-        CsvFile& getServerList();
+        //CsvFile& getServerList();
 
     private:
         std::vector<std::string> masterServers;
-        CsvFile serverList;
+        //CsvFile serverList;
+        cfg::File serverList;    // Updated for configFile
 };
 
 #endif

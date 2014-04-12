@@ -29,7 +29,7 @@ namespace Paths
     const std::string clientConfigFile = "game.cfg";
     const std::string serverConfigFile = "server.cfg";
     const std::string masterServersConfig = "data/cfg/masterservers.txt";
-    const std::string serverListFile = "data/cfg/servers.csv";
+    const std::string serverListFile = "data/cfg/servers.cfg";  // updated for configFile
     const std::string musicConfigFile = "data/cfg/music.cfg";
     const std::string soundsConfigFile = "data/cfg/sounds.cfg";
 }
