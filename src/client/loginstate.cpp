@@ -240,20 +240,8 @@ void LoginState::refreshServers()
 void LoginState::displayServers()
 {
     const sf::Color textColor(190, 190, 190, 255);
-    cfg::File servercfg(Paths::serverListFile);
     textItemList.clearList();
-    /*
-    for (auto& server: servers.getServerList())
-    {
-        // We can have an enum for all of the columns
-        if (server.size() >= 2)
-        {
-            string displayName = server[0] + " (" + server[1] + ")";
-            textItemList.addItemWithHiddenText(displayName, server[1], textColor);
-        }
-    }
-    */
-
+    cfg::File& servercfg = servers.getServerList();
     for (auto& section : servercfg)
     {
         // If there is a port listed, append the colon and the port number
