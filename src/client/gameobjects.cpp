@@ -46,7 +46,7 @@ const cfg::File::ConfigMap GameObjects::defaultOptions = {
 };
 
 GameObjects::GameObjects():
-    config(Paths::clientConfigFile, defaultOptions, true), // Config file gets loaded here
+    config(Paths::clientConfigFile, defaultOptions, cfg::File::AllFlags), // Config file gets loaded here
     music(Paths::musicConfigFile),
     sound(Paths::soundsConfigFile)
 {
@@ -56,8 +56,6 @@ GameObjects::GameObjects():
 GameObjects::~GameObjects()
 {
     window.close();
-    if (config("rewriteConfigFile", "Developer").toBool())
-        config.writeToFile();
 }
 
 void GameObjects::setupWindow(const std::string& windowTitle)

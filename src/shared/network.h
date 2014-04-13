@@ -12,7 +12,8 @@ const unsigned short clientPort = 1338;
 
 namespace Network
 {
-    bool downloadFile(const std::string&, std::string&);
+    // Downloads a file from an HTTP link, and stores the contents into a string
+    bool downloadFile(const std::string& url, std::string& out);
 }
 
 #endif

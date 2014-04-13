@@ -4,13 +4,13 @@
 	<Project>
 		<Option title="ZombieGameWindows" />
 		<Option pch_mode="2" />
-		<Option compiler="tdm_gcc_compiler_64-bit" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
 				<Option output="ZombieGameDebug" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Windows/Debug/" />
 				<Option type="1" />
-				<Option compiler="tdm_gcc_compiler_64-bit" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
@@ -27,7 +27,7 @@
 				<Option output="ZombieGame" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Windows/Release/" />
 				<Option type="1" />
-				<Option compiler="tdm_gcc_compiler_64-bit" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -59,7 +59,6 @@
 		</Compiler>
 		<Linker>
 			<Add directory="lib/windows/sfml2/lib" />
-			<Add directory="lib/windows/sfml2/extlibs/libs-mingw/x64" />
 		</Linker>
 		<Unit filename="src/audio/musicplayer.cpp" />
 		<Unit filename="src/audio/musicplayer.h" />

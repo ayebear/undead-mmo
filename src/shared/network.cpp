@@ -8,9 +8,6 @@
 bool Network::downloadFile(const std::string& url, std::string& out)
 {
     bool status = false;
-
-    std::cout << "Downloading " << url << "... ";
-
     auto slash = url.find('/');
     if (slash != std::string::npos)
     {
@@ -27,11 +24,5 @@ bool Network::downloadFile(const std::string& url, std::string& out)
             status = true;
         }
     }
-
-    if (status)
-        std::cout << "Successful!\n";
-    else
-        std::cout << "Error.\n";
-
     return status;
 }

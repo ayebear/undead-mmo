@@ -4,13 +4,13 @@
 	<Project>
 		<Option title="ZombieServerWindows" />
 		<Option pch_mode="2" />
-		<Option compiler="tdm_gcc_compiler_64-bit" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
 				<Option output="ZombieServerDebug" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Windows/Debug/" />
 				<Option type="1" />
-				<Option compiler="tdm_gcc_compiler_64-bit" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-std=c++11" />
 					<Add option="-g" />
@@ -20,14 +20,13 @@
 					<Add library="sfml-window-d" />
 					<Add library="sfml-system-d" />
 					<Add library="sfml-network-d" />
-					<Add library="sfml-audio-d" />
 				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="ZombieServer" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Windows/Release/" />
 				<Option type="1" />
-				<Option compiler="tdm_gcc_compiler_64-bit" />
+				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-std=c++11" />
@@ -39,7 +38,6 @@
 					<Add library="sfml-window" />
 					<Add library="sfml-system" />
 					<Add library="sfml-network" />
-					<Add library="sfml-audio" />
 				</Linker>
 			</Target>
 		</Build>
@@ -50,17 +48,10 @@
 			<Add directory="src/shared" />
 			<Add directory="src/other" />
 			<Add directory="src/entities" />
-			<Add directory="src/es" />
 			<Add directory="src/configfile" />
 		</Compiler>
 		<Linker>
-			<Add library="sfml-graphics" />
-			<Add library="sfml-window" />
-			<Add library="sfml-system" />
-			<Add library="sfml-network" />
-			<Add library="sfml-audio" />
 			<Add directory="lib/windows/sfml2/lib" />
-			<Add directory="lib/windows/sfml2/extlibs/libs-mingw/x64" />
 		</Linker>
 		<Unit filename="src/configfile/configfile.cpp" />
 		<Unit filename="src/configfile/configfile.h" />

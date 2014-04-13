@@ -27,7 +27,7 @@ void SoundPlayer::loadFromConfig(const std::string& configPath)
 {
     // Load the sound files listed in the config file
     soundBuffers.clear();
-    cfg::File soundConfig(configPath, defaultOptions, true);
+    cfg::File soundConfig(configPath, defaultOptions, cfg::File::Warnings | cfg::File::Errors);
     setVolume(soundConfig("volume").toFloat());
     setMaxSounds(soundConfig("maxSounds").toInt());
     for (auto& option: soundConfig.getSection("Sounds"))
