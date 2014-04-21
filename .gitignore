@@ -2,6 +2,7 @@
 /*.sh
 /*.dll
 /bin/
+/lib/
 obj/
 ZombieGame
 ZombieServer
