@@ -4,3 +4,6 @@
 [submodule "src/netlib"]
 	path = src/netlib
 	url = https://github.com/ayebear/netlib.git
+[submodule "src/ocs"]
+	path = src/ocs
+	url = git://git.code.sf.net/p/objectcomponentsystem/code
