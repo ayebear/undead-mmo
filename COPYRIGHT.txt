@@ -1,7 +1,8 @@
-Copyright (C) 2013
+Copyright (C) 2013-2014
 Eric Hebert (ayebear/calcfreak89)
 Miles Combs (undisclosed1)
 Kevin Miller (lastresort92)
+Adam Magness (zeroadam)
 Other contributors
 
 See the file LICENSE.txt for copying conditions.
