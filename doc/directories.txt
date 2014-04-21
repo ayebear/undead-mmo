@@ -6,8 +6,6 @@ data/
     Resources that the client loads, such as textures and audio.
 doc/
     Documentation on everything.
-lib/
-    Any libraries that the code depends on.
 projects/
     IDE projects that are properly setup to point to the libraries and code for different operating systems.
     These use relative paths and should be placed in the root of the git repository folder.

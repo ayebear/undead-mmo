@@ -11,7 +11,7 @@ lowerCamelCase for variables/objects/functions/constants
 UpperCamelCase for classes/types
     Examples:
         class MyClass;
-        typedef unsigned int SomeType;
+        using SomeType = unsigned int;
         
 1 .h file and 1 .cpp file for each class
     .h file must use include guards and NOT #pragma
@@ -45,23 +45,32 @@ Always use const when possible:
     const functions for functions that do not modify anything in classes
     const variables for variables that should never change during program execution
 
-Curly brackets should all be on their own line. It makes things easier to read and less cluttered.
+Curly braces should all be on their own line. It makes things easier to read and less dense.
     Example:
         void someFunction()
         {
             // Do something...
         }
-        vs:
+    Not:
         void someFunction() {
             // Do something...
         }
 
-Function prototypes should only have data types without variable names!
-    We could change this later maybe...
-        Example:
-        void someFunc(int);
-            vs:
-        void someFunc(int someVar);
+Curly braces should not be used if only 1 line is needed. Just put the line of code after the if statement/loop.
+    With the above curly brace style, it should be easy not to make mistakes where multiple lines are written
+    after the statement without curly braces, because you should be able to see the curly brace between the
+    statement and the body of code.
+    Example:
+        if (something)
+            doSomething();
+
+If statements, for/while loops, etc. should have a space after them:
+    Like this:
+        if (something == 5)
+    Not this:
+        if(something == 5)
+    Also not this:
+        if( something == 5 )
 
 Global variables and singletons are prohibited!
     If an object needs access to another object, just pass a reference or pointer to it!
