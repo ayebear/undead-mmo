@@ -53,7 +53,7 @@ void GameState::onPop()
 
 void GameState::onStart()
 {
-    objects.music.start("Game");
+    objects.music.start("game");
 }
 
 void GameState::handleEvents()

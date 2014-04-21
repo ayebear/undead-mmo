@@ -23,10 +23,11 @@ void MusicPlayer::loadListFromConfig(const std::string& configPath)
     cfg::File musicConfig(configPath, defaultOptions, cfg::File::Warnings | cfg::File::Errors);
     setVolume(musicConfig("volume").toFloat());
     setShuffle(musicConfig("shuffle").toBool());
-    for (auto& section: musicConfig)
-        for (auto& option: section.second)
-            if (!section.first.empty())
-                songs[section.first].push_back(option.second.toString());
+    for (auto& arr: musicConfig.getSection("Music"))
+    {
+        for (auto& option: arr.second)
+            songs[arr.first].push_back(option);
+    }
 }
 
 void MusicPlayer::start(const std::string& songSetName)

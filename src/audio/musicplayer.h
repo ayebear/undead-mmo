@@ -20,20 +20,21 @@ To use this class, you can simply create a MusicPlayer object,
 Example usage:
 #include "musicplayer.h"
 MusicPlayer music("music.cfg");
-music.start("CoolSet");
+music.start("coolSet");
 
 Example music.cfg file:
     volume = 70
     shuffle = true
-    [CoolSet]
-    someTrack = sometrack.ogg
-    anotherTrack = sometrack2.ogg
+    [Music]
+    coolSet = {
+        "someTrack.ogg",
+        "anotherTrack.ogg"
+    }
 
 TODO:
     Make the public interface a bit simpler
     Use a thread or callback to get rid of the update function
     Support pausing/replaying/next/back
-    Store and allow getting the track names from the config file
     Handle loading filenames from other sources besides config files
     Support audio spatialization
 */
@@ -57,7 +58,7 @@ class MusicPlayer
         void checkSongId(); // Checks if the current ID is valid, otherwise it resets it
         void shuffleSongs(); // Shuffles the current song list
 
-        typedef std::vector<std::string> SongList; // A single list of music filenames
+        using SongList = std::vector<std::string>; // A single list of music filenames
         std::map<std::string, SongList> songs; // Stores all of the song sets
         unsigned int currentSongId; // The currently playing song
         std::string currentSongSet; // The currently playing set of songs

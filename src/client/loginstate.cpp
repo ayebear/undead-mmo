@@ -70,7 +70,7 @@ LoginState::~LoginState()
 
 void LoginState::onStart()
 {
-    objects.music.start("Menu");
+    objects.music.start("menu");
     displayServers();
 }
 
