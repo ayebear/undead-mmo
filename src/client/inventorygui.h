@@ -6,9 +6,9 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include "slot.h"
 #include "textitemlist.h"
-#include "clientnetwork.h"
 #include "tileset.h"
 
 class InventoryGUI: public sf::Drawable
@@ -44,17 +44,14 @@ class InventoryGUI: public sf::Drawable
         void handleMouseMoved(sf::Event);
         void handleMouseClicked(sf::Event);
 
-        void processPackets(ClientNetwork&);
+        void handleResizePacket(sf::Packet&);
+        void handleUpdatePacket(sf::Packet&);
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
 
         void setUpSlots(int);
-
-        void handleResizePacket(sf::Packet&);
-        void handleUpdatePacket(sf::Packet&);
-
         void updateSlot(unsigned int, int, int);
 
         static TileSet itemTextures;

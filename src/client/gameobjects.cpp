@@ -46,7 +46,9 @@ const cfg::File::ConfigMap GameObjects::defaultOptions = {
 };
 
 GameObjects::GameObjects():
-    config(Paths::clientConfigFile, defaultOptions, cfg::File::AllFlags), // Config file gets loaded here
+    accountClient(client),
+    packetBuilder(client),
+    config(Paths::clientConfigFile, defaultOptions, cfg::File::AllFlags),
     music(Paths::musicConfigFile),
     sound(Paths::soundsConfigFile)
 {

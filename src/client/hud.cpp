@@ -2,6 +2,7 @@
 // See the file LICENSE.txt for copying conditions.
 
 #include "hud.h"
+#include "packet.h"
 
 Hud::Hud()
 {
@@ -42,6 +43,11 @@ void Hud::setUp(GameObjects& objects)
     infectionBar.setUp(infectionBarName, infectionBarPos, infectionBarSize, 0, 50, 100, 2, statusBarBackgroundCol, infectionBarFillColor, objects.fontBold, false, true);
 
     inventory.setUp(1, sf::FloatRect(.7, .3, .3, .6), objects.fontBold, objects.window);
+
+    // Setup callbacks
+    using namespace std::placeholders;
+    objects.client.registerCallback(Packet::InventoryResize, std::bind(&InventoryGUI::handleResizePacket, inventory, _1));
+    objects.client.registerCallback(Packet::InventoryUpdate, std::bind(&InventoryGUI::handleUpdatePacket, inventory, _1));
 }
 
 void Hud::handleMouseMoved(sf::Event& event, sf::RenderWindow& window)

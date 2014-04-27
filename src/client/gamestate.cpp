@@ -39,13 +39,13 @@ void GameState::onPush()
 {
     mouseMoved = true;
     theHud.chat.clear();
-    theHud.chat.setUsername(objects.netManager.getUsername());
+    theHud.chat.setUsername(objects.accountClient.getUsername());
     inventoryKeyReleased = true;
 }
 
 void GameState::onPop()
 {
-    objects.netManager.logOut();
+    objects.accountClient.logOut();
     myPlayer = nullptr;
     myPlayerId = 0;
     entList.clear();
@@ -59,7 +59,7 @@ void GameState::onStart()
 void GameState::handleEvents()
 {
     // Exit the game if the server disconnects
-    if (!objects.netManager.isConnected())
+    if (!objects.client.isConnected())
     {
         stateEvent.popState();
         return;
@@ -123,18 +123,9 @@ void GameState::handleEvents()
 void GameState::update()
 {
     objects.music.update();
-
-    if (!tileMap.isReady())
-        processMapDataPackets();
-
-    processEntityPackets();
-
-    if (myPlayer == nullptr)
-        processOnLogInPackets();
+    objects.client.update();
 
     entList.update(elapsedTime);
-
-    theHud.inventory.processPackets(objects.netManager);
 
     updateGameView();
 
@@ -300,7 +291,7 @@ void GameState::handleInput()
                 inputPacket << Packet::InputType::StopMoving;
             }
 
-            objects.netManager.sendPacketUdp(inputPacket);
+            objects.client.tcpSend(inputPacket);
         }
     }
     elapsedTime = clock.restart().asSeconds();
@@ -329,47 +320,37 @@ void GameState::sendAngleInputPacket()
     {
         sf::Packet anglePacket;
         anglePacket << Packet::Input << Packet::InputType::ChangeVisualAngle << currentAngle;
-        objects.netManager.sendPacketUdp(anglePacket);
+        objects.client.tcpSend(anglePacket);
         lastSentAngle = currentAngle;
         angleTimer.restart();
     }
 }
 
-void GameState::processEntityPackets()
+void GameState::processEntityPacket(sf::Packet& packet)
 {
-    while (objects.netManager.arePackets(Packet::EntityUpdate))
+    EID entId;
+    int count = 0;
+    while (packet >> entId)
     {
-        EID entId;
-        sf::Packet& packet = objects.netManager.getPacket(Packet::EntityUpdate);
-        int count = 0;
-        while (packet >> entId)
-        {
-            entList.updateEntity(entId, packet);
-            ++count;
-        }
-        if (count >= 10)
-            cout << "Updated " << count << " entities from server.\n";
-        objects.netManager.popPacket(Packet::EntityUpdate);
+        entList.updateEntity(entId, packet);
+        ++count;
     }
+    if (count >= 10)
+        cout << "Updated " << count << " entities from server.\n";
 }
 
-void GameState::processOnLogInPackets()
+void GameState::processOnLogInPacket(sf::Packet& packet)
 {
-    while (objects.netManager.arePackets(Packet::OnSuccessfulLogIn))
-    {
-        objects.netManager.getPacket(Packet::OnSuccessfulLogIn) >> myPlayerId;
-        objects.netManager.popPacket(Packet::OnSuccessfulLogIn);
-    }
-    myPlayer = entList.find(myPlayerId);
+    if (packet >> myPlayerId)
+        myPlayer = entList.find(myPlayerId);
 }
 
-void GameState::processMapDataPackets()
+void GameState::processMapDataPacket(sf::Packet& packet)
 {
-    while (objects.netManager.arePackets(Packet::MapData))
+    if (!tileMap.isReady())
     {
-        tileMap.loadFromPacket(objects.netManager.getPacket(Packet::MapData));
+        tileMap.loadFromPacket(packet);
         Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
-        objects.netManager.popPacket(Packet::MapData);
         cout << "Received map from server. Size: " << tileMap.getWidth() << " by " << tileMap.getHeight() << ".\n";
     }
 }

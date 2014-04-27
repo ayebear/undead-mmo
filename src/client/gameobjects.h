@@ -5,10 +5,12 @@
 #define GAMEOBJECTS_H
 
 #include <SFML/Graphics.hpp>
-#include "clientnetwork.h"
 #include "configfile.h"
 #include "musicplayer.h"
 #include "soundplayer.h"
+#include "client.h"
+#include "accountclient.h"
+#include "packetbuilder.h"
 
 /*
 This class contains the main game objects, such as the window, networking, config file, and fonts.
@@ -25,7 +27,9 @@ class GameObjects: sf::NonCopyable
         sf::VideoMode vidMode; // Window size, color settings, etc.
         sf::Vector2u windowSize; // The current window size (if we decide to make the game resizable, this will need to be a function)
         sf::RenderWindow window; // The main window
-        ClientNetwork netManager; // Handles communications with the server
+        net::Client client; // Used for communicating with a server
+        AccountClient accountClient; // For handling logging in and creating accounts
+        PacketBuilder packetBuilder; // Creates and sends game-specific packets
         sf::Font font, fontBold, fontMono, fontMonoBold; // Some fonts
         cfg::File config; // The main configuration file
         MusicPlayer music; // The music player

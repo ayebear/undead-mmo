@@ -220,20 +220,6 @@ void InventoryGUI::handleMouseClicked(sf::Event event)
     }
 }
 
-void InventoryGUI::processPackets(ClientNetwork& netManager)
-{
-    while (netManager.arePackets(Packet::InventoryResize))
-    {
-        handleResizePacket(netManager.getPacket(Packet::InventoryResize));
-        netManager.popPacket(Packet::InventoryResize);
-    }
-    while (netManager.arePackets(Packet::InventoryUpdate))
-    {
-        handleUpdatePacket(netManager.getPacket(Packet::InventoryUpdate));
-        netManager.popPacket(Packet::InventoryUpdate);
-    }
-}
-
 void InventoryGUI::handleResizePacket(sf::Packet& packet)
 {
     sf::Int32 newSize;

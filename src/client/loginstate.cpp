@@ -5,6 +5,8 @@
 #include <iostream>
 #include <sstream>
 #include "paths.h"
+#include "packet.h"
+#include "network.h"
 
 LoginState::LoginState(GameObjects& gameObjects):
     CommonState(gameObjects),
@@ -171,11 +173,13 @@ void LoginState::processChoice(int choice)
     else if (choice == 2)
     {
         string server = directConnectBox.getString();
-        sf::IpAddress serverAddr(server);
+        net::Address serverAddress(server);
+        if (serverAddress.port == 0)
+            serverAddress.port = serverPort;
         string username = usernameBox.getString();
         string password = passwordBox.getString();
         cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
-        int status = objects.netManager.logIn(serverAddr, username, password);
+        int status = objects.accountClient.logIn(serverAddress, username, password);
         if (status == Packet::LogInCode::Successful)
             stateEvent.pushState("Game");
         else
@@ -188,11 +192,13 @@ void LoginState::processChoice(int choice)
     else if (choice == 3)
     {
         string server = directConnectBox.getString();
-        sf::IpAddress serverAddr(server);
+        net::Address serverAddress(server);
+        if (serverAddress.port == 0)
+            serverAddress.port = serverPort;
         string username = usernameBox.getString();
         string password = passwordBox.getString();
         cout << "Creating account on " << server << " with username = " << username << ", password = " << password << endl;
-        int status = objects.netManager.createAccount(serverAddr, username, password);
+        int status = objects.accountClient.createAccount(serverAddress, username, password);
         StateArgs args;
         args.push_back(Packet::CreateAccountMessages[status - 1]);
         stateEvent.pushState("Message", args);
@@ -204,6 +210,7 @@ void LoginState::processChoice(int choice)
 void LoginState::update()
 {
     objects.music.update();
+    objects.client.update();
     loginMenu.updateMenu();
 }
 

@@ -85,6 +85,7 @@ void MainMenuState::processChoice(int choice)
 
 void MainMenuState::update()
 {
+    objects.music.update();
     mainMenu.updateMenu();
 }
 

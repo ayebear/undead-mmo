@@ -40,9 +40,9 @@ class GameState: public CommonState
         void handleInput();
         void handleMouseInput();
         void sendAngleInputPacket();
-        void processEntityPackets();
-        void processOnLogInPackets();
-        void processMapDataPackets();
+        void processEntityPacket(sf::Packet& packet);
+        void processOnLogInPacket(sf::Packet& packet);
+        void processMapDataPacket(sf::Packet& packet);
         void handleWindowResized();
         void loadHotkeys();
 

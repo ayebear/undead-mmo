@@ -7,15 +7,23 @@
 #include <string>
 #include <deque>
 #include <SFML/Graphics.hpp>
-#include "clientnetwork.h"
+#include <SFML/Network.hpp>
 #include "inputbox.h"
 #include "textitemlist.h"
-#include "gameobjects.h"
 
+class GameObjects;
+class PacketBuilder;
+
+// TODO: Get rid of this from everywhere...
 using namespace std;
 
-
-// This class handles the client-side stuff for the chat like graphics and input
+/*
+This class handles the client-side stuff for the chat like graphics and input
+TODO:
+    If we want to make this class more generic, it should use a callback or have some way
+        of retreiving messages to be sent.
+    Make the public interface a bit simpler.
+*/
 class Chat: public sf::Drawable
 {
     public:
@@ -44,7 +52,7 @@ class Chat: public sf::Drawable
         void draw(sf::RenderTarget&, sf::RenderStates) const;
 
     private:
-        void receiveMessages();
+        void handleChatMessage(sf::Packet&);
 
         void setFont(sf::Font*);
 
@@ -73,7 +81,7 @@ class Chat: public sf::Drawable
         };
 
         // Dependencies
-        ClientNetwork* netManager;
+        PacketBuilder* packetBuilder;
 
         // Visible objects
         TextItemList messageBox; // stores the current messages on the screen
@@ -84,7 +92,7 @@ class Chat: public sf::Drawable
         int msgHistoryPos; // current location in message history deque
 
         // Other variables
-        bool input;
+        bool focus;
         sf::Vector2f mainPos;
         sf::Vector2f chatSize;
         string username;

@@ -4,6 +4,7 @@
 #include "chat.h"
 #include <sstream>
 #include "packet.h"
+#include "gameobjects.h"
 
 const unsigned short Chat::maxMessages = 10;
 const short Chat::textSize = 16;
@@ -23,9 +24,8 @@ const map<string,string> Chat::help = {
 
 Chat::Chat()
 {
-    netManager = nullptr;
-
-    input = false;
+    packetBuilder = nullptr;
+    focus = false;
     mainPos.x = 0;
     mainPos.y = 0;
     msgHistoryPos = 0;
@@ -44,7 +44,7 @@ void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
     //float inputBoxHeight = textSize;
     //float inputBoxWidth = chatSize.x;
 
-    netManager = &objects.netManager;
+    objects.client.registerCallback(Packet::ChatMessage, std::bind(&Chat::handleChatMessage, this, std::placeholders::_1));
 
     messageBox.setupList(objects.window, sizeFactor, objects.fontBold, textSize, false, false);
 
@@ -60,24 +60,24 @@ void Chat::setUsername(const string& str)
 
 void Chat::setInput(bool in)
 {
-    input = in;
-    currentMsg.setInput(input);
+    focus = in;
+    currentMsg.setInput(focus);
     messageBox.toggleBackground();
 }
 
 bool Chat::getInput()
 {
-    return input;
+    return focus;
 }
 
 void Chat::toggleInput()
 {
-    setInput(!input);
+    setInput(!focus);
 }
 
 void Chat::processInput(sf::Keyboard::Key keyCode)
 {
-    if (input)
+    if (focus)
     {
         switch (keyCode)
         {
@@ -119,8 +119,8 @@ const string Chat::parseMessage()
         else
         {
             string fullStr = username + ": " + msgStr;
-            if (netManager != nullptr)
-                netManager->sendChatMessage(msgStr);
+            if (packetBuilder)
+                packetBuilder->sendChatMessage(msgStr);
             //printMessage(fullStr, Colors::normal);
         }
         clearMessage();
@@ -178,10 +178,8 @@ void Chat::sendPrivateMessage(const string& content)
     {
         string usernameStr = content.substr(0, spacePos);
         string msgStr = content.substr(spacePos + 1);
-        if (!msgStr.empty() && netManager != nullptr)
-        {
-            netManager->sendChatMessage(msgStr, usernameStr);
-        }
+        if (!msgStr.empty() && packetBuilder)
+            packetBuilder->sendChatMessage(msgStr, usernameStr);
     }
 }
 
@@ -255,47 +253,38 @@ void Chat::handleScrolling(sf::Event& event, sf::RenderWindow& window)
 
 void Chat::handleMouseClicked(sf::Event& event, sf::RenderWindow& window)
 {
-    if(!currentMsg.isActive())
+    if (!currentMsg.isActive())
     {
         currentMsg.handleMouseClicked(event, window);
 
-        if(currentMsg.isActive())
+        if (currentMsg.isActive())
         {
-            input = true;
+            focus = true;
             messageBox.toggleBackground();
         }
     }
 
-    if(input)
+    if (focus)
         messageBox.handleMouseClicked(event, window);
-
 }
 
 void Chat::update()
 {
-    receiveMessages();
     currentMsg.updateCursor();
 }
 
-void Chat::receiveMessages()
+void Chat::handleChatMessage(sf::Packet& packet)
 {
-    if (netManager != nullptr)
+    int subType;
+    string msg;
+    if (packet >> subType >> msg)
     {
-        while (netManager->arePackets(Packet::ChatMessage))
-        {
-            int subType;
-            string msg;
-            if (netManager->getPacket(Packet::ChatMessage) >> subType >> msg)
-            {
-                if (subType == Packet::Chat::Private)
-                    printMessage(msg, Colors::privateMsg);
-                else if (subType == Packet::Chat::Public)
-                    printMessage(msg, Colors::normal);
-                else if (subType == Packet::Chat::Server)
-                    printMessage(msg, Colors::server);
-            }
-            netManager->popPacket(Packet::ChatMessage);
-        }
+        if (subType == Packet::Chat::Private)
+            printMessage(msg, Colors::privateMsg);
+        else if (subType == Packet::Chat::Public)
+            printMessage(msg, Colors::normal);
+        else if (subType == Packet::Chat::Server)
+            printMessage(msg, Colors::server);
     }
 }
 
