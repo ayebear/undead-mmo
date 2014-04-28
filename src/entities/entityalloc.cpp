@@ -12,11 +12,11 @@ Entity* allocateEntity(int type)
     switch (type)
     {
         case Entity::Player:
-            return new Player;
+            return new PlayerEntity();
         case Entity::Zombie:
-            return new Zombie;
+            return new Zombie();
         case Entity::Item:
-            return new ItemEntity;
+            return new ItemEntity();
         default:
             return nullptr;
     }

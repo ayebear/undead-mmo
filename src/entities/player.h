@@ -6,10 +6,10 @@
 
 #include "mobileentity.h"
 
-class Player: public MobileEntity
+class PlayerEntity: public MobileEntity
 {
     public:
-        Player();
+        PlayerEntity();
         void update(float);
         bool collides(Entity*);
         void draw(sf::RenderTarget&, sf::RenderStates) const;

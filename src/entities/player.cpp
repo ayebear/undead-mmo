@@ -3,7 +3,7 @@
 
 #include "player.h"
 
-Player::Player()
+PlayerEntity::PlayerEntity()
 {
     type = Entity::Player;
     speed = 400;
@@ -11,46 +11,46 @@ Player::Player()
     setTexture(type);
 }
 
-void Player::update(float time)
+void PlayerEntity::update(float time)
 {
     move(time);
 }
 
-bool Player::collides(Entity* ent)
+bool PlayerEntity::collides(Entity* ent)
 {
     return false;
 }
 
-void Player::draw(sf::RenderTarget& window, sf::RenderStates states) const
+void PlayerEntity::draw(sf::RenderTarget& window, sf::RenderStates states) const
 {
     window.draw(sprite);
 }
 
-void Player::getData(sf::Packet& packet)
+void PlayerEntity::getData(sf::Packet& packet)
 {
     packet << id << type << pos.x << pos.y << angle << speed << moving << currentHealth << baseHealth << visualAngle;
 }
 
-void Player::setData(sf::Packet& packet)
+void PlayerEntity::setData(sf::Packet& packet)
 {
     packet >> pos.x >> pos.y >> angle >> speed >> moving >> currentHealth >> baseHealth >> visualAngle;
     sprite.setPosition(pos);
     updateSpriteRotation();
 }
 
-float Player::getVisualAngle() const
+float PlayerEntity::getVisualAngle() const
 {
     return visualAngle;
 }
 
-void Player::setVisualAngle(float ang)
+void PlayerEntity::setVisualAngle(float ang)
 {
     visualAngle = ang;
     updateSpriteRotation();
     changed = true;
 }
 
-void Player::updateSpriteRotation()
+void PlayerEntity::updateSpriteRotation()
 {
     sprite.setRotation(visualAngle + 90);
 }

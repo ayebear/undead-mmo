@@ -7,11 +7,12 @@
 #include <iostream>
 #include <SFML/Network.hpp>
 #include "packet.h"
-#include "servernetwork.h"
 #include "masterentitylist.h"
 #include "accountdb.h"
 #include "../graphics/tilemap.h"
 #include "configfile.h"
+#include "tcpserver.h"
+#include "playermanager.h"
 
 class Server
 {
@@ -25,12 +26,11 @@ class Server
         void sendChangedEntities();
 
         // Packet handlers
-        void processInputPacket(PacketExtra&);
-        void processPacket(PacketExtra&);
-        void processChatMessage(PacketExtra&);
-        void processLogIn(PacketExtra&);
-        void processLogOut(PacketExtra&);
-        void processCreateAccount(PacketExtra&);
+        void processPacket(sf::Packet& packet, int id);
+        void processInputPacket(sf::Packet& packet, int id);
+        void processChatMessage(sf::Packet& packet, int id);
+        void processLogIn(sf::Packet& packet, int id);
+        void processCreateAccount(sf::Packet& packet, int id);
 
         // Inventory/item functions
         void useItem(sf::Packet&, Inventory&, Entity*);
@@ -40,8 +40,8 @@ class Server
         void wieldItem(sf::Packet&, Inventory&, Entity*);
 
         // Other functions
-        void handleSuccessfulLogIn(Client*);
-        void logOutClient(Client*);
+        void handleSuccessfulLogIn(Player& player);
+        void logOutClient(int id);
 
         static const float desiredFrameTime;
         static const float frameTimeTolerance;
@@ -50,12 +50,16 @@ class Server
         float elapsedTime;
         sf::Clock clock, warningTimer;
         cfg::File config;
-        ServerNetwork netManager;
+
+        // Networking
+        //ServerNetwork netManager;
+        net::TcpServer tcpServer;
         AccountDb accounts;
-        ClientManager clients;
+        PlayerManager players;
+
+        // The instance of the game
         MasterEntityList entList;
         TileMap tileMap;
-        mutex processPacketMutex;
         unsigned int inventorySize;
 };
 

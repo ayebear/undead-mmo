@@ -29,6 +29,12 @@ GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
 
     playing = true;
     hasFocus = true;
+
+    objects.client.setValidTypeRange(1, Packet::PacketTypes - 1);
+    using namespace std::placeholders;
+    objects.client.registerCallback(Packet::EntityUpdate, std::bind(&GameState::processEntityPacket, this, _1));
+    objects.client.registerCallback(Packet::OnSuccessfulLogIn, std::bind(&GameState::processOnLogInPacket, this, _1));
+    objects.client.registerCallback(Packet::MapData, std::bind(&GameState::processMapDataPacket, this, _1));
 }
 
 GameState::~GameState()
