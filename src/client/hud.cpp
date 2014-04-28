@@ -46,8 +46,7 @@ void Hud::setUp(GameObjects& objects)
 
     // Setup callbacks
     using namespace std::placeholders;
-    objects.client.registerCallback(Packet::InventoryResize, std::bind(&InventoryGUI::handleResizePacket, inventory, _1));
-    objects.client.registerCallback(Packet::InventoryUpdate, std::bind(&InventoryGUI::handleUpdatePacket, inventory, _1));
+    objects.client.registerCallback(Packet::InventoryUpdate, std::bind(&InventoryGUI::handleUpdatePacket, &inventory, _1));
 }
 
 void Hud::handleMouseMoved(sf::Event& event, sf::RenderWindow& window)

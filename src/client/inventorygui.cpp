@@ -77,6 +77,8 @@ void InventoryGUI::setUp(int totalSlots, const sf::Vector2f& pos, const sf::Vect
 
 void InventoryGUI::setUpSlots(int totalSlots)
 {
+    std::cout << "setUpSlots(" << totalSlots << ") @ " << this << "\n";
+
     if (totalSlots <= 0)
         return;
 
@@ -220,22 +222,22 @@ void InventoryGUI::handleMouseClicked(sf::Event event)
     }
 }
 
-void InventoryGUI::handleResizePacket(sf::Packet& packet)
-{
-    sf::Int32 newSize;
-    if (packet >> newSize)
-        setUpSlots(newSize);
-}
-
 void InventoryGUI::handleUpdatePacket(sf::Packet& packet)
 {
-    sf::Int32 slotId, type, amount;
-    while (packet >> slotId >> type >> amount)
-        updateSlot(slotId, type, amount);
+    std::cout << "InventoryGUI::handleUpdatePacket()\n";
+    sf::Int32 newSize, slotId, type, amount;
+    if (packet >> newSize)
+    {
+        if (newSize != numSlots)
+            setUpSlots(newSize);
+        while (packet >> slotId >> type >> amount)
+            updateSlot(slotId, type, amount);
+    }
 }
 
 void InventoryGUI::updateSlot(unsigned int slotId, int type, int amount)
 {
+    std::cout << "updateSlot(" << slotId << ", " << type << ", " << amount << ")\n";
     if (slotId < slots.size())
     {
         if (type >= 0 && type < (int) itemTextures.size())

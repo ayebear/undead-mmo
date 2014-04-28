@@ -338,7 +338,6 @@ void Server::processLogIn(sf::Packet& packet, int id)
                     cout << "User is not already logged in.\n";
                     Player& player = players.addPlayer(id);
                     // Try logging into the account database with the received username and password
-                    player.playerData.username = username;
                     int dbLogInStatus = accounts.logIn(username, password, player.playerData);
                     if (dbLogInStatus == Packet::LogInCode::Successful)
                     {
@@ -432,14 +431,13 @@ void Server::handleSuccessfulLogIn(Player& player)
     sf::Packet tileMapPacket;
     tileMap.saveToPacket(tileMapPacket);
     tcpServer.send(tileMapPacket, player.id);
-    // Send the inventory size to the player
-    sf::Packet inventorySizePacket;
-    player.playerData.inventory.getSize(inventorySizePacket);
-    tcpServer.send(inventorySizePacket, player.id);
     // Send the inventory to the player
     sf::Packet inventoryPacket;
     if (player.playerData.inventory.getAllItems(inventoryPacket))
+    {
+        cout << "Sending items from inventory...\n";
         tcpServer.send(inventoryPacket, player.id);
+    }
     cout << "Sent initial packets to " << player.playerData.username << endl;
 }
 

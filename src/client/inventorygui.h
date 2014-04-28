@@ -44,7 +44,6 @@ class InventoryGUI: public sf::Drawable
         void handleMouseMoved(sf::Event);
         void handleMouseClicked(sf::Event);
 
-        void handleResizePacket(sf::Packet&);
         void handleUpdatePacket(sf::Packet&);
 
         virtual void draw(sf::RenderTarget&, sf::RenderStates) const;

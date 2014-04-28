@@ -7,53 +7,52 @@
 
 Inventory::Inventory()
 {
+    leftSlotId = 0;
+    rightSlotId = 0;
 }
 
-Inventory::Inventory(unsigned int newSize)
+Inventory::Inventory(unsigned newSize):
+    Inventory()
 {
     setSize(newSize);
 }
 
-void Inventory::setSize(unsigned int size)
+void Inventory::setSize(unsigned size)
 {
     itemSlots.resize(size);
 }
 
-unsigned int Inventory::getSize() const
+unsigned Inventory::getSize() const
 {
     return itemSlots.size();
 }
 
-/*void Inventory::setSize(unsigned int size)
+void Inventory::loadFromConfig(cfg::File& config)
 {
-    maxSize = size;
+    config.useSection("Inventory");
+    leftSlotId = config("leftSlotId").toInt();
+    rightSlotId = config("rightSlotId").toInt();
+
+    // Load the items from the array
+    for (auto& item: config("items"))
+        itemSlots.emplace_back(item);
+
+    config.useSection();
 }
 
-unsigned int Inventory::getSize() const
+void Inventory::saveToConfig(cfg::File& config) const
 {
-    return maxSize;
-}*/
+    config.useSection("Inventory");
+    config("leftSlotId") = leftSlotId;
+    config("rightSlotId") = rightSlotId;
 
-void Inventory::loadFromConfig(cfg::File& cfg)
-{
-    cfg.useSection("Inventory");
-    setSize(cfg("Size").toInt());
-    leftSlotId = cfg("LeftSlotId").toInt();
-    rightSlotId = cfg("RightSlotId").toInt();
-    for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots in the config file
-        itemSlots[i].fromString(cfg(std::to_string(i)).toString()); // Read the option as a string and convert it to an item code
-    cfg.useSection();
-}
+    // Save the items to an array
+    auto& items = config("items");
+    items.clear();
+    for (auto& item: itemSlots)
+        items.push() = item.toString();
 
-void Inventory::saveToConfig(cfg::File& cfg) const
-{
-    cfg.useSection("Inventory");
-    cfg("Size") = getSize();
-    cfg("LeftSlotId") = leftSlotId;
-    cfg("RightSlotId") = rightSlotId;
-    for (unsigned int i = 0; i < itemSlots.size(); i++) // Loop through all of the item slots
-        cfg(std::to_string(i)) = itemSlots[i].toString(); // Convert the slot ID and item codes to strings and save them to the config file
-    cfg.useSection();
+    config.useSection();
 }
 
 bool Inventory::addItem(Entity* ent)
@@ -67,19 +66,19 @@ bool Inventory::addItem(const ItemCode& item)
     return true;
 }
 
-bool Inventory::removeItem(unsigned int slotId)
+bool Inventory::removeItem(unsigned slotId)
 {
     itemSlots.erase(itemSlots.begin() + slotId);
     return true;
 }
 
-bool Inventory::changeItem(unsigned int slotId, int amount)
+bool Inventory::changeItem(unsigned slotId, int amount)
 {
     itemSlots[slotId].amount = amount;
     return true;
 }
 
-const ItemCode& Inventory::getItem(unsigned int slotId)
+const ItemCode& Inventory::getItem(unsigned slotId)
 {
     if (slotId >= 0 && slotId < itemSlots.size())
         return itemSlots[slotId];
@@ -87,7 +86,7 @@ const ItemCode& Inventory::getItem(unsigned int slotId)
         return ItemCode::noItem;
 }
 
-bool Inventory::swapItems(unsigned int slotId1, unsigned int slotId2)
+bool Inventory::swapItems(unsigned slotId1, unsigned slotId2)
 {
     std::swap(itemSlots[slotId1], itemSlots[slotId2]);
     return true;
@@ -99,8 +98,8 @@ bool Inventory::getChangedItems(sf::Packet& packet)
     if (anyChanged)
     {
         packet << Packet::InventoryUpdate;
-        for (unsigned int slotId: changedSlots)
-            packet << (sf::Int32) slotId << itemSlots[slotId];
+        for (unsigned slotId: changedSlots)
+            packet << static_cast<sf::Int32>(slotId) << itemSlots[slotId];
         changedSlots.clear();
     }
     return anyChanged;
@@ -112,13 +111,9 @@ bool Inventory::getAllItems(sf::Packet& packet)
     if (anyItems)
     {
         packet << Packet::InventoryUpdate;
-        for (unsigned int slotId = 0; slotId < itemSlots.size(); slotId++)
-            packet << (sf::Int32) slotId << itemSlots[slotId];
+        packet << static_cast<sf::Int32>(getSize());
+        for (unsigned slotId = 0; slotId < itemSlots.size(); slotId++)
+            packet << static_cast<sf::Int32>(slotId) << itemSlots[slotId];
     }
     return anyItems;
-}
-
-void Inventory::getSize(sf::Packet& packet) const
-{
-    packet << Packet::InventoryResize << (sf::Int32) getSize();
 }

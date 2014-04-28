@@ -24,7 +24,7 @@ bool AccountDb::loadAccountList(const string& dir)
     return accountList.loadAccountIndex(accountDir + accountListFilename);
 }
 
-int AccountDb::logIn(const string& username, const string& password, PlayerData& pData)
+int AccountDb::logIn(const string& username, const string& password, PlayerData& playerData)
 {
     int status = Packet::LogInCode::UnknownFailure;
     int accountId = accountList.getAccountId(username); // Get the account ID from the username
@@ -38,8 +38,8 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
             {
                 if (!accountCfg("banned").toBool()) // Check if the account is banned
                 {
-                    pData.loadFromConfig(accountCfg); // Load the data from the config file into the player data object
-                    pData.username = username; // Make sure we set the username!
+                    playerData.loadFromConfig(accountCfg); // Load the data from the config file into the player data object
+                    playerData.username = username; // Make sure we set the username!
                     status = Packet::LogInCode::Successful;
                 }
                 else
@@ -54,19 +54,19 @@ int AccountDb::logIn(const string& username, const string& password, PlayerData&
     return status;
 }
 
-int AccountDb::createAccount(const PlayerData& pData)
+int AccountDb::createAccount(const PlayerData& playerData)
 {
     int status = Packet::CreateAccountCode::UnknownFailure;
-    int accountId = accountList.getAccountId(pData.username); // Get the account ID from the username
+    int accountId = accountList.getAccountId(playerData.username); // Get the account ID from the username
     // TODO: We could also check if the password is strong enough, but this should be user-configurable, like minimum length, different characters, etc.
     if (accountId == -1) // Don't try to create a new account if it already exists!
     {
-        int newAccountId = accountList.addAccount(pData.username); // Add the username to the account list and get its new ID
+        int newAccountId = accountList.addAccount(playerData.username); // Add the username to the account list and get its new ID
         if (newAccountId > 0) // If the account was added to the list successfully
         {
             string accountFilename = accountIdToFilename(newAccountId);
             cfg::File accountCfg;
-            pData.saveToConfig(accountCfg); // Set the values in the config file in memory from the player data object
+            playerData.saveToConfig(accountCfg); // Set the values in the config file in memory from the player data object
 
             if (accountCfg.writeToFile(accountFilename)) // Write the account to a file
                 status = Packet::CreateAccountCode::Successful;
@@ -77,15 +77,15 @@ int AccountDb::createAccount(const PlayerData& pData)
     return status;
 }
 
-bool AccountDb::saveAccount(const PlayerData& pData)
+bool AccountDb::saveAccount(const PlayerData& playerData)
 {
     bool status = false;
-    int accountId = accountList.getAccountId(pData.username);
+    int accountId = accountList.getAccountId(playerData.username);
     if (accountId > 0)
     {
         string accountFilename = accountIdToFilename(accountId);
         cfg::File accountCfg;
-        pData.saveToConfig(accountCfg); // Save the player data to a config file in memory
+        playerData.saveToConfig(accountCfg); // Save the player data to a config file in memory
         status = accountCfg.writeToFile(accountFilename); // Write the config file in memory to the file
     }
     return status;

@@ -9,7 +9,7 @@
 namespace Packet
 {
     // This is sent with the login packet
-    const int ProtocolVersion = 7;
+    const int ProtocolVersion = 8;
 
     // This type is sent with every packet so the code that receives it can determine how to process it
     // Please refer to the documentation for more information about these types
@@ -22,7 +22,7 @@ namespace Packet
         EntityUpdate, // New/deleted/updated entities
         MapData, // All of the logical tiles for the map; is automatically sent from the server on successful login
         InventoryUpdate, // Updates slot(s) in the inventory
-        InventoryResize, // Contains the inventory size
+            // Note: The first value is the size of the inventory
         OnSuccessfulLogIn, // Data sent after successfully logging in
         MultiPacket,
 

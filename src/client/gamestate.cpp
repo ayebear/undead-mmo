@@ -20,7 +20,6 @@ GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
     myPlayerId = 0;
     playerIsMoving = false;
     gameView.setSize(objects.windowSize.x, objects.windowSize.y);
-    theHud.setUp(objects);
 
     playerInput.x = 0;
     playerInput.y = 0;
@@ -35,6 +34,8 @@ GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
     objects.client.registerCallback(Packet::EntityUpdate, std::bind(&GameState::processEntityPacket, this, _1));
     objects.client.registerCallback(Packet::OnSuccessfulLogIn, std::bind(&GameState::processOnLogInPacket, this, _1));
     objects.client.registerCallback(Packet::MapData, std::bind(&GameState::processMapDataPacket, this, _1));
+
+    theHud.setUp(objects);
 }
 
 GameState::~GameState()

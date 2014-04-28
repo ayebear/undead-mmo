@@ -9,12 +9,21 @@ const ItemCode ItemCode::noItem;
 ItemCode::ItemCode():
     type(empty),
     amount(0)
-{}
+{
+}
 
 ItemCode::ItemCode(int t, int a):
     type(t),
     amount(a)
-{}
+{
+}
+
+ItemCode::ItemCode(const std::string& str):
+    type(empty),
+    amount(0)
+{
+    fromString(str);
+}
 
 bool ItemCode::isEmpty() const
 {
