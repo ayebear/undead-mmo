@@ -27,6 +27,7 @@
 			<Add directory="src/other" />
 			<Add directory="src/entities" />
 			<Add directory="src/configfile" />
+			<Add directory="src/netlib" />
 		</Compiler>
 		<Linker>
 			<Add library="sfml-graphics" />
@@ -62,6 +63,10 @@
 		<Unit filename="src/graphics/tilemap.h" />
 		<Unit filename="src/graphics/tileset.cpp" />
 		<Unit filename="src/graphics/tileset.h" />
+		<Unit filename="src/netlib/address.cpp" />
+		<Unit filename="src/netlib/address.h" />
+		<Unit filename="src/netlib/tcpserver.cpp" />
+		<Unit filename="src/netlib/tcpserver.h" />
 		<Unit filename="src/other/csvfile.cpp" />
 		<Unit filename="src/other/csvfile.h" />
 		<Unit filename="src/other/linkedqueue.h" />
@@ -70,10 +75,6 @@
 		<Unit filename="src/server/accountdb.h" />
 		<Unit filename="src/server/accountindex.cpp" />
 		<Unit filename="src/server/accountindex.h" />
-		<Unit filename="src/server/client.cpp" />
-		<Unit filename="src/server/client.h" />
-		<Unit filename="src/server/clientmanager.cpp" />
-		<Unit filename="src/server/clientmanager.h" />
 		<Unit filename="src/server/entitygrid.cpp" />
 		<Unit filename="src/server/entitygrid.h" />
 		<Unit filename="src/server/inventory.cpp" />
@@ -85,10 +86,10 @@
 		<Unit filename="src/server/miscnetwork.h" />
 		<Unit filename="src/server/playerdata.cpp" />
 		<Unit filename="src/server/playerdata.h" />
+		<Unit filename="src/server/playermanager.cpp" />
+		<Unit filename="src/server/playermanager.h" />
 		<Unit filename="src/server/server.cpp" />
 		<Unit filename="src/server/server.h" />
-		<Unit filename="src/server/servernetwork.cpp" />
-		<Unit filename="src/server/servernetwork.h" />
 		<Unit filename="src/shared/ipport.cpp" />
 		<Unit filename="src/shared/ipport.h" />
 		<Unit filename="src/shared/itemcode.cpp" />
