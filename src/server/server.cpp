@@ -204,7 +204,7 @@ void Server::pickupItem(Inventory& inventory, Entity* playerEnt)
     {
         // In the future we could always add an auto-wield option to the client which would get sent with this request.
         // It would check if the item was wieldable, and if so, swap it with your currently wielded item.
-        if (inventory.addItem(itemToPickup)) // Add the item to your inventory
+        if (inventory.addItem(ItemCode(itemToPickup->getItem(), 1))) // Add the item to your inventory
             entList.erase(itemToPickup->getID()); // Remove the item from the entity list
     }
 }

@@ -17,9 +17,9 @@ Inventory::Inventory(unsigned newSize):
     setSize(newSize);
 }
 
-void Inventory::setSize(unsigned size)
+void Inventory::setSize(unsigned newSize)
 {
-    itemSlots.resize(size);
+    itemSlots.resize(newSize);
 }
 
 unsigned Inventory::getSize() const
@@ -55,27 +55,45 @@ void Inventory::saveToConfig(cfg::File& config) const
     config.useSection();
 }
 
-bool Inventory::addItem(Entity* ent)
-{
-    return addItem(ItemCode(ent->getItem(), 1));
-}
-
 bool Inventory::addItem(const ItemCode& item)
 {
-    itemSlots.push_back(item);
-    return true;
+    for (unsigned slotId = 0; slotId < itemSlots.size(); ++slotId)
+    {
+        if (itemSlots[slotId].isEmpty())
+        {
+            itemSlots[slotId] = item;
+            changedSlots.insert(slotId);
+            return true;
+        }
+    }
+    return false;
 }
 
 bool Inventory::removeItem(unsigned slotId)
 {
-    itemSlots.erase(itemSlots.begin() + slotId);
-    return true;
+    if (slotId < itemSlots.size())
+    {
+        itemSlots.erase(itemSlots.begin() + slotId);
+        changedSlots.insert(slotId);
+        return true;
+    }
+    return false;
 }
 
 bool Inventory::changeItem(unsigned slotId, int amount)
 {
-    itemSlots[slotId].amount = amount;
-    return true;
+    if (slotId < itemSlots.size())
+    {
+        if (amount > 0)
+        {
+            itemSlots[slotId].amount = amount;
+            changedSlots.insert(slotId);
+        }
+        else
+            removeItem(slotId);
+        return true;
+    }
+    return false;
 }
 
 const ItemCode& Inventory::getItem(unsigned slotId)
@@ -88,8 +106,14 @@ const ItemCode& Inventory::getItem(unsigned slotId)
 
 bool Inventory::swapItems(unsigned slotId1, unsigned slotId2)
 {
-    std::swap(itemSlots[slotId1], itemSlots[slotId2]);
-    return true;
+    if (slotId1 < itemSlots.size() && slotId2 < itemSlots.size() && slotId1 != slotId2)
+    {
+        std::swap(itemSlots[slotId1], itemSlots[slotId2]);
+        changedSlots.insert(slotId1);
+        changedSlots.insert(slotId2);
+        return true;
+    }
+    return false;
 }
 
 bool Inventory::getChangedItems(sf::Packet& packet)
@@ -105,7 +129,7 @@ bool Inventory::getChangedItems(sf::Packet& packet)
     return anyChanged;
 }
 
-bool Inventory::getAllItems(sf::Packet& packet)
+bool Inventory::getAllItems(sf::Packet& packet) const
 {
     bool anyItems = !itemSlots.empty();
     if (anyItems)
