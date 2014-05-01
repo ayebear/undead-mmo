@@ -26,6 +26,7 @@ Server::Server():
     players(tcpServer)
 {
     using namespace std::placeholders;
+    tcpServer.setConnectedCallback(std::bind(&Server::handleClientConnected, this, _1));
     tcpServer.setDisconnectedCallback(std::bind(&Server::logOutClient, this, _1));
     tcpServer.setPacketCallback(std::bind(&Server::processPacket, this, _1, _2));
     setup();
@@ -337,8 +338,10 @@ void Server::processLogIn(sf::Packet& packet, int id)
                 {
                     std::cout << "User is not already logged in.\n";
                     Player& player = players.addPlayer(id);
+                    std::cout << "Added player.\n";
                     // Try logging into the account database with the received username and password
                     int dbLogInStatus = accounts.logIn(username, password, player.playerData);
+                    std::cout << "Attempted login to account database.\n";
                     if (dbLogInStatus == Packet::LogInCode::Successful)
                     {
                         loginStatusCode = Packet::LogInCode::Successful; // The player has successfully logged in!
@@ -406,6 +409,7 @@ void Server::processCreateAccount(sf::Packet& packet, int id)
 
 void Server::handleSuccessfulLogIn(Player& player)
 {
+    std::cout << "Player credentials were correct.\n";
     // Set the inventory size if it hasn't been set already (so that different players can have different inventory sizes)
     if (player.playerData.inventory.getSize() <= 0)
         player.playerData.inventory.setSize(inventorySize);
@@ -441,6 +445,11 @@ void Server::handleSuccessfulLogIn(Player& player)
     std::cout << "Sent initial packets to " << player.playerData.username << std::endl;
 }
 
+void Server::handleClientConnected(int id)
+{
+    std::cout << "Client " << id << " connected.\n";
+}
+
 void Server::logOutClient(int id)
 {
     auto player = players.getPlayer(id);
@@ -461,4 +470,5 @@ void Server::logOutClient(int id)
         players.removePlayer(id);
         std::cout << username << " (" << id << ") logged out.\n";
     }
+    std::cout << "Client " << id << " disconnected.\n";
 }

@@ -93,6 +93,9 @@ int AccountClient::createAccount(const net::Address& address, const std::string&
             status = Packet::CreateAccountCode::Timeout;
             std::cout << "Create account timed out.\n";
         }
+
+        // Disconnect from the server after creating the account
+        client.disconnect();
     }
     else
         std::cout << "Error.\n";

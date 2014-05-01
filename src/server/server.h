@@ -41,6 +41,7 @@ class Server
 
         // Other functions
         void handleSuccessfulLogIn(Player& player);
+        void handleClientConnected(int id);
         void logOutClient(int id);
 
         static const float desiredFrameTime;
