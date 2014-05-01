@@ -251,9 +251,7 @@ void LoginState::displayServers()
     cfg::File& servercfg = servers.getServerList();
     for (auto& section : servercfg)
     {
-        // If there is a port listed, append the colon and the port number
-        string port = (servercfg("port", section.first).toString() == "" ? "" : (":" + servercfg("port", section.first).toString()));
-        string address = servercfg("address", section.first).toString() + port;
+        const string& address = servercfg("address", section.first);
         string displayName = section.first + " (" + address + ")";
         textItemList.addItemWithHiddenText(displayName, address, textColor);
     }
