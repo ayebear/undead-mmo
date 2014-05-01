@@ -16,7 +16,7 @@ const sf::Color Chat::Colors::server = sf::Color::Yellow;
 const sf::Color Chat::Colors::commandEntered = sf::Color::Red;
 const sf::Color Chat::Colors::commandOutput = sf::Color::Cyan;
 
-const map<string,string> Chat::help = {
+const std::map<std::string, std::string> Chat::help = {
     {"echo", "Prints out the text after the command. Usage: /echo text goes here"},
     {"exit", "Exits the game. Usage: /exit"},
     {"pm", "Sends a private message to a player. Usage: /pm username message"},
@@ -50,9 +50,11 @@ void Chat::setUp(sf::FloatRect sizeFactor, GameObjects& objects)
 
     //render window, font size, font, width of box, x Pos, Y Pos,
     currentMsg.setUp(16, objects.fontBold, mainPos.x + 3, mainPos.y + chatSize.y + 3, chatSize.x, false);
+
+    packetBuilder = &objects.packetBuilder;
 }
 
-void Chat::setUsername(const string& str)
+void Chat::setUsername(const std::string& str)
 {
     if (!str.empty())
         username = str;
@@ -105,9 +107,9 @@ void Chat::clear()
 }
 
 // This is called when enter is pressed
-const string Chat::parseMessage()
+const std::string Chat::parseMessage()
 {
-    string msgStr = currentMsg.getString();
+    std::string msgStr = currentMsg.getString();
     if (!msgStr.empty())
     {
         addToHistory(msgStr);
@@ -118,7 +120,7 @@ const string Chat::parseMessage()
         }
         else
         {
-            string fullStr = username + ": " + msgStr;
+            std::string fullStr = username + ": " + msgStr;
             if (packetBuilder)
                 packetBuilder->sendChatMessage(msgStr);
             //printMessage(fullStr, Colors::normal);
@@ -130,12 +132,12 @@ const string Chat::parseMessage()
 
 // We could also have server-side commands!
 // These will need to be executed using a different character or a special command in here...
-void Chat::parseCommand(const string& msgStr)
+void Chat::parseCommand(const std::string& msgStr)
 {
     auto spacePos = msgStr.find(" ");
-    string cmdStr = msgStr.substr(1, spacePos - 1);
-    string content;
-    if (spacePos != string::npos && spacePos < msgStr.size())
+    std::string cmdStr = msgStr.substr(1, spacePos - 1);
+    std::string content;
+    if (spacePos != std::string::npos && spacePos < msgStr.size())
         content = msgStr.substr(spacePos + 1);
     // TODO: Make a map of pointers to these functions
     if (cmdStr == "test")
@@ -152,11 +154,11 @@ void Chat::parseCommand(const string& msgStr)
         printMessage("Error: '" + cmdStr + "' is not a recognized command!", Colors::commandOutput);
 }
 
-void Chat::showHelp(const string& content)
+void Chat::showHelp(const std::string& content)
 {
     if (content.empty() || content == "help")
     {
-        string commands;
+        std::string commands;
         for (auto& cmd: help)
             commands += cmd.first + ", ";
         printMessage("Shows how to use commands. Commands: " + commands + "help. Usage: /help command", Colors::commandOutput);
@@ -171,19 +173,19 @@ void Chat::showHelp(const string& content)
     }
 }
 
-void Chat::sendPrivateMessage(const string& content)
+void Chat::sendPrivateMessage(const std::string& content)
 {
     auto spacePos = content.find(" ");
-    if (spacePos != string::npos && spacePos < content.size())
+    if (spacePos != std::string::npos && spacePos < content.size())
     {
-        string usernameStr = content.substr(0, spacePos);
-        string msgStr = content.substr(spacePos + 1);
+        std::string usernameStr = content.substr(0, spacePos);
+        std::string msgStr = content.substr(spacePos + 1);
         if (!msgStr.empty() && packetBuilder)
             packetBuilder->sendChatMessage(msgStr, usernameStr);
     }
 }
 
-void Chat::printMessage(const string& msgStr, const sf::Color& color)
+void Chat::printMessage(const std::string& msgStr, const sf::Color& color)
 {
     messageBox.addTextItem(msgStr, color);
 }
@@ -219,7 +221,7 @@ void Chat::messageHistoryDown()
     }
 }
 
-void Chat::addToHistory(const string& msgStr)
+void Chat::addToHistory(const std::string& msgStr)
 {
     // If the last element is blank, remove it, we don't want a stray blank string saved
     if (!msgHistory.empty() && msgHistory.back().empty())
@@ -238,7 +240,7 @@ void Chat::addToHistory(const string& msgStr)
 
 void Chat::saveCurrentMessage()
 {
-    string msgStr = currentMsg.getString();
+    std::string msgStr = currentMsg.getString();
     if (msgHistoryPos >= (int)msgHistory.size()) // Check if you are typing a new message which is not saved yet
         msgHistory.push_back(msgStr); // Append it to the list
     else // You are editing an already added message
@@ -276,7 +278,7 @@ void Chat::update()
 void Chat::handleChatMessage(sf::Packet& packet)
 {
     int subType;
-    string msg;
+    std::string msg;
     if (packet >> subType >> msg)
     {
         if (subType == Packet::Chat::Private)

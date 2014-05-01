@@ -7,17 +7,15 @@
 #include <string>
 #include <map>
 
-using namespace std;
-
 // A lightweight "Option"-like class
 class IntString
 {
     public:
         IntString();
-        IntString& operator=(const string&);
+        IntString& operator=(const std::string&);
 
         int num;
-        string str;
+        std::string str;
 };
 
 // This class manages a list of account usernames, and was made only for performance improvements because of ConfigFile's slow file writing
@@ -25,15 +23,15 @@ class AccountIndex
 {
     public:
         AccountIndex();
-        bool loadAccountIndex(const string&); // filename (accounts.txt)
+        bool loadAccountIndex(const std::string&); // filename (accounts.txt)
 
-        int addAccount(const string&); // takes username, returns account ID
-        int getAccountId(const string&); // takes username, returns account ID
+        int addAccount(const std::string&); // takes username, returns account ID
+        int getAccountId(const std::string&); // takes username, returns account ID
 
     private:
-        string indexFilename;
+        std::string indexFilename;
         int numOfAccounts;
-        map<string,IntString> index;
+        std::map<std::string,IntString> index;
 };
 
 #endif

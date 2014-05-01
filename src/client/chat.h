@@ -14,9 +14,6 @@
 class GameObjects;
 class PacketBuilder;
 
-// TODO: Get rid of this from everywhere...
-using namespace std;
-
 /*
 This class handles the client-side stuff for the chat like graphics and input
 TODO:
@@ -30,7 +27,7 @@ class Chat: public sf::Drawable
         Chat();
 
         void setUp(sf::FloatRect, GameObjects&);
-        void setUsername(const string&);
+        void setUsername(const std::string&);
 
         void setInput(bool);
         bool getInput();
@@ -42,8 +39,8 @@ class Chat: public sf::Drawable
         void messageHistoryUp();
         void messageHistoryDown();
 
-        const string parseMessage();
-        void printMessage(const string&, const sf::Color& color = sf::Color::White);
+        const std::string parseMessage();
+        void printMessage(const std::string&, const sf::Color& color = sf::Color::White);
 
         void handleScrolling(sf::Event&, sf::RenderWindow&);
         void handleMouseClicked(sf::Event&, sf::RenderWindow&);
@@ -57,11 +54,11 @@ class Chat: public sf::Drawable
         void setFont(sf::Font*);
 
         void clearMessage();
-        void parseCommand(const string&);
+        void parseCommand(const std::string&);
         void saveCurrentMessage();
-        void addToHistory(const string&);
-        void showHelp(const string&);
-        void sendPrivateMessage(const string&);
+        void addToHistory(const std::string&);
+        void showHelp(const std::string&);
+        void sendPrivateMessage(const std::string&);
 
         // Constants
         static const unsigned short maxMessages;
@@ -69,7 +66,7 @@ class Chat: public sf::Drawable
         static const float oldMsgAge;
         static const float maxMsgAge;
         static const unsigned short maxMsgHistory;
-        static const map<string,string> help;
+        static const std::map<std::string, std::string> help;
 
         struct Colors
         {
@@ -88,14 +85,14 @@ class Chat: public sf::Drawable
         InputBox currentMsg;
 
         // Message history
-        deque <string> msgHistory; // stores the history of your own messages
+        std::deque <std::string> msgHistory; // stores the history of your own messages
         int msgHistoryPos; // current location in message history deque
 
         // Other variables
         bool focus;
         sf::Vector2f mainPos;
         sf::Vector2f chatSize;
-        string username;
+        std::string username;
 };
 
 #endif

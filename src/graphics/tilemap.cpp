@@ -6,8 +6,6 @@
 #include <fstream>
 #include "packet.h"
 
-using namespace std;
-
 TileMap::TileMap()
 {
     ready = false;
@@ -22,7 +20,7 @@ TileMap::TileMap(const TileIDVector2D& mapData)
     loadFromMemory(mapData);
 }
 
-TileMap::TileMap(const string& filename)
+TileMap::TileMap(const std::string& filename)
 {
     loadFromFile(filename);
 }
@@ -66,12 +64,12 @@ void TileMap::loadFromMemory(const TileIDVector2D& mapData)
     ready = true;
 }
 
-bool TileMap::loadFromFile(const string& filename)
+bool TileMap::loadFromFile(const std::string& filename)
 {
-    ifstream inFile(filename);
+    std::ifstream inFile(filename);
     if (!inFile.is_open())
     {
-        cerr << "Error loading map file: \"" << filename << "\"\n";
+        std::cerr << "Error loading map file: \"" << filename << "\"\n";
         return false;
     }
 
@@ -92,7 +90,7 @@ bool TileMap::loadFromFile(const string& filename)
 
     updateMapSize();
 
-    cout << "Loaded map \"" << filename << "\". Size: " << mapWidth << " by " << mapHeight << ".\n";
+    std::cout << "Loaded map \"" << filename << "\". Size: " << mapWidth << " by " << mapHeight << ".\n";
 
     ready = true;
 

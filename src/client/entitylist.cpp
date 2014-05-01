@@ -5,8 +5,6 @@
 #include <iostream>
 #include "entityalloc.h"
 
-using namespace std;
-
 EntityList::EntityList()
 {
 }
@@ -27,7 +25,7 @@ void EntityList::updateEntity(EID id, sf::Packet& packet)
         if (type == -1)
         {
             erase(id); // Delete the entity
-            cout << "Deleted entity " << id << endl;
+            std::cout << "Deleted entity " << id << std::endl;
         }
         else
         {
@@ -42,12 +40,12 @@ void EntityList::updateEntity(EID id, sf::Packet& packet)
                 // Recreate the entity with a new type
                 erase(id);
                 add(type, id);
-                cout << "Recreated entity " << id << " with type " << type << endl;
+                std::cout << "Recreated entity " << id << " with type " << type << std::endl;
             }
         }
     }
     else
-        cerr << "ERROR: Problem allocating new entity in updateEntity()!\n";
+        std::cerr << "ERROR: Problem allocating new entity in updateEntity()!\n";
 }
 
 // This function allocates a new entity based on type AND inserts it into the entity list
@@ -86,7 +84,7 @@ void EntityList::clear()
     for (auto& ent: ents) // Go through the entities
         delete ent.second; // Deallocate them
     ents.clear(); // Remove all pointers
-    cout << "Cleared entity list.\n";
+    std::cout << "Cleared entity list.\n";
 }
 
 void EntityList::update(float time)

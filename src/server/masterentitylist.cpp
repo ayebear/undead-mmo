@@ -6,8 +6,6 @@
 #include "entityalloc.h"
 #include "packet.h"
 
-using namespace std;
-
 unsigned int MasterEntityList::entCount = 0;
 const int MasterEntityList::cleanUpRatio = 4;
 
@@ -84,7 +82,7 @@ bool MasterEntityList::cleanUp()
         freeList.clear();
         // Go through and build a new temporary vector with existing entities
         // Also assign them with new IDs!!!
-        vector <Entity*> entsTmp;
+        std::vector <Entity*> entsTmp;
         for (EID id = 0; id < (int)ents.size(); id++)
         {
             if (ents[id] != nullptr)
@@ -126,7 +124,7 @@ bool MasterEntityList::getAllEntities(sf::Packet& packet)
 {
     if (entCount > 0)
     {
-        cout << "getAllEntities()\n";
+        std::cout << "getAllEntities()\n";
         packet << Packet::EntityUpdate;
         for (auto& ent: ents)
         {
@@ -146,14 +144,14 @@ bool MasterEntityList::getChangedEntities(sf::Packet& packet)
     // Get deleted entities
     if (!deletedEnts.empty())
     {
-        cout << "Deleted entity IDs: ";
+        std::cout << "Deleted entity IDs: ";
         for (auto& entId: deletedEnts)
         {
-            cout << entId << " ";
+            std::cout << entId << " ";
             packet << entId << -1;
             anyChanged = true;
         }
-        cout << endl;
+        std::cout << std::endl;
         deletedEnts.clear();
     }
     // Get changed entities

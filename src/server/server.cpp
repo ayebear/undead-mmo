@@ -34,12 +34,12 @@ Server::Server():
 void Server::setup()
 {
     // First release will be v0.1.0 Dev
-    cout << "Undead MMO Server v0.0.16.0 Dev\n\n";
-    cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << endl;
+    std::cout << "Undead MMO Server v0.0.16.0 Dev\n\n";
+    std::cout << "The server's local IP address is: " << sf::IpAddress::getLocalAddress() << std::endl;
 
     if (config("showExternalIp").toBool())
-        cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << endl;
-    cout << endl;
+        std::cout << "The server's external IP address is: " << sf::IpAddress::getPublicAddress() << std::endl;
+    std::cout << std::endl;
 
     // Load the map file (in the future this can also be randomly generated)
     tileMap.loadFromFile(config("map").toString());
@@ -64,9 +64,9 @@ void Server::setup()
 
 void Server::start()
 {
-    cout << "Running TCP server...\n";
+    std::cout << "Running TCP server...\n";
     tcpServer.start();
-    cout << "Main thread started.\n";
+    std::cout << "Main thread started.\n";
     while (true)
     {
         // Update the current game state, also send some of this info to the clients
@@ -82,11 +82,11 @@ void Server::start()
             sf::sleep(sf::seconds(sleepTime));
         else if (warningTimer.getElapsedTime().asSeconds() >= 5)
         {
-            cout << "WARNING: Last frame took " << -sleepTime << " seconds too long! FPS: " << 1.0 / elapsedTime << "\n";
+            std::cout << "WARNING: Last frame took " << -sleepTime << " seconds too long! FPS: " << 1.0 / elapsedTime << "\n";
             warningTimer.restart();
         }
     }
-    cout << "Main thread finished.\n";
+    std::cout << "Main thread finished.\n";
 }
 
 void Server::update()
@@ -124,7 +124,7 @@ void Server::processPacket(sf::Packet& packet, int id)
             processCreateAccount(packet, id);
             break;
         default:
-            cout << "Error: Unknown received packet type. Type = " << type << endl;
+            std::cout << "Error: Unknown received packet type. Type = " << type << std::endl;
             break;
     }
 }
@@ -177,7 +177,7 @@ void Server::processInputPacket(sf::Packet& packet, int id)
                 wieldItem(packet, sender->playerData.inventory, playerEnt);
                 break;
             default:
-                cout << inputCode << " is an unknown or not yet implemented input type.\n";
+                std::cout << inputCode << " is an unknown or not yet implemented input type.\n";
                 break;
         }
     }
@@ -264,15 +264,15 @@ void Server::processChatMessage(sf::Packet& packet, int id)
         auto sender = players.getPlayer(id);
         if (sender)
         {
-            string msgPrefix = sender->playerData.username + ": ";
+            std::string msgPrefix = sender->playerData.username + ": ";
             if (subType == Packet::Chat::Public)
             {
                 // Process the message
-                string msg;
+                std::string msg;
                 if (packet >> msg)
                 {
                     msg.insert(0, msgPrefix);
-                    cout << msg << endl;
+                    std::cout << msg << std::endl;
                     // Relay the message back to everyone else
                     sf::Packet packetToSend;
                     packetToSend << Packet::ChatMessage << Packet::Chat::Public << msg;
@@ -282,9 +282,9 @@ void Server::processChatMessage(sf::Packet& packet, int id)
             else if (subType == Packet::Chat::Private)
             {
                 // Process the username
-                string username;
+                std::string username;
                 packet >> username;
-                string msg;
+                std::string msg;
                 sf::Packet packetToSend;
                 auto receiver = players.getPlayer(username);
                 if (receiver)
@@ -293,7 +293,7 @@ void Server::processChatMessage(sf::Packet& packet, int id)
                     if (packet >> msg)
                     {
                         msg.insert(0, msgPrefix);
-                        cout << "Message to " << username << ": " << msg << endl;
+                        std::cout << "Message to " << username << ": " << msg << std::endl;
 
                         // Send the private message
                         packetToSend << Packet::ChatMessage << Packet::Chat::Private << msg;
@@ -321,21 +321,21 @@ void Server::processChatMessage(sf::Packet& packet, int id)
 void Server::processLogIn(sf::Packet& packet, int id)
 {
     int protocolVersion = -1;
-    string username, password;
+    std::string username, password;
     int loginStatusCode = Packet::LogInCode::UnknownFailure;
 
     if (packet >> protocolVersion)
     {
-        cout << "Packet protocol version extracted.\n";
+        std::cout << "Packet protocol version extracted.\n";
         if (protocolVersion == Packet::ProtocolVersion)
         {
-            cout << "Packet protocol version is correct.\n";
+            std::cout << "Packet protocol version is correct.\n";
             if (packet >> username >> password)
             {
-                cout << "Extracted username and password: " << username << ", " << password << endl;
+                std::cout << "Extracted username and password: " << username << ", " << password << std::endl;
                 if (!players.getPlayer(username)) // Make sure the user is NOT already logged in
                 {
-                    cout << "User is not already logged in.\n";
+                    std::cout << "User is not already logged in.\n";
                     Player& player = players.addPlayer(id);
                     // Try logging into the account database with the received username and password
                     int dbLogInStatus = accounts.logIn(username, password, player.playerData);
@@ -362,12 +362,12 @@ void Server::processLogIn(sf::Packet& packet, int id)
 
     if (loginStatusCode == Packet::LogInCode::Successful)
     {
-        string logInMessage = username + " logged in.";
+        std::string logInMessage = username + " logged in.";
         //netManager.sendServerChatMessage(logInMessage, id);
-        cout << logInMessage << endl;
+        std::cout << logInMessage << std::endl;
     }
     else
-        cout << "Denied login request. Error code = " << loginStatusCode << endl;
+        std::cout << "Denied login request. Error code = " << loginStatusCode << std::endl;
 }
 
 void Server::processCreateAccount(sf::Packet& packet, int id)
@@ -382,7 +382,7 @@ void Server::processCreateAccount(sf::Packet& packet, int id)
             PlayerData playerData;
             packet >> playerData.username >> playerData.passwordHash;
 
-            cout << "Create account request: " << playerData.username << ", password: " << playerData.passwordHash << endl;
+            std::cout << "Create account request: " << playerData.username << ", password: " << playerData.passwordHash << std::endl;
 
             if (!playerData.username.empty() && !playerData.passwordHash.empty())
             {
@@ -399,9 +399,9 @@ void Server::processCreateAccount(sf::Packet& packet, int id)
     }
 
     if (createAccountStatus == Packet::CreateAccountCode::Successful)
-        cout << "Account was successfully created!\n";
+        std::cout << "Account was successfully created!\n";
     else
-        cout << "Error: Account was not created. Status code = " << createAccountStatus << endl;
+        std::cout << "Error: Account was not created. Status code = " << createAccountStatus << std::endl;
 }
 
 void Server::handleSuccessfulLogIn(Player& player)
@@ -417,7 +417,7 @@ void Server::handleSuccessfulLogIn(Player& player)
         newPlayerId = newPlayer->getID();
         newPlayer->setPos(sf::Vector2f(player.playerData.positionX, player.playerData.positionY));
     }
-    cout << "New player entity, ID = " << newPlayerId << endl;
+    std::cout << "New player entity, ID = " << newPlayerId << std::endl;
     player.playerEid = newPlayerId;
     // Send the new player entity ID to the player
     sf::Packet playerIdPacket;
@@ -435,10 +435,10 @@ void Server::handleSuccessfulLogIn(Player& player)
     sf::Packet inventoryPacket;
     if (player.playerData.inventory.getAllItems(inventoryPacket))
     {
-        cout << "Sending items from inventory...\n";
+        std::cout << "Sending items from inventory...\n";
         tcpServer.send(inventoryPacket, player.id);
     }
-    cout << "Sent initial packets to " << player.playerData.username << endl;
+    std::cout << "Sent initial packets to " << player.playerData.username << std::endl;
 }
 
 void Server::logOutClient(int id)
@@ -459,6 +459,6 @@ void Server::logOutClient(int id)
         //netManager.sendServerChatMessage(player->playerData.username + " has logged out.", player->id);
         accounts.saveAccount(player->playerData); // Save their account data in the account database
         players.removePlayer(id);
-        cout << username << " (" << id << ") logged out.\n";
+        std::cout << username << " (" << id << ") logged out.\n";
     }
 }

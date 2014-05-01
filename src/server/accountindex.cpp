@@ -6,15 +6,13 @@
 #include <fstream>
 #include "configoption.h"
 
-using namespace std;
-
 IntString::IntString(): num(0) {}
 
-IntString& IntString::operator=(const string& data)
+IntString& IntString::operator=(const std::string& data)
 {
     // Always set the string, but set the number to 0 if it fails
     str = data;
-    istringstream tmp(data);
+    std::istringstream tmp(data);
     if (!(tmp >> num))
         num = 0;
     /*
@@ -31,16 +29,16 @@ AccountIndex::AccountIndex()
     numOfAccounts = 0;
 }
 
-bool AccountIndex::loadAccountIndex(const string& filename)
+bool AccountIndex::loadAccountIndex(const std::string& filename)
 {
     //cout << "loadAccountIndex()...\n";
     indexFilename = filename;
     bool status = false;
-    ifstream file(filename, ifstream::in); // Open the file
+    std::ifstream file(filename, std::ifstream::in); // Open the file
     if (file.is_open())
     {
         bool good = true;
-        string username, accountId;
+        std::string username, accountId;
         IntString maxNum;
         while (good && getline(file, username)) // Read a line
         {
@@ -66,16 +64,16 @@ bool AccountIndex::loadAccountIndex(const string& filename)
 
 // This adds an account to the list, and automatically assigns an account ID.
 // If it failed, or if the username already exists, it returns -1
-int AccountIndex::addAccount(const string& username)
+int AccountIndex::addAccount(const std::string& username)
 {
     int id = -1;
     if (getAccountId(username) == -1) // Only add the account if it does not already exist
     {
-        ofstream outFile(indexFilename, ofstream::out | ofstream::app);
+        std::ofstream outFile(indexFilename, std::ofstream::out | std::ofstream::app);
         if (outFile.is_open())
         {
             numOfAccounts++; // Generate a new account ID
-            string idStr = to_string(numOfAccounts);
+            std::string idStr = std::to_string(numOfAccounts);
             index[username] = idStr; // Store the new account in memory
             outFile << username + '\n' + idStr + '\n'; // Append the username and ID to the file
             outFile.close();
@@ -87,7 +85,7 @@ int AccountIndex::addAccount(const string& username)
 
 // Returns the account ID of the username passed in
 // If it does not exist, then it returns -1
-int AccountIndex::getAccountId(const string& username)
+int AccountIndex::getAccountId(const std::string& username)
 {
     int id = -1;
     auto found = index.find(username);

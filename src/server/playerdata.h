@@ -8,8 +8,6 @@
 #include "configfile.h"
 #include "inventory.h"
 
-using namespace std;
-
 /*
 This class stores all of the information associated about a player's actual character.
 This includes all private information that only the server and a single client should know about,
@@ -27,8 +25,8 @@ class PlayerData
         void loadFromConfig(cfg::File&);
         void saveToConfig(cfg::File&) const;
 
-        string username;
-        string passwordHash;
+        std::string username;
+        std::string passwordHash;
         unsigned int salt;
         bool banned;
         int health;

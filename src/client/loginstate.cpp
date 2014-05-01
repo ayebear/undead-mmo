@@ -56,9 +56,9 @@ LoginState::LoginState(GameObjects& gameObjects):
     directConnectBox.setUp(fontSize, objects.fontBold, windowSize.x / 1.5, windowSize.y / 1.4, windowSize.x / 8, false);
 
     objects.config.useSection("Credentials");
-    string username = objects.config("username").toString();
-    string password = objects.config("password").toString();
-    string ip = objects.config("server").toString();
+    std::string username = objects.config("username").toString();
+    std::string password = objects.config("password").toString();
+    std::string ip = objects.config("server").toString();
     objects.config.useSection();
     usernameBox.setString(username);
     passwordBox.setString(password);
@@ -172,13 +172,13 @@ void LoginState::processChoice(int choice)
         refreshServers();
     else if (choice == 2)
     {
-        string server = directConnectBox.getString();
+        std::string server = directConnectBox.getString();
         net::Address serverAddress(server);
         if (serverAddress.port == 0)
             serverAddress.port = serverPort;
-        string username = usernameBox.getString();
-        string password = passwordBox.getString();
-        cout << "Logging into " << server << " with username = " << username << ", password = " << password << endl;
+        std::string username = usernameBox.getString();
+        std::string password = passwordBox.getString();
+        std::cout << "Logging into " << server << " with username = " << username << ", password = " << password << std::endl;
         int status = objects.accountClient.logIn(serverAddress, username, password);
         if (status == Packet::LogInCode::Successful)
             stateEvent.pushState("Game");
@@ -191,13 +191,13 @@ void LoginState::processChoice(int choice)
     }
     else if (choice == 3)
     {
-        string server = directConnectBox.getString();
+        std::string server = directConnectBox.getString();
         net::Address serverAddress(server);
         if (serverAddress.port == 0)
             serverAddress.port = serverPort;
-        string username = usernameBox.getString();
-        string password = passwordBox.getString();
-        cout << "Creating account on " << server << " with username = " << username << ", password = " << password << endl;
+        std::string username = usernameBox.getString();
+        std::string password = passwordBox.getString();
+        std::cout << "Creating account on " << server << " with username = " << username << ", password = " << password << std::endl;
         int status = objects.accountClient.createAccount(serverAddress, username, password);
         StateArgs args;
         args.push_back(Packet::CreateAccountMessages[status - 1]);
@@ -251,8 +251,8 @@ void LoginState::displayServers()
     cfg::File& servercfg = servers.getServerList();
     for (auto& section : servercfg)
     {
-        const string& address = servercfg("address", section.first);
-        string displayName = section.first + " (" + address + ")";
+        const std::string& address = servercfg("address", section.first);
+        std::string displayName = section.first + " (" + address + ")";
         textItemList.addItemWithHiddenText(displayName, address, textColor);
     }
 

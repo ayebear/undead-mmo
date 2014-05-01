@@ -22,12 +22,10 @@ Caveats:
 #include <set>
 #include "entity.h"
 
-using namespace std;
-
 class EntityGrid
 {
     public:
-        typedef set<EID> MicroList;
+        using MicroList = std::set<EID>;
 
         EntityGrid(); // Starts out as 0x0, must call setSize after this
         EntityGrid(int, int);
@@ -36,7 +34,7 @@ class EntityGrid
         void clear(); // Removes everything and resizes the grid back to 0x0
 
     private:
-        vector< vector<MicroList> > grid;
+        std::vector< std::vector<MicroList> > grid;
 };
 
 #endif

@@ -343,7 +343,7 @@ void GameState::processEntityPacket(sf::Packet& packet)
         ++count;
     }
     if (count >= 10)
-        cout << "Updated " << count << " entities from server.\n";
+        std::cout << "Updated " << count << " entities from server.\n";
 }
 
 void GameState::processOnLogInPacket(sf::Packet& packet)
@@ -358,7 +358,7 @@ void GameState::processMapDataPacket(sf::Packet& packet)
     {
         tileMap.loadFromPacket(packet);
         Entity::setMapSize(tileMap.getWidthPx(), tileMap.getHeightPx());
-        cout << "Received map from server. Size: " << tileMap.getWidth() << " by " << tileMap.getHeight() << ".\n";
+        std::cout << "Received map from server. Size: " << tileMap.getWidth() << " by " << tileMap.getHeight() << ".\n";
     }
 }
 
@@ -378,7 +378,7 @@ void GameState::handleWindowResized()
 void GameState::loadHotkeys()
 {
     objects.config.useSection("Hotkeys");
-    const string keyNames[] = {
+    const std::string keyNames[] = {
         "moveUp",
         "moveDown",
         "moveLeft",
@@ -397,7 +397,7 @@ void GameState::loadHotkeys()
         "reload",
         "shoot"
         };
-    for (const string& key: keyNames)
+    for (const std::string& key: keyNames)
         hotkeys.addKey(objects.config(key).toString());
     objects.config.useSection();
 

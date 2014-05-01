@@ -245,7 +245,7 @@ void InputBox::setColor(sf::Color col)
     cursor.rect.setFillColor(col);
 }
 
-void InputBox::setString(const string& str)
+void InputBox::setString(const std::string& str)
 {
     textStr = str;
     pwdStr.clear();
@@ -280,7 +280,7 @@ void InputBox::updateCursorPos()
     cursor.rect.setPosition(cursorPos.x, cursorPos.y + 2);
 }
 
-const string& InputBox::getString()
+const std::string& InputBox::getString()
 {
     return textStr;
 }

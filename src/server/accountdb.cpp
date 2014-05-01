@@ -5,32 +5,32 @@
 #include "packet.h"
 #include "configfile.h"
 
-const string AccountDb::accountListFilename = "accounts.txt";
+const std::string AccountDb::accountListFilename = "accounts.txt";
 
 AccountDb::AccountDb()
 {
     loadAccountList("accounts/");
 }
 
-AccountDb::AccountDb(const string& dir)
+AccountDb::AccountDb(const std::string& dir)
 {
     loadAccountList(dir);
 }
 
-bool AccountDb::loadAccountList(const string& dir)
+bool AccountDb::loadAccountList(const std::string& dir)
 {
     accountDir = dir;
     strlib::mustEndWith(accountDir, "/");
     return accountList.loadAccountIndex(accountDir + accountListFilename);
 }
 
-int AccountDb::logIn(const string& username, const string& password, PlayerData& playerData)
+int AccountDb::logIn(const std::string& username, const std::string& password, PlayerData& playerData)
 {
     int status = Packet::LogInCode::UnknownFailure;
     int accountId = accountList.getAccountId(username); // Get the account ID from the username
     if (accountId > 0) // Make sure the account ID is valid
     {
-        string accountFilename = accountIdToFilename(accountId);
+        std::string accountFilename = accountIdToFilename(accountId);
         cfg::File accountCfg;
         if (accountCfg.loadFromFile(accountFilename)) // Load the account config file
         {
@@ -64,7 +64,7 @@ int AccountDb::createAccount(const PlayerData& playerData)
         int newAccountId = accountList.addAccount(playerData.username); // Add the username to the account list and get its new ID
         if (newAccountId > 0) // If the account was added to the list successfully
         {
-            string accountFilename = accountIdToFilename(newAccountId);
+            std::string accountFilename = accountIdToFilename(newAccountId);
             cfg::File accountCfg;
             playerData.saveToConfig(accountCfg); // Set the values in the config file in memory from the player data object
 
@@ -83,7 +83,7 @@ bool AccountDb::saveAccount(const PlayerData& playerData)
     int accountId = accountList.getAccountId(playerData.username);
     if (accountId > 0)
     {
-        string accountFilename = accountIdToFilename(accountId);
+        std::string accountFilename = accountIdToFilename(accountId);
         cfg::File accountCfg;
         playerData.saveToConfig(accountCfg); // Save the player data to a config file in memory
         status = accountCfg.writeToFile(accountFilename); // Write the config file in memory to the file
@@ -91,7 +91,7 @@ bool AccountDb::saveAccount(const PlayerData& playerData)
     return status;
 }
 
-string AccountDb::accountIdToFilename(int id)
+std::string AccountDb::accountIdToFilename(int id)
 {
-    return accountDir + to_string(id) + ".txt";
+    return accountDir + std::to_string(id) + ".txt";
 }

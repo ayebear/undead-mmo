@@ -8,7 +8,6 @@
 #include <string>
 #include "cursor.h"
 
-using namespace std;
 /*
     TO DO:
 
@@ -39,13 +38,13 @@ class InputBox: public sf::Drawable
         void setShowRectangle(bool);
         void setTextSize(unsigned int);
         void setColor(sf::Color);
-        void setString(const string& str);
+        void setString(const std::string& str);
         void setInput(bool);
         bool isActive();
 
         // Other
         void updateCursorPos();
-        const string& getString();
+        const std::string& getString();
         void clear();
         void resetCursor();
         void addChar(char);
@@ -75,8 +74,8 @@ class InputBox: public sf::Drawable
         void end();
 
         // Variables
-        string textStr;
-        string pwdStr;
+        std::string textStr;
+        std::string pwdStr;
         sf::Text text;
         sf::Text viewableText;
         sf::Vector2f pos;

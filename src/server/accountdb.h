@@ -7,8 +7,6 @@
 #include "playerdata.h"
 #include "accountindex.h"
 
-using namespace std;
-
 /*
 TODO:
     Automatically create the accounts directory if it doesn't already exist
@@ -45,18 +43,18 @@ class AccountDb
 {
     public:
         AccountDb(); // Uses default account directory
-        AccountDb(const string&); // Takes directory of accounts
-        bool loadAccountList(const string&); // Same as constructor
+        AccountDb(const std::string&); // Takes directory of accounts
+        bool loadAccountList(const std::string&); // Same as constructor
 
-        int logIn(const string&, const string&, PlayerData&); // Username, password, player data object to load into
+        int logIn(const std::string&, const std::string&, PlayerData&); // Username, password, player data object to load into
         int createAccount(const PlayerData&); // Player data object to read from (username and password are stored in here)
         bool saveAccount(const PlayerData&); // Reads from the player data object and writes the account file
 
     private:
-        string accountIdToFilename(int);
+        std::string accountIdToFilename(int);
 
-        string accountDir;
-        static const string accountListFilename;
+        std::string accountDir;
+        static const std::string accountListFilename;
 
         AccountIndex accountList; // Stores a list of usernames and account IDs
 
