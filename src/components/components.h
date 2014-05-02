@@ -4,20 +4,20 @@
 
 #include <unordered_map>
 
-#include <OCS/Component.hpp>
-#include <SFML/Graphics/Rect.hpp>
+#include <OCS/Components.hpp>
+#include <SFML/Graphics.hpp>
 
 struct Position : public ocs::Component<Position>
 {
-    Position(float _x = 0.0f, float _y = 0.0f) : 
-        x(_x), 
-        y(_y) 
+    Position(float _x = 0.0f, float _y = 0.0f) :
+        x(_x),
+        y(_y)
         {}
 
-    std::string serialize() { serializer.serialize("% %", x, y); }
-    
+    std::string serialize() { return serializer.serialize("% %", x, y); }
+
     void deSerialize(const std::string& str) { serializer.deSerialize("% %", str, x, y); }
-    
+
     float x, y;
 };
 
@@ -25,8 +25,8 @@ struct Velocity : public ocs::Component<Velocity>
 {
     Velocity(float dx = 0.0f, float dy = 0.0f) : dx(dx), dy(dy) {}
 
-    std::string serialize() { serializer.serialize("% %", dx, dy); }
-    
+    std::string serialize() { return serializer.serialize("% %", dx, dy); }
+
     void deSerialize(const std::string& str) { serializer.deSerialize("% %", str, dx, dy); }
 
     float dx, dy;
@@ -45,7 +45,7 @@ enum ValueType
 
 struct StatModInfo
 {
-    StatModInfo()
+    StatModInfo();
 
     std::string statName;
     short valueType; //Min, Current, or Max
@@ -64,9 +64,7 @@ struct StatModifier : public ocs::Component<StatModifier>
 struct Stat
 {
     Stat(int min, int current, int max) :
-        data[ValueType::MIN](min),
-        data[ValueType::CURRENT](current),
-        data[ValueType::MAX](max)
+        data{min, current, max}
     {}
 
     int data[ValueType::TOTAL];
@@ -84,7 +82,7 @@ struct Collidable : public ocs::Component<Collidable>
 
 };
 
-struct RigidBody : public ocs::Component<RigidBody> {}
+struct RigidBody : public ocs::Component<RigidBody> {};
 
 struct Renderable : public ocs::Component<Renderable>
 {
@@ -108,7 +106,7 @@ struct Renderable : public ocs::Component<Renderable>
         textureFile = txtreFile;
     }
 
-    std::string serialize() { serializer.serialize("%", textureFile); }
+    std::string serialize() { return serializer.serialize("%", textureFile); }
 
     void deSerialize(const std::string& str)
     {

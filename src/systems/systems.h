@@ -1,32 +1,32 @@
 #ifndef ZOMBIEGAMESYSTEMS_H
 #define ZOMBIEGAMESYSTEMS_H
 
-#include <OCS/System.hpp>
+#include <OCS/Systems.hpp>
 
 struct MovementSystem : public ocs::System
 {
-    void update(ObjectManager&, MessageHub&, double);
+    void update(ocs::ObjectManager&, ocs::MessageHub&, double);
 };
 
 struct CollisionSystem : public ocs::System
-{ 
-    void handleCollisions(ObjectManager&, MessageHub&, double);
-    void update(ObjectManager&, MessageHub&, double);
+{
+    void handleCollisions(ocs::ObjectManager&, ocs::MessageHub&, double);
+    void update(ocs::ObjectManager&, ocs::MessageHub&, double);
 };
 
 struct RenderingSystem : public ocs::System
-{ 
-    void update(ObjectManager&, MessageHub&, double);
+{
+    void update(ocs::ObjectManager&, ocs::MessageHub&, double);
 };
 
 struct NetworkSystem : public ocs::System
-{ 
-    void update(ObjectManager&, MessageHub&, double);
+{
+    void update(ocs::ObjectManager&, ocs::MessageHub&, double);
 };
 
 struct InfectionSystem : public ocs::System
 {
-    void update(ObjectManager&, MessageHub&, double);
+    void update(ocs::ObjectManager&, ocs::MessageHub&, double);
 };
 
 #endif

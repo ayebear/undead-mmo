@@ -1,11 +1,11 @@
-#include "zombiegamesystems.h"
+#include "systems.h"
 
-#include <OCS/Object.hpp>
+#include <OCS/Objects.hpp>
 #include <OCS/Messaging.hpp>
 
-#include "entity/components/zombiegamecomponents.h"
+#include "components.h"
 
-void MovementSystem::update(ObjectManager& objManager, MessageHub& msgHub, double dt)
+void MovementSystem::update(ocs::ObjectManager& objManager, ocs::MessageHub& msgHub, double dt)
 {
     for (auto& vel : objManager.getComponentArray<Velocity>())
     {
@@ -31,7 +31,7 @@ struct Object
 
     void serialize();
     void deSerialize
-    
+
     protected:
 
         friend class ObjectManager;
@@ -40,7 +40,7 @@ struct Object
         //Used for copying and destroying an object
         --> std::unordered_map<Family, BaseComponentArray*> componentArrays;
         std::unordered_map<Family, ID> componentIndices; <--
-        
+
 };
 
 template<typename C>
@@ -77,27 +77,27 @@ objManager.bindStringToComponent<Health>("Health");
 
 
 
-void CollisionSystem::handleCollisions(ObjectManager& objManager, MessageHub& msgHub, double dt)
+void CollisionSystem::handleCollisions(ocs::ObjectManager& objManager, ocs::MessageHub& msgHub, double dt)
 {
 
 }
 
-void CollisionSystem::update(ObjectManager& objManager, MessageHub& msgHub, double dt)
+void CollisionSystem::update(ocs::ObjectManager& objManager, ocs::MessageHub& msgHub, double dt)
 {
 
 }
 
-void RenderingSystem::update(ObjectManager& objManager, MessageHub& msgHub, double dt)
+void RenderingSystem::update(ocs::ObjectManager& objManager, ocs::MessageHub& msgHub, double dt)
 {
-    
+
 }
 
-void NetworkSystem::update(ObjectManager& objManager, MessageHub& msgHub, double dt)
+void NetworkSystem::update(ocs::ObjectManager& objManager, ocs::MessageHub& msgHub, double dt)
 {
-    
+
 }
 
-void InfectionSystem::update(ObjectManager& objManager, MessageHub& msgHub, double dt)
+void InfectionSystem::update(ocs::ObjectManager& objManager, ocs::MessageHub& msgHub, double dt)
 {
 
 }

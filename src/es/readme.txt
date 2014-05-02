@@ -1,1 +1,0 @@
-The future entity-component system code will go in here.
