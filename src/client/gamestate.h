@@ -12,6 +12,9 @@
 #include "mainmenustate.h"
 #include "tilemap.h"
 #include "gamehotkeys.h"
+#include "OCS/Objects/ObjectManager.hpp"
+#include "OCS/Messaging/MessageHub.hpp"
+#include "OCS/Systems/SystemManager.hpp"
 
 /*
 This class manages the window and input for the game
@@ -52,6 +55,11 @@ class GameState: public CommonState
         Entity* myPlayer;
         Hud theHud; // TODO: Choose a better name?
         GameHotkeys hotkeys;
+
+        // OCS stuff
+        ocs::ObjectManager objManager;
+        ocs::SystemManager sysManager;
+        ocs::MessageHub msgHub;
 
         // Variables
         sf::Clock clock;

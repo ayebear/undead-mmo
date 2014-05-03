@@ -35,14 +35,6 @@ struct Velocity : public ocs::Component<Velocity>
 
 ////////////////////////////////////////////////////Stat
 
-enum ValueType
-{
-    MIN = 0,
-    CURRENT,
-    MAX,
-    TOTAL
-};
-
 struct StatModInfo
 {
     StatModInfo();
@@ -59,10 +51,16 @@ struct StatModifier : public ocs::Component<StatModifier>
     std::vector<StatModInfo> modifiedStats;
 };
 
-
-
 struct Stat
 {
+    enum ValueType
+    {
+        MIN = 0,
+        CURRENT,
+        MAX,
+        TOTAL
+    };
+
     Stat(int min, int current, int max) :
         data{min, current, max}
     {}
@@ -82,53 +80,30 @@ struct Collidable : public ocs::Component<Collidable>
 
 };
 
-struct RigidBody : public ocs::Component<RigidBody> {};
-
 struct Renderable : public ocs::Component<Renderable>
 {
     static std::unordered_map<std::string, sf::Texture> textures;
 
-    Renderable(const std::string& txtreFile = "")
+    Renderable(const std::string& filename = "")
     {
-        if (txtreFile != "")
-        {
-            if(textures.find(txtreFile) == textures.end())
-            {
-                if(textures[txtreFile].loadFromFile(txtreFile))
-                    sprite.setTexture(textures[txtreFile]);
-                else
-                    std::cerr << "Could not load texture from file " << txtreFile << std::endl;
-            }
-            else
-                sprite.setTexture(textures[txtreFile]);
-        }
-
-        textureFile = txtreFile;
+        setTexture(filename);
     }
 
     std::string serialize() { return serializer.serialize("%", textureFile); }
 
     void deSerialize(const std::string& str)
     {
-        std::string txtreFile;
-        serializer.deSerialize("%s", str, txtreFile);
-
-        if (txtreFile != "")
-        {
-            if (textures.find(txtreFile) == textures.end())
-            {
-                if (textures[txtreFile].loadFromFile(txtreFile))
-                    sprite.setTexture(textures[txtreFile]);
-                else
-                    std::cerr << "Could not load texture from file " << txtreFile << std::endl;
-            }
-            else
-                sprite.setTexture(textures[txtreFile]);
-        }
+        std::string filename;
+        serializer.deSerialize("%s", str, filename);
+        setTexture(filename);
     }
 
     sf::Sprite sprite;
     std::string textureFile;
+
+    private:
+
+        void setTexture(const std::string& filename);
 };
 
 #endif

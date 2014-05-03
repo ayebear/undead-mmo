@@ -7,8 +7,14 @@
 #include "tile.h"
 #include "takescreenshot.h"
 #include "paths.h"
+#include "systems.h"
+#include "components.h"
+#include "OCS/Objects/ObjectPrototypeLoader.hpp"
+#include "messages.h"
 
-GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
+GameState::GameState(GameObjects& gameObjects):
+    CommonState(gameObjects),
+    sysManager(objManager, msgHub)
 {
     loadHotkeys();
 
@@ -29,6 +35,7 @@ GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
     playing = true;
     hasFocus = true;
 
+    // Setup networking callbacks
     objects.client.setValidTypeRange(1, Packet::PacketTypes - 1);
     using namespace std::placeholders;
     objects.client.registerCallback(Packet::EntityUpdate, std::bind(&GameState::processEntityPacket, this, _1));
@@ -36,6 +43,21 @@ GameState::GameState(GameObjects& gameObjects): CommonState(gameObjects)
     objects.client.registerCallback(Packet::MapData, std::bind(&GameState::processMapDataPacket, this, _1));
 
     theHud.setUp(objects);
+
+    // Setup OCS objects
+    objManager.bindStringToComponent<Position>("Position");
+    objManager.bindStringToComponent<Collidable>("Collidable");
+    objManager.bindStringToComponent<Velocity>("Velocity");
+    objManager.bindStringToComponent<Renderable>("Renderable");
+//    objManager.bindStringToComponent<Damager>("Damager");
+//    objManager.bindStringToComponent<Health>("Health");
+
+    ocs::ObjectPrototypeLoader::loadPrototypeSet(objManager, "objects.txt", "Objects", "[UndeadMMO]");
+
+    sysManager.addSystem<MovementSystem>();
+//    sysManager.addSystem<PhysicsSystem>();
+//    sysManager.addSystem<DamageSystem>();
+//    sysManager.addSystem<RenderSystem>();
 }
 
 GameState::~GameState()
@@ -133,6 +155,11 @@ void GameState::update()
     objects.client.update();
 
     entList.update(elapsedTime);
+
+    // Update OCS objects
+//    msgHub.postMessage<Window>(*this, objects.window);
+    sysManager.updateAllSystems(elapsedTime);
+    msgHub.clearPostedMessages();
 
     updateGameView();
 
