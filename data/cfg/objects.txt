@@ -1,0 +1,27 @@
+[UndeadMMO]
+	
+	"Objects" : { "Player", "Zombie" }
+	
+[/UndeadMMO]
+
+[Player]
+	
+	"Components" : { "Position", "Velocity", "Collidable", "Renderable" }
+	
+	"Position" : "100 100"
+	"Velocity" : "0 0"
+	"Collidable" : "64 64"
+	"Renderable" : "'data/images/entities.png'"
+	
+[/Player]
+
+[Zombie]
+	
+	"Components" : { "Position", "Velocity", "Collidable", "Renderable", "AI" }
+	
+	"Position" : "100 100"
+	"Velocity" : "0 0"
+	"Collidable" : "64 64"
+	"Renderable" : "'data/images/entities.png'"
+	
+[/Zombie]
