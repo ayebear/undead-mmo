@@ -12,7 +12,7 @@ void PacketBuilder::sendChatMessage(const std::string& msg)
     {
         sf::Packet msgPacket;
         msgPacket << Packet::ChatMessage << Packet::Chat::Public << msg;
-        client.tcpSend(msgPacket);
+        client.send(msgPacket);
     }
 }
 
@@ -22,6 +22,6 @@ void PacketBuilder::sendChatMessage(const std::string& msg, const std::string& u
     {
         sf::Packet msgPacket;
         msgPacket << Packet::ChatMessage << Packet::Chat::Private << username << msg;
-        client.tcpSend(msgPacket);
+        client.send(msgPacket);
     }
 }

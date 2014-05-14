@@ -22,6 +22,8 @@ class AccountClient
         net::Client& client;
         std::string currentUsername;
         bool loggedIn;
+        int status;
+        bool packetReceived;
 };
 
 #endif

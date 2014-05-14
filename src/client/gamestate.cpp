@@ -36,7 +36,6 @@ GameState::GameState(GameObjects& gameObjects):
     hasFocus = true;
 
     // Setup networking callbacks
-    objects.client.setValidTypeRange(1, Packet::PacketTypes - 1);
     using namespace std::placeholders;
     objects.client.registerCallback(Packet::EntityUpdate, std::bind(&GameState::processEntityPacket, this, _1));
     objects.client.registerCallback(Packet::OnSuccessfulLogIn, std::bind(&GameState::processOnLogInPacket, this, _1));
@@ -152,7 +151,7 @@ void GameState::handleEvents()
 void GameState::update()
 {
     objects.music.update();
-    objects.client.update();
+    objects.client.receive();
 
     entList.update(elapsedTime);
 
@@ -325,7 +324,7 @@ void GameState::handleInput()
                 inputPacket << Packet::InputType::StopMoving;
             }
 
-            objects.client.tcpSend(inputPacket);
+            objects.client.send(inputPacket);
         }
     }
     elapsedTime = clock.restart().asSeconds();
@@ -345,6 +344,8 @@ void GameState::handleMouseInput()
         myPlayer->setVisualAngle(angle);
         currentAngle = angle;
     }
+    else
+        std::cout << "ERROR: " << (unsigned long long)myPlayer << "\n";
 }
 
 void GameState::sendAngleInputPacket()
@@ -354,7 +355,7 @@ void GameState::sendAngleInputPacket()
     {
         sf::Packet anglePacket;
         anglePacket << Packet::Input << Packet::InputType::ChangeVisualAngle << currentAngle;
-        objects.client.tcpSend(anglePacket);
+        objects.client.send(anglePacket);
         lastSentAngle = currentAngle;
         angleTimer.restart();
     }
@@ -371,12 +372,15 @@ void GameState::processEntityPacket(sf::Packet& packet)
     }
     if (count >= 10)
         std::cout << "Updated " << count << " entities from server.\n";
+    if (myPlayer == nullptr)
+        myPlayer = entList.find(myPlayerId);
 }
 
 void GameState::processOnLogInPacket(sf::Packet& packet)
 {
     if (packet >> myPlayerId)
         myPlayer = entList.find(myPlayerId);
+    std::cout << "Player entity ID: " << myPlayerId << "\n";
 }
 
 void GameState::processMapDataPacket(sf::Packet& packet)
