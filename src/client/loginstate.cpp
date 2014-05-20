@@ -210,7 +210,6 @@ void LoginState::processChoice(int choice)
 void LoginState::update()
 {
     objects.music.update();
-    objects.client.receive();
     loginMenu.updateMenu();
 }
 

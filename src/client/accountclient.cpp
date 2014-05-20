@@ -14,10 +14,8 @@ AccountClient::AccountClient(net::Client& client):
     };
     client.registerCallback(Packet::LogInStatus, accountPacketHandler);
     client.registerCallback(Packet::CreateAccountStatus, accountPacketHandler);
-
-    // Not using these yet, because it will drop the other packets we need after successfully logging in
-    //client.setGroup("login", {Packet::LogInStatus});
-    //client.setGroup("createAccount", {Packet::CreateAccountStatus});
+    client.setGroup("login", {Packet::LogInStatus});
+    client.setGroup("createAccount", {Packet::CreateAccountStatus});
 }
 
 int AccountClient::logIn(const net::Address& address, const std::string& username, const std::string& password)
@@ -41,8 +39,11 @@ int AccountClient::logIn(const net::Address& address, const std::string& usernam
         // TODO: Move this outside of this function and have a function for polling if it was successful.
         packetReceived = false;
         sf::Clock loginTimer;
-        while (!packetReceived && !client.receive() && loginTimer.getElapsedTime().asSeconds() < timeout)
+        while (!packetReceived && loginTimer.getElapsedTime().asSeconds() < timeout)
+        {
+            client.receive("login");
             sf::sleep(sf::milliseconds(10));
+        }
 
         if (!packetReceived)
         {
@@ -79,8 +80,11 @@ int AccountClient::createAccount(const net::Address& address, const std::string&
         // TODO: Move this outside of this function and have a function for polling if it was successful.
         packetReceived = false;
         sf::Clock loginTimer;
-        while (!packetReceived && !client.receive() && loginTimer.getElapsedTime().asSeconds() < timeout)
+        while (!packetReceived && loginTimer.getElapsedTime().asSeconds() < timeout)
+        {
+            client.receive("createAccount");
             sf::sleep(sf::milliseconds(10));
+        }
 
         if (!packetReceived)
         {
